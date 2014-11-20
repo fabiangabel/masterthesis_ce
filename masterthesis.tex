@@ -1,0 +1,166 @@
+\documentclass[article,type=msc,colorback,accentcolor=tud2a]{tudthesis}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{ngerman}
+\usepackage[english]{babel} 
+
+
+\usepackage[utf8]{inputenc} %input and fontencoding
+\usepackage[T1]{fontenc}
+
+
+\usepackage{nomencl} %for printing a list of symbols
+
+\usepackage{amsmath,amsthm} %math environments
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\getmydate}{%
+  \ifcase\month%
+    \or Januar\or Februar\or M\"arz%
+    \or April\or Mai\or Juni\or Juli%
+    \or August\or September\or Oktober%
+    \or November\or Dezember%
+  \fi\ \number\year%
+}
+
+\begin{document}
+\thesistitle{Titel }{}
+  \author{Fabian Gabel}
+  \referee{Prof. Dr. rer.nat. Michael Schäfer}{Dipl.-Ing U. Falk}
+  \department{Studienbereich CE}
+  \group{FNB}
+% \tuprints{12345}{1234}
+  \makethesistitle
+  \affidavit{F. Gabel}
+  \tableofcontents
+
+\printnomenclature
+  \section{Introduction}
+
+  This thesis is about. 
+
+  \section{Fundamentals of Continuum Physics}
+
+    \subsection{Navier-Stokes Equations for Incompressible Flows}
+
+      \subsubsection{Cauchy-Equations}
+      \subsubsection{Newtonian Fluids}
+      \subsubsection{Final Form of the Navier-Stokes Equations - conservative and nonconservative Form}
+
+    \subsection{Energy Equation}
+
+      \subsubsection{Generic Scalar Transport Equation}
+      \subsubsection{Bouyancy Driven Flows - Densities as Functions of the Temperature}
+
+  \section{Finite Volume Methods for Incompressible Flows - Their Theoretical Basics and their Realisation in Code}
+
+    \subsection{Fundamentals of Discretisation}
+      
+      \subsubsection{Numerical Grid}
+      \subsubsection{Approximation of Integrals}
+
+    \subsection{Discretisation of the Momentum Balance}
+      
+      \subsubsection{Semi Discretized Linearized Form of the Navier-Stokes Equations}
+      \subsubsection{Treatment of Nonorthogonalities}
+      \subsubsection{Calculation of Mass Flux - Rhie-Chow Interpolation}
+      \subsubsection{Discretization of the convective term}
+      \subsubsection{Discretization of the diffusive term}
+      \subsubsection{Discretisation of the source term}
+      \subsubsection{Assembly of Linear Systems - Final Form of Equations}
+
+    \subsection{Discretisation of the Generic Transport Equation}
+
+    \subsection{Segregated Methods - SIMPLE Algorithm}
+      
+      \subsubsection{Pressure Correction Equation}
+      \subsubsection{Characteristical Properties of Projection Methods}
+
+        Underrelaxation, slow convergence, inner iterations outer iterations, relative tolerances
+
+    \subsection{Boundary Conditions on Domain and Block Boundaries}
+      
+      \subsubsection{Dirichlet Boundary Condition}
+      \subsubsection{von Neumann Boundary Condition}
+      \subsubsection{Symmetry Boundary Condition}
+      \subsubsection{Wall Boundary Condition}
+      \subsubsection{Block Boundary Condition}
+      
+    \subsection{Coupled Solution of the Navier-Stokes Equations}
+
+      \subsubsection{Discretization fo the Navier-Stokes Equations}
+      \subsubsection{Differences to the segregated approach}
+
+        Implicit treatment of Pressure Gradient, Implicit treatment of Temperature
+
+      \subsubsection{Assembly of Linear System}
+
+      \subsubsection{Boundary Conditions}
+
+      \subsection{Characteristical Properties of the coupled solution approach}
+
+      Bad condition, singularity, faster convergence
+
+      \subsection{Numerical Solution of Linear Systems}
+
+        \subsubsection{Stone's SIP Solver}
+        Basic Idea
+        \subsubsection{Krylov Subspace Methods}
+        Basic Idea, some representative algorithms, preconditioning
+
+  \section{CAFFA Framework}
+
+    \subsection{PETSc Framework}
+      Keep in mind not to copy the manual but
+      \subsubsection{Philosophy of PETSc}
+        Bell Prize, MPI Programming
+      \subsubsection{Basic Data Types}
+        Vec,Mat (Different Matrix Types and their effect on complex methods)
+      \subsubsection{KSP and PC Objects and their usage}
+        Singularities
+      \subsubsection{Profiling}
+        Petsc Log 
+      \subsubsection{Common Errors}
+        Optimization, Interfaces, Compiler Erros not helpful, Preallocation vs. Mallocs
+
+    \subsection{Grid Generation and Conversion}
+    Generation of block structured grids, neighbouring relations are represented by a special type of boundary conditions
+    \subsection{Preprocessing}
+    Matching algorithm - the idea behind clipper. Opencascade. Efficient calculation of values for discretization.
+    \subsection{CAFFA3D}
+
+      \subsubsection{MPI Programming Model}
+      \subsubsection{Indexing of variables and treatment of boundary values}
+        Describe MatZeroValues and how it is used to simplify the code. Problems with boundary entries
+      \subsubsection{Field interlacing}
+        Realization through special arrangement of variables and the use of index sets and/or preprocessor directives
+      \subsubsection{Domain Decomposition, Ghosting and Parallel Matrix Assembly}
+
+        Ghost values are stored in local representations of the global vector (state the mapping for those entries). Matrix coefficients are calculated on one processor and sent to the neighbour. Preallocation as crucial aspect for program performance.
+
+    \subsection{Postprocessing}
+    
+      Visualization of Results with Paraview and Tecplot
+
+  \section{Verification of CAFFA}
+
+    \subsection{Theoretical Discretisation Error}
+    \subsection{Method of Manufactured Solutions}
+    \subsection{Measurement of Error and Calculation of Order}
+
+  \section{Comparison of Solver Concepts}
+
+    \subsection{Cluster Hardware and Used Software}
+    \subsection{Parallel Performance}
+
+      \subsection{Measures of Performance}
+      \subsection{Discussion of Results}
+
+    \subsection{Convergence Behaviour}
+    \subsection{Realistic Testcase}
+
+  \section{Conclusion}
+
+
+\end{document}
