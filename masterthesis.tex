@@ -13,6 +13,9 @@
 
 \usepackage{amsmath,amsthm} %math environments
 
+\usepackage{hyperref} %use hyperlinks in document
+\usepackage{url} %display urls as such
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\getmydate}{%
@@ -26,8 +29,8 @@
 
 \begin{document}
 \thesistitle{Titel }{}
-  \author{Fabian Gabel}
-  \referee{Prof. Dr. rer.nat. Michael Schäfer}{Dipl.-Ing U. Falk}
+  \author{Fabian Nuraddin Alexander Gabel}
+  \referee{Prof. Dr. rer.nat. Michael Schäfer}{Dipl.-Ing Ulrich Falk}
   \department{Studienbereich CE}
   \group{FNB}
 % \tuprints{12345}{1234}
@@ -40,7 +43,7 @@
 
   This thesis is about. 
 
-  \section{Fundamentals of Continuum Physics}
+  \section{Fundamentals of Continuum Physics for Thermo-Hydrodynamical Problems}
 
     \subsection{Navier-Stokes Equations for Incompressible Flows}
 
@@ -107,7 +110,7 @@
         \subsubsection{Stone's SIP Solver}
         Basic Idea
         \subsubsection{Krylov Subspace Methods}
-        Basic Idea, some representative algorithms, preconditioning
+        Basic Idea, some representative algorithms, importance of preconditioning
 
   \section{CAFFA Framework}
 
@@ -147,18 +150,54 @@
 
     \subsection{Theoretical Discretisation Error}
     \subsection{Method of Manufactured Solutions}
+    \subsection{Exact and Manufactured Solutions for the Navier-Stokes Equations and the Energy Equation}
+    Not always there is an exact solution. Divergence free approach. Presentation of the used manufactured solution. 
+    \begin{itemize}
+      \item \url{http://scicomp.stackexchange.com/questions/6943/manufactured-solutions-for-incompressible-navier-stokes-how-to-find-divergenc}
+      \item \url{http://link.springer.com/article/10.1007/BF00948290}
+      \item \url{http://physics.stackexchange.com/questions/60476/exact-solutions-to-the-navier-stokes-equations}
+      \item \url{http://www.annualreviews.org/doi/pdf/10.1146/annurev.fl.23.010191.001111}
+    \end{itemize}
     \subsection{Measurement of Error and Calculation of Order}
 
   \section{Comparison of Solver Concepts}
+  
+    \subsection{Impact on Convergence Behaviour on Blockstructured Grids}
 
-    \subsection{Cluster Hardware and Used Software}
+      Show how the implicit treatment of block boundaries maintains high convergence rates
+
     \subsection{Parallel Performance}
+      \subsubsection{Cluster Hardware and Used Software}
+        \begin{itemize}
+          \item Mem Section and processes in between islands (calculating across islands)
+          \item Versioning information (PETSc,INTEL COMPILERS,CLIPPER,MPI IMPLEMENTATION)
+          \item Software not designed to perform well on desktop PCs.
+        \end{itemize}
 
-      \subsection{Measures of Performance}
-      \subsection{Discussion of Results}
-
+      \subsubsection{Measures of Performance}
+        \begin{itemize}
+          \item Maße definieren
+          \item Nochmal Hager,Wellein studieren
+          \item Guidelines for measuring performance (bias through system processes or user interaction), only measure calculation time do not consider I/O in the beginning and the end
+        \end{itemize}
+      \subsubsection{Preiliminary upper bounds on performance - The STREAM Benchmark}
+        Pinning of processes, preiliminary constraints by hardware and operating systems, identification of bottlenecks, history and results of STREAM
+      \subsection{Discussion of Results for Parallel Efficiency}
+      \subsection{Speedup Measurement for analytic Testcases}
     \subsection{Convergence Behaviour}
-    \subsection{Realistic Testcase}
+    \subsection{Application in Realistic Testcases}
+      
+      \subsubsection{Flow around a cylinder 3d - stationary}
+      \subsubsection{Flow around a cylinder 3d - instationary}
+        \begin{itemize}
+          \item\url{http://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_flow3d/dfg_flow3d_configuration.html}
+        \end{itemize}
+
+      \subsubsection{Heat-Driven Cavity Flow}
+        \begin{itemize}
+          \item \url{http://www.featflow.de/en/benchmarks/cfdbenchmarking/mit_benchmark.html}
+        \end{itemize}
+      
 
   \section{Conclusion}
 
