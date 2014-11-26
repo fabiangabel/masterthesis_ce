@@ -28,7 +28,7 @@
 }
 
 \begin{document}
-\thesistitle{Titel }{}
+\thesistitle{Implementation and performance analyses of a highly efficient algorithm for pressure-velocity coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeit-Kopplung}
   \author{Fabian Nuraddin Alexander Gabel}
   \referee{Prof. Dr. rer.nat. Michael Schäfer}{Dipl.-Ing Ulrich Falk}
   \department{Studienbereich CE}
@@ -108,15 +108,15 @@
       \subsection{Numerical Solution of Linear Systems}
 
         \subsubsection{Stone's SIP Solver}
-        Basic Idea
+        Basic Idea as in Schäfer or Peric
         \subsubsection{Krylov Subspace Methods}
-        Basic Idea, some representative algorithms, importance of preconditioning
+        General concept of cyclic vector spaces, name some representative ksp algorithms, importance of preconditioning, not as detailed as in bachelor thesis
 
   \section{CAFFA Framework}
 
     \subsection{PETSc Framework}
       Keep in mind not to copy the manual but
-      \subsubsection{Philosophy of PETSc}
+      \subsubsection{About PETSc}
         Bell Prize, MPI Programming
       \subsubsection{Basic Data Types}
         Vec,Mat (Different Matrix Types and their effect on complex methods)
@@ -130,28 +130,33 @@
     \subsection{Grid Generation and Conversion}
     Generation of block structured grids, neighbouring relations are represented by a special type of boundary conditions
     \subsection{Preprocessing}
-    Matching algorithm - the idea behind clipper. Opencascade. Efficient calculation of values for discretization.
+    Matching algorithm - the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization.
     \subsection{CAFFA3D}
 
       \subsubsection{MPI Programming Model}
+        Basic idea of distributed memory programming model, emphasize the differences to shared memory model
       \subsubsection{Indexing of variables and treatment of boundary values}
-        Describe MatZeroValues and how it is used to simplify the code. Problems with boundary entries
+      Describe MatZeroValues and how it is used to simplify the code. Compliance of PETSc zero based indexing and CAFFA indexing which considers boundary values. Problems with boundary entries
       \subsubsection{Field interlacing}
-        Realization through special arrangement of variables and the use of index sets and/or preprocessor directives
+      Realization through special arrangement of variables and the use of index sets (subvector objects) and/or preprocessor directives. Advantages (there was a paper I cited in my thesis)
       \subsubsection{Domain Decomposition, Ghosting and Parallel Matrix Assembly}
 
-        Ghost values are stored in local representations of the global vector (state the mapping for those entries). Matrix coefficients are calculated on one processor and sent to the neighbour. Preallocation as crucial aspect for program performance.
+        Ghost values are stored in local representations of the global vector (state the mapping for those entries). Matrix coefficients are calculated on one processor and sent to the neighbour. Preallocation as crucial aspect for program performance. Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution.
 
     \subsection{Postprocessing}
     
       Visualization of Results with Paraview and Tecplot
 
   \section{Verification of CAFFA}
+    
+    Refer to next section for Validation of CAFFA
 
     \subsection{Theoretical Discretisation Error}
+      present the Taylor-Series Expansion
     \subsection{Method of Manufactured Solutions}
+      basically sum up the important points of salari's technical report
     \subsection{Exact and Manufactured Solutions for the Navier-Stokes Equations and the Energy Equation}
-    Not always there is an exact solution. Divergence free approach. Presentation of the used manufactured solution. 
+    Not always there is an exact solution. Divergence free approach. Presentation of the used manufactured solution. What if solution is not divergence free? Derivation of equations and modifications to continuity equation.
     \begin{itemize}
       \item \url{http://scicomp.stackexchange.com/questions/6943/manufactured-solutions-for-incompressible-navier-stokes-how-to-find-divergenc}
       \item \url{http://link.springer.com/article/10.1007/BF00948290}
@@ -159,18 +164,19 @@
       \item \url{http://www.annualreviews.org/doi/pdf/10.1146/annurev.fl.23.010191.001111}
     \end{itemize}
     \subsection{Measurement of Error and Calculation of Order}
+      Different error measures (L2-Norm,completeness of function space, consistency etc.)
 
   \section{Comparison of Solver Concepts}
   
     \subsection{Impact on Convergence Behaviour on Blockstructured Grids}
 
-      Show how the implicit treatment of block boundaries maintains high convergence rates
+      Show how the implicit treatment of block boundaries maintains (high) convergence rates
 
     \subsection{Parallel Performance}
       \subsubsection{Cluster Hardware and Used Software}
         \begin{itemize}
           \item Mem Section and processes in between islands (calculating across islands)
-          \item Versioning information (PETSc,INTEL COMPILERS,CLIPPER,MPI IMPLEMENTATION)
+          \item Versioning information (PETSc,INTEL COMPILERS,CLIPPER,MPI IMPLEMENTATION,BLAS/LAPACK)
           \item Software not designed to perform well on desktop PCs.
         \end{itemize}
 
@@ -181,11 +187,11 @@
           \item Guidelines for measuring performance (bias through system processes or user interaction), only measure calculation time do not consider I/O in the beginning and the end
         \end{itemize}
       \subsubsection{Preiliminary upper bounds on performance - The STREAM Benchmark}
-        Pinning of processes, preiliminary constraints by hardware and operating systems, identification of bottlenecks, history and results of STREAM
+        Pinning of processes, preiliminary constraints by hardware and operating systems, identification of bottlenecks, history and results of STREAM. Bandwith as Bottleneck. Petsc Implementation of STREAM
       \subsection{Discussion of Results for Parallel Efficiency}
       \subsection{Speedup Measurement for analytic Testcases}
-    \subsection{Convergence Behaviour}
-    \subsection{Application in Realistic Testcases}
+    \subsection{Application to Realistic Testcases}
+      Also consider simple load balancing by distributing matrix rows equally
       
       \subsubsection{Flow around a cylinder 3d - stationary}
       \subsubsection{Flow around a cylinder 3d - instationary}
