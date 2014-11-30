@@ -16,6 +16,8 @@
 \usepackage{hyperref} %use hyperlinks in document
 \usepackage{url} %display urls as such
 
+\usepackage{listings} %load source code printer % use with \lstset{language=[77]Fortran} \begin{lstlisting} SOURCE \end{lstlisting}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\getmydate}{%
@@ -45,51 +47,58 @@
 
   \section{Fundamentals of Continuum Physics for Thermo-Hydrodynamical Problems}
 
-    \subsection{Navier-Stokes Equations for Incompressible Flows}
-
-      \subsubsection{Cauchy-Equations}
-      \subsubsection{Newtonian Fluids}
-      \subsubsection{Final Form of the Navier-Stokes Equations - Conservative and Nonconservative Form}
-
-    \subsection{Energy Equation}
-
-      \subsubsection{Generic Scalar Transport Equation}
-
-    \subsection{Bouyancy Driven Flows - the Boussinesq Approximatio}
-      
+    \subsection{Conservation of Mass -- Continuity Equation}
+    \subsection{Conservation of Momentum -- Cauchy-Equations}
+    \subsection{Conservation of Angular Momentum}
+    \subsection{Closing the System of Equations -- Newtonian Fluids}
+    \subsection{Conservation Law for Scalar Quantities}
+        Introduce the generic transport equation and give physical interpretation of coefficients. Species transport or Temperature.
+        Check also Peric p12 or Bird et al. (1962).
+    \subsection{Necessary Simplification of Equations}
+      \subsubsection{Incompressible Flows}
+      \subsubsection{Variation of Fluid Properties -- Boussinesq Approximation}
       Talk about natural and forced convection. Differences for the solver algorithm. (s.a.) Peric P447
-      Talk abourt flows with variation in fluid properties -> mms has to map this behaviour (bouyancy force driven, i.e. naturally convected fluid)
-      Also talk about nondimensional values like prandtl number, rayleigh and reynolds
+      Talk about flows with variation in fluid properties -> mms has to map this behaviour (Buoyancy force driven, i.e. naturally convected fluid)
+      Also talk about non-dimensional values like Prandtl number, Rayleigh and Reynolds
+    \subsection{Final Form of the Set of Equations}
+        Conservative and Non-Conservative Form
 
-  \section{Finite Volume Methods for Incompressible Flows - Their Theoretical Basics and Their Realisation in Code}
+  \section{Finite Volume Method for Incompressible Flows -- Theoretical Basics and Realisation in Code}
 
-    \subsection{Fundamentals of Discretisation}
+    \subsection{Fundamentals of Discretization}
       
       \subsubsection{Numerical Grid}
       \subsubsection{Approximation of Integrals}
 
-    \subsection{Discretisation of the Momentum Balance}
+    \subsection{Discretization of the Momentum Balance}
       
       \subsubsection{Semi Discretized Linearized Form of the Navier-Stokes Equations}
-      \subsubsection{Treatment of Nonorthogonalities}
-      \subsubsection{Calculation of Mass Flux - Rhie-Chow Interpolation}
+      \subsubsection{Treatment of Non-Orthogonality of Grid Cells -- Deferred Correction Approach}
+        Cite Jsak and make some pretty pictures. Motivate each technique for non-orthogonal correction.
+      \subsubsection{Calculation of Mass Flux -- Rhie-Chow Interpolation}
       \subsubsection{Discretization of the Convective Term}
       \subsubsection{Discretization of the Diffusive Term}
-      \subsubsection{Discretisation of the Source Term}
-      \subsubsection{Assembly of Linear Systems - Final Form of Equations}
+      \subsubsection{Discretization of the Source Term}
+      \subsubsection{Assembly of Linear Systems -- Final Form of Equations}
+         Coefficients of matrices for momentum are identical except in case of different factors for under-relaxation (when does this happen) for the main diagonal coefficient. Small example in code, then show image of assembled system.
 
-    \subsection{Discretisation of the Generic Transport Equation}
+    \subsection{Discretization of the Generic Transport Equation}
 
-    \subsection{Segregated Methods - the SIMPLE-Algorithm}
+    \subsection{Segregated Methods -- the SIMPLE-Algorithm}
       
       \subsubsection{Pressure Correction Equation}
-      \subsubsection{Characteristical Properties of Projection Methods}
+      \subsubsection{Characteristic Properties of Projection Methods}
 
-        Underrelaxation, slow convergence, inner iterations outer iterations, relative tolerances
+        Under-relaxation, slow convergence, inner iterations outer iterations, relative tolerances
+
+      \subsubsection{Coupling of Temperature Equation}
+
     \subsection{Boundary Conditions on Domain and Block Boundaries}
-      
+        Introduce chapter by talking about the nature of partial differential equations (Hackbusch). Always start with a simple implementation for the generic transport equation, then specialize to Navier-Stokes equation.
       \subsubsection{Dirichlet Boundary Condition}
+        Only talk about dirichlet for velocities not for pressure.
       \subsubsection{Neumann Boundary Condition}
+        Problematics of outlet boundary conditions
       \subsubsection{Symmetry Boundary Condition}
       \subsubsection{Wall Boundary Condition}
       \subsubsection{Block Boundary Condition}
@@ -97,19 +106,19 @@
     \subsection{Coupled Solution of the Navier-Stokes Equations}
 
       \subsubsection{Discretization of the Navier-Stokes Equations}
-      \subsubsection{Differences to the Segregated Approach - Implicit Coupling of Velocities, Pressure and Temperature}
+      \subsubsection{Differences to the Segregated Approach -- Implicit Coupling of Velocities, Pressure and Temperature}
 
-          Implicit treatment of Pressure Gradient, Implicit Treatment of Temperature possible, boussinesq approximation brings maximal coupling. Temperature dependent densities also possible
+          Implicit treatment of Pressure Gradient, Implicit Treatment of Temperature possible, Boussinesq approximation brings maximal coupling. Temperature dependent densities also possible
 
       \subsubsection{Assembly of Linear System}
 
       \subsubsection{Boundary Conditions}
 
-      \subsection{Characteristical Properties of the Fully Coupled Solution Approach}
+    \subsection{Characteristic Properties of the Fully Coupled Solution Approach}
 
-        Bad condition, singularity, faster convergence, coupling in bouyancy flows (s.a. Peric page 448, Galpin Raithby)
+        Bad condition, singularity, faster convergence, coupling in Buoyancy flows (s.a. Peric page 448, Galpin Raithby)
 
-      \subsection{Numerical Solution of Linear Systems}
+    \subsection{Numerical Solution of Linear Systems}
 
         \subsubsection{Stone's SIP Solver}
 
@@ -137,28 +146,28 @@
 
       \subsubsection{Profiling}
 
-        Petsc Log 
+        PETSc Log 
 
       \subsubsection{Common Errors}
 
-        Optimization, Interfaces, Compiler Erros not helpful, Preallocation vs. Mallocs
+        Optimization, Interfaces, Compiler Errors not helpful, Preallocation vs. Mallocs
 
     \subsection{Grid Generation and Conversion}
 
-      Generation of block structured grids, neighbouring relations are represented by a special type of boundary conditions
+      Generation of block structured grids, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within a epsilon neighbourhood while maintaining the grid intact.
     \subsection{Preprocessing}
-    Matching algorithm - the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization.
-    \subsection{CAFFA3D}
+    Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement
+    \subsection{Implementation Details of CAFFA}
 
       \subsubsection{MPI Programming Model}
-        Basic idea of distributed memory programming model, emphasize the differences to shared memory model
+        Basic idea of distributed memory programming model, emphasize the differences to shared memory model. Have a diagram at hand that shows how CAFFA sequentially works (schedule) and point out the locations where and of which type (global reduce, etc.) communication is, or when synchronization is necessary. Point out that one should try to minimize the number of this points such that parallel perfomance stays high. Better to calculate Velocity and Pressure Gradients at once not by seperately calling this routine.
       \subsubsection{Indexing of Variables and Treatment of Boundary Values}
-      Describe MatZeroValues and how it is used to simplify the code. Compliance of PETSc zero based indexing and CAFFA indexing which considers boundary values. Problems with boundary entries
+      Describe MatZeroValues and how it is used to simplify the code. Also loose a word on PCREDISTRIBUTE its advantages and downsides. Compliance of PETSc zero based indexing and CAFFA indexing which considers boundary values. Problems with boundary entries
       \subsubsection{Field Interlacing}
       Realization through special arrangement of variables and the use of index sets (subvector objects) and/or preprocessor directives. Advantages (there was a paper I cited in my thesis)
-      \subsubsection{Domain Decomposition, Ghosting and Parallel Matrix Assembly}
+      \subsubsection{Domain Decomposition, Exchange of Ghost Values and Parallel Matrix Assembly}
 
-        Ghost values are stored in local representations of the global vector (state the mapping for those entries). Matrix coefficients are calculated on one processor and sent to the neighbour. Preallocation as crucial aspect for program performance. Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution.
+      Ghost values are stored in local representations of the global vector (state the mapping for those entries). Matrix coefficients are calculated on one processor and sent to the neighbour. Preallocation as crucial aspect for program performance. Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution.Use Spy function of Matlab to visualize the sparse matrices. Point out advantages of calculating coefficients for the neighbouring cells locally (no need to update mass fluxes, geometric data doesn't need to be shared, small communication overhead since processors assemble matrix parts that don't belong to them (visualize). Paradigm: Each time new information is available perform global updates. Advantages of using matrices: Show structure of matrix when using arbitrary matching vs. higher memory requirements vs. better convergence
 
     \subsection{Postprocessing}
     
@@ -166,13 +175,16 @@
 
   \section{Verification of CAFFA}
     
+    Different parts, describe incremental approach, only present final results.
     Refer to next section for Validation of CAFFA
 
-    \subsection{Theoretical Discretisation Error}
+    \subsection{Theoretical Discretization Error}
       present the Taylor-Series Expansion
+
     \subsection{Method of Manufactured Solutions}
       basically sum up the important points of salari's technical report, symmetry of solution/domain/grid is bad
       point out that mms is not able to detect errors in the physical model
+      Also loose a word or two about discontinuous manufactured solutions
 
     \subsection{Exact and Manufactured Solutions for the Navier-Stokes Equations and the Energy Equation}
     Not always there is an exact solution. Divergence free approach. Presentation of the used manufactured solution. What if solution is not divergence free? Derivation of equations and modifications to continuity equation. analyze the problem of too complicated manufactured solutions. also use temperature dependent density function
@@ -185,15 +197,19 @@
     \subsection{Measurement of Error and Calculation of Order}
       Different error measures (L2-Norm,completeness of function space, consistency etc.)
 
+      \subsubsection{Testcase on Single Processor on Orthogonal Grid}
+      \subsubsection{Testcase on Multiple Processor on Non-Orthogonal Grid}
+
   \section{Comparison of Solver Concepts}
   
-    \subsection{Impact on Convergence Behaviour on Blockstructured Grids}
+    \subsection{Convergence Behaviour on Locally Refined Block Structured Grids}
 
       Show how the implicit treatment of block boundaries maintains (high) convergence rates. Plot Residual over number of iterations.
 
     \subsection{Parallel Performance}
-      \subsubsection{Cluster Hardware and Used Software}
+      \subsubsection{Employed Hardware and Software -- The Lichtenberg-High Performance Computer }
         \begin{itemize}
+          \item Networking
           \item Mem Section and processes in between islands (calculating across islands)
           \item Versioning information (PETSc,INTEL COMPILERS,CLIPPER,MPI IMPLEMENTATION,BLAS/LAPACK)
           \item Software not designed to perform well on desktop PCs.
@@ -206,34 +222,41 @@
           \item Guidelines for measuring performance (bias through system processes or user interaction), only measure calculation time do not consider I/O in the beginning and the end
           \item Cite Schäfer and Peric with their different indicators for parallel efficiency, load balancing and numerical efficiency
         \end{itemize}
-      \subsubsection{Preiliminary Upper Bounds on Performance - the STREAM Benchmark}
-        Pinning of processes, preiliminary constraints by hardware and operating systems, identification of bottlenecks, history and results of STREAM. Bandwith as Bottleneck. Petsc Implementation of STREAM
-      \subsection{Discussion of Results for Parallel Efficiency}
-      \subsection{Speedup Measurement for Analytic Testcases}
+      \subsubsection{Preliminary Upper Bounds on Performance -- The STREAM Benchmark}
+        Pinning of processes (picture), preliminary constraints by hardware and operating systems, identification of bottlenecks and explain possible workarounds, history and results of STREAM. Bandwidth as Bottleneck, how to calculate a Speedup estimate based on the measured bandwidth. PETSc Implementation of STREAM
+      \subsubsection{Discussion of Results for Parallel Efficiency}
+      \subsubsection{Speedup Measurement for Analytic Test Cases}
 
-    \subsection{Application to Testcases with Varying Degree of Non-Linearity}
+    \subsection{Test Cases with Varying Degree of Non-Linearity}
       
-      As Peric says I want to prove that the higher the nonlinearity of NS, the better relative convergence rates can be achieved with a coupled solver. Fi
+      As Peric says I want to prove that the higher the non-linearity of NS, the better relative convergence rates can be achieved with a coupled solver. Fi
 
-      \subsubsection{Transport of a Passive Scalar - Forced Convection}
-      \subsubsection{Bouyancy Driven Flow - Natural Convection}
-      \subsubsection{Flow with Temperature Dependent Density - A Highly Nonlinear Testcase}
+      \subsubsection{Transport of a Passive Scalar -- Forced Convection}
+      \subsubsection{Buoyancy Driven Flow -- Natural Convection}
+      \subsubsection{Flow with Temperature Dependent Density -- A Highly Non-Linear Test Case}
+        Maybe I could consider two test cases, one with oscillating density and one with a quadratic polynomial. Interesting would be also to consider the dependence of convergence on another scalar transport equation
 
-    \subsection{Comparison of Solver Concepts in Realistic Scenarios}
-      Also consider simple load balancing by distributing matrix rows equally
+    \subsection{Realistic Testing Scenarios -- Benchmarking}
+        Also consider simple load balancing by distributing matrix rows equally
       
-      \subsubsection{Flow around a cylinder 3d - stationary}
-      \subsubsection{Flow around a cylinder 3d - instationary}
+      \subsubsection{Flow Around a Cylinder 3D -- Stationary}
+        Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
+      \subsubsection{Flow Around a Cylinder 3D -- Instationary}
         \begin{itemize}
           \item\url{http://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_flow3d/dfg_flow3d_configuration.html}
         \end{itemize}
+        Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
 
       \subsubsection{Heat-Driven Cavity Flow}
         \begin{itemize}
           \item \url{http://www.featflow.de/en/benchmarks/cfdbenchmarking/mit_benchmark.html}
         \end{itemize}
-      
+        Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
+    \subsection{Realistic Testing Scenario -- Complex Geometry}
+        
   \section{Conclusion and Outlook}
-    Turbulence, Multiphase, GPU-Accelerators, Load-Balancing, dynamic mesh refinement, Counjugate Heat Transfer with other requirements for the numerical grid, grid movement
+    Turbulence, Multiphase (what about discontinuities), GPU-Accelerators, Load-Balancing, dynamic mesh refinement, Counjugate Heat Transfer with other requirements for the numerical grid, grid movement, list some papers here)
+    Identify the optimal regimes / conditions for maximizing performance. Each solver concept has its strengths and weaknesses.
+    Try other variants of Projection Methods like SIMPLEC, SIMPLER, PISO or PIMPLE (OpenFOAM)
 
 \end{document}
