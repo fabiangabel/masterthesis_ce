@@ -154,20 +154,27 @@
 
     \subsection{Grid Generation and Conversion}
 
-      Generation of block structured grids, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within a epsilon neighbourhood while maintaining the grid intact.
+      Generation of block structured grids, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within a epsilon neighbourhood while maintaining the grid intact. Show in a graph how preallocation impacts on runtime.
     \subsection{Preprocessing}
     Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement
     \subsection{Implementation Details of CAFFA}
 
       \subsubsection{MPI Programming Model}
         Basic idea of distributed memory programming model, emphasize the differences to shared memory model. Have a diagram at hand that shows how CAFFA sequentially works (schedule) and point out the locations where and of which type (global reduce, etc.) communication is, or when synchronization is necessary. Point out that one should try to minimize the number of this points such that parallel perfomance stays high. Better to calculate Velocity and Pressure Gradients at once not by seperately calling this routine.
+
+        \subsubsection{Convergence Control} 
+        Explain how the criterion for convergence is met 
+
+        \subsubsection{Modi of Calculation}
+          there are different modi of calculation, (NS segregated, then scalar; NS and Scalar Segregated; NS coupled and Scalar segregated; Fully coupled (wath out with fully coupled, this term seems to have already another meaning)). Note that for comparison of solvers it is crucial to develop programs on the same basis. This establishes comparability.
+
       \subsubsection{Indexing of Variables and Treatment of Boundary Values}
       Describe MatZeroValues and how it is used to simplify the code. Also loose a word on PCREDISTRIBUTE its advantages and downsides. Compliance of PETSc zero based indexing and CAFFA indexing which considers boundary values. Problems with boundary entries
       \subsubsection{Field Interlacing}
-      Realization through special arrangement of variables and the use of index sets (subvector objects) and/or preprocessor directives. Advantages (there was a paper I cited in my thesis)
+      Realization through special arrangement of variables and the use of index sets (subvector objects) and/or preprocessor directives. Advantages (there was a paper I cited in my thesis). Note that not all variables are interlaced (Velocities are, but their gradients are not). Great impact on Matrix structure.
       \subsubsection{Domain Decomposition, Exchange of Ghost Values and Parallel Matrix Assembly}
 
-      Ghost values are stored in local representations of the global vector (state the mapping for those entries). Matrix coefficients are calculated on one processor and sent to the neighbour. Preallocation as crucial aspect for program performance. Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution.Use Spy function of Matlab to visualize the sparse matrices. Point out advantages of calculating coefficients for the neighbouring cells locally (no need to update mass fluxes, geometric data doesn't need to be shared, small communication overhead since processors assemble matrix parts that don't belong to them (visualize). Paradigm: Each time new information is available perform global updates. Advantages of using matrices: Show structure of matrix when using arbitrary matching vs. higher memory requirements vs. better convergence
+      Ghost values are stored in local representations of the global vector (state the mapping for those entries). Matrix coefficients are calculated on one processor and sent to the neighbour. Preallocation as crucial aspect for program performance. Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution.Use Spy function of Matlab to visualize the sparse matrices. Point out advantages of calculating coefficients for the neighbouring cells locally (no need to update mass fluxes, geometric data doesn't need to be shared, small communication overhead since processors assemble matrix parts that don't belong to them (visualize)). Paradigm: Each time new information is available perform global updates. Advantages of using matrices: Show structure of matrix when using arbitrary matching vs. higher memory requirements vs. better convergence
 
     \subsection{Postprocessing}
     
@@ -198,7 +205,9 @@
       Different error measures (L2-Norm,completeness of function space, consistency etc.)
 
       \subsubsection{Testcase on Single Processor on Orthogonal Grid}
-      \subsubsection{Testcase on Multiple Processor on Non-Orthogonal Grid}
+      \subsubsection{Testcase on Multiple Processors on Non-Orthogonal Grid}
+
+        Give a measure of the grid quality.
 
   \section{Comparison of Solver Concepts}
   
@@ -224,6 +233,7 @@
         \end{itemize}
       \subsubsection{Preliminary Upper Bounds on Performance -- The STREAM Benchmark}
         Pinning of processes (picture), preliminary constraints by hardware and operating systems, identification of bottlenecks and explain possible workarounds, history and results of STREAM. Bandwidth as Bottleneck, how to calculate a Speedup estimate based on the measured bandwidth. PETSc Implementation of STREAM
+
       \subsubsection{Discussion of Results for Parallel Efficiency}
       \subsubsection{Speedup Measurement for Analytic Test Cases}
 
