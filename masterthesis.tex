@@ -1,4 +1,5 @@
 \documentclass[article,type=msc,colorback,accentcolor=tud2a]{tudthesis}
+%\documentclass[article,type=msc,colorback,accentcolor=tud2a]{tudreport}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\usepackage{ngerman}
@@ -13,6 +14,7 @@
 
 \usepackage{amsmath,amsthm} %math environments
 
+\usepackage{cite} %use bibtex
 \usepackage{hyperref} %use hyperlinks in document
 \usepackage{url} %display urls as such
 
@@ -31,12 +33,14 @@
 
 \begin{document}
 \thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
+%\title{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
   \author{Fabian Nuraddin Alexander Gabel}
   \referee{Prof. Dr. rer. nat. Michael Schäfer}{Dipl.-Ing Ulrich Falk}
   \department{Studienbereich CE}
   \group{FNB}
 % \tuprints{12345}{1234}
   \makethesistitle
+% \maketitle
   \affidavit{F. Gabel}
   \tableofcontents
 
@@ -55,10 +59,11 @@
         Introduce the generic transport equation and give physical interpretation of coefficients. Species transport or Temperature.
         Check also Peric p12 or Bird et al. (1962).
     \subsection{Necessary Simplification of Equations}
+        Negligible viscous dissipation and and pressure work source terms in the enery equation (vakilipour)
       \subsubsection{Incompressible Flows}
       \subsubsection{Variation of Fluid Properties -- Boussinesq Approximation}
       Talk about natural and forced convection. Differences for the solver algorithm. (s.a.) Peric P447
-      Talk about flows with variation in fluid properties -> mms has to map this behaviour (Buoyancy force driven, i.e. naturally convected fluid)
+      Talk about flows with variation in fluid properties -> mms has to map this behaviour (Buoyancy force driven, i.e. naturally convected fluid), mixed Convection
       Also talk about non-dimensional values like Prandtl number, Rayleigh and Reynolds
     \subsection{Final Form of the Set of Equations}
         Conservative and Non-Conservative Form
@@ -80,7 +85,7 @@
       \subsubsection{Discretization of the Diffusive Term}
       \subsubsection{Discretization of the Source Term}
       \subsubsection{Assembly of Linear Systems -- Final Form of Equations}
-         Coefficients of matrices for momentum are identical except in case of different factors for under-relaxation (when does this happen) for the main diagonal coefficient. Small example in code, then show image of assembled system.
+        Coefficients of matrices for momentum are identical except in case of different factors for under-relaxation (underrelaxation (Andersson) )(when does this happen) for the main diagonal coefficient. Small example in code, then show image of assembled system.
 
     \subsection{Discretization of the Generic Transport Equation}
 
@@ -89,7 +94,7 @@
       \subsubsection{Pressure Correction Equation}
       \subsubsection{Characteristic Properties of Projection Methods}
 
-        Under-relaxation, slow convergence, inner iterations outer iterations, relative tolerances
+        Under-relaxation, slow convergence, inner iterations outer iterations, relative tolerances, also talk about staggered and collocated variable positioning
 
       \subsubsection{Coupling of Temperature Equation}
 
@@ -108,15 +113,28 @@
       \subsubsection{Discretization of the Navier-Stokes Equations}
       \subsubsection{Differences to the Segregated Approach -- Implicit Coupling of Velocities, Pressure and Temperature}
 
-          Implicit treatment of Pressure Gradient, Implicit Treatment of Temperature possible, Boussinesq approximation brings maximal coupling. Temperature dependent densities also possible
+          \begin{itemize}
+            \item Implicit treatment of Pressure Gradient
+            \item Implicit Treatment of Temperature possible
+            \item Boussinesq approximation brings velocity-to-temperature-coupling (vakilipour), Newton-Raphson Linearization
+            \item Temperature dependent densities also possible
+          \end{itemize}
 
       \subsubsection{Assembly of Linear System}
 
       \subsubsection{Boundary Conditions}
 
+      \begin{itemize}
+        \item Dirichlet Velocities (implies Neumann for Pressure
+        \item Dirichlet Pressure (implies Neumann for Velocities
+        \item Symmetry and Outled Boundary Condition
+        \item Wall Boundary Condition
+      \end{itemize}
+
     \subsection{Characteristic Properties of the Fully Coupled Solution Approach}
 
-        Bad condition, singularity, faster convergence, coupling in Buoyancy flows (s.a. Peric page 448, Galpin Raithby)
+        Bad condition, singularity, usually faster convergence if efficient linear solver is chosen, coupling in Buoyancy flows (s.a. Peric page 448, Galpin Raithby)
+        Design of algorithm does not need to inforce continuity (is inherently fullfilled because of the coupling of the equations)
 
     \subsection{Numerical Solution of Linear Systems}
 
@@ -126,12 +144,18 @@
 
         \subsubsection{Krylov Subspace Methods}
 
-          General concept of cyclic vector spaces of \(\mathbb{R}^n\), name some representative ksp algorithms, importance of preconditioning, not as detailed as in bachelor thesis
+          \begin{itemize}
+            \item General concept of cyclic vector spaces of \(\mathbb{R}^n\), 
+            \item talk about bases of krylov subspaces and the arnoldi algorithm, talk about polynomials and linear combinations
+            \item mention the two major branches (minimum residual approach, petrov and ritz-galerkin approach) 
+            \item name some representative ksp algorithms, importance of preconditioning, not as detailed as in bachelor thesis
+            \item in cases there is a nonempty Nullspace what happens?
+          \end{itemize}
 
   \section{CAFFA Framework}
 
     \subsection{PETSc Framework}
-        Keep in mind not to copy the manual but
+        Keep in mind not to copy the manual
       \subsubsection{About PETSc}
 
         Bell Prize, MPI Programming
@@ -150,17 +174,25 @@
 
       \subsubsection{Common Errors}
 
-        Optimization, Interfaces, Compiler Errors not helpful, Preallocation vs. Mallocs
+      Optimization, Interfaces, (ROWMAJOR,COLUMNMAJOR), Compiler Errors not helpful, Preallocation vs. Mallocs
 
     \subsection{Grid Generation and Conversion}
 
-      Generation of block structured grids, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within a epsilon neighbourhood while maintaining the grid intact. Show in a graph how preallocation impacts on runtime.
+      Generation of block structured locally refined grids with nonmatching block interfaces, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within a epsilon neighbourhood while maintaining the grid intact. Show in a graph how preallocation impacts on runtime.
     \subsection{Preprocessing}
-    Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement
+    Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement, arbitrary polygon matching
     \subsection{Implementation Details of CAFFA}
 
       \subsubsection{MPI Programming Model}
-        Basic idea of distributed memory programming model, emphasize the differences to shared memory model. Have a diagram at hand that shows how CAFFA sequentially works (schedule) and point out the locations where and of which type (global reduce, etc.) communication is, or when synchronization is necessary. Point out that one should try to minimize the number of this points such that parallel perfomance stays high. Better to calculate Velocity and Pressure Gradients at once not by seperately calling this routine.
+        Basic idea of distributed memory programming model, emphasize the differences to shared memory model. Have a diagram at hand that shows how CAFFA sequentially works (schedule) and point out the locations where and of which type (global reduce, etc.) communication is, or when synchronization is necessary.
+        \begin{itemize}
+          \item after each solve
+          \item pressure reference
+          \item error calculation
+          \item gradient calculation
+        \end{itemize}
+        
+        Point out that one should try to minimize the number of this points such that parallel perfomance stays high. Better to calculate Velocity and Pressure Gradients at once not by seperately calling this routine.
 
         \subsubsection{Convergence Control} 
         Explain how the criterion for convergence is met 
@@ -174,11 +206,19 @@
       Realization through special arrangement of variables and the use of index sets (subvector objects) and/or preprocessor directives. Advantages (there was a paper I cited in my thesis). Note that not all variables are interlaced (Velocities are, but their gradients are not). Great impact on Matrix structure.
       \subsubsection{Domain Decomposition, Exchange of Ghost Values and Parallel Matrix Assembly}
 
-      Ghost values are stored in local representations of the global vector (state the mapping for those entries). Matrix coefficients are calculated on one processor and sent to the neighbour. Preallocation as crucial aspect for program performance. Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution.Use Spy function of Matlab to visualize the sparse matrices. Point out advantages of calculating coefficients for the neighbouring cells locally (no need to update mass fluxes, geometric data doesn't need to be shared, small communication overhead since processors assemble matrix parts that don't belong to them (visualize)). Paradigm: Each time new information is available perform global updates. Advantages of using matrices: Show structure of matrix when using arbitrary matching vs. higher memory requirements vs. better convergence
+      \begin{itemize}
+        \item Ghost values are stored in local representations of the global vector (state the mapping for those entries). 
+        \item Matrix coefficients are calculated on one processor and sent to the neighbour. 
+        \item Preallocation as crucial aspect for program performance. For the coupled system the matrix is assembled in a 2-3 step process to save memory for coefficients. 
+        \item Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution. 
+        \item Use Spy function of Matlab to visualize the sparse matrices. Point out advantages of calculating coefficients for the neighbouring cells locally (no need to update mass fluxes, geometric data doesn't need to be shared, small communication overhead since processors assemble matrix parts that don't belong to them (visualize)). 
+        \item Paradigm: Each time new information is available perform global updates. Advantages of using matrices: Show structure of matrix when using arbitrary matching vs. higher memory requirements vs. better convergence
+      \end{itemize}
 
     \subsection{Postprocessing}
     
       Visualization of Results with Paraview and Tecplot
+      Export matrices as binaries and visualize them using matlab scripts.
 
   \section{Verification of CAFFA}
     
@@ -265,8 +305,13 @@
     \subsection{Realistic Testing Scenario -- Complex Geometry}
         
   \section{Conclusion and Outlook}
-    Turbulence, Multiphase (what about discontinuities), GPU-Accelerators, Load-Balancing, dynamic mesh refinement, Counjugate Heat Transfer with other requirements for the numerical grid, grid movement, list some papers here)
+  Turbulence (turbulent viscosity has to be updated in each iteration), Multiphase (what about discontinuities), GPU-Accelerators, Load-Balancing, dynamic mesh refinement, Counjugate Heat Transfer with other requirements for the numerical grid, grid movement, list some papers here)
     Identify the optimal regimes / conditions for maximizing performance. Each solver concept has its strengths and weaknesses.
     Try other variants of Projection Methods like SIMPLEC, SIMPLER, PISO or PIMPLE (OpenFOAM)
 
+%testing purposes
+    \nocite{*}
+
+\bibliography{masterthesis}{}
+\bibliographystyle{acm}
 \end{document}
