@@ -6,20 +6,41 @@
         \item Final Forms ideally integrals which are the starting point for finite volume methods
       \end{itemize}
 
-      This section covers the set of fundamental equations for thermo-hydrodynamical problems which the numerical solution techniques of the following chapters are aiming to solve. Furthermore the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on (Kundu, Spurk, Ferziger, Anderson). For a thourough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods the focus lays on stating the integral forms of the relevant conservation laws. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis non-moving inertial frames in a Cartesian coordinate system with the coordinates \( (x_1,x_2,x_3) \in \mathbb{R}^3\) are used. This approach is also known as \textit{Eulerian approach}. 
+      This section covers the set of fundamental equations for thermo-hydrodynamical problems which the numerical solution techniques of the following chapters are aiming to solve. Furthermore the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on (Kundu, Spurk, Ferziger, Anderson). For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods the focus lays on stating the integral forms of the relevant conservation laws. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i \) are used. This approach is also known as \textit{Eulerian approach}. 
 
     \subsection{Conservation of Mass -- Continuity Equation}
 
-    The conservation law of mass embraces the physical concept that, neglecting relativistic and nuclear reactions, mass cannot be created or destoyed. Using the notion of a mathematical control volume, which is used to denote a constant domain of integration, one can state the integral mass ballance of a control volume \(V\) with control surface \(S\) using Gauss' theorem as
+    The conservation law of mass embraces the physical concept that, neglecting relativistic and nuclear reactions, mass cannot be created or destroyed. Using the notion of a mathematical control volume, which is used to denote a constant domain of integration, one can state the integral mass balance of a control volume \(V\) with control surface \(S\) using Gauss' theorem as
 
-    \begin{displaymath}
+    \begin{equation}
       \iiint\limits_V \frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x_i}\left( \rho u_i \right) \mathrm{d}V 
       =  \iiint\limits_V \frac{\partial \rho}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i n_i \mathrm{d}S
       = 0.
-    \end{displaymath}
+    \end{equation}
 
     \subsection{Conservation of Momentum -- Cauchy-Equations}
-    \subsection{Conservation of Angular Momentum}
+
+    The conservation law of momentum, also known as Newton's Second Law, axiomatically demands the balance of the temporal change of momentum and the sum of all attacking forces of a body. Those forces can be divided into body forces and surface forces. Let \(k_i\) denote a mass specific force and \(t_i\) the stress vector. A first form of the integral momentum balance in the direction of \(x_i\) can be formulated as
+
+    \begin{displaymath}
+      \iiint\limits_V \frac{\partial \left(\rho u_i \right)}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i \left( u_j n_j \right) \mathrm{d}S = \iiint\limits_V \rho k_i \mathrm{d}V + \iint\limits_S t_i \mathrm{d}S.
+    \end{displaymath}
+
+    In general the stress vector \(t\) is a function not only of the location \(\vec{x} = \left( x_i \right)_{i = 1,\dots,3}\) and of the time \(t\) but also of the normal vector \(\vec{n} = \left( n_i \right)_{i = 1,\dots,3} \). A central simplification can be introduced, namely Cauchy's stress theorem, which states that the stress vector is the image of the normal vector under a linear mapping \(T\). With respect to the Cartesian canonical basis \(\left(\vec{e}_i \right)_{i = 1, \dots, 3}\) the mapping \(T\) is represented by the matrix \( \left(\tau_{ji}\right)_{i,j = 1,\dots,3}\) and Cauchy's stress theorem reads
+
+    \begin{displaymath}
+      t\left(x,t,n\right) = T(x,t,n) = \left(\tau_{ji} n_j\right)_{i = 1, \dots, 3}.
+    \end{displaymath}
+
+    Assuming the validity of Cauchy's stress theorem one can derive Cauchy's first law of motion, which in integral form can be formulated as
+
+    \begin{equation}
+      \iiint\limits_V \frac{\partial \left(\rho u_i \right)}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i \left( u_j n_j \right) \mathrm{d}S = \iiint\limits_V \rho k_i \mathrm{d}V + \iint\limits_S \tau_{ji}n_j \mathrm{d}S
+    \end{equation}
+
+    and represents the starting point for the modelling of fluid mechanical problems. One should note, that Cauchy's first law of motion does not take any assumptions regarding material properties, which is why the set of equations (1,2) is not closed in the sense that every unknown contained can be calculated.
+
+    %\subsection{Conservation of Angular Momentum}
     \subsection{Closing the System of Equations -- Newtonian Fluids}
     \subsection{Conservation Law for Scalar Quantities}
         Introduce the generic transport equation and give physical interpretation of coefficients. Species transport or Temperature.
