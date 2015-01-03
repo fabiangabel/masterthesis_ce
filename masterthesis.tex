@@ -3,22 +3,6 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\usepackage{ngerman}
-\usepackage[english]{babel} 
-
-
-\usepackage[utf8]{inputenc} %input and fontencoding
-\usepackage[T1]{fontenc}
-
-
-\usepackage{nomencl} %for printing a list of symbols
-
-\usepackage{amsmath,amsthm} %math environments
-
-\usepackage{cite} %use bibtex
-\usepackage{hyperref} %use hyperlinks in document
-\usepackage{url} %display urls as such
-
-\usepackage{listings} %load source code printer % use with \lstset{language=[77]Fortran} \begin{lstlisting} SOURCE \end{lstlisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -30,6 +14,8 @@
     \or November\or Dezember%
   \fi\ \number\year%
 }
+
+\usepackage{masterthesis}
 
 \begin{document}
 \thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
@@ -44,29 +30,13 @@
   \affidavit{F. Gabel}
   \tableofcontents
 
-\printnomenclature
+\include{./tex/masterthesis.nomenclature}
+
   \section{Introduction}
 
   This thesis is about. 
 
-  \section{Fundamentals of Continuum Physics for Thermo-Hydrodynamical Problems}
-
-    \subsection{Conservation of Mass -- Continuity Equation}
-    \subsection{Conservation of Momentum -- Cauchy-Equations}
-    \subsection{Conservation of Angular Momentum}
-    \subsection{Closing the System of Equations -- Newtonian Fluids}
-    \subsection{Conservation Law for Scalar Quantities}
-        Introduce the generic transport equation and give physical interpretation of coefficients. Species transport or Temperature.
-        Check also Peric p12 or Bird et al. (1962).
-    \subsection{Necessary Simplification of Equations}
-        Negligible viscous dissipation and and pressure work source terms in the enery equation (vakilipour)
-      \subsubsection{Incompressible Flows}
-      \subsubsection{Variation of Fluid Properties -- Boussinesq Approximation}
-      Talk about natural and forced convection. Differences for the solver algorithm. (s.a.) Peric P447
-      Talk about flows with variation in fluid properties -> mms has to map this behaviour (Buoyancy force driven, i.e. naturally convected fluid), mixed Convection
-      Also talk about non-dimensional values like Prandtl number, Rayleigh and Reynolds
-    \subsection{Final Form of the Set of Equations}
-        Conservative and Non-Conservative Form
+  \include{./tex/masterthesis.fundamentals}
 
   \section{Finite Volume Method for Incompressible Flows -- Theoretical Basics and Realisation in Code}
 
@@ -312,6 +282,8 @@
 %testing purposes
     \nocite{*}
 
-\bibliography{masterthesis}{}
+\clearpage
+\addcontentsline{toc}{section}{References}
+\bibliography{masterthesis.articles}{}
 \bibliographystyle{acm}
 \end{document}

@@ -1,0 +1,35 @@
+
+  \section{Fundamentals of Continuum Physics for Thermo-Hydrodynamical Problems}
+
+    \begin{itemize}
+        \item Cartesian Grid Components 3d
+        \item Final Forms ideally integrals which are the starting point for finite volume methods
+      \end{itemize}
+
+      This section covers the set of fundamental equations for thermo-hydrodynamical problems which the numerical solution techniques of the following chapters are aiming to solve. Furthermore the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on (Kundu, Spurk, Ferziger, Anderson). For a thourough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods the focus lays on stating the integral forms of the relevant conservation laws. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis non-moving inertial frames in a Cartesian coordinate system with the coordinates \( (x_1,x_2,x_3) \in \mathbb{R}^3\) are used. This approach is also known as \textit{Eulerian approach}. 
+
+    \subsection{Conservation of Mass -- Continuity Equation}
+
+    The conservation law of mass embraces the physical concept that, neglecting relativistic and nuclear reactions, mass cannot be created or destoyed. Using the notion of a mathematical control volume, which is used to denote a constant domain of integration, one can state the integral mass ballance of a control volume \(V\) with control surface \(S\) using Gauss' theorem as
+
+    \begin{displaymath}
+      \iiint\limits_V \frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x_i}\left( \rho u_i \right) \mathrm{d}V 
+      =  \iiint\limits_V \frac{\partial \rho}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i n_i \mathrm{d}S
+      = 0.
+    \end{displaymath}
+
+    \subsection{Conservation of Momentum -- Cauchy-Equations}
+    \subsection{Conservation of Angular Momentum}
+    \subsection{Closing the System of Equations -- Newtonian Fluids}
+    \subsection{Conservation Law for Scalar Quantities}
+        Introduce the generic transport equation and give physical interpretation of coefficients. Species transport or Temperature.
+        Check also Peric p12 or Bird et al. (1962).
+    \subsection{Necessary Simplification of Equations}
+        Negligible viscous dissipation and and pressure work source terms in the enery equation (vakilipour)
+      \subsubsection{Incompressible Flows}
+      \subsubsection{Variation of Fluid Properties -- Boussinesq Approximation}
+      Talk about natural and forced convection. Differences for the solver algorithm. (s.a.) Peric P447
+      Talk about flows with variation in fluid properties -> mms has to map this behaviour (Buoyancy force driven, i.e. naturally convected fluid), mixed Convection
+      Also talk about non-dimensional values like Prandtl number, Rayleigh and Reynolds
+    \subsection{Final Form of the Set of Equations}
+        Conservative and Non-Conservative Form
