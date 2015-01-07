@@ -1,0 +1,51 @@
+  \section{Finite Volume Method for Incompressible Flows -- Segregated Approach}
+
+    \subsection{Discretization of the Mass Balance}
+
+    \subsection{Discretization of the Momentum Balance}
+      
+      \subsubsection{Semi Discretized Linearized Form of the Navier-Stokes Equations}
+
+      \subsubsection{Calculation of Mass Flux -- Rhie-Chow Interpolation}
+
+      \subsubsection{Discretization of the Convective Term}
+
+      \subsubsection{Discretization of the Diffusive Term}
+
+      \subsubsection{Discretization of the Source Term}
+
+      \subsubsection{Assembly of Linear Systems -- Final Form of Equations}
+        Coefficients of matrices for momentum are identical except in case of different factors for under-relaxation (underrelaxation (Andersson) )(when does this happen) for the main diagonal coefficient. Small example in code, then show image of assembled system.
+
+    \subsection{Discretization of the Generic Transport Equation}
+
+    \subsection{The SIMPLE-Algorithm}
+      
+      \subsubsection{Pressure Correction Equation}
+
+      \subsubsection{Characteristic Properties of Projection Methods}
+
+      \subsubsection{Dependence on Under-Relaxation -- The Pressure-Weighted Interpolation Method}
+
+        Under-relaxation, slow convergence, inner iterations outer iterations, relative tolerances, also talk about staggered and collocated variable positioning
+
+      \subsubsection{Coupling of Temperature Equation}
+
+    \subsection{Boundary Conditions on Domain and Block Boundaries}
+
+        Introduce chapter by talking about the nature of partial differential equations (Hackbusch). Always start with a simple implementation for the generic transport equation, then specialize to Navier-Stokes equation.
+
+      \subsubsection{Dirichlet Boundary Condition}
+
+        Only talk about dirichlet for velocities not for pressure.
+
+      \subsubsection{Neumann Boundary Condition}
+
+        Problematics of outlet boundary conditions
+
+      \subsubsection{Symmetry Boundary Condition}
+
+      \subsubsection{Wall Boundary Condition}
+
+      \subsubsection{Block Boundary Condition}
+      

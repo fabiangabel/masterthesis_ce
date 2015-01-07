@@ -1,0 +1,50 @@
+  \section{Finite Volume Method for Incompressible Flows -- Theoretical Basics}
+
+  This section deals with the fundamentals of the numerical solution via a finite volume method of the formerly presented set of partial differential equations with the focus on the methods applied in the present thesis. This embraces mentioning the different grid types to be used and the discretization techniques to be applied. Since this thesis focusses on the analysis of a fully coupled numerical solution algorithm, special emphasis is put on the comparison between segregated and coupled solution methods for solving the set of partial differential equations. Concretely this is achieved by presenting the discretization technique used for the application of the SIMPLE algorithm and later on modifying those results to be applicable to use in a fully coupled solution algorithm. Since on top of the Navier-Stokes equations a scalar transport equation for the temperature is solved, different methods to realize velocity-temperature-coupling and vice versa are discussed. 
+    
+  One goal of the present thesis is to apply the theoretical results generated in this section and implement a fully coupled solver. For this reason after each subsection a brief summary of the realisation of the previously presented technique in a computer program, namely CAFFA3d is given, this embraces the calculation of coefficients and the assembly of the linear systems to be solved.
+
+  The last part of this section presents two different approaches to solve sparse linear systems, \textit{Stone}'s SIP-Solver and Kylov-Subspace Methods.
+
+  \begin{itemize}
+    \item Mention boundary conditions
+  \end{itemize}
+
+  \subsection{Fundamentals of Discretization}
+
+    In this subsection a brief overview of the general grid structure to be used in the present thesis is given. The main idea behind finite volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so called control volumes. The goal of the finite volume method is to provide algebraic equations which can be used to determine an approximate solution of a partial differential equation.
+      
+  \subsection{Numerical Grid}
+
+    The result of the finite division of a continuous problem domain is the numerical grid. The grid consists of a finite number of grid cells which represent the boundaries of a discrete domain of integration. 
+
+    Regarding the treatment of domain boundaries, and the ordering cell of the cells within the problem domain different types of numerical grids can be distinguished. The present thesis makes use of so called block structured grids with hexahedron cells. A structured grid is characterized by a constant amount of of grid cells in each coordinate direction. A block structured grid consists of different grid blocks, of which each considered individually is structured but considered globally the grid is unstructured. An example of a block structured grid is given in FIGURE.
+
+    Inside a structured grid block, cells with the shape of hexahedrons are used. In addition to the geometric boundaries of each control volume a numerical grid also provides a mapping that assigns to each control volume with index \(P\) a set of indexes of neighbouring control volumes \(NB(P):=\{W,S,B,T,N,E\}\), which are named after the geographic directions. The faces of each hexahedral control volume represent the mentioned geometric boundaries. 
+
+    \begin{itemize}
+      \item talk about grid quality
+      \item talk about local refinement
+    \end{itemize}
+
+    \subsection{Approximation of Integrals}
+
+    \subsection{Approximation of Derivatives}
+
+    \subsection{Treatment of Non-Orthogonality of Grid Cells -- Deferred Correction Approach}
+      \subsubsection{Minimum Correction Approach}
+      \subsubsection{Orthogonal Correction Approach}
+      \subsubsection{Over-Relaxed Approach}
+
+    \subsection{Numerical Solution of Linear Systems}
+       \subsubsection{Stone's SIP Solver}
+         Basic Idea as in Schäfer or Peric
+       \subsubsection{Krylov Subspace Methods}
+        \begin{itemize}
+          \item General concept of cyclic vector spaces of \(\mathbb{R}^n\), 
+          \item talk about bases of krylov subspaces and the arnoldi algorithm, talk about polynomials and linear combinations
+          \item mention the two major branches (minimum residual approach, petrov and ritz-galerkin approach) 
+          \item name some representative ksp algorithms, importance of preconditioning, not as detailed as in bachelor thesis
+          \item in cases there is a nonempty Nullspace what happens?
+        \end{itemize}
+

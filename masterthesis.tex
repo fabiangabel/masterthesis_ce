@@ -20,7 +20,7 @@
 \begin{document}
 \thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
 %\title{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
-  \author{Fabian Nuraddin Alexander Gabel}
+  \author{Fabian Gabel}
   \referee{Prof. Dr. rer. nat. Michael Schäfer}{Dipl.-Ing Ulrich Falk}
   \department{Studienbereich CE}
   \group{FNB}
@@ -37,90 +37,9 @@
   This thesis is about. 
 
   \include{./tex/masterthesis.fundamentals}
-
-  \section{Finite Volume Method for Incompressible Flows -- Theoretical Basics and Realisation in Code}
-
-    \subsection{Fundamentals of Discretization}
-      
-      \subsubsection{Numerical Grid}
-      \subsubsection{Approximation of Integrals}
-
-    \subsection{Discretization of the Momentum Balance}
-      
-      \subsubsection{Semi Discretized Linearized Form of the Navier-Stokes Equations}
-      \subsubsection{Treatment of Non-Orthogonality of Grid Cells -- Deferred Correction Approach}
-        Cite Jsak and make some pretty pictures. Motivate each technique for non-orthogonal correction.
-      \subsubsection{Calculation of Mass Flux -- Rhie-Chow Interpolation}
-      \subsubsection{Discretization of the Convective Term}
-      \subsubsection{Discretization of the Diffusive Term}
-      \subsubsection{Discretization of the Source Term}
-      \subsubsection{Assembly of Linear Systems -- Final Form of Equations}
-        Coefficients of matrices for momentum are identical except in case of different factors for under-relaxation (underrelaxation (Andersson) )(when does this happen) for the main diagonal coefficient. Small example in code, then show image of assembled system.
-
-    \subsection{Discretization of the Generic Transport Equation}
-
-    \subsection{Segregated Methods -- the SIMPLE-Algorithm}
-      
-      \subsubsection{Pressure Correction Equation}
-      \subsubsection{Characteristic Properties of Projection Methods}
-
-        Under-relaxation, slow convergence, inner iterations outer iterations, relative tolerances, also talk about staggered and collocated variable positioning
-
-      \subsubsection{Coupling of Temperature Equation}
-
-    \subsection{Boundary Conditions on Domain and Block Boundaries}
-        Introduce chapter by talking about the nature of partial differential equations (Hackbusch). Always start with a simple implementation for the generic transport equation, then specialize to Navier-Stokes equation.
-      \subsubsection{Dirichlet Boundary Condition}
-        Only talk about dirichlet for velocities not for pressure.
-      \subsubsection{Neumann Boundary Condition}
-        Problematics of outlet boundary conditions
-      \subsubsection{Symmetry Boundary Condition}
-      \subsubsection{Wall Boundary Condition}
-      \subsubsection{Block Boundary Condition}
-      
-    \subsection{Coupled Solution of the Navier-Stokes Equations}
-
-      \subsubsection{Discretization of the Navier-Stokes Equations}
-      \subsubsection{Differences to the Segregated Approach -- Implicit Coupling of Velocities, Pressure and Temperature}
-
-          \begin{itemize}
-            \item Implicit treatment of Pressure Gradient
-            \item Implicit Treatment of Temperature possible
-            \item Boussinesq approximation brings velocity-to-temperature-coupling (vakilipour), Newton-Raphson Linearization
-            \item Temperature dependent densities also possible
-          \end{itemize}
-
-      \subsubsection{Assembly of Linear System}
-
-      \subsubsection{Boundary Conditions}
-
-      \begin{itemize}
-        \item Dirichlet Velocities (implies Neumann for Pressure
-        \item Dirichlet Pressure (implies Neumann for Velocities
-        \item Symmetry and Outled Boundary Condition
-        \item Wall Boundary Condition
-      \end{itemize}
-
-    \subsection{Characteristic Properties of the Fully Coupled Solution Approach}
-
-        Bad condition, singularity, usually faster convergence if efficient linear solver is chosen, coupling in Buoyancy flows (s.a. Peric page 448, Galpin Raithby)
-        Design of algorithm does not need to inforce continuity (is inherently fullfilled because of the coupling of the equations)
-
-    \subsection{Numerical Solution of Linear Systems}
-
-        \subsubsection{Stone's SIP Solver}
-
-          Basic Idea as in Schäfer or Peric
-
-        \subsubsection{Krylov Subspace Methods}
-
-          \begin{itemize}
-            \item General concept of cyclic vector spaces of \(\mathbb{R}^n\), 
-            \item talk about bases of krylov subspaces and the arnoldi algorithm, talk about polynomials and linear combinations
-            \item mention the two major branches (minimum residual approach, petrov and ritz-galerkin approach) 
-            \item name some representative ksp algorithms, importance of preconditioning, not as detailed as in bachelor thesis
-            \item in cases there is a nonempty Nullspace what happens?
-          \end{itemize}
+  \include{./tex/masterthesis.fvm}
+  \include{./tex/masterthesis.seg}
+  \include{./tex/masterthesis.cpld}
 
   \section{CAFFA Framework}
 
@@ -148,9 +67,10 @@
 
     \subsection{Grid Generation and Conversion}
 
-      Generation of block structured locally refined grids with nonmatching block interfaces, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within a epsilon neighbourhood while maintaining the grid intact. Show in a graph how preallocation impacts on runtime.
+      Generation of block structured locally refined grids with non-matching block interfaces, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within a epsilon neighbourhood while maintaining the grid intact. Show in a graph how preallocation impacts on runtime.
     \subsection{Preprocessing}
-    Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement, arbitrary polygon matching
+    Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement, arbitrary polygon matching, parallelizable due to easier interface
+
     \subsection{Implementation Details of CAFFA}
 
       \subsubsection{MPI Programming Model}
@@ -162,7 +82,7 @@
           \item gradient calculation
         \end{itemize}
         
-        Point out that one should try to minimize the number of this points such that parallel perfomance stays high. Better to calculate Velocity and Pressure Gradients at once not by seperately calling this routine.
+        Point out that one should try to minimize the number of this points such that parallel performance stays high. Better to calculate Velocity and Pressure Gradients at once not by seperately calling this routine.
 
         \subsubsection{Convergence Control} 
         Explain how the criterion for convergence is met 
@@ -211,17 +131,18 @@
       \item \url{http://physics.stackexchange.com/questions/60476/exact-solutions-to-the-navier-stokes-equations}
       \item \url{http://www.annualreviews.org/doi/pdf/10.1146/annurev.fl.23.010191.001111}
     \end{itemize}
+
     \subsection{Measurement of Error and Calculation of Order}
       Different error measures (L2-Norm,completeness of function space, consistency etc.)
 
-      \subsubsection{Testcase on Single Processor on Orthogonal Grid}
-      \subsubsection{Testcase on Multiple Processors on Non-Orthogonal Grid}
+      \subsubsection{Testcase on Single Processor on Orthogonal Locally Refined Grid}
+      \subsubsection{Testcase on Multiple Processors on Non-Orthogonal Locally Refined Grid}
 
         Give a measure of the grid quality.
 
   \section{Comparison of Solver Concepts}
   
-    \subsection{Convergence Behaviour on Locally Refined Block Structured Grids}
+    \subsection{Convergence Behaviour on Locally Refined Block Structured Grids with Different Degrees of Coupling}
 
       Show how the implicit treatment of block boundaries maintains (high) convergence rates. Plot Residual over number of iterations.
 
@@ -241,6 +162,7 @@
           \item Guidelines for measuring performance (bias through system processes or user interaction), only measure calculation time do not consider I/O in the beginning and the end
           \item Cite Schäfer and Peric with their different indicators for parallel efficiency, load balancing and numerical efficiency
         \end{itemize}
+
       \subsubsection{Preliminary Upper Bounds on Performance -- The STREAM Benchmark}
         Pinning of processes (picture), preliminary constraints by hardware and operating systems, identification of bottlenecks and explain possible workarounds, history and results of STREAM. Bandwidth as Bottleneck, how to calculate a Speedup estimate based on the measured bandwidth. PETSc Implementation of STREAM
 

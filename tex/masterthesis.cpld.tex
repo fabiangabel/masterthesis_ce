@@ -1,0 +1,56 @@
+  \section{Finite Volume Method for Incompressible Flows -- Coupled Approach}
+
+    \subsection{Discretization of the Mass Balance}
+
+    \subsection{Discretization of the Momentum Balance}
+      
+      \subsubsection{Semi Discretized Linearized Form of the Navier-Stokes Equations}
+
+      \subsubsection{Calculation of Mass Flux -- Rhie-Chow Interpolation}
+
+      \subsubsection{Discretization of the Convective Term}
+
+      \subsubsection{Discretization of the Diffusive Term}
+
+      \subsubsection{Discretization of the Source Term}
+
+    \subsection{The Coupled Algorithm}
+      
+      \subsubsection{Pressure Equation}
+
+      \subsubsection{Characteristic Properties of Coupled Solution Methods}
+
+        No Underrelaxation needed, higher memory requirements
+
+        Bad condition, singularity, usually faster convergence if efficient linear solver is chosen, coupling in Buoyancy flows (s.a. Peric page 448, Galpin Raithby)
+        Design of algorithm does not need to inforce continuity (is inherently fullfilled because of the coupling of the equations)
+
+        Explicitely mention the differences
+
+        \begin{itemize}
+          \item Implicit treatment of Pressure Gradient
+          \item Implicit Treatment of Temperature possible
+          \item Boussinesq approximation brings velocity-to-temperature-coupling (vakilipour), Newton-Raphson Linearization
+          \item Temperature dependent densities also possible
+        \end{itemize}
+
+    \subsection{Coupling of Temperature Equation}
+      
+      \subsubsection{Decoupled Approach}
+      \subsubsection{Velocity-Temperature Coupling}
+      \subsubsection{Temperature-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
+
+    \subsection{Boundary Conditions on Domain and Block Boundaries}
+
+      \subsubsection{Dirichlet Boundary Condition for Velocity}
+
+      \subsubsection{Dirichlet Boundary Condition for Pressure}
+
+      \subsubsection{Symmetry Boundary Condition}
+
+      \subsubsection{Wall Boundary Condition}
+
+      \subsubsection{Block Boundary Condition}
+
+    \subsection{Assembly of Linear Systems -- Final Form of Equations}
+
