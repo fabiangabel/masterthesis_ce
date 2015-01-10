@@ -10,4 +10,5 @@ masterthesis.toc
 masterthesis.nomenclature.aux
 masterthesis.out
 .*.swp
-tex/masterthesis.fundamentals.aux
+tex/masterthesis.*.aux
+tex/.masterthesis.*
