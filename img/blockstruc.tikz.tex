@@ -1,0 +1,320 @@
+\begin{tikzpicture}
+	\coordinate (P1) at (-25cm,6.5cm); % left vanishing point (To pick)
+	\coordinate (P2) at (18cm,5.5cm); % right vanishing point (To pick)
+
+	\coordinate (A1) at (0em,0cm); % central top point (To pick)
+	\coordinate (A2) at (0em,1.5cm); % central bottom point (To pick)
+	\coordinate (A3) at (0em,3cm); % central bottom point (To pick)
+
+	\coordinate (A4) at ($(P1)!.94!(A1)$); 
+	\coordinate (A5) at ($(P1)!.94!(A2)$);
+	\coordinate (A6) at ($(P1)!.94!(A3)$);
+
+	\coordinate (A7) at ($(P1)!.88!(A1)$); 
+	\coordinate (A8) at ($(P1)!.88!(A2)$);
+	\coordinate (A9) at ($(P1)!.88!(A3)$);
+
+	\coordinate (A10) at ($(P2)!.94!(A1)$); 
+	\coordinate (A11) at ($(P2)!.94!(A2)$);
+	\coordinate (A12) at ($(P2)!.94!(A3)$);
+
+	\coordinate (A19) at ($(P2)!.88!(A1)$); 
+	\coordinate (A20) at ($(P2)!.88!(A2)$);
+	\coordinate (A21) at ($(P2)!.88!(A3)$);
+
+	\coordinate (A13) at
+	  (intersection cs: first line={(A10) -- (P1)},
+			    second line={(A4) -- (P2)});
+	\coordinate (A14) at
+	  (intersection cs: first line={(A11) -- (P1)}, 
+			    second line={(A5) -- (P2)});
+	\coordinate (A15) at
+	  (intersection cs: first line={(A12) -- (P1)}, 
+			    second line={(A6) -- (P2)});
+
+	\coordinate (A16) at
+	  (intersection cs: first line={(A10) -- (P1)},
+			    second line={(A7) -- (P2)});
+	\coordinate (A17) at
+	  (intersection cs: first line={(A11) -- (P1)}, 
+			    second line={(A8) -- (P2)});
+	\coordinate (A18) at
+	  (intersection cs: first line={(A12) -- (P1)}, 
+			    second line={(A9) -- (P2)});
+
+	\coordinate (A22) at
+	  (intersection cs: first line={(A19) -- (P1)},
+			    second line={(A4) -- (P2)});
+	\coordinate (A23) at
+	  (intersection cs: first line={(A20) -- (P1)}, 
+			    second line={(A5) -- (P2)});
+	\coordinate (A24) at
+	  (intersection cs: first line={(A21) -- (P1)}, 
+			    second line={(A6) -- (P2)});
+
+	\coordinate (A25) at
+	  (intersection cs: first line={(A19) -- (P1)},
+			    second line={(A7) -- (P2)});
+	\coordinate (A26) at
+	  (intersection cs: first line={(A20) -- (P1)}, 
+			    second line={(A8) -- (P2)});
+	\coordinate (A27) at
+	  (intersection cs: first line={(A21) -- (P1)}, 
+			    second line={(A9) -- (P2)});
+
+        \foreach \i in {1,2,3,4,5,6,7,8,9,
+                        10,11,12,15,18,
+                        19,20,21,24,27}
+        {
+	 %\draw[fill=black] (A\i) circle (0.15em) ;
+        }
+
+        %Vertical Lines
+        \draw (A1) -- (A2) -- (A3);
+        \draw (A4) -- (A5) -- (A6) -- (A15) -- (A24);
+        \draw (A7) -- (A8) -- (A9) -- (A18) -- (A27);
+        \draw (A12) -- (A15) -- (A18);
+        \draw (A21) -- (A24) -- (A27);
+
+        \fill[gray!30] (A1) -- (A19) -- (A21) -- (A3) -- cycle;
+        %Horizontal Lines
+        \draw (A7) -- (A4) -- (A1);
+        \draw (A8) -- (A5) -- (A2);
+        \draw (A9) -- (A6) -- (A3) -- (A12) -- (A21);
+        \draw[gray,dashed] (A2) -- (A20);
+        \draw[gray,dashed] (A10) -- (A12);
+        \draw[gray,dashed] (A1) -- (A19);
+        \draw[gray,dashed] (A19) -- (A21);
+
+        %Boundary
+
+	\coordinate (B1) at (0em,0cm);
+	\coordinate (B2) at (0em,1cm);
+	\coordinate (B3) at (0em,2cm);
+	\coordinate (B4) at (0em,3cm);
+
+	\coordinate (B5) at ($(P1)!1.05!(B1)$); 
+	\coordinate (B6) at ($(P1)!1.05!(B2)$);
+	\coordinate (B7) at ($(P1)!1.05!(B3)$);
+	\coordinate (B8) at ($(P1)!1.05!(B4)$);
+
+	\coordinate (B9)  at ($(P1)!1.1!(B1)$); 
+	\coordinate (B10) at ($(P1)!1.1!(B2)$);
+	\coordinate (B11) at ($(P1)!1.1!(B3)$);
+	\coordinate (B12) at ($(P1)!1.1!(B4)$);
+
+	\coordinate (B13)  at ($(P1)!1.15!(B1)$); 
+	\coordinate (B14) at ($(P1)!1.15!(B2)$);
+	\coordinate (B15) at ($(P1)!1.15!(B3)$);
+	\coordinate (B16) at ($(P1)!1.15!(B4)$);
+
+	\coordinate (B17) at ($(P2)!0.96!(B1)$); 
+	\coordinate (B18) at ($(P2)!0.96!(B2)$);
+	\coordinate (B19) at ($(P2)!0.96!(B3)$);
+	\coordinate (B20) at ($(P2)!0.96!(B4)$);
+
+        \coordinate (B33) at ($(P2)!.92!(B1)$); 
+        \coordinate (B34) at ($(P2)!.92!(B2)$);
+        \coordinate (B35) at ($(P2)!.92!(B3)$);
+        \coordinate (B36) at ($(P2)!.92!(B4)$);
+
+        \coordinate (B49) at ($(P2)!.88!(B1)$); 
+        \coordinate (B50) at ($(P2)!.88!(B2)$);
+        \coordinate (B51) at ($(P2)!.88!(B3)$);
+        \coordinate (B52) at ($(P2)!.88!(B4)$);
+
+	\coordinate (B21) at
+	  (intersection cs: first line={(B17) -- (P1)},
+			    second line={(B5) -- (P2)});
+	\coordinate (B22) at
+	  (intersection cs: first line={(B18) -- (P1)},
+			    second line={(B6) -- (P2)});
+	\coordinate (B23) at
+	  (intersection cs: first line={(B19) -- (P1)},
+			    second line={(B7) -- (P2)});
+	\coordinate (B24) at
+	  (intersection cs: first line={(B20) -- (P1)},
+			    second line={(B8) -- (P2)});
+
+	\coordinate (B25) at
+	  (intersection cs: first line={(B17) -- (P1)},
+			    second line={(B9) -- (P2)});
+	\coordinate (B26) at
+	  (intersection cs: first line={(B18) -- (P1)},
+			    second line={(B10) -- (P2)});
+	\coordinate (B27) at
+	  (intersection cs: first line={(B19) -- (P1)},
+			    second line={(B11) -- (P2)});
+	\coordinate (B28) at
+	  (intersection cs: first line={(B20) -- (P1)},
+			    second line={(B12) -- (P2)});
+
+	\coordinate (B29) at
+	  (intersection cs: first line={(B17) -- (P1)},
+			    second line={(B13) -- (P2)});
+	\coordinate (B30) at
+	  (intersection cs: first line={(B18) -- (P1)},
+			    second line={(B14) -- (P2)});
+	\coordinate (B31) at
+	  (intersection cs: first line={(B19) -- (P1)},
+			    second line={(B15) -- (P2)});
+	\coordinate (B32) at
+	  (intersection cs: first line={(B20) -- (P1)},
+			    second line={(B16) -- (P2)});
+
+	\coordinate (B37) at
+	  (intersection cs: first line={(B33) -- (P1)},
+			    second line={(B5) -- (P2)});
+	\coordinate (B38) at
+	  (intersection cs: first line={(B34) -- (P1)},
+			    second line={(B6) -- (P2)});
+	\coordinate (B39) at
+	  (intersection cs: first line={(B35) -- (P1)},
+			    second line={(B7) -- (P2)});
+	\coordinate (B40) at
+	  (intersection cs: first line={(B36) -- (P1)},
+			    second line={(B8) -- (P2)});
+
+	\coordinate (B41) at
+	  (intersection cs: first line={(B33) -- (P1)},
+			    second line={(B9) -- (P2)});
+	\coordinate (B42) at
+	  (intersection cs: first line={(B34) -- (P1)},
+			    second line={(B10) -- (P2)});
+	\coordinate (B43) at
+	  (intersection cs: first line={(B35) -- (P1)},
+			    second line={(B11) -- (P2)});
+	\coordinate (B44) at
+	  (intersection cs: first line={(B36) -- (P1)},
+			    second line={(B12) -- (P2)});
+
+	\coordinate (B45) at
+	  (intersection cs: first line={(B33) -- (P1)},
+			    second line={(B13) -- (P2)});
+	\coordinate (B46) at
+	  (intersection cs: first line={(B34) -- (P1)},
+			    second line={(B14) -- (P2)});
+	\coordinate (B47) at
+	  (intersection cs: first line={(B35) -- (P1)},
+			    second line={(B15) -- (P2)});
+	\coordinate (B48) at
+	  (intersection cs: first line={(B36) -- (P1)},
+			    second line={(B16) -- (P2)});
+
+	\coordinate (B53) at
+	  (intersection cs: first line={(B49) -- (P1)},
+			    second line={(B5) -- (P2)});
+	\coordinate (B54) at
+	  (intersection cs: first line={(B50) -- (P1)},
+			    second line={(B6) -- (P2)});
+	\coordinate (B55) at
+	  (intersection cs: first line={(B51) -- (P1)},
+			    second line={(B7) -- (P2)});
+	\coordinate (B56) at
+	  (intersection cs: first line={(B52) -- (P1)},
+			    second line={(B8) -- (P2)});
+
+	\coordinate (B57) at
+	  (intersection cs: first line={(B49) -- (P1)},
+			    second line={(B9) -- (P2)});
+	\coordinate (B58) at
+	  (intersection cs: first line={(B50) -- (P1)},
+			    second line={(B10) -- (P2)});
+	\coordinate (B59) at
+	  (intersection cs: first line={(B51) -- (P1)},
+			    second line={(B11) -- (P2)});
+	\coordinate (B60) at
+	  (intersection cs: first line={(B52) -- (P1)},
+			    second line={(B12) -- (P2)});
+
+	\coordinate (B61) at
+	  (intersection cs: first line={(B49) -- (P1)},
+			    second line={(B13) -- (P2)});
+	\coordinate (B62) at
+	  (intersection cs: first line={(B50) -- (P1)},
+			    second line={(B14) -- (P2)});
+	\coordinate (B63) at
+	  (intersection cs: first line={(B51) -- (P1)},
+			    second line={(B15) -- (P2)});
+	\coordinate (B64) at
+	  (intersection cs: first line={(B52) -- (P1)},
+			    second line={(B16) -- (P2)});
+
+
+        %Front lines
+        \draw (B13) -- (B29) -- (B45) -- (B61);
+        \draw (B1) -- (B5) -- (B9) -- (B13);
+        \draw (B2) -- (B6) -- (B10) -- (B14);
+        \draw (B3) -- (B7);
+        \draw (B14) -- (B62);
+
+        %Vertical lines
+        \draw (B5) -- (B6) -- (B7) -- (B8);
+        \draw (B29) -- (B30);
+        \draw (B45) -- (B46) -- (B47) -- (B48);
+        \draw (B61) -- (B62) -- (B63) -- (B64);
+        \draw (B13) -- (B14);
+        \draw (B9) -- (B10);
+        \draw (B38) -- (B40);
+        \draw (B22) -- (B24);
+        \draw (B42) -- (B44);
+
+        %horizontal lines
+        \draw (B22) -- (B26) -- (B30);
+
+        %linien in die tiefe
+        \draw (B6) -- (B22); 
+        \draw (B7) -- (B39);
+        \draw (B10) -- (B42);
+        \draw (B47) -- (B63);
+        \draw (B48) -- (B64);
+        \draw (B44) -- (B60);
+
+        \draw (B8) -- (B24) -- (B40) -- (B56);
+
+        %Top lines (to east)
+        \draw (B4) -- (B8);
+        \draw (B20) -- (B24);
+        \draw (B36) -- (B40) -- (B44) -- (B48);
+        \draw (B52) -- (B56) -- (B60) -- (B64);
+        \draw (B38) -- (B46);
+        \draw (B39) -- (B47);
+
+        %fill out one CV
+        \fill[gray!50,opacity=0.7] (B26) -- (B27) -- (B23) -- (B22) -- cycle;
+        \fill[gray!80,opacity=0.7] (B42) -- (B43) -- (B39) -- (B38) -- cycle;
+        \fill[gray!80,opacity=1.0] (B22) -- (B38) -- (B39) -- (B23) -- cycle; 
+        \fill[gray!50,opacity=0.7] (B26) -- (B42) -- (B43) -- (B27) -- cycle; 
+        \fill[gray!50,opacity=1.0] (B22) -- (B26) -- (B42) -- (B38) -- cycle;
+        \fill[gray!80,opacity=0.7] (B23) -- (B27) -- (B43) -- (B39) -- cycle;
+
+        \draw[gray!90,dashed] (B8) -- (B16) -- (B48);
+        \draw[gray!90,dashed] (B16) -- (B14);
+        \draw[gray!90,dashed] (B32) -- (B30);
+        \draw[gray!90,dashed] (B12) -- (B10);
+        \draw[gray!90,dashed] (B32) -- (B30);
+        \draw[gray!90,dashed] (B7) -- (B15) -- (B47);
+        \draw[gray!90,dashed] (B23) -- (B31);
+        \draw[gray!90,dashed] (B12) -- (B44);
+        \draw[gray!90,dashed] (B26) -- (B28);
+        \draw[gray!90,dashed] (B24) -- (B32);
+        \draw[gray!90,dashed] (B11) -- (B43);
+
+        \draw[gray!90,dashed] (B17) -- (B20);
+        \draw[gray!90,dashed] (B33) -- (B36);
+        \draw[gray!90,dashed] (B2) -- (B50);
+        \draw[gray!90,dashed] (B3) -- (B51);
+        \draw[gray!30,dashed] (B49) -- (B61);
+
+        %right lines (vertical)
+
+
+
+
+        \foreach \i in {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64}
+        {
+	 %\draw[fill=black] (B\i) circle (0.15em) ;
+        }
+        
+
+\end{tikzpicture}
