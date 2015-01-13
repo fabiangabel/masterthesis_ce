@@ -1,4 +1,5 @@
   \section{Finite Volume Method for Incompressible Flows -- Segregated Approach}
+to be solved  Since this thesis focusses on the analysis of a fully coupled numerical solution algorithm, special emphasis is put on the comparison between segregated and coupled solution methods for solving the set of partial differential equations. Concretely this is achieved by presenting the discretization technique used for the application of the SIMPLE algorithm and later on modifying those results to be applicable to use in a fully coupled solution algorithm. Since on top of the Navier-Stokes equations a scalar transport equation for the temperature is solved, different methods to realize velocity-temperature-coupling and vice versa are discussed.
 
     \subsection{Discretization of the Mass Balance}
 
@@ -25,11 +26,15 @@
 
       \subsubsection{Characteristic Properties of Projection Methods}
 
-      \subsubsection{Dependence on Under-Relaxation -- The Pressure-Weighted Interpolation Method}
-
         Under-relaxation, slow convergence, inner iterations outer iterations, relative tolerances, also talk about staggered and collocated variable positioning
 
+      \subsubsection{Dependence on Under-Relaxation -- The Pressure-Weighted Interpolation Method}
+
+        Present an approach for Under-Relaxation independent converged solution. Conduct the proof to show it really works. Present the results for different under-relaxation factors
+
       \subsubsection{Coupling of Temperature Equation}
+
+        Explicit coupling through source term in momentum balances (Boussinesq-Approximation)
 
     \subsection{Boundary Conditions on Domain and Block Boundaries}
 
@@ -46,6 +51,8 @@
       \subsubsection{Symmetry Boundary Condition}
 
       \subsubsection{Wall Boundary Condition}
+
+      Note that there are different approaches. Explain which approach is used and why (memory efficiency)
 
       \subsubsection{Block Boundary Condition}
       
