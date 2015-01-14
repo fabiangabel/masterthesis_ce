@@ -15,6 +15,7 @@
     \begin{itemize}
       \item talk about grid quality
       \item talk about local refinement
+      \item talk about variable arrangement
     \end{itemize}
 
     \begin{figure}[h]
@@ -34,7 +35,37 @@
     
     \subsection{Approximation of Integrals and Derivatives}
 
-    In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \textit{midipoint rule}. This rule is similar to the mean value theorem of integration. 
+    In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \textit{midipoint rule}. This rule is similar to the mean value theorem of integration, which states that there exists a point \(\vec{\xi} \in V\) for a riemann integrable function \(\phi\) such that \(\phi(\xi) \int_V \mathrm{d}V = \int_V \phi(x) \mathrm{d}V\). In the midpoint rule \(\vec{\xi}\) is taken to be the center of mass of \(V\). If the integration domain \(V\) is indeed a Volume, fortunately the calculation of \(\phi(\mathbb{\xi})\) with \(\vec{\xi} := \left({ \int_V x_i \mathrm{d}V }/{ \int_V \mathrm{d}V } \right)_{i = 1,\dots,3}\) presents no difficulties since due to the collocated variable arrangement the values of \(\phi\) are stored in the cell center, which corresponds to the location \(\vec{\xi}\). However if the domain of integration is a surface a preceding interpolation step is necessary.
+
+    On the other hand to transorm a partial differential equation into a linear algebraic equation it is necessary to discretize the differential operators of the equations. For numerical reasons two different discretization techniques are used in this thesis. A common task is to discretize expressions of the form
+
+    \begin{displaymath}
+      \left(\nabla \phi\right)_e \cdot \vec{n}_e,
+    \end{displaymath}
+
+    where \(\left(\nabla \phi\right)_e\) is the Gradient of \(\phi\) on a Boundary face \(S_e\). One method is to directly interpret this expression as a directional derivative and approximate it with a central difference
+
+    \begin{displaymath}
+      \left(\nabla \phi\right)_e \cdot \vec{n}_e \approx \frac{\phi_P - \phi_E}{|| \vec{x}_P - \vec{x}_E ||_2}.
+    \end{displaymath}
+
+    Another method would be to first calculate the cell center gradients \(\left(\nabla \phi \right)_P\) and \(\left(\nabla \phi \right)_E\) and interpolate them linearily before calculating the projection onto \(\vec{n}_e\)
+
+    \begin{displaymath}
+      \left(\nabla \phi\right)_e \cdot \vec{n}_e 
+      \approx 
+      \left[\gamma_e \left(\nabla \phi \right)_P + (1-\gamma_e) \left(\nabla \phi \right)_E \right] \cdot \vec{n}_e,
+    \end{displaymath}
+
+    where \( \gamma_e := {||\vec{x}_P - \vec{x}_e||_2}/{||\vec{x}_P - \vec{x}_E||_2}\) is a geometric interpolation factor. For calculating the cell center gradients another method based on Gauss' integration theorem and the midpoint rule for volume integration is employed.
+
+    \begin{displaymath}
+      \left( \nabla \phi \right)_{i,P}
+      =
+      \left( \frac{\partial \phi}{\partial x_i}\right)_P
+      \approx
+      \frac{\int_V\left(\frac{\partial \phi}{\partial x_i}\right)_P\mathrm{d}V}{|V|}
+    \end{displaymath}
 
     Briefly explain the idea behing the quadrature via the midpoint rule. Talk about central differences and the approximation via the gauss theorem. Maybe talk about the resulting order of the truncation error. 
 
