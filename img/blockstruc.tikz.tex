@@ -281,12 +281,12 @@
         \draw (B39) -- (B47);
 
         %fill out one CV
-        \fill[gray!50,opacity=0.7] (B26) -- (B27) -- (B23) -- (B22) -- cycle;
-        \fill[gray!80,opacity=0.7] (B42) -- (B43) -- (B39) -- (B38) -- cycle;
-        \fill[gray!80,opacity=1.0] (B22) -- (B38) -- (B39) -- (B23) -- cycle; 
-        \fill[gray!50,opacity=0.7] (B26) -- (B42) -- (B43) -- (B27) -- cycle; 
-        \fill[gray!50,opacity=1.0] (B22) -- (B26) -- (B42) -- (B38) -- cycle;
-        \fill[gray!80,opacity=0.7] (B23) -- (B27) -- (B43) -- (B39) -- cycle;
+        \fill[gray!30] (B42) -- (B43) -- (B39) -- (B38) -- cycle;  %back
+        \fill[gray!50] (B22) -- (B38) -- (B39) -- (B23) -- cycle;  %left
+        \fill[gray!50,opacity=0.2] (B26) -- (B27) -- (B23) -- (B22) -- cycle;  %front
+%       \fill[gray!50,opacity=0.7] (B26) -- (B42) -- (B43) -- (B27) -- cycle;  %right
+        \fill[gray!90] (B22) -- (B26) -- (B42) -- (B38) -- cycle;  %bottom
+        \fill[gray!90,opacity=0.2] (B23) -- (B27) -- (B43) -- (B39) -- cycle;  %top
 
         \draw[gray!90,dashed] (B8) -- (B16) -- (B48);
         \draw[gray!90,dashed] (B16) -- (B14);

@@ -7,8 +7,8 @@
 	\coordinate (P2) at (18cm,5.5cm); % right vanishing point (To pick)
 
 	%% (A1) and (A2) defines the 2 central points of the cuboid
-	\coordinate (A1) at (0em,0cm); % central top point (To pick)
-	\coordinate (A2) at (0em,-2.5cm); % central bottom point (To pick)
+	\coordinate (A1) at (0em,2.0cm); % central top point (To pick)
+	\coordinate (A2) at (0em,0.0cm); % central bottom point (To pick)
 
 	%% (A3) to (A8) are computed given a unique parameter (or 2) .8
 	% You can vary .8 from 0 to 1 to change perspective on left side
@@ -16,8 +16,8 @@
 	\coordinate (A4) at ($(P1)!.9!(A1)$);
 
 	% You can vary .8 from 0 to 1 to change perspective on right side
-	\coordinate (A7) at ($(P2)!.9!(A2)$);
-	\coordinate (A8) at ($(P2)!.9!(A1)$);
+	\coordinate (A7) at ($(P2)!.92!(A2)$);
+	\coordinate (A8) at ($(P2)!.92!(A1)$);
 
 	%% Automatically compute the last 2 points with intersections
 	\coordinate (A5) at
@@ -33,13 +33,13 @@
 	%% Possibly draw back faces
 
 	\fill[gray!90] (A2) -- (A3) -- (A6) -- (A7) -- cycle; % face 6
-	\node at (barycentric cs:A2=1,A3=1,A6=1,A7=1) { $S_b$};
+        \node (C6) at (barycentric cs:A2=1,A3=1,A6=1,A7=1) { $S_b$};
 	
 	\fill[gray!50] (A3) -- (A4) -- (A5) -- (A6) -- cycle; % face 3
-	\node at (barycentric cs:A3=1,A4=1,A5=1,A6=1) { $S_w$};
+        \node (C3) at (barycentric cs:A3=1,A4=1,A5=1,A6=1) { $S_w$};
 	
 	\fill[gray!30] (A5) -- (A6) -- (A7) -- (A8) -- cycle; % face 4
-	\node at (barycentric cs:A5=1,A6=1,A7=1,A8=1) { $S_n$};
+        \node (C4) at (barycentric cs:A5=1,A6=1,A7=1,A8=1) { $S_n$};
 	
 	\draw[thick,dashed] (A5) -- (A6);
 	\draw[thick,dashed] (A3) -- (A6);
@@ -48,11 +48,40 @@
 	%% Possibly draw front faces
 
 	% \fill[orange] (A1) -- (A8) -- (A7) -- (A2) -- cycle; % face 1
-	  \node at (barycentric cs:A1=1,A8=1,A7=1,A2=1) { $S_e$};
+        \node (C1) at (barycentric cs:A1=1,A8=1,A7=1,A2=1) { $S_e$};
 	\fill[gray!50,opacity=0.2] (A1) -- (A2) -- (A3) -- (A4) -- cycle; % f2
-	\node at (barycentric cs:A1=1,A2=1,A3=1,A4=1) { $S_s$};
+        \node (C2) at (barycentric cs:A1=1,A2=1,A3=1,A4=1) { $S_s$};
 	\fill[gray!90,opacity=0.2] (A1) -- (A4) -- (A5) -- (A8) -- cycle; % f5
-	\node at (barycentric cs:A1=1,A4=1,A5=1,A8=1) { $S_t$};
+        \node (C5) at (barycentric cs:A1=1,A4=1,A5=1,A8=1) { $S_t$};
+
+        %construct center points
+	\coordinate (D1) at ($(C3)!.5!(C1)$);
+        \draw[fill=black] (D1) circle (0.15em)
+          node[above right]{P} ;
+
+        %east west
+	\coordinate (D2) at ($(C3)!1.5!(C1)$);
+        \draw[fill=black] (D2) circle (0.15em)
+          node[above right]{W} ;
+	\coordinate (D3) at ($(C3)!-.5!(C1)$);
+        \draw[fill=black] (D3) circle (0.15em)
+          node[above right]{E} ;
+
+        %north south
+	\coordinate (D2) at ($(C2)!1.5!(C4)$);
+        \draw[fill=black] (D2) circle (0.15em)
+          node[above right]{N} ;
+	\coordinate (D3) at ($(C2)!-.5!(C4)$);
+        \draw[fill=black] (D3) circle (0.15em)
+          node[above right]{S} ;
+
+        %bottom top
+	\coordinate (D4) at ($(C5)!1.5!(C6)$);
+        \draw[fill=black] (D4) circle (0.15em)
+          node[above right]{B} ;
+	\coordinate (D5) at ($(C5)!-.5!(C6)$);
+        \draw[fill=black] (D5) circle (0.15em)
+          node[above right]{T} ;
 
 	%% Possibly draw front lines
 	\draw[thick] (A1) -- (A2);
@@ -64,13 +93,76 @@
 	\draw[thick] (A2) -- (A7);
 	\draw[thick] (A4) -- (A5);
 	\draw[thick] (A8) -- (A5);
+
+        %draw help lines for neighbouring cvs
+        % north south
+        \coordinate (N1) at ($(A1)!-0.8!(A8)$);
+        \coordinate (N2) at ($(A2)!-0.8!(A7)$);
+        \coordinate (N3) at ($(A3)!-0.8!(A6)$);
+        \coordinate (N4) at ($(A4)!-0.8!(A5)$);
+
+        \draw[gray,dashed] (A1) -- (N1);
+        \draw[gray,dashed] (A2) -- (N2);
+        \draw[gray,dashed] (A3) -- (N3);
+        \draw[gray,dashed] (A4) -- (N4);
+
+        \coordinate (N8) at ($(A1)!1.8!(A8)$);
+        \coordinate (N7) at ($(A2)!1.8!(A7)$);
+        \coordinate (N6) at ($(A3)!1.8!(A6)$);
+        \coordinate (N5) at ($(A4)!1.8!(A5)$);
+
+        \draw[gray,dashed] (A8) -- (N8);
+        \draw[gray,dashed] (A7) -- (N7);
+        \draw[gray,dashed] (A6) -- (N6);
+        \draw[gray,dashed] (A5) -- (N5);
+
+        %east west
+        \coordinate (N33) at ($(A2)!1.4!(A3)$);
+        \coordinate (N44) at ($(A1)!1.4!(A4)$);
+        \coordinate (N55) at ($(A8)!1.4!(A5)$);
+        \coordinate (N66) at ($(A7)!1.4!(A6)$);
+
+        \draw[gray,dashed] (A3) -- (N33);
+        \draw[gray,dashed] (A4) -- (N44);
+        \draw[gray,dashed] (A5) -- (N55);
+        \draw[gray,dashed] (A6) -- (N66);
+
+        \coordinate (N22) at ($(A2)!-0.4!(A3)$);
+        \coordinate (N11) at ($(A1)!-0.4!(A4)$);
+        \coordinate (N88) at ($(A8)!-0.4!(A5)$);
+        \coordinate (N77) at ($(A7)!-0.4!(A6)$);
+
+        \draw[gray,dashed] (A1) -- (N11);
+        \draw[gray,dashed] (A2) -- (N22);
+        \draw[gray,dashed] (A7) -- (N77);
+        \draw[gray,dashed] (A8) -- (N88);
+
+        %bottom top
+        \coordinate (N333) at ($(A4)!1.4!(A3)$);
+        \coordinate (N222) at ($(A1)!1.4!(A2)$);
+        \coordinate (N777) at ($(A8)!1.4!(A7)$);
+        \coordinate (N666) at ($(A5)!1.4!(A6)$);
+
+        \draw[gray,dashed] (A3) -- (N333);
+        \draw[gray,dashed] (A2) -- (N222);
+        \draw[gray,dashed] (A7) -- (N777);
+        \draw[gray,dashed] (A6) -- (N666);
+
+        \coordinate (N444) at ($(A4)!-0.8!(A3)$);
+        \coordinate (N111) at ($(A1)!-0.8!(A2)$);
+        \coordinate (N888) at ($(A8)!-0.8!(A7)$);
+        \coordinate (N555) at ($(A5)!-0.8!(A6)$);
+
+        \draw[gray,dashed] (A4) -- (N444);
+        \draw[gray,dashed] (A1) -- (N111);
+        \draw[gray,dashed] (A8) -- (N888);
+        \draw[gray,dashed] (A5) -- (N555);
 	
 	% Possibly draw points
 	% (it can help you understand the cuboid structure)
 	%\foreach \i in {1,2,...,8}
 	%{
 	%  \draw[fill=black] (A\i) circle (0.15em)
-	%    node[above right] {\tiny \i};
 	%}
 	%\draw[fill=black] (P1) circle (0.1em) node[below] {\tiny p1};
 	%\draw[fill=black] (P2) circle (0.1em) node[below] {\tiny p2};
