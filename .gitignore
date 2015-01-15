@@ -2,6 +2,8 @@ masterthesis.aux
 masterthesis.bbl
 masterthesis.blg
 masterthesis.dvi
+masterthesis.lof
+masterthesis.lot
 masterthesis.ilg
 masterthesis.log
 masterthesis.nlo
@@ -12,3 +14,5 @@ masterthesis.out
 .*.swp
 tex/masterthesis.*.aux
 tex/.masterthesis.*
+texput.log
+tex/texput.log

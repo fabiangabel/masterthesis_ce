@@ -1,0 +1,31 @@
+\begin{tikzpicture}
+  \coordinate (A1) at (1cm,0cm);
+  \coordinate (A2) at (5.5cm,0cm);
+  \coordinate (A3) at (1cm,2cm);
+  \coordinate (A4) at (3.5cm,-2cm);
+
+  \coordinate (A5) at 
+    (intersection cs: first line= {(A1) -- (A2)},
+                      second line= {(A3) -- (A4)});
+
+  \coordinate (A6) at (4cm,1.2cm);
+
+  \coordinate (A7) at (4.4cm,0cm);
+
+  
+  \draw[fill=black] (A1) circle (0.15em)
+    node[above right]{P};
+  \draw[fill=black] (A2) circle (0.15em)
+    node[above right]{E};
+  \draw[fill=black] (A3) circle (0.15em);
+  \draw[fill=black] (A4) circle (0.15em);
+  \draw[fill=black] (A5) circle (0.15em);
+  \draw[fill=black] (A7) circle (0.15em);
+
+  \draw[arrows = {-Stealth},gray!70] (A7) -- (A6) node [midway,right] {${\mathbf{k}}$};
+  \draw[arrows = {-Stealth},gray!50] (A5) -- (A7) node [midway,below] {$\Delta$};
+  
+  \draw[arrows = {-Stealth}] (A1) -- (A2);
+  \draw[gray,thick,dashed] (A3) -- (A4);
+  \draw[arrows = {-Stealth},gray] (A5) -- (A6) node [sloped,midway,above] {${\mathbf{S}_e}$};
+\end{tikzpicture}
