@@ -4,13 +4,68 @@
 
     \subsection{Discretization of the Mass Balance}
 
+    Integration of equation (\ref{eq:contidiff}) over the integration domain of a single control volume \(P\) yields after the application of Gauss' integration theorem and the additivity of the Riemann integral
+
+    \begin{displaymath}
+      \iint\limits_S  u_i n_i \mathrm{d}S = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f}  u_i n_{i} \mathrm{d}S = 0
+    \end{displaymath}
+
+    In the present work the mass balance is discretized using the midpoint rule for the surface integrals and linear interpolation of the velocity to to center of mass of the surface. This leads to the following form of the mass balance: 
+
+    \begin{align*}
+      \sum_{f \in \{w,s,b,t,n,e\}} u_{i_f} n_{f_i} S_f 
+      &= u_{i_w} n_{w_i} S_w + u_{i_e} n_{e_i} S_e 
+       + u_{i_s} n_{s_i} S_s + u_{i_n} n_{n_i} S_n 
+       + u_{i_b} n_{b_i} S_b + u_{i_t} n_{t_i} S_t  \\
+      &= ( \gamma_w u_{i_W} + (1 - \gamma_w ) u_{i_P} ) n_{w_i} S_w + ( \gamma_s u_{i_S} + (1 - \gamma_s ) u_{i_P} ) n_{s_i} S_s \\
+      &\quad + ( \gamma_b u_{i_B} + (1 - \gamma_b ) u_{i_P} ) n_{b_i} S_b + ( \gamma_t u_{i_T} + (1 - \gamma_t ) u_{i_P} ) n_{t_i} S_t \\
+      &\quad + ( \gamma_n u_{i_N} + (1 - \gamma_n ) u_{i_P} ) n_{n_i} S_n + ( \gamma_e u_{i_E} + (1 - \gamma_e ) u_{i_P} ) n_{e_i} S_e \\
+      & =  0,
+    \end{align*}
+
+    where \( \gamma_f \) for \( f \in \{w,e,s,n,b,t\} \) is the geometrical interpolation factor.
+
     \subsection{Discretization of the Momentum Balance}
-      
-      \subsubsection{Semi Discretized Linearized Form of the Navier-Stokes Equations}
+
+      The stationary momentum balance integrated over a single control volume \(P\) reads as
+
+      \begin{displaymath}
+        \underbrace{\iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S}_{\text{convection term}}
+        - \underbrace{\iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S}_{\text{diffusion term}}
+        = - \overbrace{\iiint_V \frac{\partial p}{\partial x_i} \mathrm{d}V}^{\text{sourceterm pressure}}
+        - \overbrace{\iiint_V \rho \beta \left(T - T_0\right) \mathrm{d}V}^{\text{sourceterm temperature}}
+      \end{displaymath}
+
+      where the different terms to be addressed individually in the following sections are indicated. Note that the form of this equation has been modified by using Gauss' integration theorem The terms residing on the left will be treated in an implicit manner whereas the terms on the right will be treated explicitly. 
 
       \subsubsection{Calculation of Mass Flux -- Rhie-Chow Interpolation}
 
-      \subsubsection{Discretization of the Convective Term}
+      \subsubsection{Linearization and Discretization of the Convective Term}
+
+      The convective term \(\rho u_i u_j\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (REFERENCE), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent of the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). Using the additivity of the Riemann integral the first step is to decompose the surface integral into individual contributions from each boundary face of the control volume \(P\)
+      
+      \begin{displaymath}
+      \iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S
+      = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f}\rho u_{i} u_{j} n_{j} \mathrm{d}S
+      \approx \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f} \rho u_{i}^{(n)} u_{j}^{(n-1)} n_{j} \mathrm{d}S,
+      \end{displaymath}
+
+      where the last approximation is due to the linearization. The convective term is then discretized by using the midpoint integration rule and a blended interpolation scheme, that combines upwind and linear interpolation. The blending combines one discretization of lower order (Upwind) with one of higher order (Linear Interpolation). Since this term is treated explicitly the computational stencil is kept small and the diagonal dominance of the resulting system matrix is increased which benefits the convergence of a linear solver. For simplicity all further derivations are presented for the boundary face \(S_e\). The discretization leads to
+
+      \begin{displaymath}
+        \iint\limits_{S_f} \rho u_{i}^{(n)} u_{j}^{(n-1)} n_{j} \mathrm{d}S 
+        \approx \rho u_{i_e}^{(*)} u_{j_e}^{(n-1)} n_{e_j} S_e,  
+      \end{displaymath}
+
+      where the interpolated velocity \(u_{i_e}^{(*)}\) is calculated as
+
+      \begin{displaymath}
+        u_{i_e}^{(*)} =  \left(\max(0,u_{i_P}^{(n)}) + \min(u_{i_E}^{(n)},0)\right) 
+        - \eta \left[ \left(\max(0,u_{i_P}^{(n-1)}) + \min(u_{i_E}^{(n-1)},0)\right) - \left( \gamma_e u_{j_E}^{(n-1)} + \left(1 - \gamma_e \right) u_{j_P}^{(n-1)}\right)
+         \right] .
+      \end{displaymath}
+
+      \vspace{0.3cm} The blending parameter \(\eta \in [0,1]\) is chosen to be \(1\), which leads to an approximation of second order in a fully converged solution, since the implicit and explicit upwind interpolation coincide in case of a converged solution.
 
       \subsubsection{Discretization of the Diffusive Term}
 
