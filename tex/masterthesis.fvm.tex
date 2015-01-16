@@ -71,7 +71,7 @@
 
     Briefly explain the idea behing the quadrature via the midpoint rule. Talk about central differences and the approximation via the gauss theorem. Maybe talk about the resulting order of the truncation error. 
 
-    \subsection{Treatment of Non-Orthogonality of Grid Cells -- Deferred Correction Approach}
+    \subsection{Treatment of Non-Orthogonality of Grid Cells}
 
     Unfortunately real applications involve complex geometries which in turn affects the orthogonality of the grid. On non-orthogonal meshes the directional derivative in direction of the face normal unit vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other side the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error that comes with this approximation (PROOF?). Hence a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
 
@@ -79,7 +79,7 @@
       \vec{S}_e = \Delta + \vec{k},
     \end{equation}
 
-    where \(\Delta\) is parallel to the the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \textit{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \textit{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented. However in each method the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two dimensional. An geometrical interpretation of the tree approaches is given in FIGURE.
+    where \(\Delta\) is parallel to the the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \textit{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \textit{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented. However in each method the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two dimensional. An geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}.
 
 
       \subsubsection{Minimum Correction Approach}
@@ -90,11 +90,11 @@
         \Delta = \left( \vec{d} \cdot \vec{S}_e \right) \frac{\vec{d}}{||\vec{d}||_2}.
       \end{displaymath}
 
-      The Influence of the non-orthogonal contribution increases with increasing non-orthogonality of the grid.
+      The Influence of the orthogonal contribution decreases with increasing non-orthogonality of the grid.
 
       \subsubsection{Orthogonal Correction Approach}
 
-      The following method for decomposing the surface normal vector is presented in Ferziger/Peric and the approach implemented in the developed solvers. In this approach a simple projection is used which is independent of the non-orthogonality of the grid. The orthogonal contribution thus is modelled as
+    The following method for decomposing the surface normal vector is presented in Ferziger/Peric and the approach implemented in the developed solvers. In this approach a simple projection is used which is independent of the non-orthogonality of the grid. As a result the orthogonal contribution \(||\Delta||_2 =  ||\vec{S}_e||_2\) and is thus modelled as 
 
       \begin{displaymath}
         \Delta =  S_e \frac{\vec{d}}{ ||\vec{d}||_2}.
@@ -102,48 +102,39 @@
 
       \subsubsection{Over-Relaxed Approach}
 
-      The last approach is used in Jsak and Darwish and is characterized by an increasing influence of the non-orthogonal contribution with decreasing grid orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
+      The last approach is used in Jsak and Darwish and is characterized by an increasing influence of the orthogonal contribution with increasing grid non-orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
 
       \begin{displaymath}
         \Delta =  S_e^2 \frac{\vec{d}}{ \vec{d} \cdot \vec{S}_e }.
       \end{displaymath} 
 
-      \begin{figure}
-      \label{fig:blockstruc}
+      \begin{figure}[h]
+      \label{fig:nonorth}
       \subfigure{
-      \begin{minipage}[1\width]{0.25\textwidth}%
+      \begin{minipage}[1\width]{0.31\textwidth}%
         \centering{}
       \input{./img/mincorr.tikz.tex}
       \end{minipage}}\qquad
       \subfigure{
-      \begin{minipage}[1\width]{0.33\textwidth}%
+      \begin{minipage}[1\width]{0.31\textwidth}%
         \centering{}
       \input{./img/orthcorr.tikz.tex}
       \end{minipage}}
       \subfigure{
-      \begin{minipage}[1\width]{0.33\textwidth}%
+      \begin{minipage}[1\width]{0.31\textwidth}%
         \centering{}
       \input{./img/overcorr.tikz.tex}
       \end{minipage}}
-      \caption{Blockstructured grid consisting of two blocks}
+      \caption{Minimum correction, orthogonal correction and over-relaxed approach}
       \end{figure}
 
-    \begin{itemize}
-      \item note that each method should vanish on orthogonal grids
-      \item Stick to Jsak and refer to Muzaferja's PHD thesis and Ferziger/Peric. 
-      \item Note the discrepancy in Perics book's referral to Muzaferja's thesis. 
-      \item Talk about the benefits of each approximation, maybe with example calculation 
-      \item Talk about the overall convergence rates
-      \item note that this only accelerates the solver. The fully converged solution should be independent of the treatment of the non-orthogonalities. (Proof?)
-    \end{itemize}
-
-    \subsection{Numerical Solution of Non-Linear Systems}
+    \subsection{Numerical Solution of Non-Linear Systems -- Linearization Techniques}
 
       Introduce the concept of the Picard-Iteration as a linearization technique. Introduce the notions of inner and outer iterations. Refer to later chapters when it comes to deferred correction.
 
     \subsection{Numerical Solution of Linear Systems}
 
-        The discretization techniques to be presented in the following chapter in composition with a Picard iteration transform the approximate solution of a system of partial differential equations into the solution of algebraic equations via linear systems.
+        
 
        \subsubsection{Stone's SIP Solver}
 
