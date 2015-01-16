@@ -1,5 +1,6 @@
   \section{Finite Volume Method for Incompressible Flows -- Segregated Approach}
-to be solved  Since this thesis focusses on the analysis of a fully coupled numerical solution algorithm, special emphasis is put on the comparison between segregated and coupled solution methods for solving the set of partial differential equations. Concretely this is achieved by presenting the discretization technique used for the application of the SIMPLE algorithm and later on modifying those results to be applicable to use in a fully coupled solution algorithm. Since on top of the Navier-Stokes equations a scalar transport equation for the temperature is solved, different methods to realize velocity-temperature-coupling and vice versa are discussed.
+
+  The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:setofeq}). The applied discretization techniques depend on the different terms of each equation, thus at first every equation will be discretized individually. The finite volume method relies on the discretization of integral equations, which will be derived at the beginning of each subsection that relies on them. Since the system of partial differential equations to be solved always exhibits coupling at least between the dependent variables pressure and velocity a first solution algorithm, namely the \textit{SIMPLE} algorithm addressed to resolve the pressure velocity coupling is introduced. The efficient coupling of the Navier-Stokes equations to the temperature equation is one part of the present thesis and will be addressed in a separate subsection. Furthermore every problem modelled by partial differential equations needs to provide valid boundary conditions. The discretization of those boundary conditions, that are relevant for the present thesis will be presented in their own subsection.
 
     \subsection{Discretization of the Mass Balance}
 
@@ -44,15 +45,17 @@ to be solved  Since this thesis focusses on the analysis of a fully coupled nume
 
         Only talk about dirichlet for velocities not for pressure.
 
-      \subsubsection{Neumann Boundary Condition}
+      %\subsubsection{Neumann Boundary Condition}
 
         Problematics of outlet boundary conditions
 
-      \subsubsection{Symmetry Boundary Condition}
+      %\subsubsection{Symmetry Boundary Condition}
 
       \subsubsection{Wall Boundary Condition}
 
       Note that there are different approaches. Explain which approach is used and why (memory efficiency)
 
       \subsubsection{Block Boundary Condition}
+
+      Relevant for block structured grids as for the validity of the domain composition.
       

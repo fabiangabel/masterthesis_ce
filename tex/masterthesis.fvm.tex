@@ -6,9 +6,24 @@
       
   \subsection{Numerical Grid}
 
-    In this subsection a brief overview of the general grid structure to be used in the present thesis is given. The main idea behind finite volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so called control volumes. The result of the this finite partition of a continuous problem domain is called the numerical grid. The grid consists of a finite number of grid cells which represent the boundaries of a discrete domain of integration. 
+  In this subsection a brief overview of the general grid structure to be used in the present thesis is given. The main idea behind finite volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so called control volumes. The result of the this finite partition of a continuous problem domain is called the numerical grid. The grid consists of a finite number of grid cells which represent the boundaries of a discrete domain of integration. Depending on whether the numerical solution of an equation is to be calculated on the boundary vertices of grid cell or in the center of the cell, the variable arrangement is denoted to be vertex or cell center oriented. As the methods of employed in the present thesis are intended to be generally applicable to complex geometries the cell centered approach offers more flexibility (\ref{fig:cellvertex}).
 
-    Regarding the treatment of domain boundaries and the ordering of the cells within the problem domain different types of numerical grids can be distinguished. The present thesis makes use of so called block structured grids with hexahedron cells. A structured grid is characterized by a constant amount of of grid cells in each coordinate direction. The high regularity of structured grids benefits the computational efficiency of algorithms to be used on this type of grid. A block structured grid consists of different grid blocks. of which each considered individually is structured but if the topology of the grid is considered it is unstructured. An example of a block structured grid with distinguishable grid blocks is given in figure \ref{fig:blockstruc}. The use of block structured grids is motivated by the need to increase the adaptivity of structured grids by maintaining high computational efficiency. 
+  \begin{figure}
+     \label{fig:cellvertex}
+      \subfigure{
+      \begin{minipage}[1\width]{0.5\textwidth}%
+        \input{./img/vertexoriented.tikz.tex}
+        \centering{}
+      \end{minipage}}\qquad
+      \subfigure{
+      \begin{minipage}[1\width]{0.4\textwidth}%
+        \centering{}
+        \input{./img/cellcenter.tikz.tex}
+      \end{minipage}}
+      \caption{Comparison of vertex oriented and cell center oriented variable arrangement}
+  \end{figure}
+
+    Regarding the treatment of domain boundaries and the ordering of the cells within the problem domain different types of numerical grids can be distinguished. The present thesis makes use of so called block structured grids with hexahedron cells. A structured grid is characterized by a constant amount of of grid cells in each coordinate direction. The high regularity of structured grids benefits the computational efficiency of algorithms to be used on this type of grid. A block structured grid consists of different grid blocks of which each considered individually is structured, but if the topology of the grid is considered it is unstructured. An example of a block structured grid with distinguishable grid blocks is given in figure \ref{fig:blockstruc}. The use of block structured grids is motivated by the need to increase the adaptivity of structured grids by maintaining high computational efficiency. Furthermore it naturally embraces the concept of domain decomposition which facilitates the implementation of parallel algorithms for the decomposed computational domain.
 
     Inside a structured grid block, cells with the shape of hexahedrons are used. In addition to the geometric boundaries of each control volume a numerical grid also provides a mapping that assigns to each control volume with index \(P\) a set of indexes of neighbouring control volumes \(NB(P):=\{W,S,B,T,N,E\}\), which are named after the geographic directions. Figure \ref{fig:blockstruc} shows a single grid cell with its direct neighbours. The faces \(\{S_w,S_s,S,b,S_t,S_n,S_e\}\) of each hexahedral control volume represent the mentioned geometric boundaries. 
 
@@ -30,14 +45,14 @@
         \centering{}
         \input{./img/cv.tikz.tex}
       \end{minipage}}
-      \caption{Blockstructured grid consisting of two blocks}
+      \caption{Block structured grid consisting of two blocks}
      \end{figure}
     
     \subsection{Approximation of Integrals and Derivatives}
 
-    In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \textit{midipoint rule}. This rule is similar to the mean value theorem of integration, which states that there exists a point \(\vec{\xi} \in V\) for a riemann integrable function \(\phi\) such that \(\phi(\xi) \int_V \mathrm{d}V = \int_V \phi(x) \mathrm{d}V\). For the midpoint rule \(\vec{\xi}\) is taken to be the center of mass of \(V\). If the integration domain \(V\) is indeed a Volume, fortunately the calculation of \(\phi(\mathbb{\xi})\) with \(\vec{\xi} := \left({ \int_V x_i \mathrm{d}V }/{ \int_V \mathrm{d}V } \right)_{i = 1,\dots,3}\) presents no difficulties since due to the collocated variable arrangement the value of \(\phi\) is stored in the cell center, which corresponds to the location \(\vec{\xi}\). However if the domain of integration is a surface, a preceding interpolation step is necessary.
+    In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \textit{midipoint rule}. This rule is similar to the mean value theorem of integration, which states that there exists a point \(\vec{\xi} \in V\) for a Riemann integrable function \(\phi\) such that \(\phi(\xi) \int_V \mathrm{d}V = \int_V \phi(x) \mathrm{d}V\). For the midpoint rule \(\vec{\xi}\) is taken to be the center of mass of \(V\). If the integration domain \(V\) is indeed a Volume, fortunately the calculation of \(\phi(\mathbb{\xi})\) with \(\vec{\xi} := \left({ \int_V x_i \mathrm{d}V }/{ \int_V \mathrm{d}V } \right)_{i = 1,\dots,3}\) presents no difficulties since due to the collocated variable arrangement the value of \(\phi\) is stored in the cell center, which corresponds to the location \(\vec{\xi}\). However if the domain of integration is a surface, a preceding interpolation step is necessary.
 
-    On the other hand to transorm a partial differential equation into a linear algebraic equation it is necessary to discretize the differential operators of the equations. For numerical reasons two different discretization techniques are used in this thesis. A common task is to discretize expressions of the form
+    On the other hand to transform a partial differential equation into a linear algebraic equation it is necessary to discretize the differential operators of the equations. For numerical reasons two different discretization techniques are used in this thesis. A common task is to discretize expressions of the form
 
     \begin{displaymath}
       \left(\nabla \phi\right)_e \cdot \vec{n}_e,
@@ -69,7 +84,7 @@
       \frac{\int_V\left(\frac{\partial \phi}{\partial x_i}\right)_P\mathrm{d}V}{|V|}
     \end{equation}
 
-    Briefly explain the idea behing the quadrature via the midpoint rule. Talk about central differences and the approximation via the gauss theorem. Maybe talk about the resulting order of the truncation error. 
+    Briefly explain the idea behind the quadrature via the midpoint rule. Talk about central differences and the approximation via the gauss theorem. Maybe talk about the resulting order of the truncation error. 
 
     \subsection{Treatment of Non-Orthogonality of Grid Cells}
 
@@ -79,12 +94,12 @@
       \vec{S}_e = \Delta + \vec{k},
     \end{equation}
 
-    where \(\Delta\) is parallel to the the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \textit{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \textit{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented. However in each method the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two dimensional. An geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}.
+    where \(\Delta\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \textit{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \textit{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented. However in each method the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two dimensional. An geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}.
 
 
       \subsubsection{Minimum Correction Approach}
 
-      This is the approach as used in proposed in Muzaferja The reader should note, that even though Ferziger/Peric reference the work of Muzaferja they use a different approach to be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by chosing \(\vec{k}\) to be orthogonal to \(\Delta\), which leads to
+      This is the approach as used in proposed in Muzaferja The reader should note, that even though Ferziger/Peric reference the work of Muzaferja they use a different approach to be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by choosing \(\vec{k}\) to be orthogonal to \(\Delta\), which leads to
 
       \begin{displaymath}
         \Delta = \left( \vec{d} \cdot \vec{S}_e \right) \frac{\vec{d}}{||\vec{d}||_2}.
