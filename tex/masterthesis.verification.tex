@@ -1,0 +1,30 @@
+  \section{Verification of the developed CAFFA Framework}
+
+    Different parts, describe incremental approach, only present final results.
+    Refer to next section for Validation of CAFFA
+
+    \subsection{Theoretical Discretization Error}
+      present the Taylor-Series Expansion
+
+    \subsection{Method of Manufactured Solutions}
+      basically sum up the important points of salari's technical report, symmetry of solution/domain/grid is bad
+      point out that mms is not able to detect errors in the physical model
+      Also loose a word or two about discontinuous manufactured solutions
+
+    \subsection{Exact and Manufactured Solutions for the Navier-Stokes Equations and the Energy Equation}
+    Not always there is an exact solution. Divergence free approach. Presentation of the used manufactured solution. What if solution is not divergence free? Derivation of equations and modifications to continuity equation. analyze the problem of too complicated manufactured solutions. also use temperature dependent density function. Explain why global mass conservation in a discrete sense is important and how it can be achived. Special domain, vanishing manufactured solution or symmetric manufactured solutions if a higher approximation of boundary fluxes is not feasible.
+    \begin{itemize}
+      \item \url{http://scicomp.stackexchange.com/questions/6943/manufactured-solutions-for-incompressible-navier-stokes-how-to-find-divergenc}
+      \item \url{http://link.springer.com/article/10.1007/BF00948290}
+      \item \url{http://physics.stackexchange.com/questions/60476/exact-solutions-to-the-navier-stokes-equations}
+      \item \url{http://www.annualreviews.org/doi/pdf/10.1146/annurev.fl.23.010191.001111}
+    \end{itemize}
+
+    \subsection{Measurement of Error and Calculation of Order}
+      Different error measures (L2-Norm,completeness of function space, consistency etc.)
+
+      \subsubsection{Testcase on Single Processor on Orthogonal Locally Refined Grid}
+      \subsubsection{Testcase on Multiple Processors on Non-Orthogonal Locally Refined Grid}
+
+        Give a measure of the grid quality.
+

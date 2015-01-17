@@ -1,0 +1,55 @@
+  \section{Comparison of Solver Concepts}
+  
+    \subsection{Convergence Behaviour on Locally Refined Block Structured Grids with Different Degrees of Coupling}
+
+      Show how the implicit treatment of block boundaries maintains (high) convergence rates. Plot Residual over number of iterations.
+
+    \subsection{Parallel Performance}
+      \subsubsection{Employed Hardware and Software -- The Lichtenberg-High Performance Computer }
+        \begin{itemize}
+          \item Networking
+          \item Mem Section and processes in between islands (calculating across islands)
+          \item Versioning information (PETSc,INTEL COMPILERS,CLIPPER,MPI IMPLEMENTATION,BLAS/LAPACK)
+          \item Software not designed to perform well on desktop PCs.
+        \end{itemize}
+
+      \subsubsection{Measures of Performance}
+        \begin{itemize}
+          \item Maße definieren
+          \item Nochmal Hager,Wellein studieren
+          \item Guidelines for measuring performance (bias through system processes or user interaction), only measure calculation time do not consider I/O in the beginning and the end
+          \item Cite Schäfer and Peric with their different indicators for parallel efficiency, load balancing and numerical efficiency
+        \end{itemize}
+
+      \subsubsection{Preliminary Upper Bounds on Performance -- The STREAM Benchmark}
+        Pinning of processes (picture), preliminary constraints by hardware and operating systems, identification of bottlenecks and explain possible workarounds, history and results of STREAM. Bandwidth as Bottleneck, how to calculate a Speedup estimate based on the measured bandwidth. PETSc Implementation of STREAM
+
+      \subsubsection{Discussion of Results for Parallel Efficiency}
+      \subsubsection{Speedup Measurement for Analytic Test Cases}
+
+    \subsection{Test Cases with Varying Degree of Non-Linearity}
+      
+      As Peric says I want to prove that the higher the non-linearity of NS, the better relative convergence rates can be achieved with a coupled solver. Fi
+
+      \subsubsection{Transport of a Passive Scalar -- Forced Convection}
+      \subsubsection{Buoyancy Driven Flow -- Natural Convection}
+      \subsubsection{Flow with Temperature Dependent Density -- A Highly Non-Linear Test Case}
+        Maybe I could consider two test cases, one with oscillating density and one with a quadratic polynomial. Interesting would be also to consider the dependence of convergence on another scalar transport equation
+
+    \subsection{Realistic Testing Scenarios -- Benchmarking}
+        Also consider simple load balancing by distributing matrix rows equally
+      
+      \subsubsection{Flow Around a Cylinder 3D -- Stationary}
+        Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
+      \subsubsection{Flow Around a Cylinder 3D -- Instationary}
+        \begin{itemize}
+          \item\url{http://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_flow3d/dfg_flow3d_configuration.html}
+        \end{itemize}
+        Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
+
+      \subsubsection{Heat-Driven Cavity Flow}
+        \begin{itemize}
+          \item \url{http://www.featflow.de/en/benchmarks/cfdbenchmarking/mit_benchmark.html}
+        \end{itemize}
+        Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
+    \subsection{Realistic Testing Scenario -- Complex Geometry}

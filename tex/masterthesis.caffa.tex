@@ -1,0 +1,73 @@
+  \section{CAFFA Framework}
+
+  CAFFA is an acronym and stands for Computer Aided Fluid Flow Analysis. Based on Peric caffa 2d code, 3 dimensional extension to blockstructured grids. Characteristic is the parallelisation with PETSc and the fully implicit treatment of arbitrary block boundaries.
+
+    \subsection{PETSc Framework}
+
+        PETSc is an acronym for Portable Extensible Toolkit for Scientific Calculations and is a software library.
+        Keep in mind not to copy the manual
+
+      \subsubsection{About PETSc}
+
+        Bell Prize, MPI Programming
+
+      \subsubsection{Basic Data Types}
+
+        Vec,Mat (Different Matrix Types and Their effect on complex methods)
+
+      \subsubsection{KSP and PC Objects and Their Usage}
+
+        Singularities
+
+      \subsubsection{Profiling}
+
+        PETSc Log 
+
+      \subsubsection{Common Errors}
+
+      Optimization, Interfaces, (ROWMAJOR,COLUMNMAJOR), Compiler Errors not helpful, Preallocation vs. Mallocs
+
+    \subsection{Grid Generation and Conversion}
+
+      Generation of block structured locally refined grids with non-matching block interfaces, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within a epsilon neighbourhood while maintaining the grid intact. Show in a graph how preallocation impacts on runtime.
+    \subsection{Preprocessing}
+    Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement, arbitrary polygon matching, parallelizable due to easier interface
+
+    \subsection{Implementation Details of CAFFA}
+
+      \subsubsection{MPI Programming Model}
+        Basic idea of distributed memory programming model, emphasize the differences to shared memory model. Have a diagram at hand that shows how CAFFA sequentially works (schedule) and point out the locations where and of which type (global reduce, etc.) communication is, or when synchronization is necessary.
+        \begin{itemize}
+          \item after each solve
+          \item pressure reference
+          \item error calculation
+          \item gradient calculation
+        \end{itemize}
+        
+        Point out that one should try to minimize the number of this points such that parallel performance stays high. Better to calculate Velocity and Pressure Gradients at once not by separately calling this routine.
+
+        \subsubsection{Convergence Control} 
+        Explain how the criterion for convergence is met 
+
+        \subsubsection{Modi of Calculation}
+          there are different modi of calculation, (NS segregated, then scalar; NS and Scalar Segregated; NS coupled and Scalar segregated; Fully coupled (watch out with fully coupled, this term seems to have already another meaning)). Note that for comparison of solvers it is crucial to develop programs on the same basis. This establishes comparability.
+
+      \subsubsection{Indexing of Variables and Treatment of Boundary Values}
+      Describe MatZeroValues and how it is used to simplify the code. Also loose a word on PCREDISTRIBUTE its advantages (no boundary values involved, do not have to be reset when system is solved with high tolerance) and downsides (preliminary tests showed bad scaling behaviour (PROVE)). Compliance of PETSc zero based indexing and CAFFA indexing which considers boundary values.
+      \subsubsection{Field Interlacing}
+      Realization through special arrangement of variables and the use of index sets (subvector objects) and/or preprocessor directives. Advantages (there was a paper I cited in my thesis). Note that not all variables are interlaced (Velocities are, but their gradients are not). Great impact on Matrix structure.
+      \subsubsection{Domain Decomposition, Exchange of Ghost Values and Parallel Matrix Assembly}
+
+      \begin{itemize}
+        \item Ghost values are stored in local representations of the global vector (state the mapping for those entries). 
+        \item Matrix coefficients are calculated on one processor and sent to the neighbour. 
+        \item Preallocation as crucial aspect for program performance. For the coupled system the matrix is assembled in a 2-3 step process to save memory for coefficients. 
+        \item Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution. 
+        \item Use Spy function of Matlab to visualize the sparse matrices. Point out advantages of calculating coefficients for the neighbouring cells locally (no need to update mass fluxes, geometric data doesn't need to be shared, small communication overhead since processors assemble matrix parts that don't belong to them (visualize)). 
+        \item Paradigm: Each time new information is available perform global updates. Advantages of using matrices: Show structure of matrix when using arbitrary matching vs. higher memory requirements vs. better convergence
+      \end{itemize}
+
+    \subsection{Postprocessing}
+    
+      Visualization of Results with Paraview and Tecplot
+      Export matrices as binaries and visualize them using matlab scripts.

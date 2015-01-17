@@ -1,11 +1,6 @@
 
   \section{Fundamentals of Continuum Physics for Thermo-Hydrodynamical Problems}
 
-    \begin{itemize}
-        \item Cartesian Grid Components 3d
-        \item Final Forms ideally integrals which are the starting point for finite volume methods
-      \end{itemize}
-
       This section covers the set of fundamental equations for thermo-hydrodynamical problems which the numerical solution techniques of the following chapters are aiming to solve. Furthermore the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on (Kundu, Spurk, Ferziger, Anderson). For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods the focus lays on stating the integral forms of the relevant conservation laws. However in the process of deriving the final set of equations the use of differential formulations of the stated laws are required. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i \) are used. This approach is also known as \textit{Eulerian approach}.  
 
     \subsection{Conservation of Mass -- Continuity Equation}
@@ -29,6 +24,7 @@
     \begin{displaymath}
       \iiint\limits_V \frac{\partial \left(\rho u_i \right)}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i \left( u_j n_j \right) \mathrm{d}S = \iiint\limits_V \rho k_i \mathrm{d}V + \iint\limits_S t_i \mathrm{d}S.
     \end{displaymath}
+
     In general the stress vector \(\vec{t}\) is a function not only of the location \(\vec{x} = \left( x_i \right)_{i = 1,\dots,3}\) and of the time \(t\) but also of the surface normal unit vector \(\vec{n}\). A central simplification can be introduced, namely Cauchy's stress theorem, which states that the stress vector is the image of the normal vector under a linear mapping \(\vec{T}\). With respect to the Cartesian canonical basis \(\left(\vec{e}_i \right)_{i = 1, \dots, 3}\) the mapping \(\vec{T}\) is represented by the coefficient matrix \( \left(\tau_{ji}\right)_{i,j = 1,\dots,3}\) and Cauchy's stress theorem reads
     \begin{displaymath}
       \vec{t}\left(x,t,n\right) = \vec{T}(x,t,n) = \left(\tau_{ji} n_j\right)_{i = 1, \dots, 3}.
@@ -55,10 +51,13 @@
     \begin{displaymath}
       \tau_{ij} = -p \delta_{ij} + \sigma_{ij},
     \end{displaymath}
-    where \(p\) is the thermodynamic pressure, \(\delta_{ij}\) is the \textit{Kronecker}-Delta and \( \sigma_{ij} \) is the so called \textit{deviatoric stress tensor}. For the fluids the studies that the present thesis performs it is sufficient to consider viscous fluids for which there exists a linear relation between the components of the deviatoric stress tensor and the symmetric part of the transpose of the jacobian of the velocity field \(\left( S_{ij} \right)_{i,j=1,\dots,3}\),
+    where \(p\) is the thermodynamic pressure, \(\delta_{ij}\) is the \textit{Kronecker}-Delta and \( \sigma_{ij} \) is the so called \textit{deviatoric stress tensor}. 
+    
+    For the fluids the studies that the present thesis performs it is sufficient to consider viscous fluids for which there exists a linear relation between the components of the deviatoric stress tensor and the symmetric part of the transpose of the jacobian of the velocity field \(\left( S_{ij} \right)_{i,j=1,\dots,3}\),
     \begin{displaymath}
       S_{ij} = \frac{1}{2} \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i} \right).
     \end{displaymath}
+
     If one now imposes material-isotropy and the mentioned stress-symmetry (\ref{eq:stresssymetry}) restriction it can be shown (Aries) that the constitutive equation for the deviatoric stress tensor reads 
     \begin{displaymath}
       \sigma_{ij} = 2 \mu S_{ij} + \lambda S_{mm} \delta_{ij},
@@ -120,16 +119,17 @@
       \begin{displaymath}
        - \rho k_i = \frac{\partial \Phi_\vec{k}}{\partial x_i}.
       \end{displaymath}
+
       In the case of this thesis this assumption is valid since the mass specific force is the mass specific gravitational force \(\vec{g} = \left( g_i \right)_{i = 1,\dots,3}\) and the density is assumed to be constant, so the potential can be modelled as
       \begin{displaymath}
         \Phi_g = - \rho g_j x_j.
       \end{displaymath}
-      This term can be interpreted as the hydrostatic pressure \(p_{hyd}\) and can be added to the thermodynamical pressure \(p\) to simplify calculations. 
+      This term can be interpreted as the hydrostatic pressure \(p_{hyd}\) and can be added to the thermodynamical pressure \(p\) to simplify calculations 
       \begin{align}
         \rho g_i - \frac{\partial p}{\partial x_i} 
         =& \frac{\partial}{\partial x_i} \left( \rho g_j x_j \right) - \frac{\partial p}{\partial x_i} \nonumber \\[0.5em]
         =& \frac{\partial}{\partial x_i} \left( \rho g_j x_j \right) - \frac{\partial}{\partial x_i}  \left(\hat{p} + p_{hyd} \right) \nonumber \\[0.5em]
-        =& - \frac{\partial \hat{p}}{\partial x_i}
+        =& - \frac{\partial \hat{p}}{\partial x_i}.
       \end{align}
       Since in incompressible fluids only pressure differences matter, this has no effect on the solution. After finishing the calculations \(p_{hyd}\) can be calculated and added to the resulting pressure \(\hat{p}\).
 
@@ -163,10 +163,12 @@
       \end{align*}
       using \(\rho \vec{g}\) as the mass specific force. 
 
-      Talk about natural and forced convection. Differences for the solver algorithm. (s.a.) Peric P447
-      Talk about flows with variation in fluid properties -> mms has to map this behaviour (Buoyancy force driven, i.e. naturally convected fluid), mixed Convection
-      Also talk about non-dimensional values like Prandtl number, Rayleigh and Reynolds
-      Talk about the validity of this approximation
+      \begin{itemize}
+        \item Talk about natural and forced convection. Differences for the solver algorithm. (s.a.) Peric P447
+        \item Talk about flows with variation in fluid properties -> mms has to map this behaviour (Buoyancy force driven, i.e. naturally convected fluid), mixed Convection
+        \item Also talk about non-dimensional values like Prandtl number, Rayleigh and Reynolds
+        \item Talk about the validity of this approximation
+      \end{itemize}
       
     \subsection{Final Form of the Set of Equations}
 
