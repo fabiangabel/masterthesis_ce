@@ -53,27 +53,21 @@
     In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \textit{midipoint rule}. This rule is similar to the mean value theorem of integration, which states that there exists a point \(\vec{\xi} \in V\) for a Riemann integrable function \(\phi\) such that \(\phi(\xi) \int_V \mathrm{d}V = \int_V \phi(x) \mathrm{d}V\). For the midpoint rule \(\vec{\xi}\) is taken to be the center of mass of \(V\). If the integration domain \(V\) is indeed a Volume, fortunately the calculation of \(\phi(\mathbb{\xi})\) with \(\vec{\xi} := \left({ \int_V x_i \mathrm{d}V }/{ \int_V \mathrm{d}V } \right)_{i = 1,\dots,3}\) presents no difficulties since due to the collocated variable arrangement the value of \(\phi\) is stored in the cell center, which corresponds to the location \(\vec{\xi}\). However if the domain of integration is a surface, a preceding interpolation step is necessary.
 
     On the other hand to transform a partial differential equation into a linear algebraic equation it is necessary to discretize the differential operators of the equations. For numerical reasons two different discretization techniques are used in this thesis. A common task is to discretize expressions of the form
-
     \begin{displaymath}
       \left(\nabla \phi\right)_e \cdot \vec{n}_e,
     \end{displaymath}
-
     where \(\left(\nabla \phi\right)_e\) is the Gradient of \(\phi\) on a boundary face \(S_e\). One method is to directly interpret this expression as a directional derivative and approximate it with a central difference
-
     \begin{equation}
       \label{eq:cds}
       \left(\nabla \phi\right)_e \cdot \vec{n}_e \approx \frac{\phi_P - \phi_E}{|| \vec{x}_P - \vec{x}_E ||_2}.
     \end{equation}
-
     Another method would be to first calculate the cell center gradients \(\left(\nabla \phi \right)_P\) and \(\left(\nabla \phi \right)_E\) and interpolate them linearily before calculating the projection onto \(\vec{n}_e\)
-
     \begin{displaymath}
       \left(\nabla \phi\right)_e \cdot \vec{n}_e 
       \approx 
       \left[\gamma_e \left(\nabla \phi \right)_P + (1-\gamma_e) \left(\nabla \phi \right)_E \right] \cdot \vec{n}_e,
     \end{displaymath}
-
-    where \( \gamma_e := {||\vec{x}_P - \vec{x}_e||_2}/{||\vec{x}_P - \vec{x}_E||_2}\) is a geometric interpolation factor. For calculating the cell center gradients a method based on Gauss' integration theorem and the midpoint rule for volume integration is employed.
+    where \( \gamma_e := {||\vec{x}_P - \vec{x}_e||_2}/{||\vec{x}_P - \vec{x}_E||_2}\) is a geometric interpolation factor. For calculating the cell center gradients a method based on Gauss' integration theorem and the midpoint rule for volume integration is employed
 
     \begin{equation}
       \label{eq:gaussgrad}
@@ -81,7 +75,7 @@
       =
       \left( \frac{\partial \phi}{\partial x_i}\right)_P
       \approx
-      \frac{\int_V\left(\frac{\partial \phi}{\partial x_i}\right)_P\mathrm{d}V}{|V|}
+      \frac{\int_V\left(\frac{\partial \phi}{\partial x_i}\right)_P\mathrm{d}V}{|V|}.
     \end{equation}
 
     Briefly explain the idea behind the quadrature via the midpoint rule. Talk about central differences and the approximation via the gauss theorem. Maybe talk about the resulting order of the truncation error. 
@@ -89,28 +83,22 @@
     \subsection{Treatment of Non-Orthogonality of Grid Cells}
 
     Unfortunately real applications involve complex geometries which in turn affects the orthogonality of the grid. On non-orthogonal meshes the directional derivative in direction of the face normal unit vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other side the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error that comes with this approximation (PROOF?). Hence a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
-
     \begin{equation}
       \vec{S}_e = \Delta + \vec{k},
     \end{equation}
-
     where \(\Delta\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \textit{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \textit{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented. However in each method the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two dimensional. An geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}.
-
 
       \subsubsection{Minimum Correction Approach}
 
       This is the approach as used in proposed in Muzaferja The reader should note, that even though Ferziger/Peric reference the work of Muzaferja they use a different approach to be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by choosing \(\vec{k}\) to be orthogonal to \(\Delta\), which leads to
-
       \begin{displaymath}
         \Delta = \left( \vec{d} \cdot \vec{S}_e \right) \frac{\vec{d}}{||\vec{d}||_2}.
       \end{displaymath}
-
-      The Influence of the orthogonal contribution decreases with increasing non-orthogonality of the grid.
+      It should be noted that the Influence of the orthogonal contribution decreases with increasing non-orthogonality of the grid.
 
       \subsubsection{Orthogonal Correction Approach}
 
     The following method for decomposing the surface normal vector is presented in Ferziger/Peric and the approach implemented in the developed solvers. In this approach a simple projection is used which is independent of the non-orthogonality of the grid. As a result the orthogonal contribution \(||\Delta||_2 =  ||\vec{S}_e||_2\) and is thus modelled as 
-
       \begin{displaymath}
         \Delta =  S_e \frac{\vec{d}}{ ||\vec{d}||_2}.
       \end{displaymath}
@@ -118,7 +106,6 @@
       \subsubsection{Over-Relaxed Approach}
 
       The last approach is used in Jsak and Darwish and is characterized by an increasing influence of the orthogonal contribution with increasing grid non-orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
-
       \begin{displaymath}
         \Delta =  S_e^2 \frac{\vec{d}}{ \vec{d} \cdot \vec{S}_e }.
       \end{displaymath} 
@@ -148,8 +135,6 @@
       Introduce the concept of the Picard-Iteration as a linearization technique. Introduce the notions of inner and outer iterations. Refer to later chapters when it comes to deferred correction.
 
     \subsection{Numerical Solution of Linear Systems}
-
-        
 
        \subsubsection{Stone's SIP Solver}
 
