@@ -1,6 +1,6 @@
   \section{Finite Volume Method for Incompressible Flows -- Segregated Approach}
 
-  The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:setofeq}). The applied discretization techniques depend on the different terms of each equation, thus at first every equation will be discretized individually. The finite volume method relies on the discretization of integral equations, which will be derived at the beginning of each subsection that relies on them. Since the system of partial differential equations to be solved always exhibits coupling at least between the dependent variables pressure and velocity a first solution algorithm, namely the \textit{SIMPLE} algorithm addressed to resolve the pressure velocity coupling is introduced. The efficient coupling of the Navier-Stokes equations to the temperature equation is one part of the present thesis and will be addressed in a separate subsection. Furthermore every problem modelled by partial differential equations needs to provide valid boundary conditions. The discretization of those boundary conditions, that are relevant for the present thesis will be presented in their own subsection.
+  The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). The applied discretization techniques depend on the different terms of each equation, thus at first every equation will be discretized individually. The finite volume method relies on the discretization of integral equations, which will be derived at the beginning of each subsection that relies on them. Since the system of partial differential equations to be solved always exhibits coupling at least between the dependent variables pressure and velocity a first solution algorithm, namely the \textit{SIMPLE} algorithm addressed to resolve the pressure velocity coupling is introduced. The efficient coupling of the Navier-Stokes equations to the temperature equation is one part of the present thesis and will be addressed in a separate subsection. Furthermore every problem modelled by partial differential equations needs to provide valid boundary conditions. The discretization of those boundary conditions, that are relevant for the present thesis will be presented in their own subsection.
 
     \subsection{Discretization of the Mass Balance}
 
@@ -36,7 +36,7 @@
 
       \subsubsection{Linearization and Discretization of the Convective Term}
 
-      The convective term \(\rho u_i u_j\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (REFERENCE), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent of the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). However this linearization will not be directly visible because it will be covered by the mass flux \(\dot{m}_f = \iint\limits_{S_f} \rho u_j^{(n-1)} n_j \mathrm{d}S \). Using the additivity of the Riemann integral the first step is to decompose the surface integral into individual contributions from each boundary face of the control volume \(P\)
+      The convective term \(\rho u_i u_j\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (\ref{sec:nonlinear}), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent of the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). However this linearization will not be directly visible because it will be covered by the mass flux \(\dot{m}_f = \iint\limits_{S_f} \rho u_j^{(n-1)} n_j \mathrm{d}S \). Using the additivity of the Riemann integral the first step is to decompose the surface integral into individual contributions from each boundary face of the control volume \(P\)
       \begin{displaymath}
       \iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S
       = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f}\rho u_{i} u_{j} n_{j} \mathrm{d}S
@@ -51,30 +51,62 @@
       Note that the convective fluxes carrying a \(l\) or \(h\) as exponent, already have been linearized and discretized. The discretization applied to the convective flux in the present work is using the midpoint integration rule and blends the upwind interpolation scheme with the linear interpolation scheme. Applied to above decomposition one can derive the following approximations
       \begin{align*}
         F_{i,f}^{c,l} &= u_{i,F} \min(\dot{m}_f ,0) + u_{i,P} \max(0,\dot{m}_f) \\
-        F_{i,f}^{c,h} &= u_{i,F} \gamma_e + u_{i,P} (1 - \gamma_f),
+        F_{i,f}^{c,h} &= u_{i,F} \gamma_f + u_{i,P} (1 - \gamma_f),
       \end{align*}
-      where the variable values have to be taken from the previous iteration step \((n-1)\) as necessary and the mass flux \(\dot{m}_e\) has been used as result of the linearization process. The results can now be summarized by presenting the convective contribution to the matrix coefficients \(a_{F,u_i}\) and \(a_{P,u_i}\) and the right hand side \(b_{P,u_i}\) which are calculated as
+      where the variable values have to be taken from the previous iteration step \((n-1)\) as necessary and the mass flux \(\dot{m}_f\) has been used as result of the linearization process. The results can now be summarized by presenting the convective contribution to the matrix coefficients \(a_{F,u_i}\) and \(a_{P,u_i}\) and the right hand side \(b_{P,u_i}\) which are calculated as
+      \begin{subequations}
       \begin{align}
-        a_{F,u_i}^c &= \min(\dot{m}_f ,0), \quad a_{P,u_i}^c = \sum_{F \in NB(P)} \max(0,\dot{m}_f) \\
-        b_{P,u_i}^c &= \sum_{F \in NB(P)} \eta  \left(u_{i,F)}^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_e \right)\right) \nonumber \\
-                    &\quad \quad \quad  \quad+ \eta \left( u_{i,P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_e\right) \right)\right)
+        a_{F,u_i}^c &= \min(\dot{m}_f ,0), \quad \quad a_{P,u_i}^c = \sum_{F \in NB(P)} \max(0,\dot{m}_f) \\[1em]
+        b_{P,u_i}^c &= \sum_{F \in NB(P)} \eta  \left(u_{i,F)}^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right) \nonumber \\
+                    &\quad \quad \quad  \quad+ \eta \left( u_{i,P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right)
       \end{align}
+    \end{subequations}
 
       \subsubsection{Discretization of the Diffusive Term}
 
-      The diffusive term contains the first partial derivatives of the velocity as result of the material constitutive equation that characterizes the behaviour of Newtonian fluids. As pointed out in section \ref{sec:nonorth} directional derivatives can be discretized using central differences on orthogonal grids or in the more general case of non-orthogonal grids using central differences implicitly and a explicit deferred correction comprising the non-orthogonality of the grid. As seen in section \ref{sec:fundclosing} the diffusive term of the Navier-Stokes equations can be simplified using the mass balance in the case of an incompressible flow with constant viscosity \(\mu\). To sustain the generality of the presented approach this simplification will be omitted.
+      The diffusive term contains the first partial derivatives of the velocity as result of the material constitutive equation that characterizes the behaviour of Newtonian fluids. As pointed out in section \ref{sec:nonorth} directional derivatives can be discretized using central differences on orthogonal grids or in the more general case of non-orthogonal grids using central differences implicitly and a explicit deferred correction comprising the non-orthogonality of the grid. As seen in equation (\ref{eq:navierstokes}) the diffusive term of the Navier-Stokes equations can be simplified using the mass balance in the case of an incompressible flow with constant viscosity \(\mu\). To sustain the generality of the presented approach this simplification will be omitted.
+    
 
       As before, by using the additivity and furthermore linearity of the Riemann integral, the integration of the diffusive term will be divided into integration over individual boundary faces \(S_f\) 
       \begin{displaymath}
       \iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S \mathrm{d}S
       = \sum_{f \in \{w,s,b,t,n,e\}} \left[
-        \iint\limits_{S_f} \mu \underline{\frac{\partial u_i}{\partial x_j}n_j} \mathrm{d}S
+        \iint\limits_{S_f} \mu \underline{\frac{\partial u_i}{\partial x_j}n_j \mathrm{d}S}
     + \iint\limits_{S_f} \mu \frac{\partial u_j}{\partial x_i}n_j \mathrm{d}S \right]
        = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{d},
       \end{displaymath}
-      where \(F_{i,f}^{d}\) denotes the diffusive flux through an individual boundary face. Section \ref{sec:nonorth} only covered the non-orthogonal corrector for directional derivatives. Since the velocity is a vector field and not a scalar field, the results of section \ref{sec:nonorth} may only be applied to the underlined term. The other term will be treated explicitly since it is considerably smaller than the underlined term and does not cause oscillations and thus will not derogate convergence.
+      where \(F_{i,f}^{d}\) denotes the diffusive flux through an individual boundary face. Section \ref{sec:nonorth} only covered the non-orthogonal corrector for directional derivatives. Since the velocity is a vector field and not a scalar field, the results of section \ref{sec:nonorth} may only be applied to the underlined term. The other term will be treated explicitly since it is considerably smaller than the underlined term and does not cause oscillations and thus will not derogate convergence. To begin with all present integrals will be approximated using the midpoint rule of integration. The diffusive flux \(F_{i,f}^d\) for a generic face \(S_f\) then reads 
+      \begin{displaymath}
+        F_{i,f}^d \approx \mu \underline{\left(\frac{\partial u_i}{\partial x_j}\right)_f n_j S_f} + \mu \left(\frac{\partial u_j}{\partial x_i}\right)_f n_j S_f.
+      \end{displaymath}
 
-      Using central differences for the implicit discretization of the directional derivative and furthermore using the \textit{orthogonal correction} approach from \ref{seq:orthcorrapproach}
+      Using central differences for the implicit discretization of the directional derivative and furthermore using the \textit{orthogonal correction} approach from \ref{seq:orthcorrapproach} the approximation can be derived as
+      \begin{align*}
+        F_{i,f}^d 
+        &\approx 
+        \mu \left( \underline{||\vecg{\vecg{\Delta}_f}||_2 \frac{u_{P_i} - u_{F_i}}{ || \vec{x}_P - \vec{x}_F ||_2 }  
+        -  \left(\nabla u_i \right)_f^{(n-1)} \cdot \left(\vecg{\Delta}_f - \vec{S}_f\right)  }  \right)
+        + \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i} \\[1em]
+        &= \mu \left(\underline{  S_f \frac{u_{P_i} - u_{F_i}}{ || \vec{x}_P - \vec{x}_F ||_2 }  
+    - \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} - n_{f_i}\right)S_f  } \right)
+      + \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i}
+    \end{align*}
+      where
+      \begin{displaymath}
+        \vecg{\xi}_f = \frac{\vec{x}_P - \vec{x}_F}{|| \vec{x}_p - \vec{x}_F ||_2}
+      \end{displaymath}
+      denotes the unit vector pointing in direction of the straight line connecting control volume \(P\) and control volume \(F\). The interpolation of the cell center gradients to the boundary faces is performed as in (\ref{eq:interpolgrad}). Now the contribution of the diffusive part to matrix coefficients and the right hand side can be calculated as:
+      \begin{subequations}
+        \begin{align}
+          a_{F,u_i}^d &= - \frac{\mu S_f}{||\vec{x}_P - \vec{x}_F||_2}, 
+          \quad \quad a_{P,u_i}^d = \sum_{F \in NB(P)} \frac{\mu S_f}{|| \vec{x}_P - \vec{x}_F ||} \\[1em]
+          b_{F,u_i}^d &=   \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} - n_{f_i}\right)S_f  
+          - \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i} S_f   \nonumber \\[0.5em]
+          &=   \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \xi_{f_i} S_f
+          - \mu \left( \left( \frac{\partial u_i}{\partial x_j} \right)_f^{(n-1)}
+          - \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} \right) n_{f_i} S_f 
+        \end{align}
+      \end{subequations}
 
       \subsubsection{Discretization of the Source Term}
 
