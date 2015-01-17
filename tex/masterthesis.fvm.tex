@@ -61,7 +61,7 @@
       \label{eq:cds}
       \left(\nabla \phi\right)_e \cdot \vec{n}_e \approx \frac{\phi_P - \phi_E}{|| \vec{x}_P - \vec{x}_E ||_2}.
     \end{equation}
-    Another method would be to first calculate the cell center gradients \(\left(\nabla \phi \right)_P\) and \(\left(\nabla \phi \right)_E\) and interpolate them linearily before calculating the projection onto \(\vec{n}_e\)
+    Another method would be to first calculate the cell center gradients \(\left(\nabla \phi \right)_P\) and \(\left(\nabla \phi \right)_E\) and interpolate them linearly before calculating the projection onto \(\vec{n}_e\)
     \begin{displaymath}
       \left(\nabla \phi\right)_e \cdot \vec{n}_e 
       \approx 
@@ -81,22 +81,25 @@
     Briefly explain the idea behind the quadrature via the midpoint rule. Talk about central differences and the approximation via the gauss theorem. Maybe talk about the resulting order of the truncation error. 
 
     \subsection{Treatment of Non-Orthogonality of Grid Cells}
+    \label{sec:nonorth}
 
-    Unfortunately real applications involve complex geometries which in turn affects the orthogonality of the grid. On non-orthogonal meshes the directional derivative in direction of the face normal unit vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other side the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error that comes with this approximation (PROOF?). Hence a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
+    Unfortunately real applications involve complex geometries, which in turn affects the orthogonality of the grid. On non-orthogonal meshes the directional derivative in direction of the face normal unit vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other side the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error that comes with this approximation (PROOF?). Hence a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
     \begin{equation}
+      \label{eq:orthdecomp}
       \vec{S}_e = \Delta + \vec{k},
     \end{equation}
-    where \(\Delta\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \textit{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \textit{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented. However in each method the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two dimensional. An geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}.
+    where \(\Delta\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \textit{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \textit{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented by stating the respective expression for \(\Delta\). The resulting vector \(\vec{k}\) can be calculated by using (\ref{eq:orthdecomp}). One important characteristic that all of the presented approaches have is common is that the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two dimensional. An geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}. The last subsection handles the integration of one generic approach into the discretization process.
 
       \subsubsection{Minimum Correction Approach}
 
-      This is the approach as used in proposed in Muzaferja The reader should note, that even though Ferziger/Peric reference the work of Muzaferja they use a different approach to be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by choosing \(\vec{k}\) to be orthogonal to \(\Delta\), which leads to
+      This is the approach as proposed in Muzaferja. The reader should note, that even though Ferziger/Peric reference the work of Muzaferja they use a different approach to be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by always choosing \(\vec{k}\) to be orthogonal to \(\Delta\), which leads to
       \begin{displaymath}
         \Delta = \left( \vec{d} \cdot \vec{S}_e \right) \frac{\vec{d}}{||\vec{d}||_2}.
       \end{displaymath}
       It should be noted that the Influence of the orthogonal contribution decreases with increasing non-orthogonality of the grid.
 
       \subsubsection{Orthogonal Correction Approach}
+      \label{seq:orthcorrapproach}
 
     The following method for decomposing the surface normal vector is presented in Ferziger/Peric and the approach implemented in the developed solvers. In this approach a simple projection is used which is independent of the non-orthogonality of the grid. As a result the orthogonal contribution \(||\Delta||_2 =  ||\vec{S}_e||_2\) and is thus modelled as 
       \begin{displaymath}
@@ -129,6 +132,18 @@
       \end{minipage}}
       \caption{Minimum correction, orthogonal correction and over-relaxed approach}
       \end{figure}
+
+      \subsubsection{Deferred Non-Orthogonal Correction}
+
+      In order to reduce the computational stencil that would be necessary to handle the non-orthogonal correction implicitly the correction will be treated explicitly using a deferred correction which guarantees that in the case of a fully converged solution only the face normal derivative has been taken into account. Generally the discretization using a non-orthogonal correction would yield 
+      \begin{displaymath}
+        \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx \left(\nabla \phi \right)_e \cdot \Delta + \left( \nabla \phi \right)_e \cdot \vec{k}.
+      \end{displaymath}
+      Where the first term can be approximated using a central differencing scheme for the directional derivative and the second by interpolating cell center gradients. If one furthermore uses the fact that this method comes to play in an solution algorithm for a non-linear system of partial differential equations a deferred correction can be implemented which ensues a smaller error from the non-orthogonality. In the case of the previously mentioned discretization techniques for partial derivatives a possible deferred correction approach reads
+      \begin{displaymath}
+        \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx ||\Delta||_2 \frac{\phi_P - \phi_E}{||x_P - x_E||_2} - \left[ \left(\nabla \phi \right)_e \cdot \left(\Delta - \vec{k}\right) \right]^{(n-1)}.
+      \end{displaymath}
+      It should be noted that the use of a deferred correction in conjunction with the requirement that the non-orthogonal correction vanishes on orthogonal grid introduces a inconsistent discretization of \( \left(\nabla \phi \right)_e \cdot \Delta \).
 
     \subsection{Numerical Solution of Non-Linear Systems -- Linearization Techniques}
 

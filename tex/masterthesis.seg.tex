@@ -25,8 +25,8 @@
 
       The stationary momentum balance integrated over a single control volume \(P\) reads as
       \begin{displaymath}
-        \underbrace{\iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S}_{\text{convection term}}
-        - \underbrace{\iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S}_{\text{diffusion term}}
+        \underbrace{\iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S}_{\text{convective term}}
+        - \underbrace{\iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S}_{\text{diffusive term}}
         = - \overbrace{\iiint_V \frac{\partial p}{\partial x_i} \mathrm{d}V}^{\text{sourceterm pressure}}
         - \overbrace{\iiint_V \rho \beta \left(T - T_0\right) \mathrm{d}V}^{\text{sourceterm temperature}}
       \end{displaymath}
@@ -36,32 +36,45 @@
 
       \subsubsection{Linearization and Discretization of the Convective Term}
 
-      The convective term \(\rho u_i u_j\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (REFERENCE), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent of the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). Using the additivity of the Riemann integral the first step is to decompose the surface integral into individual contributions from each boundary face of the control volume \(P\)
+      The convective term \(\rho u_i u_j\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (REFERENCE), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent of the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). However this linearization will not be directly visible because it will be covered by the mass flux \(\dot{m}_f = \iint\limits_{S_f} \rho u_j^{(n-1)} n_j \mathrm{d}S \). Using the additivity of the Riemann integral the first step is to decompose the surface integral into individual contributions from each boundary face of the control volume \(P\)
       \begin{displaymath}
       \iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S
       = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f}\rho u_{i} u_{j} n_{j} \mathrm{d}S
-%     \approx \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f} \rho u_{i}^{(n)} u_{j}^{(n-1)} n_{j} \mathrm{d}S,
       = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{c}
       \end{displaymath}
       where \(F_{i,f}^c := \iint\limits_{S_f} \rho u_{i}^{(n)} u_{j}^{(n-1)} n_{j} \mathrm{d}S \) is the convective flux of the velocity \(u_i\) through the face \(S_f\). 
       
-      To improve diagonal dominance of the resulting linear system while maintaining the smaller discretization error of a higher order discretization, a blended discretization scheme is applied using a deferred correction. Since due to the non-linearity of the equations to be solved an iterative solution process is needed by all means, the overall convergence doesn't degrade noticeably when using a deferred correction. Blending and deferred correction result in a decomposition of the convective flux into a lower order approximation that is treated implicitly and the explicit difference between the higher and lower order approximation for the same convective flux. Since for coarse grid resolutions the use of higher order approximations may lead to oscillations of the solution which may degrade or even impede convergence the schemes can be blended by a control factor \( \eta \in [0,1]\). For simplicity all further derivations are presented for the boundary face \(S_e\). This decomposition then leads to
+      To improve diagonal dominance of the resulting linear system while maintaining the smaller discretization error of a higher order discretization, a blended discretization scheme is applied using a deferred correction. Since due to the non-linearity of the equations to be solved an iterative solution process is needed by all means, the overall convergence doesn't degrade noticeably when using a deferred correction. Blending and deferred correction result in a decomposition of the convective flux into a lower order approximation that is treated implicitly and the explicit difference between the higher and lower order approximation for the same convective flux. Since for coarse grid resolutions the use of higher order approximations may lead to oscillations of the solution which may degrade or even impede convergence, the schemes can be blended by a control factor \( \eta \in [0,1]\). To show the generality of this approach all further derivations are presented for the generic boundary face \(S_f\) that separates control volume \(P\) from its neighbour \(F \in NB(P)\). This decomposition then leads to
       \begin{displaymath}
-        F_{i,e}^c \approx  \underbrace{F_{i,e}^{c,l}}_{\text{implicit}} + \eta \bigl[\underbrace{ F_{i,e}^{c,h} - F_{i,e}^{c,l} }_{\text{explicit}}\bigr]^{(n-1)}.
+        F_{i,f}^c \approx  \underbrace{F_{i,f}^{c,l}}_{\text{implicit}} + \eta \bigl[\underbrace{ F_{i,f}^{c,h} - F_{i,f}^{c,l} }_{\text{explicit}}\bigr]^{(n-1)}.
       \end{displaymath}
       Note that the convective fluxes carrying a \(l\) or \(h\) as exponent, already have been linearized and discretized. The discretization applied to the convective flux in the present work is using the midpoint integration rule and blends the upwind interpolation scheme with the linear interpolation scheme. Applied to above decomposition one can derive the following approximations
       \begin{align*}
-        F_{i,e}^{c,l} &= u_{i,E} \min(\dot{m}_e ,0) + u_{i,P} \max(0,\dot{m}_e) \\
-        F_{i,e}^{c,h} &= u_{i,E} \gamma_e + u_{i,P} (1 - \gamma_e),
+        F_{i,f}^{c,l} &= u_{i,F} \min(\dot{m}_f ,0) + u_{i,P} \max(0,\dot{m}_f) \\
+        F_{i,f}^{c,h} &= u_{i,F} \gamma_e + u_{i,P} (1 - \gamma_f),
       \end{align*}
-      where the variable values have to be taken from the previous iteration step \((n-1)\) as necessary and the mass flux \(\dot{m}_e\) has been used as result of the linearization process. The results can now be summarized by presenting the convective contribution to the matrix coefficients \(a_{E,u_i}\) and \(a_{P,u_i}\) and the right hand side \(b_{P,u_i}\) which are calculated as
+      where the variable values have to be taken from the previous iteration step \((n-1)\) as necessary and the mass flux \(\dot{m}_e\) has been used as result of the linearization process. The results can now be summarized by presenting the convective contribution to the matrix coefficients \(a_{F,u_i}\) and \(a_{P,u_i}\) and the right hand side \(b_{P,u_i}\) which are calculated as
       \begin{align}
-        a_{E,u_i}^c &= \min(\dot{m}_e ,0), \quad a_{P,u_i}^c = \max(0,\dot{m}_e) \\
-        b_{P,u_i}^c &= \quad \eta  \left(u_{i,E)}^{(n-1)} \left( \min(\dot{m}_e,0) - \gamma_e \right)\right) \\
-                    &\quad + \eta \left( u_{i,P}^{(n-1)} \left( \max(0,\dot{m}_e) - \left(1 - \gamma_e\right) \right)\right)
+        a_{F,u_i}^c &= \min(\dot{m}_f ,0), \quad a_{P,u_i}^c = \sum_{F \in NB(P)} \max(0,\dot{m}_f) \\
+        b_{P,u_i}^c &= \sum_{F \in NB(P)} \eta  \left(u_{i,F)}^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_e \right)\right) \nonumber \\
+                    &\quad \quad \quad  \quad+ \eta \left( u_{i,P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_e\right) \right)\right)
       \end{align}
 
       \subsubsection{Discretization of the Diffusive Term}
+
+      The diffusive term contains the first partial derivatives of the velocity as result of the material constitutive equation that characterizes the behaviour of Newtonian fluids. As pointed out in section \ref{sec:nonorth} directional derivatives can be discretized using central differences on orthogonal grids or in the more general case of non-orthogonal grids using central differences implicitly and a explicit deferred correction comprising the non-orthogonality of the grid. As seen in section \ref{sec:fundclosing} the diffusive term of the Navier-Stokes equations can be simplified using the mass balance in the case of an incompressible flow with constant viscosity \(\mu\). To sustain the generality of the presented approach this simplification will be omitted.
+
+      As before, by using the additivity and furthermore linearity of the Riemann integral, the integration of the diffusive term will be divided into integration over individual boundary faces \(S_f\) 
+      \begin{displaymath}
+      \iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S \mathrm{d}S
+      = \sum_{f \in \{w,s,b,t,n,e\}} \left[
+        \iint\limits_{S_f} \mu \underline{\frac{\partial u_i}{\partial x_j}n_j} \mathrm{d}S
+    + \iint\limits_{S_f} \mu \frac{\partial u_j}{\partial x_i}n_j \mathrm{d}S \right]
+       = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{d},
+      \end{displaymath}
+      where \(F_{i,f}^{d}\) denotes the diffusive flux through an individual boundary face. Section \ref{sec:nonorth} only covered the non-orthogonal corrector for directional derivatives. Since the velocity is a vector field and not a scalar field, the results of section \ref{sec:nonorth} may only be applied to the underlined term. The other term will be treated explicitly since it is considerably smaller than the underlined term and does not cause oscillations and thus will not derogate convergence.
+
+      Using central differences for the implicit discretization of the directional derivative and furthermore using the \textit{orthogonal correction} approach from \ref{seq:orthcorrapproach}
 
       \subsubsection{Discretization of the Source Term}
 
