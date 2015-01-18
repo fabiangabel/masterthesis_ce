@@ -1,27 +1,64 @@
-  \section{Finite Volume Method for Incompressible Flows -- Segregated Approach}
+\section{Implicit Finite Volume Method for Incompressible Flows -- Segregated Approach}
 
   The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). The applied discretization techniques depend on the different terms of each equation, thus at first every equation will be discretized individually. The finite volume method relies on the discretization of integral equations, which will be derived at the beginning of each subsection that relies on them. Since the system of partial differential equations to be solved always exhibits coupling at least between the dependent variables pressure and velocity a first solution algorithm, namely the \textit{SIMPLE} algorithm addressed to resolve the pressure velocity coupling is introduced. The efficient coupling of the Navier-Stokes equations to the temperature equation is one part of the present thesis and will be addressed in a separate subsection. Furthermore every problem modelled by partial differential equations needs to provide valid boundary conditions. The discretization of those boundary conditions, that are relevant for the present thesis will be presented in their own subsection.
 
-    \subsection{Discretization of the Mass Balance}
+  \subsection{Implicit Pressure Correction and the SIMPLE Algorithm}
+  
+  The goal of finite volume methods is to deduce a system of linear algebraic equations from a partial differential equation. In the case of the momentum balances the general structure of this linear equations is
+  \begin{equation}
+    \label{eq:linfinal}
+    a_{P,u_i} u_{i,P}^{(n)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} = b_{P,u_i}^{(n)} - \left(\frac{\delta p^{(n)}}{\delta x_i}\right)_P,
+  \end{equation}
+  where the pressure gradient has been discretized only symbolically and \(b_{P,u_i}\) denotes the source term. At this stage the equations are still coupled and non-linear. As described in section \ref{sec:nonlinear} the Picard iteration process will be used to linearize the equations. After this, every momentum balance equation will only depend on the one dominant variable \(u_i\), what furthermore accomplishes the decoupling of the momentum balances which was due to the convection term \((u_i u_j)\). The decoupled momentum balances will then be solved sequentially for the dominant variable. All coefficients \(a_{\{P,F\},u_i}\), the source term and the pressure gradient will be evaluated explicitly by using results of the preceding outer iteration \((n-1)\) until the non-linear equations are fulfilled up to a certain tolerance (\ref{sec:convergencecontrol}). This leads to the following linear equation 
+  \begin{equation}
+    \label{eq:lininter}
+    a_{P,u_i} u_{i,P}^{(n*)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n*)} = b_{P,u_i}^{(n-1)} - \left(\frac{\delta p^{(n-1)}}{\delta x_i}\right)_P.
+\end{equation}
+Here \((*)\) indicates that the solution of this equation still needs to be corrected to also fulfill the discretized mass balance
+  \begin{equation}
+    \label{eq:contisemi}
+    \frac{\delta \left(\rho u_i^{(n)}\right)}{\delta x_i} = 0.
+  \end{equation}
+Furthermore the lack of an equation with the pressure as dominant variable leads to the necessity to alter the mass balance as the only equation left. Methods of this type are called projection methods. A common class of algorithms of this family of methods uses an equation for the additive pressure correction \(p'\) instead of the pressure itself and enforces continuity by correcting the velocities with an additive corrector \(u_i'\):
+  \begin{displaymath}
+    u_{i,P}^{(n)} =  u_{i,P}^{(n*)}  + u_{i,P}', \quad   p_P^{(n)} =  p_P^{(n-1)}  + p_P'.
+  \end{displaymath}
+  It is now possible to formulate the discretized momentum balance for the corrected velocities and the corrected pressure as
+  \begin{equation}
+    \label{eq:lincorr}
+    a_{P,u_i} u_{i,P}^{(n)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} = b_{P,u_i}^{(n-1)} - \left(\frac{\delta p^{(n)}}{\delta x_i}\right)_P.
+  \end{equation}
+  It should be noted that the only difference between (\ref{eq:lincorr}) and (\ref{eq:linfinal}) is that the source term \(b_{P,u_i}\) has not been updated yet. To couple velocity and pressure correctors one can subtract equations (\ref{eq:linfinal}) and (\ref{eq:lininter}) and consider the linearity of the differential operator
+  \begin{equation}
+    \label{eq:velcorr}
+    u_{i,P}'  =  - \frac{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}{a_{P,u_i}} - \frac{1}{a_{P,u_i}}\left(\frac{\delta p'}{\delta x_i}\right)_P.
+  \end{equation}
+  Since the global purpose the presented method is to enforce continuity by implicitly calculating a pressure correction the velocity correction has to be expressed in terms of the pressure correction and inserted to to the discretized continuity equation (\ref{eq:contisemi}) as follows
+  \begin{equation}
+    \left[\frac{\delta \left(\rho u_i^{(n*)}\right)}{\delta x_i} \right]_{P}
+  - \frac{\delta}{\delta x_i} \left[ \frac{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}{a_{P,u_i}}\right]_{P}
+  - \frac{\delta}{\delta x_i} \left[\frac{1}{a_{P,u_i}}\left(\frac{\delta p'}{\delta x_i}\right)_P\right]_{P}
+  =
+  \frac{\delta \left(\rho u_i^{(n*)}\right)}{\delta x_i} + \frac{\delta \left(\rho u_i'\right)}{\delta x_i}
+  =
+  0.
+  \end{equation}
+  In order to separate the pressure correction \(p'\), the dominant variable from the velocities the semi discrete form of the pressure correction equation can be stated as
+  \begin{equation}
+    \label{eq:finalpresscorr}
+   \frac{\delta}{\delta x_i} \left[\frac{1}{a_{P,u_i}}\left(\frac{\delta p'}{\delta x_i}\right)_P\right]_{P}
+  =
+    \left[\frac{\delta \left(\rho u_i^{(n*)}\right)}{\delta x_i} \right]_{P}
+    - \underline{\frac{\delta}{\delta x_i} \left[ \frac{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}{a_{P,u_i}}\right]_{P}}.
+  \end{equation}
+  
+  The majority of the class of pressure correction algorithms has this equation as common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving the pressure equation, still unknown and will be calculated by means of equation (\ref{eq:velcorr}). The method used in the present work is the SIMPLE Algorithm (Semi Implicit Method for Pressure Linked Equations REFERENCE). The approximation this algorithm performs is very severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in (\ref{eq:finalpresscorr}). 
+  
+  The approximation performed in the SIMPLE algorithm affects convergence in a way that the pressure correction has to be under-relaxed with a parameter \(\alpha_p \in [0,1]\). The velocities have to be under-relaxed as well. However this leads to an undesirable property of the SIMPLE algorithm if the mass fluxes, to be introduced in the following subsection, are calculated as it is common practice by the Rhie-Chow interpolation. This interpolation method will produce results that depend on the under-relaxation factor of the velocity \(alpha_{\vec{u}}\). Since the present work aims at a detailed comparison to the results of different solver algorithms another interpolation technique will be presented, namely the pressure weighted interpolation method.
 
-    Integration of equation (\ref{eq:contidiff}) over the integration domain of a single control volume \(P\) yields after the application of Gauss' integration theorem and the additivity of the Riemann integral
-    \begin{displaymath}
-      \iint\limits_S  u_i n_i \mathrm{d}S = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f}  u_i n_{i} \mathrm{d}S = 0.
-    \end{displaymath}
-    In the present work the mass balance is discretized using the midpoint rule for the surface integrals and linear interpolation of the velocity to to center of mass of the surface. This leads to the following form of the mass balance: 
-    \begin{align*}
-      \sum_{f \in \{w,s,b,t,n,e\}} u_{i_f} n_{f_i} S_f 
-      &= u_{i_w} n_{w_i} S_w + u_{i_e} n_{e_i} S_e 
-       + u_{i_s} n_{s_i} S_s + u_{i_n} n_{n_i} S_n 
-       + u_{i_b} n_{b_i} S_b + u_{i_t} n_{t_i} S_t  \\
-      &= ( \gamma_w u_{i_W} + (1 - \gamma_w ) u_{i_P} ) n_{w_i} S_w + ( \gamma_s u_{i_S} + (1 - \gamma_s ) u_{i_P} ) n_{s_i} S_s \\
-      &\quad + ( \gamma_b u_{i_B} + (1 - \gamma_b ) u_{i_P} ) n_{b_i} S_b + ( \gamma_t u_{i_T} + (1 - \gamma_t ) u_{i_P} ) n_{t_i} S_t \\
-      &\quad + ( \gamma_n u_{i_N} + (1 - \gamma_n ) u_{i_P} ) n_{n_i} S_n + ( \gamma_e u_{i_E} + (1 - \gamma_e ) u_{i_P} ) n_{e_i} S_e \\
-      & =  0,
-    \end{align*}
-    where \( \gamma_f \) for \( f \in \{w,e,s,n,b,t\} \) is the geometrical interpolation factor.
+  \subsection{Calculation of Mass Fluxes and the Pressure Weighted Interpolation Method}
 
-    \subsection{Discretization of the Momentum Balance}
+  \subsection{Discretization of the Momentum Balance}
 
       The stationary momentum balance integrated over a single control volume \(P\) reads as
       \begin{equation}
@@ -32,8 +69,6 @@
         - \underbrace{\iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V}_{\text{sourceterm temperature}}
       \end{equation}
       where the different terms to be addressed individually in the following sections are indicated. Note that the form of this equation has been modified by using Gauss' integration theorem. The terms residing on the left will be treated in an implicit and due to deferred corrections in an explicit manner whereas the terms on the right will be treated exclusively in an  explicit manner.
-
-      \subsubsection{Calculation of Mass Flux -- Rhie-Chow Interpolation}
 
       \subsubsection{Linearization and Discretization of the Convective Term}
 
@@ -120,7 +155,33 @@
         = b_{P,u_i}^{sc}
       \end{equation}
 
-    \subsection{Assembly of Linear Systems -- Final Form of Equations with under-relaxation}
+  \subsection{Discretization of the Pressure Correction Equation}
+
+  \subsection{Discretization of the Temperature Equation}
+
+    The discretization of the temperature equation is performed by the same means as for the momentum balance. The only difference is a simpler diffusion term. The integral form of the temperature equation after applying the Gauss' theorem of integration is
+    \begin{displaymath}
+    \underbrace{ \iint\limits_S \rho u_j T n_j \mathrm{d}S }_{\text{advective term}}
+    - \underbrace{ \iint\limits_S \kappa \frac{\partial T}{\partial x_j} n_j \mathrm{d}V }_{\text{diffusive term}}
+    = \underbrace{\iiint\limits_V \vphantom{\frac{ T}{ x_j} } q_T \mathrm{d}V }_{\text{source term}}.
+    \end{displaymath}
+    Proceeding as in the previous subsections one can now discretize the advective, the diffusive term and the source term. Since this process does not provide further insight, just the final results will be presented. The discretization yields the matrix coefficients as
+    \begin{subequations}
+      \begin{align}
+        a_{F,T} &= \min(\dot{m}_f,0) + \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
+        a_{P,T} &= \sum_{F \in NB(P)}\max(0,\dot{m}_f) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
+        b_{P,T} &= \sum_{F \in NB(P)} \eta  \left(T_F^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right) \nonumber \\
+                &\quad \quad \quad  \quad+ \eta \left( T_{P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right) \nonumber \\[0.5em]
+                &\quad + \sum_{F \in NB(P)} \left( \frac{\partial T}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber \\[0.5em]
+                &\quad + q_{T_P} V_P.
+      \end{align}
+    \end{subequations}
+    Again it is possible though not always necessary, as in the case of the velocities, to under-relax the solution of the resulting linear system with a factor \(\alpha_T\). This can be accomplished as shown in the previous sections.
+
+
+  \subsection{Boundary Conditions}
+
+  \subsection{Structure of the Assembled Linear Systems}
 
     The objective of a finite volume method is to create a set of linear algebraic equations by discretizing partial differential equations. For the momentum balance all necessary components have been calculated. Taking all contributions together leads to the following linear algebraic equation for each control volume \(P\)
     \begin{displaymath}
@@ -149,63 +210,3 @@
     \end{displaymath}
     It must be noted that under-relaxation has not been accounted for in the derivation of the Rhie-Chow interpolation method (REFERENCE). As it has been shown the results depend on the choice of the under-relaxation factor. However under-relaxation is necessary for overall convergence, so in order to be able to compare the results of the different solver algorithms this dependency has to be eliminated. Subsection (REFERENCE) will present a common approach to resolve this dependency.
 
-    \subsection{Discretization of the Temperature Equation}
-
-    The discretization of the temperature equation is performed by the same means as for the momentum balance. The only difference is a simpler diffusion term. The integral form of the temperature equation after applying the Gauss' theorem of integration is
-    \begin{displaymath}
-    \underbrace{ \iint\limits_S \rho u_j T n_j \mathrm{d}S }_{\text{advective term}}
-    - \underbrace{ \iint\limits_S \kappa \frac{\partial T}{\partial x_j} n_j \mathrm{d}V }_{\text{diffusive term}}
-    = \underbrace{\iiint\limits_V \vphantom{\frac{ T}{ x_j} } q_T \mathrm{d}V }_{\text{source term}}.
-    \end{displaymath}
-    Proceeding as in the previous subsections one can now discretize the advective, the diffusive term and the source term. Since this process does not provide further insight, just the final results will be presented. The discretization yields the matrix coefficients as
-    \begin{subequations}
-      \begin{align}
-        a_{F,T} &= \min(\dot{m}_f,0) + \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
-        a_{P,T} &= \sum_{F \in NB(P)}\max(0,\dot{m}_f) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
-        b_{P,T} &= \sum_{F \in NB(P)} \eta  \left(T_F^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right) \nonumber \\
-                &\quad \quad \quad  \quad+ \eta \left( T_{P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right) \nonumber \\[0.5em]
-                &\quad + \sum_{F \in NB(P)} \left( \frac{\partial T}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber \\[0.5em]
-                &\quad + q_{T_P} V_P.
-      \end{align}
-    \end{subequations}
-    Again it is possible though not always necessary, as in the case of the velocities, to under-relax the solution of the resulting linear system with a factor \(\alpha_T\). This can be accomplished as shown in the previous sections.
-
-    \subsection{The SIMPLE-Algorithm}
-      
-      \subsubsection{Pressure Correction Equation}
-
-      \subsubsection{Characteristic Properties of Projection Methods}
-
-        Under-relaxation, slow convergence, inner iterations outer iterations, relative tolerances, also talk about staggered and collocated variable positioning
-
-      \subsubsection{Dependency on Under-Relaxation -- The Pressure-Weighted Interpolation Method}
-
-        Present an approach for Under-Relaxation independent converged solution. Conduct the proof to show it really works. Present the results for different under-relaxation factors
-
-      \subsubsection{Coupling of Temperature Equation}
-
-        Explicit coupling through source term in momentum balances (Boussinesq-Approximation)
-
-    \subsection{Boundary Conditions on Domain and Block Boundaries}
-
-        Introduce chapter by talking about the nature of partial differential equations (Hackbusch). Always start with a simple implementation for the generic transport equation, then specialize to Navier-Stokes equation.
-
-      \subsubsection{Dirichlet Boundary Condition}
-
-        Only talk about dirichlet for velocities not for pressure.
-
-      %\subsubsection{Neumann Boundary Condition}
-
-        Problematics of outlet boundary conditions
-
-      %\subsubsection{Symmetry Boundary Condition}
-
-      \subsubsection{Wall Boundary Condition}
-
-      Note that there are different approaches. Explain which approach is used and why (memory efficiency)
-
-      \subsubsection{Block Boundary Condition}
-
-      Relevant for block structured grids as for the validity of the domain composition.
-
-      
