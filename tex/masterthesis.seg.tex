@@ -54,7 +54,7 @@
   \end{subequations}
   where \(\gamma_f\) is a geometric interpolation factor. 
 
-  Using the assumptions made equation (\ref{eq:approxpwim}) the expression in equation (\ref{eq:virtualu}) can be closed in a way that it only depends on the variable values in node \(P\) and \(Q\).
+  Using the assumptions made equation (\ref{eq:approxpwim}) the expression in equation (\ref{eq:virtualu}) can be closed in a way that it only depends on the variable values in node \(P\) and \(Q\)
   \begin{align}
     u_{i,f}^{(n)} 
     &\approx 
@@ -71,14 +71,45 @@
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber\\[1em]
     &=
     \left[\left(1 - \gamma_f\right) u_{i,P}^{(n-1)} + \gamma_f u_{i,Q}^{(n-1)} \right] \nonumber\\[1em]
-    &\quad\quad - \frac{\alpha_{\vec{u}}}{a_{f,u_i}} 
+    &\quad\quad - 
     \left[ 
-      \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+    - \left(1 - \gamma_f \right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}}\left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+    - \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
+    \right] \nonumber \\[1em]
+    &\quad\quad + \left(1 - \alpha\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] \nonumber \\[1em]
+    &\approx
+    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n-1)} + \gamma_f u_{i,Q}^{(n-1)} \right] \nonumber\\[1em]
+    &\quad\quad - 
+    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+    \left[ 
+    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
     - \left(1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
     - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
     \right] \nonumber \\[1em]
-    &\quad\quad + \left(1 - \alpha\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right]
+    &\quad\quad + \left(1 - \alpha\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
   \end{align}
+  It should be noted that the argumentation that led to the last expression is that the task of the pressure gradient corrector is to supress oscillations. If there are no oscillations this part does not come into consideration. This is however true on equidistant grids, where \(\gamma_f = \frac{1}{2}\). On grids with variation in the spacing one final modification has to be performed based on the following proposition.
+
+  PROPOSITION WITH PROOF.
+
+  It is desirable for the pressure corrector to vanish if the profile of the pressure is quadratic. Using the following proposition this can be accomplished with modifying equation REFERENCE as
+  \begin{align}
+    u_{i,f}^{(n)} 
+    &=
+    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n-1)} + \gamma_f u_{i,Q}^{(n-1)} \right] \nonumber\\[1em]
+    &\quad\quad - 
+    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+    \left[ 
+    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+    - \frac{1}{2} \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+    - \frac{1}{2} \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
+    \right] \nonumber \\[1em]
+    &\quad\quad + \left(1 - \alpha\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
+  \end{align}
+
+  INTERPRET THE DIFFERENT TERMS OF THIS FINAL EQUATION
 
   \subsection{Implicit Pressure Correction and the SIMPLE Algorithm}
   \label{sec:simple}
