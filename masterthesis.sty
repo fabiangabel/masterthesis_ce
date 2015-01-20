@@ -1,4 +1,4 @@
-\usepackage[english]{babel} 
+\usepackage[ngerman,english]{babel} 
 
 \usepackage[utf8]{inputenc} %input and fontencoding
 \usepackage[T1]{fontenc}
@@ -21,6 +21,13 @@
 \usepackage{subfigure}
 \usepackage{graphicx}
 \usepackage{sidecap} % sometimes its desirable to have a caption appear on the side of a float, rather than above or below
+
+\usepackage{algorithm} %algorithms
+\usepackage{algpseudocode}
+\usepackage{algpascal}
+\algnewcommand\algorithmicto{\textbf{to}}
+\algrenewtext{For}[2]%
+{\algorithmicfor\ #1 \algorithmicto\ #2 \algorithmicdo}
 
 \usepackage{nomencl} %create nomenclature (Symbolverzeichnis)
 \makenomenclature

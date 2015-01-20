@@ -17,6 +17,9 @@
 
 \usepackage{masterthesis}
 
+%selective compilation of files
+\includeonly{./tex/masterthesis.fvm,./tex/masterthesis.seg}
+
 \begin{document}
 \thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
 %\title{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
@@ -27,10 +30,13 @@
 % \tuprints{12345}{1234}
   \makethesistitle
 % \maketitle
+  \selectlanguage{ngerman}
   \affidavit{F. Gabel}
+  \selectlanguage{english}
   \tableofcontents
   \listoffigures
   \listoftables
+  \listofalgorithms
 
 \include{./tex/masterthesis.nomenclature}
 

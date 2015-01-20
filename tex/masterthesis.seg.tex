@@ -1,15 +1,94 @@
 \section{Implicit Finite Volume Method for Incompressible Flows -- Segregated Approach}
 
-  The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). The applied discretization techniques depend on the different terms of each equation, thus at first every equation will be discretized individually. The finite volume method relies on the discretization of integral equations, which will be derived at the beginning of each subsection that relies on them. Since the system of partial differential equations to be solved always exhibits coupling at least between the dependent variables pressure and velocity a first solution algorithm, namely the \textit{SIMPLE} algorithm addressed to resolve the pressure velocity coupling is introduced. The efficient coupling of the Navier-Stokes equations to the temperature equation is one part of the present thesis and will be addressed in a separate subsection. Furthermore every problem modelled by partial differential equations needs to provide valid boundary conditions. The discretization of those boundary conditions, that are relevant for the present thesis will be presented in their own subsection.
+  The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling at least between the dependent variables pressure and velocity a first solution algorithm, namely the \emph{SIMPLE} algorithm addressed to resolve the pressure velocity coupling is introduced. Methods of calculating mass fluxes and the detailed derivation of all coefficients that result from the discretization process is presented. The discretization of those boundary conditions, that are relevant for the present thesis will be presented in their own subsection.
+
+  \subsection{Calculation of Mass Fluxes and the Pressure-Weighted Interpolation Method}
+
+  The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified and the conservation property of finite volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major drawback if SIMPLE-Type algorithms, to be introduced in section \ref{sec:simple}, are used is that pressure field may delink which will then lead to unphysical oscillations in both the pressure and the velocity results. This . If the oscillations are severe enough the solution algorithm might get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances and the mass fluxes in the continuity equation are discretized using central differences. A common practice to eliminate this behaviour is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. The original interpolation scheme however doesn't guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms that are used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. This issues will be addressed in this subsection which at the end will present an interpolation method that assures an under-relaxation independent solution, the \emph{pressure-weighted interpolation method} \cite{miller88}.
+
+  Starting point of the pressure-weighted interpolation method are the discretized momentum balances at node \(P\) and the neighbouring node \(Q\). The discretization for a finite volume methods and details including the incorporation of under-relaxation factors will be handled in subsection \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances read if one solves for the velocity at node \(P\) or \(Q\)
+  \begin{subequations}
+  \begin{align}
+    u_{i,P}^{(n)} 
+    &= 
+    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)}
+    +                                     b_{P,u_i}^{(n-1)} 
+    -                                     V_P\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_P \right)
+    + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}  \\[1em]
+    \text{and} \quad
+    u_{i,Q}^{(n)} 
+    &= 
+    - \frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}} \left(\sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)}
+    +                                     b_{Q,u_i}^{(n-1)} 
+    -                                     V_Q\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_Q   \right)
+    + \left(1 - \alpha_{\vec{u}}\right) u_{i,Q}^{(n-1)}
+  \end{align}
+  \end{subequations}
+  where the superscript \((n-1)\) denotes the previous outer iteration number. The reader should note, that the pressure gradient has not been discretized yet. This has the advantage that the selective interpolation technique \cite{schaefernumbe} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same manner a semi-discrete implicit momentum can be formulated for a virtual control volume located between nodes \(P\) and \(Q\) (PICTURE)
+  \begin{equation}
+    \label{eq:virtualu}
+    u_{i,f}^{(n)} 
+    = 
+    - \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}} \left(\sum_{F \in NB(f)} a_{F,u_i} u_{i,F}^{(n)} 
+    +                                     b_{f,u_i}^{(n-1)} 
+    -                                     V_f\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_f  \right)
+    + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} 
+  \end{equation}
+  
+  To eliminate the artifacts surging form the virtualization of a control volume the following assumptions have to be made to derive a closed expression for the velocity on the boundary face \(S_f\)
+  \begin{subequations}
+    \label{eq:approxpwim}
+  \begin{align}
+    \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}} \left(\sum_{F \in NB(f)} a_{F,u_i} u_{i,F}^{(n)} \right)
+    &\approx
+    \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} \right)
+    +
+    \gamma_f \frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}} \left(\sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)} \right) \\[1em]
+    \text{and}
+    \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}} 
+    &\approx
+    \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} 
+    +
+    \gamma_f \frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}},
+  \end{align}
+  \end{subequations}
+  where \(\gamma_f\) is a geometric interpolation factor. 
+
+  Using the assumptions made equation (\ref{eq:approxpwim}) the expression in equation (\ref{eq:virtualu}) can be closed in a way that it only depends on the variable values in node \(P\) and \(Q\).
+  \begin{align}
+    u_{i,f}^{(n)} 
+    &\approx 
+    \left(1-\gamma_f\right)  \left( -\frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} \right)
+    +\gamma_f  \left( -\frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}} \sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)}  \right) \nonumber \\[1em]
+    &\quad\quad+ \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}b_{f,u_i}^{(n-1)} 
+    - \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}V_f\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_f 
+    + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \\[1em]
+    &=
+    \left(1-\gamma_f\right) u_{i,P}^{(n)} - \left(1 - \gamma_f\right) \left(  b_{Q,u_i}^{(n-1)} - V_Q \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right) \nonumber \\[1em]
+    &\quad\quad+\gamma_f  u_{i,Q}^{(n)} - \gamma_f\left( b_{Q,u_i}^{(n-1)} - V_Q \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}  \right) \nonumber \\[1em]
+    &\quad\quad+ \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}b_{f,u_i}^{(n-1)} 
+    - \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}V_f\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_f 
+    + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber\\[1em]
+    &=
+    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n-1)} + \gamma_f u_{i,Q}^{(n-1)} \right] \nonumber\\[1em]
+    &\quad\quad - \frac{\alpha_{\vec{u}}}{a_{f,u_i}} 
+    \left[ 
+      \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+    - \left(1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+    - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
+    \right] \nonumber \\[1em]
+    &\quad\quad + \left(1 - \alpha\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right]
+  \end{align}
 
   \subsection{Implicit Pressure Correction and the SIMPLE Algorithm}
+  \label{sec:simple}
   
   The goal of finite volume methods is to deduce a system of linear algebraic equations from a partial differential equation. In the case of the momentum balances the general structure of this linear equations is
   \begin{equation}
     \label{eq:linfinal}
     a_{P,u_i} u_{i,P}^{(n)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} = b_{P,u_i}^{(n)} - \left(\frac{\delta p^{(n)}}{\delta x_i}\right)_P,
   \end{equation}
-  where the pressure gradient has been discretized only symbolically and \(b_{P,u_i}\) denotes the source term. At this stage the equations are still coupled and non-linear. As described in section \ref{sec:nonlinear} the Picard iteration process will be used to linearize the equations. After this, every momentum balance equation will only depend on the one dominant variable \(u_i\), what furthermore accomplishes the decoupling of the momentum balances which was due to the convection term \((u_i u_j)\). The decoupled momentum balances will then be solved sequentially for the dominant variable. All coefficients \(a_{\{P,F\},u_i}\), the source term and the pressure gradient will be evaluated explicitly by using results of the preceding outer iteration \((n-1)\) until the non-linear equations are fulfilled up to a certain tolerance (\ref{sec:convergencecontrol}). This leads to the following linear equation 
+  where the pressure gradient has been discretized only symbolically and \(b_{P,u_i}\) denotes the source term. The symbolic discretization of the pressure gradient not only includes the discretization of the differential operator but, in the case a finite volume method is used, also the approximation of the integral. At this stage the equations are still coupled and non-linear. As described in section \ref{sec:nonlinear} the Picard iteration process will be used to linearize the equations. After this, every momentum balance equation will only depend on the one dominant variable \(u_i\). Furthermore the coupling of the momentum balances through the convective term \((u_i u_j)\) is resolved in the process of linearization. The decoupled momentum balances will then be solved sequentially for the dominant variable. All coefficients \(a_{\{P,F\},u_i}\), the source term and the pressure gradient will be evaluated explicitly by using results of the preceding outer iteration \((n-1)\) until the non-linear equations are fulfilled up to a certain tolerance (\ref{sec:convergencecontrol}). This leads to the following linear equation 
   \begin{equation}
     \label{eq:lininter}
     a_{P,u_i} u_{i,P}^{(n*)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n*)} = b_{P,u_i}^{(n-1)} - \left(\frac{\delta p^{(n-1)}}{\delta x_i}\right)_P.
@@ -19,7 +98,8 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     \label{eq:contisemi}
     \frac{\delta \left(\rho u_i^{(n)}\right)}{\delta x_i} = 0.
   \end{equation}
-Furthermore the lack of an equation with the pressure as dominant variable leads to the necessity to alter the mass balance as the only equation left. Methods of this type are called projection methods. A common class of algorithms of this family of methods uses an equation for the additive pressure correction \(p'\) instead of the pressure itself and enforces continuity by correcting the velocities with an additive corrector \(u_i'\):
+
+The lack of an equation with the pressure as dominant variable leads to the necessity to alter the mass balance as the only equation left. Methods of this type are called projection methods. A common class of algorithms of this family of methods uses an equation for the additive pressure correction \(p'\) instead of the pressure itself and enforces continuity by correcting the velocities with an additive corrector \(u_i'\):
   \begin{displaymath}
     u_{i,P}^{(n)} =  u_{i,P}^{(n*)}  + u_{i,P}', \quad   p_P^{(n)} =  p_P^{(n-1)}  + p_P'.
   \end{displaymath}
@@ -28,12 +108,13 @@ Furthermore the lack of an equation with the pressure as dominant variable leads
     \label{eq:lincorr}
     a_{P,u_i} u_{i,P}^{(n)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} = b_{P,u_i}^{(n-1)} - \left(\frac{\delta p^{(n)}}{\delta x_i}\right)_P.
   \end{equation}
-  It should be noted that the only difference between (\ref{eq:lincorr}) and (\ref{eq:linfinal}) is that the source term \(b_{P,u_i}\) has not been updated yet. To couple velocity and pressure correctors one can subtract equations (\ref{eq:linfinal}) and (\ref{eq:lininter}) and consider the linearity of the differential operator
+  It should be noted that the only difference between (\ref{eq:lincorr}) and (\ref{eq:linfinal}) is that the source term \(b_{P,u_i}\) has not been updated yet. To couple velocity and pressure correctors one can subtract equations (\ref{eq:linfinal}) and (\ref{eq:lininter}) and consider the linearity of the discretization operator \(\frac{\delta}{\delta x_i}\)
   \begin{equation}
     \label{eq:velcorr}
-    u_{i,P}'  =  - \frac{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}{a_{P,u_i}} - \frac{1}{a_{P,u_i}}\left(\frac{\delta p'}{\delta x_i}\right)_P.
+    u_{i,P}'  =  - \underline{\frac{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}{a_{P,u_i}}} - \frac{1}{a_{P,u_i}}\left(\frac{\delta p'}{\delta x_i}\right)_P.
   \end{equation}
-  Since the global purpose the presented method is to enforce continuity by implicitly calculating a pressure correction the velocity correction has to be expressed in terms of the pressure correction and inserted to to the discretized continuity equation (\ref{eq:contisemi}) as follows
+
+  Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed in terms of the pressure correction and inserted into the discretized continuity equation (\ref{eq:contisemi}) as follows
   \begin{equation}
     \left[\frac{\delta \left(\rho u_i^{(n*)}\right)}{\delta x_i} \right]_{P}
   - \frac{\delta}{\delta x_i} \left[ \frac{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}{a_{P,u_i}}\right]_{P}
@@ -43,7 +124,7 @@ Furthermore the lack of an equation with the pressure as dominant variable leads
   =
   0.
   \end{equation}
-  In order to separate the pressure correction \(p'\), the dominant variable from the velocities the semi discrete form of the pressure correction equation can be stated as
+  In order to separate the pressure correction \(p'\), the dominant variable from the velocities the semi-discrete form of the pressure correction equation can be stated as
   \begin{equation}
     \label{eq:finalpresscorr}
    \frac{\delta}{\delta x_i} \left[\frac{1}{a_{P,u_i}}\left(\frac{\delta p'}{\delta x_i}\right)_P\right]_{P}
@@ -52,13 +133,40 @@ Furthermore the lack of an equation with the pressure as dominant variable leads
     - \underline{\frac{\delta}{\delta x_i} \left[ \frac{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}{a_{P,u_i}}\right]_{P}}.
   \end{equation}
   
-  The majority of the class of pressure correction algorithms has this equation as common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving the pressure equation, still unknown and will be calculated by means of equation (\ref{eq:velcorr}). The method used in the present work is the SIMPLE Algorithm (Semi Implicit Method for Pressure Linked Equations REFERENCE). The approximation this algorithm performs is very severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in (\ref{eq:finalpresscorr}). 
+  The majority of the class of pressure correction algorithms has this equation as common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving the pressure equation, still unknown and will be calculated by means of equation (\ref{eq:velcorr}), after a solution to (\ref{eq:finalpresscorr}) has been obtained. The method used in the present work is the SIMPLE Algorithm (Semi-Implicit Method for Pressure-Linked Equations REFERENCE). The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in (\ref{eq:finalpresscorr}) and accordingly in (\ref{eq:velcorr}) for the velocity correction.
   
-  The approximation performed in the SIMPLE algorithm affects convergence in a way that the pressure correction has to be under-relaxed with a parameter \(\alpha_p \in [0,1]\). The velocities have to be under-relaxed as well. However this leads to an undesirable property of the SIMPLE algorithm if the mass fluxes, to be introduced in the following subsection, are calculated as it is common practice by the Rhie-Chow interpolation. This interpolation method will produce results that depend on the under-relaxation factor of the velocity \(alpha_{\vec{u}}\). Since the present work aims at a detailed comparison to the results of different solver algorithms another interpolation technique will be presented, namely the pressure weighted interpolation method.
+  The approximation performed in the SIMPLE algorithm affects convergence in a way that the pressure correction has to be under-relaxed with a parameter \(\alpha_p \in [0,1]\)
+  \begin{equation}
+    p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} p_P'
+  \end{equation}
+  The velocities will be under-relaxed as well for stability reasons. This will change the discrete momentum balance to
+  \begin{displaymath}
+    \frac{a_{P,u_i}}{\alpha_{\vec{u}}} u_{i,P}^{(n)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} = b_{P,u_i}^{(n)} - \left(\frac{\delta p^{(n)}}{\delta x_i}\right)_P + \frac{(1 - \alpha_{\vec{u}}}{\alpha_{\vec{u}}} u_{i,P}^{(n-1)} ,
+  \end{displaymath}
+  A more detailed integration of the under-relaxation into the momentum balance will be found at the end of subsection (REFERENCE). The under-relaxation leads to an undesirable property of the SIMPLE algorithm, if the mass fluxes, to be introduced in subsection (REFERENCE), are calculated by the standard Rhie-Chow momentum interpolation scheme, which is the common practice. In this case the interpolation method will generate results that depend on the under-relaxation factor of the velocity \(alpha_{\vec{u}}\). Since the present work aims at a detailed comparison of the results of different solver algorithms an superior interpolation technique will be presented, namely the pressure weighted interpolation method.
 
-  \subsection{Calculation of Mass Fluxes and the Pressure Weighted Interpolation Method}
+  Generally the SIMPLE algorithm can be represented by the following iterative procedure as in Algorithm \ref{al:simple}.
+\alglanguage{pseudocode}
+\begin{algorithm}
+\label{al:simple}
+\caption{SIMPLE Algorithm}
+\begin{algorithmic}
+%\Procedure{B-TREE-DELETE}{$x,k$}
+  \State{Solve linearized momentum balances}
+\State $i=1$ \Comment{*}
+\While{$i \leq x.n$ and $k > x.key[i]$}                \Comment{localize key} \Comment{*}
+        \State $i=i+1$
+    \EndWhile
+    \If{$i \leq x.n$}                        \Comment{avoid array out of bounds} \Comment{*}
+        \If{$k == x.key[i]$}                                     \Comment{check if key is in node}
+            \State $inNode = true$
+        \EndIf
+    \EndIf
+\end{algorithmic}
+\end{algorithm}
 
   \subsection{Discretization of the Momentum Balance}
+  \label{sec:segdiscretization}
 
       The stationary momentum balance integrated over a single control volume \(P\) reads as
       \begin{equation}
@@ -115,7 +223,7 @@ Furthermore the lack of an equation with the pressure as dominant variable leads
         F_{i,f}^d \approx \mu \underline{\left(\frac{\partial u_i}{\partial x_j}\right)_f n_j S_f} + \mu \left(\frac{\partial u_j}{\partial x_i}\right)_f n_j S_f.
       \end{displaymath}
 
-      Using central differences for the implicit discretization of the directional derivative and furthermore using the \textit{orthogonal correction} approach from \ref{seq:orthcorrapproach} the approximation can be derived as
+      Using central differences for the implicit discretization of the directional derivative and furthermore using the \emph{orthogonal correction} approach from \ref{seq:orthcorrapproach} the approximation can be derived as
       \begin{align*}
         F_{i,f}^d 
         &\approx 
@@ -193,7 +301,7 @@ Furthermore the lack of an equation with the pressure as dominant variable leads
       a_{F,u_i} &= a_{F,u_i}^c - a_{F,u_i}^d \\
       b_{P,u_i} &= b_{P,u_i}^c - b_{P,u_i}^d + b_{P,u_i}^{sc}.
     \end{align}
-    In the case of control volumes located at boundaries some of the coefficients will be calculated in a different manner. This aspect will be addressed in a later section. For the decoupled iterative solution process of the Navier-Stokes equations it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by a \textit{under-relaxation} technique, a convex combination of the solution of the linear system present iteration \((n)\) and from the previous iteration \((n-1)\) with the under-relaxation parameter \(\alpha_{u_i}\). Generally speaking this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\). This has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right hand side. This helps to increase memory efficiency.
+    In the case of control volumes located at boundaries some of the coefficients will be calculated in a different manner. This aspect will be addressed in a later section. For the decoupled iterative solution process of the Navier-Stokes equations it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by a \emph{under-relaxation} technique, a convex combination of the solution of the linear system present iteration \((n)\) and from the previous iteration \((n-1)\) with the under-relaxation parameter \(\alpha_{u_i}\). Generally speaking this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\). This has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right hand side. This helps to increase memory efficiency.
 
     Let  the solution for the linear system without under-relaxation be denoted as
     \begin{displaymath}
@@ -206,7 +314,9 @@ Furthermore the lack of an equation with the pressure as dominant variable leads
     \end{align*}
     an expression that can be modified to derive a linear system whose solution is the under-relaxed velocity
     \begin{displaymath}
-      \frac{a_{P,u_i}}{\alpha_{\vec{u}}} u_{P_i} + \sum_{F \in NB(P)} a_F u_{F_i} = b_{P,u_i} + (1 - \alpha_{\vec{u}} )\, u_{P_i}^{(n-1)}. 
+      \frac{a_{P,u_i}}{\alpha_{\vec{u}}} u_{i,P} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F} 
+      = 
+      b_{P,u_i} + \frac{(1 - \alpha_{\vec{u}})\, a_{P,u_i}}{\alpha_{\vec{u}}}\, u_{i,P}^{(n-1)}. 
     \end{displaymath}
     It must be noted that under-relaxation has not been accounted for in the derivation of the Rhie-Chow interpolation method (REFERENCE). As it has been shown the results depend on the choice of the under-relaxation factor. However under-relaxation is necessary for overall convergence, so in order to be able to compare the results of the different solver algorithms this dependency has to be eliminated. Subsection (REFERENCE) will present a common approach to resolve this dependency.
 

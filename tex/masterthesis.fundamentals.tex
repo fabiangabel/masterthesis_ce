@@ -1,7 +1,7 @@
 
   \section{Fundamentals of Continuum Physics for Thermo-Hydrodynamical Problems}
 
-      This section covers the set of fundamental equations for thermo-hydrodynamical problems which the numerical solution techniques of the following chapters are aiming to solve. Furthermore the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on (Kundu, Spurk, Ferziger, Anderson). For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods the focus lays on stating the integral forms of the relevant conservation laws. However in the process of deriving the final set of equations the use of differential formulations of the stated laws are required. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i \) are used. This approach is also known as \textit{Eulerian approach}.  
+      This section covers the set of fundamental equations for thermo-hydrodynamical problems which the numerical solution techniques of the following chapters are aiming to solve. Furthermore the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on (Kundu, Spurk, Ferziger, Anderson). For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods the focus lays on stating the integral forms of the relevant conservation laws. However in the process of deriving the final set of equations the use of differential formulations of the stated laws are required. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i \) are used. This approach is also known as \emph{Eulerian approach}.  
 
     \subsection{Conservation of Mass -- Continuity Equation}
 
@@ -51,7 +51,7 @@
     \begin{displaymath}
       \tau_{ij} = -p \delta_{ij} + \sigma_{ij},
     \end{displaymath}
-    where \(p\) is the thermodynamic pressure, \(\delta_{ij}\) is the \textit{Kronecker}-Delta and \( \sigma_{ij} \) is the so called \textit{deviatoric stress tensor}. 
+    where \(p\) is the thermodynamic pressure, \(\delta_{ij}\) is the \emph{Kronecker}-Delta and \( \sigma_{ij} \) is the so called \emph{deviatoric stress tensor}. 
     
     For the fluids the studies that the present thesis performs it is sufficient to consider viscous fluids for which there exists a linear relation between the components of the deviatoric stress tensor and the symmetric part of the transpose of the jacobian of the velocity field \(\left( S_{ij} \right)_{i,j=1,\dots,3}\),
     \begin{displaymath}
@@ -62,7 +62,7 @@
     \begin{displaymath}
       \sigma_{ij} = 2 \mu S_{ij} + \lambda S_{mm} \delta_{ij},
     \end{displaymath}
-    where \(\lambda\) and \(\mu\) denominate scalars which depend on the local thermodynamical state. Taking everything into account (\ref{eq:cauchymotion}) can be formulated as the differential conservation law of momentum for newtonian fluids, better known as the \textit{Navier-Stokes equations} in differential form:
+    where \(\lambda\) and \(\mu\) denominate scalars which depend on the local thermodynamical state. Taking everything into account (\ref{eq:cauchymotion}) can be formulated as the differential conservation law of momentum for newtonian fluids, better known as the \emph{Navier-Stokes equations} in differential form:
     \begin{equation}
       \label{eq:nsfull}
       \frac{\partial \left(\rho u_i \right)}{\partial t} 
@@ -93,12 +93,12 @@
 
       \subsubsection{Incompressible Flows and Hydrostatic Pressure}
 
-      A common simplification when modelling low Mach number flows (\(Ma < 0.3\)), is the assumption of \textit{incompressibility}, or the assumption of an \textit{isochoric} flow. If one furthermore assumes homogeneous density \(\rho\) in space and time, a restrictive assumption that will be partially alleviated in the following section the continuity equation in differential form (\ref{eq:contifull}) can be simplified to
+      A common simplification when modelling low Mach number flows (\(Ma < 0.3\)), is the assumption of \emph{incompressibility}, or the assumption of an \emph{isochoric} flow. If one furthermore assumes homogeneous density \(\rho\) in space and time, a restrictive assumption that will be partially alleviated in the following section the continuity equation in differential form (\ref{eq:contifull}) can be simplified to
       \begin{equation}
         \label{eq:contiinc}
         \frac{\partial u_i}{\partial x_i} = 0.
       \end{equation}
-      In other words: In order for a velocity vector field \(\vec{u}\) to be valid for an incompressible flow it has to be free of divergence, or \textit{solenoidal} (Aries).
+      In other words: In order for a velocity vector field \(\vec{u}\) to be valid for an incompressible flow it has to be free of divergence, or \emph{solenoidal} (Aries).
 
       If furthermore, one assumes also constant dynamic viscosity \(\mu\), which can be suitable in the case of isothermal flow or if the temperature differences within the flow are small, the Navier-Stokes equations in differential form can be reduced to 
       \begin{subequations}
@@ -115,7 +115,7 @@
         + \mu \frac{\partial}{\partial x_j} \left( \frac{\partial u_i}{\partial x_j} \right)
       \end{align}
     \end{subequations}
-      by using \textit{Schwartz}'s lemma to interchange the order of differentiation. A common simplification to further simplify the set of equations is the assumption of a volume specific force \(\rho \vec{k}\) that can be modelled by a potential, such that is can be represented as the gradient of a scalar field \(\Phi_\vec{k}\) as
+      by using \emph{Schwartz}'s lemma to interchange the order of differentiation. A common simplification to further simplify the set of equations is the assumption of a volume specific force \(\rho \vec{k}\) that can be modelled by a potential, such that is can be represented as the gradient of a scalar field \(\Phi_\vec{k}\) as
       \begin{displaymath}
        - \rho k_i = \frac{\partial \Phi_\vec{k}}{\partial x_i}.
       \end{displaymath}
@@ -135,7 +135,7 @@
 
       \subsubsection{Variation of Fluid Properties -- The Boussinesq Approximation}
 
-      If modelling of an incompressible flow involves heat transfer fluid properties like the density change with varying temperature. If the variation of temperature is small one can still assume a constant density to maintain the structure of the advection and diffusion terms in (\ref{eq:nsfull}) and only consider the changes of the density in the gravitational term. If linear variation of density with respect to temperature is assumed this approximation is called \textit{Boussinesq}-approximation. In this case the Navier-Stokes equations are formulated using a reference pressure \(\rho_0\) at the reference temperature \(T_0\) and the now temperature dependent density \(\rho\), with
+      If modelling of an incompressible flow involves heat transfer fluid properties like the density change with varying temperature. If the variation of temperature is small one can still assume a constant density to maintain the structure of the advection and diffusion terms in (\ref{eq:nsfull}) and only consider the changes of the density in the gravitational term. If linear variation of density with respect to temperature is assumed this approximation is called \emph{Boussinesq}-approximation. In this case the Navier-Stokes equations are formulated using a reference pressure \(\rho_0\) at the reference temperature \(T_0\) and the now temperature dependent density \(\rho\), with
       \begin{equation}
         \rho \left( T \right) = \rho_0 \left( 1 - \beta \left( T - T_0 \right) \right).
       \end{equation}
