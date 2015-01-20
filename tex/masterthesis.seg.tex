@@ -3,6 +3,7 @@
   The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling at least between the dependent variables pressure and velocity a first solution algorithm, namely the \emph{SIMPLE} algorithm addressed to resolve the pressure velocity coupling is introduced. Methods of calculating mass fluxes and the detailed derivation of all coefficients that result from the discretization process is presented. The discretization of those boundary conditions, that are relevant for the present thesis will be presented in their own subsection.
 
   \subsection{Calculation of Mass Fluxes and the Pressure-Weighted Interpolation Method}
+  \label{sec:massflux}
 
   The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified and the conservation property of finite volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major drawback if SIMPLE-Type algorithms, to be introduced in section \ref{sec:simple}, are used is that pressure field may delink which will then lead to unphysical oscillations in both the pressure and the velocity results. This . If the oscillations are severe enough the solution algorithm might get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances and the mass fluxes in the continuity equation are discretized using central differences. A common practice to eliminate this behaviour is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. The original interpolation scheme however doesn't guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms that are used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. This issues will be addressed in this subsection which at the end will present an interpolation method that assures an under-relaxation independent solution, the \emph{pressure-weighted interpolation method} \cite{miller88}.
 
@@ -13,29 +14,28 @@
     &= 
     - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)}
     +                                     b_{P,u_i}^{(n-1)} 
-    -                                     V_P\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_P \right)
+    -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}  \\[1em]
     \text{and} \quad
     u_{i,Q}^{(n)} 
     &= 
     - \frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}} \left(\sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)}
     +                                     b_{Q,u_i}^{(n-1)} 
-    -                                     V_Q\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_Q   \right)
+    -                                     V_Q\left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}   \right)
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,Q}^{(n-1)}
   \end{align}
   \end{subequations}
-  where the superscript \((n-1)\) denotes the previous outer iteration number. The reader should note, that the pressure gradient has not been discretized yet. This has the advantage that the selective interpolation technique \cite{schaefernumbe} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same manner a semi-discrete implicit momentum can be formulated for a virtual control volume located between nodes \(P\) and \(Q\) (PICTURE)
+  where the superscript \((n-1)\) denotes the previous outer iteration number. The reader should note, that the pressure gradient has not been discretized yet. This has the advantage that the selective interpolation technique \cite{schaefer99} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same manner a semi-discrete implicit momentum can be formulated for a virtual control volume located between nodes \(P\) and \(Q\) (PICTURE)
   \begin{equation}
     \label{eq:virtualu}
     u_{i,f}^{(n)} 
     = 
     - \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}} \left(\sum_{F \in NB(f)} a_{F,u_i} u_{i,F}^{(n)} 
     +                                     b_{f,u_i}^{(n-1)} 
-    -                                     V_f\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_f  \right)
-    + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} 
+    -                                     V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)}  \right)
+    + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)}.
   \end{equation}
-  
-  To eliminate the artifacts surging form the virtualization of a control volume the following assumptions have to be made to derive a closed expression for the velocity on the boundary face \(S_f\)
+  To guarantee convergence of this expression of \(u_{i,f}\) under-relaxation is necessary \cite{majumdar88}. To eliminate the undefined artifacts surging form the virtualization of a control volume the following assumptions have to be made to derive a closed expression for the velocity on the boundary face \(S_f\)
   \begin{subequations}
     \label{eq:approxpwim}
   \begin{align}
@@ -44,7 +44,7 @@
     \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} \right)
     +
     \gamma_f \frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}} \left(\sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)} \right) \\[1em]
-    \text{and}
+    \text{and} \quad
     \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}} 
     &\approx
     \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} 
@@ -54,14 +54,15 @@
   \end{subequations}
   where \(\gamma_f\) is a geometric interpolation factor. 
 
-  Using the assumptions made equation (\ref{eq:approxpwim}) the expression in equation (\ref{eq:virtualu}) can be closed in a way that it only depends on the variable values in node \(P\) and \(Q\)
+  Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in equation (\ref{eq:virtualu}) can be closed in a way that it only depends on the variable values in node \(P\) and \(Q\)
   \begin{align}
+    \label{eq:closepwim}
     u_{i,f}^{(n)} 
     &\approx 
-    \left(1-\gamma_f\right)  \left( -\frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} \right)
-    +\gamma_f  \left( -\frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}} \sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)}  \right) \nonumber \\[1em]
-    &\quad\quad+ \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}b_{f,u_i}^{(n-1)} 
-    - \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}V_f\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_f 
+    \left(1-\gamma_f\right)  \left( -\frac{\alpha_\vec{u}}{a_{P,u_i}} \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} \right)
+    +\gamma_f  \left( -\frac{\alpha_\vec{u}}{a_{Q,u_i}} \sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)}  \right) \nonumber \\[1em]
+    &\quad\quad+ \frac{\alpha_\vec{u}}{a_{f,u_i}}b_{f,u_i}^{(n-1)} 
+    - \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \\[1em]
     &=
     \left(1-\gamma_f\right) u_{i,P}^{(n)} - \left(1 - \gamma_f\right) \left(  b_{Q,u_i}^{(n-1)} - V_Q \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right) \nonumber \\[1em]
@@ -88,13 +89,36 @@
     - \left(1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
     - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
     \right] \nonumber \\[1em]
-    &\quad\quad + \left(1 - \alpha\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
+    &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
   \end{align}
-  It should be noted that the argumentation that led to the last expression is that the task of the pressure gradient corrector is to supress oscillations. If there are no oscillations this part does not come into consideration. This is however true on equidistant grids, where \(\gamma_f = \frac{1}{2}\). On grids with variation in the spacing one final modification has to be performed based on the following proposition.
+  It should be noted that the argumentation that led to the last expression is that the task of the pressure gradient corrector is to suppress oscillations. 
+  
+  If there are no oscillations this part does not come into consideration. This is however true on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary orthogonal grids another modification has to be performed which is based on the special case of the mean value theorem of differential calculus and the following 
+\begin{prop}
+  Let \(x_1,x_2 \in \mathbb{R}\) with \(x_1 \neq x_2\) and \(p(x) = a_0 + a_1 x + a_2 x^2\) a real polynomial function. Then 
+  \begin{displaymath}
+    \frac{dp}{dx}\left(\frac{x_1+x_2}{2}\right) = \frac{p(x_2) - p(x_1)}{x_2 - x_1},
+  \end{displaymath}
+  i.e. the slope of the secant equals the value of the first derivative of \(p\) exactly half the way between \(x_1\) and \(x_2\).
+\end{prop}
 
-  PROPOSITION WITH PROOF.
-
-  It is desirable for the pressure corrector to vanish if the profile of the pressure is quadratic. Using the following proposition this can be accomplished with modifying equation REFERENCE as
+\begin{proof}
+  Evaluation of the derivative yields
+  \begin{displaymath}
+      \frac{dp}{dx}\left(\frac{x_1+x_2}{2}\right) = a_1 + 2 a_2 \frac{x_1 + x_2}{2} = a_1 + a_2(x_1 + x_2).
+  \end{displaymath}
+  On the other hand the slope of the secant, using the third binomial rule can be expressed as
+  \begin{displaymath}
+    \begin{array}{ll}
+    \frac{p(x_2) - p(x_1)}{x_2 - x_1} 
+  &= \frac{a_0 + a_1 x_2 + a_2 x_2^2 - \left(a_0 + a_1 x_1 + a_2 x_1 ^2\right)}{x_2 - x_1} \\[1.0em]
+    \quad &= \frac{a_1 (x_2 - x_1) + a_2 \left(x_2^2 - x_1^2\right)}{x_2 - x_1} \\[1.0em]
+    \quad &= a_1 + a_2 (x_2 + x_1).
+  \end{array}
+  \end{displaymath}
+  The comparison of both expressions completes the proof.
+\end{proof}
+  It is desirable for the pressure corrector to vanish independent of the grid spacing if the profile of the pressure is quadratic and hence does not exhibit oscillations. According to the preceding proposition this can be accomplished by modifying equation (\ref{eq:closepwim}) to average the pressure gradients from node \(P\) and \(Q\) instead of interpolating linearly
   \begin{align}
     u_{i,f}^{(n)} 
     &=
@@ -103,13 +127,14 @@
     \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
     \left[ 
     \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    - \frac{1}{2} \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-    - \frac{1}{2} \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
+    - \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+    + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right)
     \right] \nonumber \\[1em]
-    &\quad\quad + \left(1 - \alpha\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
+    &\quad\quad + \underline{\left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right]}.
   \end{align}
+  Comparing this final expression with the standard interpolation scheme it is evident that the underlined term is not taken into consideration \cite{ferziger02} normally. However section \ref{sec:independence} shows that neglecting this term creates under-relaxation factor dependent results.
 
-  INTERPRET THE DIFFERENT TERMS OF THIS FINAL EQUATION
+  PROOF THAT THIS GUARANTEES INDEPENDENT RESULTS MATHEMATICALLY
 
   \subsection{Implicit Pressure Correction and the SIMPLE Algorithm}
   \label{sec:simple}
@@ -117,35 +142,104 @@
   The goal of finite volume methods is to deduce a system of linear algebraic equations from a partial differential equation. In the case of the momentum balances the general structure of this linear equations is
   \begin{equation}
     \label{eq:linfinal}
-    a_{P,u_i} u_{i,P}^{(n)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} = b_{P,u_i}^{(n)} - \left(\frac{\delta p^{(n)}}{\delta x_i}\right)_P,
+    u_{i,P}^{(n)} 
+    = 
+    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)}
+    +                                     b_{P,u_i}^{(n-1)} 
+    -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
+    + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}  
   \end{equation}
-  where the pressure gradient has been discretized only symbolically and \(b_{P,u_i}\) denotes the source term. The symbolic discretization of the pressure gradient not only includes the discretization of the differential operator but, in the case a finite volume method is used, also the approximation of the integral. At this stage the equations are still coupled and non-linear. As described in section \ref{sec:nonlinear} the Picard iteration process will be used to linearize the equations. After this, every momentum balance equation will only depend on the one dominant variable \(u_i\). Furthermore the coupling of the momentum balances through the convective term \((u_i u_j)\) is resolved in the process of linearization. The decoupled momentum balances will then be solved sequentially for the dominant variable. All coefficients \(a_{\{P,F\},u_i}\), the source term and the pressure gradient will be evaluated explicitly by using results of the preceding outer iteration \((n-1)\) until the non-linear equations are fulfilled up to a certain tolerance (\ref{sec:convergencecontrol}). This leads to the following linear equation 
+  where the pressure gradient has been discretized only symbolically and \(b_{P,u_i}\) denotes the source term. At this stage the equations are still coupled and non-linear. As described in section \ref{sec:nonlinear} the Picard iteration process has been used to linearize the equations. Every momentum balance equation only depends on the one dominant variable \(u_i\). Furthermore the coupling of the momentum balances through the convective term \((u_i u_j)\) has been resolved in the process of linearization. The decoupled momentum balances can then be solved sequentially for the dominant variable \(u_i\). All coefficients \(a_{\{P,F\},u_i}\), the source term and the pressure gradient will be evaluated explicitly by using results of the preceding outer iteration \((n-1)\) until the non-linear equations are fulfilled up to a certain tolerance (\ref{sec:convergence}). This leads to the following linear equation 
   \begin{equation}
-    \label{eq:lininter}
-    a_{P,u_i} u_{i,P}^{(n*)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n*)} = b_{P,u_i}^{(n-1)} - \left(\frac{\delta p^{(n-1)}}{\delta x_i}\right)_P.
+    \label{eq:nodeinter}
+    u_{i,P}^{(n*)} 
+    = 
+    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n*)}
+    +                                     b_{P,u_i}^{(n-1)} 
+    -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
+    + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}  
 \end{equation}
 Here \((*)\) indicates that the solution of this equation still needs to be corrected to also fulfill the discretized mass balance
   \begin{equation}
     \label{eq:contisemi}
-    \frac{\delta \left(\rho u_i^{(n)}\right)}{\delta x_i} = 0.
+    \frac{\delta \left(\rho u_i^{(n)}\right)}{\delta x_i} = 0. \quad\text{REVISION NECESSARY}
   \end{equation}
 
-The lack of an equation with the pressure as dominant variable leads to the necessity to alter the mass balance as the only equation left. Methods of this type are called projection methods. A common class of algorithms of this family of methods uses an equation for the additive pressure correction \(p'\) instead of the pressure itself and enforces continuity by correcting the velocities with an additive corrector \(u_i'\):
+  Applying the same procedure as in section \ref{sec:massflux} to equation (\ref{eq:lininter}) results in the following expression for the face velocities after solving the discretized momentum balances
+  \begin{align}
+    \label{eq:faceinter}
+    u_{i,f}^{(n)} 
+    &=
+    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n*)} + \gamma_f u_{i,Q}^{(n*)} \right] \nonumber\\[1em]
+    &\quad\quad - 
+    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+    \left[ 
+    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+    - \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+    + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right)
+    \right] \nonumber \\[1em]
+    &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
+  \end{align}
+
+  The lack of an equation with the pressure as dominant variable leads to the necessity to alter the mass balance as the only equation left. Methods of this type are called projection methods. A common class of algorithms of this family of methods uses an equation for the additive pressure correction \(p'\) instead of the pressure itself and enforces continuity by correcting the velocities with an additive corrector \(u_i'\) as in
   \begin{displaymath}
-    u_{i,P}^{(n)} =  u_{i,P}^{(n*)}  + u_{i,P}', \quad   p_P^{(n)} =  p_P^{(n-1)}  + p_P'.
+    u_{i,P}^{(n)} =  u_{i,P}^{(n*)}  + u_{i,P}',\quad u_{i,f}^{(n)} =  u_{i,f}^{(n*)}  + u_{i,f}' \quad \text{and} \quad   p_P^{(n)} =  p_P^{(n-1)}  + p_P'.
   \end{displaymath}
   It is now possible to formulate the discretized momentum balance for the corrected velocities and the corrected pressure as
   \begin{equation}
-    \label{eq:lincorr}
-    a_{P,u_i} u_{i,P}^{(n)} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} = b_{P,u_i}^{(n-1)} - \left(\frac{\delta p^{(n)}}{\delta x_i}\right)_P.
+    \label{eq:nodecorr}
+    u_{i,P}^{(n)} 
+    = 
+    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)}
+    +                                     b_{P,u_i}^{(n-1)} 
+    -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n)} \right)
+    + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}  .
   \end{equation}
-  It should be noted that the only difference between (\ref{eq:lincorr}) and (\ref{eq:linfinal}) is that the source term \(b_{P,u_i}\) has not been updated yet. To couple velocity and pressure correctors one can subtract equations (\ref{eq:linfinal}) and (\ref{eq:lininter}) and consider the linearity of the discretization operator \(\frac{\delta}{\delta x_i}\)
-  \begin{equation}
-    \label{eq:velcorr}
-    u_{i,P}'  =  - \underline{\frac{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}{a_{P,u_i}}} - \frac{1}{a_{P,u_i}}\left(\frac{\delta p'}{\delta x_i}\right)_P.
-  \end{equation}
-
-  Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed in terms of the pressure correction and inserted into the discretized continuity equation (\ref{eq:contisemi}) as follows
+  It should be noted that the only difference to the equation that will be solved in the next outer iteration is that the source term \(b_{P,u_i}\) has not been updated yet. The same applies to the equation for the face velocity \(u_{i,f}\)
+  \begin{align}
+    \label{eq:facecorr}
+    u_{i,f}^{(n)} 
+    &=
+    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
+    &\quad\quad - 
+    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+    \left[ 
+    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)} 
+    - \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P^{(n)} 
+    + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n)} \right)
+    \right] \nonumber \\[1em]
+    &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
+  \end{align}
+  To couple velocity and pressure correctors one can subtract equations (\ref{eq:nodeinter}) from (\ref{eq:nodecorr}), (\ref{eq:faceinter}) from (\ref{eq:facecorr}) to get
+  \begin{align}
+    \label{eq:nodeprime}
+    u_{i,P}' 
+    &=  
+    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\underline{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}
+    - V_P\left(\frac{\partial p'}{\partial x_i}\right)_P^{(n)} \right) \\[1em]
+    \label{eq:faceprime}
+    u_{i,f}' 
+    &= 
+    \left[\left(1 - \gamma_f\right) u_{i,P}' + \gamma_f u_{i,Q}' \right] 
+    - 
+    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+    \left[ 
+    \left(\frac{\partial p}{\partial x_i}\right)_f' 
+    - \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P' 
+    + \left(\frac{\partial p}{\partial x_i}\right)_Q' \right)
+    \right],
+  \end{align}
+  The majority of the class of pressure correction algorithms has this equations as a common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving the pressure equation, still unknown. The method used in the present work is the SIMPLE Algorithm (Semi-Implicit Method for Pressure-Linked Equations \cite{spalding}). The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation \ref{eq:nodeprime} accordingly. Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by substituting equation (\ref{eq:nodeprime}) in to equation (\ref{eq:faceprime}). This gives
+  \begin{align}
+    u_{i,f}' 
+    &= 
+    - 
+    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+    \left[ 
+    \left(\frac{\partial p}{\partial x_i}\right)_f' 
+    \right]  
+  \end{align}
+  which is then inserted into the discretized continuity equation (\ref{eq:contisemi}) to obtain
   \begin{equation}
     \left[\frac{\delta \left(\rho u_i^{(n*)}\right)}{\delta x_i} \right]_{P}
   - \frac{\delta}{\delta x_i} \left[ \frac{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}{a_{P,u_i}}\right]_{P}

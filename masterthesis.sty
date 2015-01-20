@@ -3,11 +3,27 @@
 \usepackage[utf8]{inputenc} %input and fontencoding
 \usepackage[T1]{fontenc}
 
+
 \usepackage[intoc,noprefix]{nomencl} %for printing a list of symbols
 
-\usepackage{amsmath,amsthm} %math environments
+\usepackage{amsmath,amsthm} %math environments; no errors with TUDesign
+%\usepackage{amsmath,amsthm,amssymb} %math environments
+
+% literaturverwaltung
+%\usepackage[backend=biber,
+%            hyperref=true,
+%            style=numeric,
+%            maxcitenames=3,
+%            maxbibnames=100,
+%            block=none,
+%            backref=true]{biblatex}
+%\addbibresource{./bib/masterthesis.articles.bib}
+%\addbibresource{./bib/masterthesis.books.bib}
 
 \usepackage{cite} %use bibtex
+\bibliographystyle{acm}
+
+%hyperlinks and urls
 \usepackage{hyperref} %use hyperlinks in document
 \usepackage{url} %display urls as such
 
@@ -38,3 +54,8 @@
 %commands
 \renewcommand{\vec}[1]{\mathbf{#1}}
 \newcommand{\vecg}[1]{\boldsymbol{#1}}
+
+%proof environment
+\everymath=\expandafter{\the\everymath\displaystyle}
+\theoremstyle{plain}
+\newtheorem*{prop}{Proposition}

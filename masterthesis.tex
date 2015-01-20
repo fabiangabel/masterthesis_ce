@@ -18,7 +18,7 @@
 \usepackage{masterthesis}
 
 %selective compilation of files
-%\includeonly{./tex/masterthesis.fvm,./tex/masterthesis.seg}
+\includeonly{./tex/masterthesis.seg}
 
 \begin{document}
 \thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
@@ -61,6 +61,9 @@
 
 \clearpage
 \addcontentsline{toc}{section}{References}
-\bibliography{bib/masterthesis.articles}{}
-\bibliographystyle{acm}
+\bibliography{bib/masterthesis.articles,bib/masterthesis.books}
+%if using biblatex
+%\printbibliography[title={Book references},type=book]
+%\printbibliography[title={Article references},type=article]
+%\printbibliography[title={Other references}, nottype=article, nottype=book]
 \end{document}
