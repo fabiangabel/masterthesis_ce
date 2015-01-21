@@ -17,9 +17,11 @@ where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is pe
   \subsection{A Pressure-Weighted Interpolation Method for Velocities}
   \label{sec:massflux}
 
-  The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified and the conservation property of finite volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major drawback with cell centered variable arrangements is that pressure field may delink, which will then lead to unphysical oscillations in both the pressure and the velocity results. If the oscillations are severe enough the solution algorithm might even get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances and the mass fluxes in the continuity equation are discretized using central differences. A common practice to eliminate this behaviour is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. The original interpolation scheme however doesn't guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms that are used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. This issues will be addressed in this subsection which at the end will present an interpolation method that assures an under-relaxation independent solution, the \emph{pressure-weighted interpolation method} \cite{miller88}.
+  The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified and the conservation property of finite volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major drawback with cell centered variable arrangements is that pressure field may delink, which will then lead to unphysical oscillations in both the pressure and the velocity results. If the oscillations are severe enough the solution algorithm might even get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances and the mass fluxes in the continuity equation are discretized using central differences. 
+  
+  A common practice to eliminate this behaviour is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. The original interpolation scheme however doesn't guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms that are used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. This issues will be addressed in this subsection which at the end will present an interpolation method that assures an under-relaxation independent solution, the \emph{pressure-weighted interpolation method} \cite{miller88}.
 
-  Starting point of the pressure-weighted interpolation method are the discretized momentum balances at node \(P\) and the arbitrary neighbouring node \(Q\). The discretization for finite volume methods and details including the incorporation of under-relaxation factors will be handled in subsection \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), reads
+  The starting point of the pressure-weighted interpolation method is formed by the discretized momentum balances at node \(P\) and an arbitrary neighbouring node \(Q\). The discretization for finite volume methods and details including the incorporation of under-relaxation factors will be handled in subsection \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), read
   \begin{subequations}
   \begin{align}
     u_{i,P}^{(n)} 
@@ -47,7 +49,7 @@ where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is pe
     -                                     V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)}  \right)
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)}.
   \end{equation}
-  To guarantee convergence of this expression of \(u_{i,f}\), under-relaxation is necessary \cite{majumdar88}. To eliminate the undefined artifacts surging form the virtualization of a control volume the following assumptions have to be made to derive a closed expression for the velocity on the boundary face \(S_f\)
+  To guarantee convergence of this expression for \(u_{i,f}\), under-relaxation is necessary \cite{majumdar88}. To eliminate the undefined artifacts surging form the virtualization of a control volume the following assumptions have to be made to derive a closed expression for the velocity on the boundary face \(S_f\)
   \begin{subequations}
     \label{eq:approxpwim}
   \begin{align}
@@ -103,7 +105,7 @@ where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is pe
     \right] \nonumber \\[1em]
     &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
   \end{align}
-  It should be noted that the argumentation that led to the last expression is that the task of the underlined pressure gradient corrector in equation (\ref{eq:closepwim}) is to suppress oscillations in the pressure field. If there are no oscillations this part should not become active. As long as the behaviour of this corrector remains consistent it can be multiplied with arbitrary constants \cite{ferziger02}. This is however true on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary orthogonal grids another modification has to be performed which is based on a special case of the mean value theorem of differential calculus and the following 
+  It should be noted that the argumentation that led to the last expression, is that the task of the underlined pressure gradient corrector in equation (\ref{eq:closepwim}) is to suppress oscillations in the pressure field. If there are no oscillations this part should not become active. As long as the behaviour of this corrector remains consistent, i.e. that there are no oscillations in the pressure field, it can be multiplied with arbitrary constants \cite{ferziger02}. This is however true on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary orthogonal grids another modification has to be performed which is based on a special case of the mean value theorem of differential calculus and the following 
 \begin{prop}
   Let \(x_1,x_2 \in \mathbb{R}\) with \(x_1 \neq x_2\) and \(p(x) = a_0 + a_1 x + a_2 x^2\) a real polynomial function. Then 
   \begin{displaymath}
@@ -160,7 +162,7 @@ where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is pe
     \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
     - \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
     + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right)
-    \right] \nonumber
+    \right]. \nonumber
   \end{align*}
   Upon convergence \(u_{i,P}^{(n)} = u_{i,P}^{(n-1)}\) and \(u_{i,f}^{(n)} = u_{i,f}^{(n-1)}\). This leads to
   \begin{align*}
@@ -172,8 +174,8 @@ where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is pe
     \left[ 
     \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
     - \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-    + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right),
-    \right] \nonumber
+    + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right)
+    \right], \nonumber
   \end{align*}
   which shows, after division by \(\alpha_\vec{u} > 0\), that \(u_{i,f}\) is independent of the under-relaxation factor.
   \end{proof}
@@ -388,25 +390,25 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
         \underbrace{\iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S}_{\text{convective term}}
         - \underbrace{\iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S}_{\text{diffusive term}}
         = - \underbrace{\iiint\limits_V \frac{\partial p}{\partial x_i} \mathrm{d}V}_{\text{sourceterm pressure}}
-        - \underbrace{\iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V}_{\text{sourceterm temperature}}
+        - \underbrace{\iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V}_{\text{sourceterm temperature}},
       \end{equation}
-      where the different terms to be addressed individually in the following sections are indicated. Note that the form of this equation has been modified by using Gauss' integration theorem. The terms residing on the left will be treated in an implicit and due to deferred corrections in an explicit manner whereas the terms on the right will be treated exclusively in an  explicit manner.
+      where the different terms to be addressed individually in the following sections are indicated. The reader should note that the form of this equation has been modified by using Gauss' integration theorem. The terms residing on the left will be treated in an implicit and due to deferred corrections in an explicit manner whereas the terms on the right will be treated exclusively in an  explicit manner.
 
       \subsubsection{Linearization and Discretization of the Convective Term}
 
-      The convective term \(\rho u_i u_j\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (\ref{sec:nonlinear}), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent on the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). However this linearization will not be directly visible because it will be covered by the mass flux \(\dot{m}_f = \iint\limits_{S_f} \rho u_j^{(n-1)} n_j \mathrm{d}S \). Using the additivity of the Riemann integral the first step is to decompose the surface integral into individual contributions from each boundary face of the control volume \(P\)
+      The convective term \(\left( \rho u_i u_j \right)\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (\ref{sec:nonlinear}), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent on the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). However this linearization will not be directly visible because it will be covered by the mass flux \(\dot{m}_f = \iint\limits_{S_f} \rho u_j^{(n-1)} n_j \mathrm{d}S \). Using the additivity of the Riemann integral the first step is to decompose the surface integral into individual contributions from each boundary face of the control volume \(P\)
       \begin{displaymath}
       \iint\limits_S \rho u_i u_jn_j \mathrm{d}S
       = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f}\rho u_{i} u_{j} n_{j} \mathrm{d}S
-      = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{c}
+      = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{c},
       \end{displaymath}
-      where \(F_{i,f}^c := \iint\limits_{S_f} \rho u_{i}^{(n)} u_{j}^{(n-1)} n_{j} \mathrm{d}S \) is the convective flux of the velocity \(u_i\) through the face \(S_f\). 
+      where \(F_{i,f}^c := \iint\limits_{S_f} \rho u_{i}^{(n)} u_{j}^{(n-1)} n_{j} \mathrm{d}S \) is the convective flux of the velocity \(u_i\) through the boundary face \(S_f\). 
       
-      To improve diagonal dominance of the resulting linear system while maintaining the smaller discretization error of a higher order discretization, a blended discretization scheme is applied using a deferred correction. Since due to the non-linearity of the equations to be solved an iterative solution process is needed by all means, the overall convergence doesn't degrade noticeably when using a deferred correction. Blending and deferred correction result in a decomposition of the convective flux into a lower order approximation that is treated implicitly and the explicit difference between the higher and lower order approximation for the same convective flux. Since for coarse grid resolutions the use of higher order approximations may lead to oscillations of the solution which may degrade or even impede convergence, the schemes can be blended by a control factor \( \eta \in [0,1]\). To show the generality of this approach all further derivations are presented for the generic boundary face \(S_f\) that separates control volume \(P\) from its neighbour \(F \in NB(P)\). This decomposition then leads to
+      To improve diagonal dominance of the resulting linear system while maintaining the smaller discretization error of a higher order discretization, a blended discretization scheme is applied and combined with a deferred correction. Since due to the non-linearity of the equations to be solved an iterative solution process is needed by all means, the overall convergence doesn't degrade noticeably when using a deferred correction \cite{ferziger02}. Blending and deferred correction result in a decomposition of the convective flux into a lower order approximation that is treated implicitly and the explicit difference between the higher and lower order approximation for the same convective flux. Since for coarse grid resolutions the use of higher order approximations may lead to oscillations of the solution which in turn may degrade or even impede convergence, the schemes can be blended by a control factor \( \eta \in [0,1]\). To show the generality of this approach all further derivations are presented for the generic boundary face \(S_f\) that separates control volume \(P\) from its neighbour \(F \in NB(P)\). This decomposition then leads to
       \begin{displaymath}
         F_{i,f}^c \approx  \underbrace{F_{i,f}^{c,l}}_{\text{implicit}} + \eta \, \bigl[\underbrace{ F_{i,f}^{c,h} - F_{i,f}^{c,l} }_{\text{explicit}}\bigr]^{(n-1)}.
       \end{displaymath}
-      Note that the convective fluxes carrying a \(l\) or \(h\) as exponent, already have been linearized and discretized. The discretization applied to the convective flux in the present work is using the midpoint integration rule and blends the upwind interpolation scheme with the linear interpolation scheme. Applied to above decomposition one can derive the following approximations
+      It should be noted that the convective fluxes carrying an \(l\) for \emph{lower} or an \(h\) for \emph{higher} as exponent, already have been linearized and discretized. The discretization applied to the convective flux in the present work is using the midpoint integration rule and blends the upwind interpolation scheme with a linear interpolation scheme. Applied to above decomposition one can derive the following approximations
       \begin{align*}
         F_{i,f}^{c,l} &= u_{i,F} \min(\dot{m}_f ,0) + u_{i,P} \max(0,\dot{m}_f) \\
         F_{i,f}^{c,h} &= u_{i,F} \, \gamma_f + u_{i,P} \, (1 - \gamma_f),
@@ -416,13 +418,13 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
       \begin{align}
         a_{F,u_i}^c &= \min(\dot{m}_f ,0), \quad \quad a_{P,u_i}^c = \sum_{F \in NB(P)} \max(0,\dot{m}_f) \\[1em]
         b_{P,u_i}^c &= \sum_{F \in NB(P)} \eta  \left(u_{i,F}^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right) \nonumber \\
-                    &\quad \quad \quad  \quad+ \eta \left( u_{i,P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right)
+                    &\quad \quad \quad  \quad+ \eta \left( u_{i,P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right).
       \end{align}
     \end{subequations}
 
       \subsubsection{Discretization of the Diffusive Term}
 
-      The diffusive term contains the first partial derivatives of the velocity as result of the material constitutive equation that characterizes the behaviour of Newtonian fluids. As pointed out in section \ref{sec:nonorth} directional derivatives can be discretized using central differences on orthogonal grids or in the more general case of non-orthogonal grids using central differences implicitly and a explicit deferred correction comprising the non-orthogonality of the grid. As seen in equation (\ref{eq:navierstokes}) the diffusive term of the Navier-Stokes equations can be simplified using the mass balance in the case of an incompressible flow with constant viscosity \(\mu\). To sustain the generality of the presented approach this simplification will be omitted.
+      The diffusive term contains the first partial derivatives of the velocity as a result of the material constitutive equation that characterizes the behaviour of Newtonian fluids. As pointed out in section \ref{sec:nonorth} directional derivatives can be discretized using central differences on orthogonal grids or in the more general case of non-orthogonal grids using central differences implicitly and an explicit deferred correction comprising the non-orthogonality of the grid. As seen in equation (\ref{eq:navierstokes}) the diffusive term of the Navier-Stokes equations can be simplified using the mass balance in the case of an incompressible flow with constant viscosity \(\mu\). To sustain the generality of the presented approach this simplification will be omitted.
 
       As before, by using the additivity and furthermore linearity of the Riemann integral, the integration of the diffusive term will be divided into integration over individual boundary faces \(S_f\) 
       \begin{displaymath}
@@ -501,8 +503,8 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     \end{subequations}
     Again it is possible though not always necessary, as in the case of the velocities, to under-relax the solution of the resulting linear system with a factor \(\alpha_T\). This can be accomplished as shown in the previous sections.
 
-
   \subsection{Boundary Conditions}
+  \label{sec:segboundary}
 
   \subsection{Treatment of the Singularity of the Pressure Correction Equation with Neumann Boundaries}
 
@@ -524,10 +526,9 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} \left( p_P' - p_{\text{ref}}' \right)
   \end{equation}
 
-
   \subsection{Structure of the Assembled Linear Systems}
 
-    The objective of a finite volume method is to create a set of linear algebraic equations by discretizing partial differential equations. For the momentum balance all necessary components have been calculated. Taking all contributions together leads to the following linear algebraic equation for each control volume \(P\)
+    The objective of a finite volume method is to create a set of linear algebraic equations by discretizing partial differential equations. In the case of the discretized momentum balance taking all contributions together leads to the following linear algebraic equation for each control volume \(P\)
     \begin{displaymath}
       a_{P,u_i} u_{P_i} + \sum_{F \in NB(P)} a_F u_{F_i} = b_{P,u_i},
     \end{displaymath}
@@ -537,13 +538,15 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
       a_{F,u_i} &= a_{F,u_i}^c - a_{F,u_i}^d \\
       b_{P,u_i} &= b_{P,u_i}^c - b_{P,u_i}^d + b_{P,u_i}^{sc}.
     \end{align}
-    In the case of control volumes located at boundaries some of the coefficients will be calculated in a different manner. This aspect will be addressed in a later section. For the decoupled iterative solution process of the Navier-Stokes equations it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by a \emph{under-relaxation} technique, a convex combination of the solution of the linear system present iteration \((n)\) and from the previous iteration \((n-1)\) with the under-relaxation parameter \(\alpha_{u_i}\). Generally speaking this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\). This has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right hand side. This helps to increase memory efficiency.
+    Similar expressions for the pressure correction equation and the temperature equation exist.
+
+    In the case of control volumes located at boundaries some of the coefficients will be calculated in a different manner. This aspect is addressed in section \ref{sec:segboundary}. For the decoupled iterative solution process of the Navier-Stokes equations it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by an \emph{under-relaxation} technique, a convex combination of the solution of the linear system for the present iteration \((n)\) and from the previous iteration \((n-1)\) with the under-relaxation parameter \(\alpha_{u_i}\). Generally speaking this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\). This has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right hand side. This helps to increase memory efficiency.
 
     Let  the solution for the linear system without under-relaxation be denoted as
     \begin{displaymath}
       \tilde{u}_{P_i}^{(n)} := \frac{b_{P,u_i} - \sum_{F \in NB(P)} a_F u_{F_i}}{a_{P,u_i}},
     \end{displaymath}
-    Which is only a formal expression. A convex combination as described yields
+    Which is only a formal expression for the case the underlying linear system is solved exactly. A convex combination as described yields
     \begin{align*}
       u_{P_i}^{(n)} :&= \alpha_{\vec{u}} \tilde{u}_{P_i}^{(n)} + (1 - \alpha_{\vec{u}} )\, u_{P_i}^{(n-1)} \\[0.5em]
                      &= \alpha_{\vec{u}} \frac{b_{P,u_i} - \sum_{F \in NB(P)} a_F u_{F_i}}{a_{P,u_i}} + (1 - \alpha_{\vec{u}} )\, u_{P_i}^{(n-1)},
@@ -554,5 +557,3 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
       = 
       b_{P,u_i} + \frac{(1 - \alpha_{\vec{u}})\, a_{P,u_i}}{\alpha_{\vec{u}}}\, u_{i,P}^{(n-1)}. 
     \end{displaymath}
-    It must be noted that under-relaxation has not been accounted for in the derivation of the Rhie-Chow interpolation method (REFERENCE). As it has been shown the results depend on the choice of the under-relaxation factor. However under-relaxation is necessary for overall convergence, so in order to be able to compare the results of the different solver algorithms this dependency has to be eliminated. Subsection (REFERENCE) will present a common approach to resolve this dependency.
-
