@@ -515,7 +515,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
 
   \subsubsection{Dirichlet Boundary Conditions}
 
-  The first boundary condition is the Dirichlet boundary condition. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. Especially the mass flux \(\dot{m}_f\) is known and hence has not to be calculated using the pressure weighted interpolation method. Since no special modifications have to be made as the resulting coefficient for a neighbouring control volume laying past the boundary is considered on the right hand side of the linear system, the implementation approach will be presented only for the temperature equation. Since there is no boundary condition that fixes the gradient at Dirichlet boundaries it is assumed that the partial derivatives of the respective variable is constant and can hence be extrapolated
+  The first boundary condition is the Dirichlet boundary condition. This type of boundary condition is used to model inlet conditions for flow problems. For the temperature equation it may also be used at walls as will be shown in subsection \ref{seg:walls}. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. Especially the mass flux \(\dot{m}_f\) is known and hence has not to be calculated using the pressure weighted interpolation method. Since no special modifications have to be made as the resulting coefficient for a neighbouring control volume laying past the boundary is considered on the right hand side of the linear system, the implementation approach will be presented only for the temperature equation. Since there is no boundary condition that fixes the gradient at Dirichlet boundaries it is assumed that the partial derivatives of the respective variable is constant and can hence be extrapolated
   \begin{displaymath}
     \left( \frac{\partial T}{\partial x_j} \right)_f \approx \left( \frac{\partial T}{\partial x_j} \right)_P.
   \end{displaymath}
@@ -531,6 +531,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
   The reader should note, that instead the gradient discretization at boundaries is realized by one sided forward differencing schemes instead of a central differencing scheme. This does not affect accuracy drastically because the distance used in the differential quotient is half the distance used on an central difference inside the domain \cite{schaefer99}.
 
   \subsubsection{Treatment of Wall Boundaries}
+  \label{seg:walls}
     
     A common boundary to the solution domain is given by solid walls. In viscous flows this can be interpreted as a no-slip condition, i.e. a Dirichlet boundary condition for the velocities. Convective fluxes through solid walls are thus zero by definition however the diffusive fluxes require special treatment not only for the velocities but also for the temperature. To approximate the fluid behavior on a wall boundary correctly, special modifications have to be taken into account to model the normal an shear tension. Furthermore diffusive fluxes for the temperature can be given by Neumann boundary conditions.
 
@@ -588,7 +589,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
       \vec{t_w} = \frac{\vec{u}_t}{|| \vec{u}_t ||_2} \quad \text{, where} \quad \vec{u}_t = \vec{u} - \left( \vec{u} \cdot \vec{n}_w \right) \vec{n}.
     \end{displaymath}
 
-    According to \cite{ferziger02} this force should not be handled explicitly for convergence reasons. On the other side, if the surface force is expressed by the velocities \(u_i\) the discretization process would lead to different central matrix coefficients, which not only affects memory efficiency but also the discretization of the pressure correction equation, because in the process of the derivation the central coefficients were assumed to be independent of the three momentum balances.
+    According to \cite{ferziger02} this force should not be handled explicitly for convergence reasons. On the other side, if the surface force is expressed by the velocities \(u_i\) the discretization process would lead to different central matrix coefficients, which would affect memory efficiency.
 
     The discretization approach used in the present thesis uses a simpler implicit discretization coupled with a deferred correction that combines the explicit discretization of the surface force (\ref{eq:wallforce}) with a central difference. At first the contained directional derivative is discretized implicitly by
     \begin{displaymath}
@@ -612,6 +613,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     \end{align*}
     The reader should note that since the deferred correction uses a Dirichlet boundary no correction of the value of the wall velocity \(u_{i,w}\) has to be accounted for.
 
+    If the solution of the flow field is coupled with the solution of an energy equations, different options for the boundary condition at walls may be chosen. If the wall temperature is known a Dirichlet boundary condition for the temperature is the choice. A wall of this type is called to be \emph{isothermal}. If on the other side only the heat flux is known a Neumann boundary condition is used. In the special case of zero heat flux the wall is called to be \emph{adiabatic}. For adiabatic walls, which are besides isothermal walls used for the present thesis the implementation is straight forward since no coefficients have to be calculated.
 
   \subsubsection{Treatment of Block Boundaries}
 
