@@ -21,13 +21,14 @@
     \subsection{Conservation of Momentum -- Cauchy-Equations}
 
     The conservation law of momentum, also known as Newton's Second Law, axiomatically demands the balance of the temporal change of momentum and the sum of all attacking forces on a body. Those forces can be divided into body forces and surface forces. Let \(\vec{k} = \left( k_i \right)_{i=1,\dots,3}\) denote a mass specific force and \(\vec{t} = \left(t_i\right)_{i=1,\dots,3}\) the stress vector. A first form of the integral momentum balance in the direction of \(x_i\) can be formulated as
-    \begin{displaymath}
+    \begin{equation}
+      \label{eq:cauchy}
       \iiint\limits_V \frac{\partial \left(\rho u_i \right)}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i \left( u_j n_j \right) \mathrm{d}S = \iiint\limits_V \rho k_i \mathrm{d}V + \iint\limits_S t_i \mathrm{d}S.
-    \end{displaymath}
+    \end{equation}
 
     In general the stress vector \(\vec{t}\) is a function not only of the location \(\vec{x} = \left( x_i \right)_{i = 1,\dots,3}\) and of the time \(t\) but also of the surface normal unit vector \(\vec{n}\). A central simplification can be introduced, namely Cauchy's stress theorem, which states that the stress vector is the image of the normal vector under a linear mapping \(\vec{T}\). With respect to the Cartesian canonical basis \(\left(\vec{e}_i \right)_{i = 1, \dots, 3}\) the mapping \(\vec{T}\) is represented by the coefficient matrix \( \left(\tau_{ji}\right)_{i,j = 1,\dots,3}\) and Cauchy's stress theorem reads
     \begin{displaymath}
-      \vec{t}\left(x,t,n\right) = \vec{T}(x,t,n) = \left(\tau_{ji} n_j\right)_{i = 1, \dots, 3}.
+      \vec{t}\left(\vec{x},t,\vec{n}\right) = \vec{T}(\vec{x},t,\vec{n}) = \left(\tau_{ji} n_j\right)_{i = 1, \dots, 3}.
     \end{displaymath}
     Assuming the validity of Cauchy's stress theorem one can derive Cauchy's first law of motion, which in differential form can be formulated as
     \begin{equation}

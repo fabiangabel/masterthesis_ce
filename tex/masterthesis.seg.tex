@@ -1,6 +1,6 @@
 \section{Implicit Finite Volume Method for Incompressible Flows -- Segregated Approach}
 
-  The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling at least between the dependent variables pressure and velocity a first solution algorithm, namely the \emph{SIMPLE} algorithm addressed to resolve the pressure velocity coupling is introduced. Methods of calculating mass fluxes and the detailed derivation of all coefficients that result from the discretization process is presented. The discretization of those boundary conditions, that are relevant for the present thesis will be presented in their own subsection.
+  The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling at least between the dependent variables pressure and velocity a first solution algorithm, namely the \emph{SIMPLE} algorithm addressed to resolve the pressure velocity coupling is introduced. Furthermore an under-relaxation factor independent method of calculating mass fluxes by interpolation is introduced and the detailed derivation of all coefficients that result from the discretization process is presented. Finally the boundary conditions, that are relevant for the present thesis will be presented.
 
 \subsection{Discretization of the Mass Balance}
 Integration of equation (\ref{eq:contidiff}) over the integration domain of a single control volume \(P\) yields after the application of Gauss' integration theorem and the additivity of the Riemann integral
@@ -39,7 +39,14 @@ where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is pe
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,Q}^{(n-1)} \quad,
   \end{align}
   \end{subequations}
-  where the superscript \((n-1)\) denotes the previous outer iteration number. The reader should note, that the pressure gradient has not been discretized yet. This has the advantage that the selective interpolation technique \cite{schaefer99} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same manner a semi-discrete implicit momentum balance can be formulated for a virtual control volume located between nodes \(P\) and \(Q\) (PICTURE)
+  where the superscript \((n-1)\) denotes the previous outer iteration number. The reader should note, that the pressure gradient has not been discretized yet. This has the advantage that the selective interpolation technique \cite{schaefer99} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same manner a semi-discrete implicit momentum balance can be formulated for a virtual control volume located between nodes \(P\) and \(Q\). Image \ref{fig:virt} gives an interpretation of the virtual control volume.
+  \begin{figure}
+     \label{fig:virt}
+        \input{./img/virt.tikz.tex}
+        \centering{}
+      \caption{Comparison of vertex oriented and cell center oriented variable arrangement}
+  \end{figure}
+
   \begin{equation}
     \label{eq:virtualu}
     u_{i,f}^{(n)} 
@@ -434,7 +441,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     + \iint\limits_{S_f} \mu \frac{\partial u_j}{\partial x_i}n_j \mathrm{d}S \right]
        = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{d},
       \end{displaymath}
-      where \(F_{i,f}^{d}\) denotes the diffusive flux through an individual boundary face. Section \ref{sec:nonorth} only covered the non-orthogonal corrector for directional derivatives. Since the velocity is a vector field and not a scalar field, the results of section \ref{sec:nonorth} may only be applied to the underlined term. The other term will be treated explicitly since it is considerably smaller than the underlined term and does not cause oscillations and thus will not derogate convergence. To begin with all present integrals will be approximated using the midpoint rule of integration. The diffusive flux \(F_{i,f}^d\) for a generic face \(S_f\) then reads 
+      where \(F_{i,f}^{d}\) denotes the diffusive flux through an individual boundary face. Section \ref{sec:nonorth} only covered the non-orthogonal corrector for directional derivatives. Since the velocity is a vector field and not a scalar field, the results of section \ref{sec:nonorth} may only be applied to the underlined term. The other term will be treated explicitly since it is considerably smaller than the underlined term and does not cause oscillations and thus will not derogate convergence \cite{ferziger02}. To begin with all present integrals will be approximated using the midpoint rule of integration. The diffusive flux \(F_{i,f}^d\) for a generic face \(S_f\) then reads 
       \begin{displaymath}
         F_{i,f}^d \approx \mu \underline{\left(\frac{\partial u_i}{\partial x_j}\right)_f n_j S_f} + \mu \left(\frac{\partial u_j}{\partial x_i}\right)_f n_j S_f.
       \end{displaymath}
@@ -461,7 +468,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
           \quad \quad a_{P,u_i}^d = \sum_{F \in NB(P)} \frac{\mu S_f}{|| \vec{x}_P - \vec{x}_F ||} \\[1em]
           b_{F,u_i}^d &=  \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} - n_{f_i}\right)S_f  
           - \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i} S_f   \nonumber \\[0.5em]
-          &=   \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \xi_{f_i} S_f
+          &=  \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \xi_{f_i} S_f
           - \mu \left( \left( \frac{\partial u_i}{\partial x_j} \right)_f^{(n-1)}
           - \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} \right) n_{f_i} S_f.
         \end{align}
@@ -478,8 +485,6 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
         - \rho \beta \left(T_P^{(n-1)} - T_0\right) V_P
         = b_{P,u_i}^{sc}
       \end{equation}
-
-  \subsection{Discretization of the Pressure Correction Equation}
 
   \subsection{Discretization of the Temperature Equation}
   \label{sec:discretetemperature}
@@ -505,6 +510,36 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
 
   \subsection{Boundary Conditions}
   \label{sec:segboundary}
+
+  As shown it is possible to deduce a linear algebraic equation for each control volume. The approach presented in the preceding subsection however did not cover the treatment of control volumes at the domain boundaries. This subsection introduces the boundary conditions which are relevant for the present work and furthermore deals with transition conditions at block boundaries.
+
+  \subsubsection{Dirichlet Boundary Conditions}
+
+  The first boundary condition is the Dirichlet boundary condition. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. Especially the mass flux \(\dot{m}_f\) is known and hence has not to be calculated using the pressure weighted interpolation method. Since no special modifications have to be made as the resulting coefficient for a neighbouring control volume laying past the boundary is considered on the right hand side of the linear system, the implementation approach will be presented only for the temperature equation. Since there is no boundary condition that fixes the gradient at Dirichlet boundaries it is assumed that the partial derivatives of the respective variable is constant and can hence be extrapolated
+  \begin{displaymath}
+    \left( \frac{\partial T}{\partial x_j} \right)_f \approx \left( \frac{\partial T}{\partial x_j} \right)_P.
+  \end{displaymath}
+  The modification to the central coefficient of the linear equation can be recursively formulated as
+  \begin{displaymath}
+    a_{P,T} = a_{P,T} + \left( \max(0,\dot{m}_f )  - \frac{\kappa S_f}{|| \vec{x}_P - \vec{x}_f ||_2} \right),
+  \end{displaymath}
+  whereas the contribution to the right hand side reads
+  \begin{align}
+    b_{P,T} &= b_{P,T} - \left( \min(\dot{m}_f,0) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_f||_2}\right) T_f +
+    \left( \frac{\partial T}{\partial x_j}\right)_P^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber 
+  \end{align}
+  The reader should note, that instead the gradient discretization at boundaries is realized by one sided forward differencing schemes instead of a central differencing scheme. This does not affect accuracy drastically because the distance used in the differential quotient is half the distance used on an central difference inside the domain \cite{schaefer99}.
+
+  \subsubsection{Treatment of Wall Boundaries}
+    
+    A common boundary to the solution domain is given by solid walls. In viscous flows this can be interpreted as a no-slip condition, i.e. a Dirichlet boundary condition for the velocities. Convective fluxes through solid walls are thus zero by definition however the diffusive fluxes require special treatment not only for the velocities but also for the temperature. To approximate the fluid behavior on a wall boundary correctly, special modifications have to be taken into account to model the normal an shear tension. Furthermore diffusive fluxes for the temperature can be given by Neumann boundary conditions.
+
+    The derivation of the discretized diffusive flux through wall boundaries starts from the integral momentum balance (\ref{eq:cauchy}) for the vector \(\vec{u}\). Here only the term for surface forces is needed
+    \begin{equation}
+      \vec{F}_w =  \iint\limits_{S_w} \vec{t} \mathrm{d}S = \iint\limits_{S_w} \vec{T}( \mathrm{d}S 
+    \end{equation}
+
+  \subsubsection{Treatment of Block Boundaries}
 
   \subsection{Treatment of the Singularity of the Pressure Correction Equation with Neumann Boundaries}
 

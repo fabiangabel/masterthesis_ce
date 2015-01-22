@@ -1,4 +1,4 @@
-  \section{Finite Volume Method for Incompressible Flows -- Theoretical Basics}
+  \section{Finite Volume Methods for Incompressible Flows -- Theoretical Basics}
 
   This section deals with the fundamentals of the numerical solution via a finite volume method of the formerly presented set of partial differential equations. The focus of this section is, to provide an overview over the methods to be used in the present thesis. The information contained in this section is based on (Peric,Schäfer,Muzaferja,Jsak). The overview starts by mentioning the different grid types to be used and the discretization techniques to be applied. On the basis of integral formulations of the equations to be solved, the therein contained integrals and differential operators have to be discretized. Since the accuracy of the default concepts for discretizing differential operators degrades with decreasing grid quality, this chapter furthermore presents different approaches to handle corrections for cases in which the cause of degrading grid quality is increased non-orthogonality. 
   
@@ -151,13 +151,8 @@
 
       Introduce the concept of the Picard-Iteration as a linearization technique. Introduce the notions of inner and outer iterations. Refer to later chapters when it comes to deferred correction.
 
-    \subsection{Numerical Solution of Linear Systems}
+      \subsection{Numerical Solution of Linear Systems with Krylov Subspace Methods}
 
-       \subsubsection{Stone's SIP Solver}
-
-         Basic Idea as in Schäfer or Peric. Emphasize that this is a very problem specific approach, that cannot be generalized that easily in opposition to the general purpose linear solvers from PETSc. Present ether BiCGStab or GMRES, the one which performs better and is used throughout the thesis.
-
-       \subsubsection{Krylov Subspace Methods}
         \begin{itemize}
           \item General concept of cyclic vector spaces of \(\mathbb{R}^n\), 
           \item talk about bases of krylov subspaces and the arnoldi algorithm, talk about polynomials and linear combinations
