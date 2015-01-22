@@ -536,8 +536,82 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
 
     The derivation of the discretized diffusive flux through wall boundaries starts from the integral momentum balance (\ref{eq:cauchy}) for the vector \(\vec{u}\). Here only the term for surface forces is needed
     \begin{equation}
-      \vec{F}_w =  \iint\limits_{S_w} \vec{t} \mathrm{d}S = \iint\limits_{S_w} \vec{T}( \mathrm{d}S 
+      \vec{F}_w =  \iint\limits_{S_w} \vec{t} \mathrm{d}S = \iint\limits_{S_w} \vec{T}(\vec{n}_w) \mathrm{d}S 
     \end{equation}
+    For the purpose of treating wall boundary conditions it is appropriate to use a local coordinate system \(n,t,s\) where \(n\) denotes the wall normal coordinate, \(t\) denotes the coordinate tangential to the wall shear force and, \(s\) is the binormal coordinate. (FIGURE). With respect to this coordinate system the wall normal vector is represented by \(\vec{n}_w = \left( 1, 0 , 0 \right)^T\) and the image of the wall normal vector \(\vec{T}(\vec{n_w})\) is represented by 
+    \begin{displaymath}
+    \vec{T}(\vec{n}_w) =
+    \left[
+      \begin{array}{ccc}
+        \tau_{nn} & \tau_{nt} & \tau_{ns}\\
+        \tau_{nt} & \tau_{tt} & \tau_{ts}\\
+        \tau_{ns} & \tau_{ts} & \tau_{ss}
+      \end{array}
+    \right]
+    \left[
+    \begin{array}{c}
+      1\\
+      0\\
+      0
+    \end{array}
+    \right]
+    =
+    \left[
+    \begin{array}{c}
+      \tau_{nn}\\
+      \tau_{nt}\\
+      \tau_{ns}
+    \end{array}
+    \right]
+    \end{displaymath}
+    The velocity of the wall is assumed to be constant, so the directional derivative of the tangential velocity vanishes on the wall
+    \begin{displaymath}
+      \tau_{tt} =  \frac{ \partial u_t }{ \partial x_t }  =  0,
+    \end{displaymath}
+    which in conjunction with the continuity equation in differential form leads to
+    \begin{displaymath}
+     \frac{ \partial u_n }{ \partial x_n } + \frac{ \partial u_t }{ \partial x_t } =  \frac{ \partial u_n }{ \partial x_n } = 0,
+    \end{displaymath}
+    what is equivalent to \( \tau_{nn} = 0\) at the wall. An physical interpretation would be that the transfer of momentum at the wall occurs by shear forces exclusively. Furthermore the coordinate direction \(t\) is chosen to be parallel to the shear force which is no restriction because of the possibility to rotate the coordinate system within the plane. This leads to \(\tau_{ns} = 0 \). The absolute value of the surface force hence only depends on the normal derivative of the velocity tangential to the wall. After transforming the coordinates back to the system \((x_1, x_2, x_3)\) the surface force can be calculated and the integral can be discretized using the midpoint rule by
+    \begin{equation}
+      \label{eq:wallforce}
+      \vec{F}_w 
+      =  
+      \iint\limits_{S_w} \vec{t_w} \, \tau_{nt} \mathrm{d}S
+      =
+      \iint\limits_{S_w} \vec{t_w} \, \mu \frac{\partial u_t}{\partial n} \mathrm{d}S
+      =
+      \vec{t_w} \, \mu \left(\frac{\partial u_t}{\partial n}\right)_w S_w
+    \end{equation}
+    where \( \vec{t_w} \) denotes the transformed tangential vector \((0,1,0)^T\) with respect to the coordinate system \((x_1,x_2,x_3)\). In the discretization process this tangential vector will be calculated from the velocity vector as
+    \begin{displaymath}
+      \vec{t_w} = \frac{\vec{u}_t}{|| \vec{u}_t ||_2} \quad \text{, where} \quad \vec{u}_t = \vec{u} - \left( \vec{u} \cdot \vec{n}_w \right) \vec{n}.
+    \end{displaymath}
+
+    According to \cite{ferziger02} this force should not be handled explicitly for convergence reasons. On the other side, if the surface force is expressed by the velocities \(u_i\) the discretization process would lead to different central matrix coefficients, which not only affects memory efficiency but also the discretization of the pressure correction equation, because in the process of the derivation the central coefficients were assumed to be independent of the three momentum balances.
+
+    The discretization approach used in the present thesis uses a simpler implicit discretization coupled with a deferred correction that combines the explicit discretization of the surface force (\ref{eq:wallforce}) with a central difference. At first the contained directional derivative is discretized implicitly by
+    \begin{displaymath}
+      \left(\frac{\partial u_t}{\partial n}\right) {t_w}_i
+      \approx
+      \left(\frac{\partial u_i}{\partial \xi}\right)
+      \approx
+      \frac{u_{i,P} - u_{i,w}}{|| \vec{x}_P - \vec{x}_w ||_2}
+    \end{displaymath}
+    and explicitly by
+    \begin{displaymath}
+      \left(\frac{\partial u_t}{\partial n}\right) {t_w}_i
+      \approx
+      \frac{\left(u_{i,P}- u_{i,w} \right) - \left(u_{j,P} - u_{j,w}\right) n_j n_i  }{\left( \vec{x}_P - \vec{x}_w \right) \cdot \vec{n}_w}.
+    \end{displaymath}
+    Therefore the contributions to the central coefficient and the right hand side of the linear equation that results from the presented discretization process are
+    \begin{align*}
+      a_{P,u_i} &= a_{P,u_i} + \mu \frac{S_f}{|| \vec{x}_P - \vec{x}_w ||_2} \quad \text{and} \\
+      b_{P,u_i} &= a_{P,u_i} + \mu \frac{S_f}{|| \vec{x}_P - \vec{x}_w ||_2} u_{i,P}^{(n-1)} + 
+      \frac{\left(u_{i,P}^{(n-1)}- u_{i,w} \right) - \left(u_{j,P}^{(n-1)} - u_{j,w}\right) n_j n_i  }{\left( \vec{x}_P - \vec{x}_w \right) \cdot \vec{n}_w}.
+    \end{align*}
+    The reader should note that since the deferred correction uses a Dirichlet boundary no correction of the value of the wall velocity \(u_{i,w}\) has to be accounted for.
+
 
   \subsubsection{Treatment of Block Boundaries}
 
