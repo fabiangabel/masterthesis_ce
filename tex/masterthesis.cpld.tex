@@ -1,42 +1,44 @@
-  \section{Implicit Finite Volume Method for Incompressible Flows -- Coupled Approach}
+\section{Implicit Finite Volume Method for Incompressible Flows -- Fully Coupled Approach}
 
-    Since the antecedent section already discussed the discretization of the momentum balance the focus of this section will be on highlighting the differences and presenting various approaches to incorporate different degrees of velocity-temperature and temperature-velocity/pressure coupling. It should be noted that the discretization of the equations to be solved is not changed in any way, so the presented differences only are due to difference in the solution algorithm. As in the previous section the final forms of the presented equations are presented as they are implemented in the developed solver framework. 
+Since the antecedent section \ref{sec:seg} already discussed the discretization details on the involved equations, this section aims at a comparison at the algorithmic level of the SIMPLE algorithm, presented in section \ref{sec:simple}, as a method to resolve the pressure-velocity coupling, and an implementation of a fully coupled solution algorithm. It should be noted that the discretization of the equations to be solved is not changed in any way to maintain comparability, so the presented differences are exclusively due to difference in the solution algorithm. Successful implementations of a fully coupled solution algorithm for incompressible Navier-Stokes equations have been presented in \cite{chen10,darwish09,falk13,vakilipour12}. In addition the presented work will extend the solution approach presented in \cite{falk13} to three-dimensional domains. Furthermore this section will present various approaches to incorporate different degrees of velocity-temperature and temperature-velocity/pressure coupling. Finally the structure of the resulting linear system to be solved is discussed.
 
-    \subsection{The Coupled Algorithm}
+\subsection{The Fully Coupled Algorithm -- Pressure-Velocity Coupling Revised}
+
+This subsection motivates the use of a fully coupled algorithm to resolve pressure-velocity coupling and mentions the differences to the approach presented in subsection \ref{sec:simple}.
       
-      \subsubsection{Pressure Equation}
+\subsubsection{Characteristic Properties of Coupled Solution Methods}
 
-      \subsubsection{Characteristic Properties of Coupled Solution Methods}
+Subsection \ref{sec:simple} presented a common solution approach to solve incompressible Navier-Stokes equations. After the linearization of the equations, momentum balances were solved using the pressure from the previous iteration as a guess. Since in general the velocity field obtained by solving a momentum balance with a guessed pressure does not obey continuity the velocity field and the pressure field had to be corrected. This in turn would lead to an inferior solution regarding the residual of the momentum balances. To avoid this iterative guess-and-correct solution process another class of approaches to the pressure-velocity coupling problematic is represented by algorithms that are \emph{fully coupled}. 
 
-        No Underrelaxation needed, higher memory requirements
+The central aspect of fully coupled solution methods for Navier-Stokes equations is, that instead of solving for the velocities and pressure corrections sequentially, the velocity field and the pressure are solved for simultaneously \cite{schäfer99}, so every velocity field that is calculated obeys conservation of momentum and mass, without needing to be corrected. As a result under-relaxation of pressure and velocities is no longer required. The only reason for the need of an iterative solution process is the non-linearity of the Navier-Stokes equations. This furthermore makes room for deferred corrections as introduced in subsection \ref{sec:segdiscretization}.
 
-        Bad condition, singularity, usually faster convergence if efficient linear solver is chosen, coupling in Buoyancy flows (s.a. Peric page 448, Galpin Raithby)
-        Design of algorithm does not need to enforce continuity (is inherently fulfilled because of the coupling of the equations)
+On the downside implementations of fully coupled solution methods require significantly more system memory than segregated methods. This is due to the higher amount of information that has to be available at all times and the resulting linear systems which are, due to the increased amount of unknowns to solve for, also require more memory. Furthermore the bad condition of the linear algebraic system REFERENCE tends to slow down the convergence of the equation solver algorithm. 
 
-        Explicitly mention the differences
+\subsubsection{Pressure Equation and Pressure-Velocity Coupling}
 
-        \begin{itemize}
-          \item Implicit treatment of Pressure Gradient
-          \item Implicit Treatment of Temperature possible
-          \item Boussinesq approximation brings velocity-to-temperature-coupling (vakilipour), Newton-Raphson Linearization
-          \item Temperature dependent densities also possible
-        \end{itemize}
+As in the case of segregated methods it is not advisable to solve the mass balance equation directly \cite{schaefer99}. Instead as in \ref{sec:simple} an equation for the pressure is derived by using the pressure-weighted interpolation method, which has been introduced in \ref{sec:massflux}
 
-    \subsection{Coupling the Temperature Equation}
+\subsubsection{Momentum Balance and Velocity-Pressure Coupling}
+
+Talk about the additional coefficients \(A_{P,u_i,p}\)
+
+\subsection{Coupling the Temperature Equation}
+
+Since the present work also aims at analyzing the efficiency of different methods to couple the temperature equation to the velocities and vice-versa this subsection discusses different approaches to handle the coupling of the energy equation to the Navier-Stokes equations if a Boussinesq-Approximation REFERENCE is used.
       
-      \subsubsection{Decoupled Approach}
-      \subsubsection{Velocity-Temperature Coupling}
-      \subsubsection{Temperature-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
+\subsubsection{Decoupled Approach}
+\subsubsection{Velocity-Temperature Coupling}
+\subsubsection{Temperature-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
 
-    \subsection{Boundary Conditions on Domain and Block Boundaries}
+\subsection{Boundary Conditions on Domain and Block Boundaries}
 
-      \subsubsection{Dirichlet Boundary Condition for Velocity}
+\subsubsection{Dirichlet Boundary Condition for Velocity}
 
-      %\subsubsection{Dirichlet Boundary Condition for Pressure}
+%\subsubsection{Dirichlet Boundary Condition for Pressure}
 
-      \subsubsection{Wall Boundary Condition}
+\subsubsection{Wall Boundary Condition}
 
-      \subsubsection{Block Boundary Condition}
+\subsubsection{Block Boundary Condition}
 
-    \subsection{Assembly of Linear Systems -- Final Form of Equations}
+\subsection{Assembly of Linear Systems -- Final Form of Equations}
 

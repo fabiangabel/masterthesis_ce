@@ -1,4 +1,5 @@
 \section{Implicit Finite Volume Method for Incompressible Flows -- Segregated Approach}
+\label{sec:seg}
 
   The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling, at least between the dependent variables pressure and velocity, a first solution algorithm, namely the \emph{SIMPLE} algorithm, addressed to resolve the pressure velocity coupling, is introduced. Furthermore an under-relaxation factor independent method of calculating mass fluxes by interpolation is introduced and the detailed derivation of all coefficients that result from the discretization process is presented. Finally the boundary conditions, that are relevant for the present thesis will be introduced.
 
@@ -376,7 +377,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
   \end{equation}
   This discretization can then be inserted into the semi-discretized pressure correction equation (\ref{eq:presscorr}) 
   \begin{equation}
-    \label{eq:presscorr}
+%   \label{eq:discpresscorr}
     \sum_{F \in NB(P)} \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_{F,u_i}}\right)
      \frac{p_P' - p_F'}{\left(\vec{x}_P - \vec{x}_F\right)\cdot \vec{n}_f} S_f
     = b_{P,p}.

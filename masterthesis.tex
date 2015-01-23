@@ -18,7 +18,7 @@
 \usepackage{masterthesis}
 
 %selective compilation of files
-%\includeonly{./tex/masterthesis.fundamentals,./tex/masterthesis.seg}
+\includeonly{./tex/masterthesis.fundamentals,./tex/masterthesis.seg,./tex/masterthesis.cpld}
 
 \begin{document}
 \thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
@@ -40,9 +40,15 @@
 
 \include{./tex/masterthesis.nomenclature}
 
-  \section{Introduction}
-  This thesis is about. 
+  \section{TODO LIST}
 
+  \begin{itemize}
+    \item change the matrix coefficient indexing to \(a_P^{u_i,p}\) like in \cite{darwish09}.
+    \item extend nomenclature
+    \item align equations using the \textbf{alignat} environment
+  \end{itemize}
+
+  \include{./tex/masterthesis.introduction}
   \include{./tex/masterthesis.fundamentals}
   \include{./tex/masterthesis.fvm}
   \include{./tex/masterthesis.seg}
@@ -50,11 +56,7 @@
   \include{./tex/masterthesis.caffa}
   \include{./tex/masterthesis.verification}
   \include{./tex/masterthesis.comparison}
-
-  \section{Conclusion and Outlook}
-  Turbulence (turbulent viscosity has to be updated in each iteration), Multiphase (what about discontinuities), GPU-Accelerators, Load-Balancing, dynamic mesh refinement, Counjugate Heat Transfer with other requirements for the numerical grid, grid movement, list some papers here)
-    Identify the optimal regimes / conditions for maximizing performance. Each solver concept has its strengths and weaknesses.
-    Try other variants of Projection Methods like SIMPLEC, SIMPLER, PISO or PIMPLE (OpenFOAM)
+  \include{./tex/masterthesis.conclusion}
 
 %testing purposes
     \nocite{*}
