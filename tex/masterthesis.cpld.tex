@@ -101,7 +101,38 @@ In the same way it is possible to realize the coupling described in the previous
 
 \subsubsection{Temperature-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
 
-The previous section discussed the velocity temperature coupling and so far only the momentum balances were affected by the realization of the coupling methods. Independently it is possible to couple the energy equation not only to the momentum balances but also to the pressure equation. In section \ref{sec:discretetemperature} the non-linear partial differential equation was linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid however if an implicit temperature coupling sought a coupling of the energy equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization} which can be interpreted as an bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial.
+The previous section discussed the velocity temperature coupling and so far only the momentum balances were affected by the realization of the coupling methods. Independently it is possible to couple the energy equation not only to the momentum balances but also to the pressure equation. In section \ref{sec:discretetemperature} the non-linear partial differential equation was linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid however if an implicit temperature coupling sought a coupling of the energy equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization} which can be interpreted as an bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial.
+
+The Newton-Raphson linearization technique is applied to the convective term of the energy equation as follows. A first order Taylor approximation for the mass specific convective flux through the boundary face \(S_f\) can be formulated as
+\begin{align*}
+  \left(u_{j,f} T_f \right)^{(n)} 
+  &\approx 
+  \left(u_{j,f} T_f \right)^{(n-1)} 
+  + \frac{\partial}{\partial u_{j,f}}\left( u_{j,f} T_f \right)^{(n-1)} \left(u_{j,f}^{(n)} - u_{j,f}^{(n-1)} \right) 
+  + \frac{\partial}{\partial T_f}\left( u_{j,f} T_f \right)^{(n-1)} \left( T_f^{(n)} - T_f^{(n-1)} \right) \\[0.5em]
+  &=
+  (u_{j,f} T_f )^{(n-1)} 
+  + \vphantom{(u_{j,f} T_f)}{T_f}^{(n-1)} (\vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} - \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n-1)} ) 
+  +  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} ( \vphantom{(u_j T)}{T_f}^{(n)} - \vphantom{(u_j T)}{T_f}^{(n-1)} ) \\[0.7em]
+  &=
+  \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  + \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} \vphantom{(u_jT)}{T_f}^{(n-1)}  -  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
+\end{align*}
+A comparison with REFERENCE shows, that the underlined term is the same as in the usual linearization. The first of the two new terms will be treated implicitly after using the pressure-weighted interpolation method from section \ref{sec:pwim} to interpolate the value of \(u_{j,f}\) and the second term will be treated explicitly. The use of the pressure-weighted interpolation method creates not only temperature-to-velocity but also temperature-to-pressure coupling. Applying the pressure-weighted interpolation the equation for the mass specific convective flux reads
+\begin{align*}
+  \left(u_{j,f} T_f \right)^{(n)} 
+  &\approx 
+  \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  \\[1em]
+  +  \vphantom{(u_jT)}{T_f}^{(n-1)}  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
+    &\quad\quad - 
+    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+    \left[ 
+    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)} 
+    -  \left(1 - \gamma_f\right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n)} 
+    - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n)} 
+    \right] \nonumber \\[1em]
+    &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right]. \\
+-  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}. \\
+\end{align*}
 
 \subsection{Boundary Conditions on Domain and Block Boundaries}
 
