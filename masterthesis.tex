@@ -18,7 +18,7 @@
 \usepackage{masterthesis}
 
 %selective compilation of files
-\includeonly{./tex/masterthesis.fundamentals,./tex/masterthesis.seg,./tex/masterthesis.cpld}
+%\includeonly{./tex/masterthesis.fundamentals,./tex/masterthesis.seg,./tex/masterthesis.cpld}
 
 \begin{document}
 \thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
@@ -30,9 +30,7 @@
 % \tuprints{12345}{1234}
   \makethesistitle
 % \maketitle
-  \selectlanguage{ngerman}
-  \affidavit{Fabian Gabel}
-  \selectlanguage{english}
+  \selectlanguage{ngerman} \affidavit{Fabian Gabel} \selectlanguage{english}
   \tableofcontents
   \listoffigures
   \listoftables
@@ -40,12 +38,23 @@
 
 \include{./tex/masterthesis.nomenclature}
 
-  \section{TODO LIST}
+  \section*{TODO LIST}
 
   \begin{itemize}
     \item change the matrix coefficient indexing to \(a_P^{u_i,p}\) like in \cite{darwish09}.
     \item extend nomenclature
     \item align equations using the \textbf{alignat} environment
+    \item check pressure correction equation on iteration indices (gradients)
+    \item check simple chapter, since the right hand side lacks of deferred corrector and under-relaxed velocities
+    \item mention the boundary conditions for the pressure correction
+    \item extend algorithms to handle passive scalars
+    \item check all headings for correct spelling
+    \item mention that for an unknown velocity field the partial differential equation for the temperature is non-linear as well
+    \item consistent use of either temperature or energy equation
+    \item check the signs in the Boussinesq approximation
+    \item pressure weighted interpolation method for large body forces?
+    \item not only speed but also improvement of robustness
+    \item instationary flows?
   \end{itemize}
 
   \include{./tex/masterthesis.introduction}

@@ -302,6 +302,13 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
   \begin{equation}
     \label{eq:presscorrb}
     b_{P,p} := \sum_{F \in NB(P)} u_{i,f}^{(n*)} n_i S_f.
+    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+    \left[ 
+    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+    - \left( 1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+    - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
+    \right] \nonumber \\[1em]
+    \quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
   \end{equation}
   The complete discretization with central differences as approximation for the gradient of the pressure correction is straightforward and will be presented in subsection \ref{sec:segpresscorr}.
   
@@ -370,11 +377,11 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
   &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] n_{i,f},
   \end{align}
   where the scalar product of pressure gradients and the normal vector has been replaced by a directional derivative in the direction of the face normal vector. In the present work pressure gradients in (\ref{eq:facecorr3}) and pressure correction gradients in equation (\ref{eq:presscorr}) will be discretized by central differences
-  \begin{equation}
+  \begin{displaymath}
   \left(\frac{\partial p}{\partial n}\right)_f \approx \frac{p_P - p_Q}{\left(\vec{x}_P - \vec{x}_Q\right)\cdot \vec{n}_f} 
   \quad \text{and} \quad 
   \left(\frac{\partial p'}{\partial n}\right)_f \approx \frac{p_P' - p_Q'}{\left(\vec{x}_P - \vec{x}_Q\right)\cdot \vec{n}_f}.
-  \end{equation}
+  \end{displaymath}
   This discretization can then be inserted into the semi-discretized pressure correction equation (\ref{eq:presscorr}) 
   \begin{equation}
 %   \label{eq:discpresscorr}
@@ -387,10 +394,11 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     a_{P,p'} p_{P}' + \sum_{F \in NB(P)} a_{F,p'} p_{F}' = b_{P,p'},
   \end{displaymath}
   can be calculated as
-  \begin{displaymath}
+  \begin{equation}
+    \label{eq:segpresscorrcoeff}
     a_{F,p'} = -\left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_{F,u_i}}\right) \frac{S_f}{\left(\vec{x}_P - \vec{x}_F\right) \cdot \vec{n}_f} \quad \text{and} \quad
-    a_{P,p'} = \sum_{F \in NB(P)} -a_{F,p'}.
-  \end{displaymath}
+    a_{P,p'} = - \sum_{F \in NB(P)} a_{F,p'}.
+  \end{equation}
   The right hand side can be calculated as in equation (\ref{eq:presscorrb}), if the presented discretization is applied. 
 
   \subsection{Discretization of the Momentum Balance}
@@ -661,11 +669,13 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
       a_{P,u_i} u_{P_i} + \sum_{F \in NB(P)} a_F u_{F_i} = b_{P,u_i},
     \end{displaymath}
     where the coefficients are composed as
+    \begin{subequations}
     \begin{align}
       a_{P,u_i} &= a_{P,u_i}^c - a_{P,u_i}^d \\
       a_{F,u_i} &= a_{F,u_i}^c - a_{F,u_i}^d \\
       b_{P,u_i} &= b_{P,u_i}^c - b_{P,u_i}^d + b_{P,u_i}^{sc}.
     \end{align}
+    \end{subequations}
     Similar expressions for the pressure correction equation and the temperature equation exist.
 
     In the case of control volumes located at boundaries some of the coefficients will be calculated in a different manner. This aspect is addressed in section \ref{sec:segboundary}. For the decoupled iterative solution process of the Navier-Stokes equations it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by an \emph{under-relaxation} technique, a convex combination of the solution of the linear system for the present iteration \((n)\) and from the previous iteration \((n-1)\) with the under-relaxation parameter \(\alpha_{u_i}\). Generally speaking this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\). This has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right hand side. This helps to increase memory efficiency.

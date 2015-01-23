@@ -4,37 +4,112 @@ Since the antecedent section \ref{sec:seg} already discussed the discretization 
 
 \subsection{The Fully Coupled Algorithm -- Pressure-Velocity Coupling Revised}
 
-This subsection motivates the use of a fully coupled algorithm to resolve pressure-velocity coupling and mentions the differences to the approach presented in subsection \ref{sec:simple}.
+This subsection motivates the use of a fully coupled algorithm to resolve pressure-velocity coupling and mentions the differences to the approach presented in subsection \ref{sec:simple}. The mentioned subsection presented a common solution approach to solve incompressible Navier-Stokes equations: After the linearization of the equations, momentum balances were solved using the pressure from the previous iteration as a guess. Since in general the velocity field obtained by solving a momentum balance with a guessed pressure does not obey continuity, the velocity field and the pressure field had to be corrected. This in turn would lead to an inferior solution regarding the residual of the momentum balances. To avoid this iterative guess-and-correct solution process another class of approaches to the pressure-velocity coupling problematic, represented by algorithms that are \emph{fully coupled}, will be introduced now. . 
+
+The central aspect of fully coupled solution methods for Navier-Stokes equations is, that instead of solving for the velocities and pressure corrections sequentially, the velocity field and the pressure are solved for simultaneously \cite{schäfer99}, so every velocity field that is calculated obeys conservation of momentum and mass, without needing to be corrected. As a result the under-relaxation of pressure and velocities is no longer required, which accelerates convergence significantly in terms of needed outer iterations. The only reason for still needing an iterative solution process is the non-linearity of the Navier-Stokes equations which is accounted for by the use of the Picard iteration process, which has been presented in subsection \ref{sec:nonlinear}. The iterations fortunately make room for deferred corrections as introduced in subsection \ref{sec:segdiscretization}.
+
+On the downside implementations of fully coupled solution methods require significantly more system memory than segregated methods. This is due to the higher amount of information that has to be available at the same time and the resulting linear systems which also require more memory, due to the increased amount of unknowns to solve for. Furthermore the bad condition of the linear algebraic system \cite{schaefer99} tends to slow down the convergence of the equation solver algorithm.
+
+As in the case of segregated methods it is not advisable to solve the mass balance equation directly \cite{schaefer99}. Instead of deriving an equation for the pressure correction \(p'\), as shown in \ref{sec:simple}, an equation for the pressure is derived by using the pressure-weighted interpolation method, which has been introduced in \ref{sec:massflux} and is used to approximate the velocities in the discretized mass balance (\ref{eq:massbalance}). Concretely equation (\ref{eq:pwim}) is adapted for the use in a fully coupled algorithm
+\begin{displaymath}
+  u_{i,f}^{(n)} 
+  =
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right]
+  - \left(\left(1 - \gamma_f\right) \frac{V_P}{a_{P,u_i}} + \gamma_f \frac{ V_Q}{a_{Q,u_i}}\right)
+  \left[ 
+    \underline{ \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)}}
+  - \frac{1}{2} 
+  \left( 
+    \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+  + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} 
+  \right)
+  \right].
+\end{displaymath}
+The changes comprise the removal of last term of (\ref{eq:pwim}) accounting for the under-relaxation, since no under-relaxation is needed in fully coupled algorithms which is equivalent to an under-relaxation factor \(\alpha_\vec{u} = 1\). Furthermore the underlined partial derivatives are now going to be treated implicitly. This leads to the semi-implicit pressure equation
+\begin{align}
+  \sum_{F \in NB(P)} 
+  \rho
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,F}^{(n)} \right]\,  S_f
+  - \rho \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_{P,u_i}} + \gamma_f \frac{ V_F}{a_{F,u_i}}\right)
+  \left[ 
+  \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)}
+  \right]\,  S_f \nonumber \\
+  =
+  - \sum_{F \in NB(P)}
+  \rho
+  \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_{P,u_i}} + \gamma_f \frac{ V_F}{a_{F,u_i}}\right)
+  \left[ 
+  \frac{1}{2} 
+  \left( 
+    \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+  + \left(\frac{\partial p}{\partial x_i}\right)_F^{(n-1)} 
+  \right)
+  \right] \, S_f.
+\end{align}
+
+Even though this equation is solved for the pressure \(p\) while equation (\ref{eq:presscorr}) is solved for the pressure correction \(p'\) the matrix coefficients from the pressure correction discretization of equation (\ref{eq:segpresscorrcoeff}) and the calculation of the right hand side is given in equation (\ref{eq:presscorrb}). For the implicit coupling to the velocities \(u_i\) additional matrix coefficients have to be considered. These can be calculated as
+\begin{displaymath}
+  a_F^{p,u_i} = \rho \, \gamma_f S_f \quad \text{and} \quad a_P^{p,u_i} = \sum_{F \in NB(P)} \rho \, (1-\gamma_f) \, S_f.
+\end{displaymath}
+
+On the other side the discretized momentum balance gives matrix coefficients to account for the implicit velocity-pressure coupling. They are calculated as
+\begin{displaymath}
+  a_F^{u_i,p} =  \gamma_f S_f \quad \text{and} \quad a_P^{u_i,p} = \sum_{F \in NB(P)} (1-\gamma_f) \, S_f.
+\end{displaymath}
+If the Boussinesq approximation is used implicitly, an additional coefficient \(a_P^{u_i,T}\) to account for the velocity temperature coupling has to be considered. This will be handled in subsection \ref{sec:temperaturecoupling}
+
+\begin{algorithm}
+\label{al:simple}
+\caption{Fully Coupled Solution Algorithm}
+\begin{algorithmic}
+\State{\textit{INITIALIZE} variables}
+\While{(convergence criterion not accomplished)}
+\If{(Temperature coupling)}
+  \State{\textit{SOLVE} the linear system for velocities, pressure and temperature}
+\Else
+  \State{\textit{SOLVE} the linear system for velocities and pressure}
+\EndIf
+\State{\textit{CALCULATE} mass fluxes using REFERENCE}
+\If{(Decoupled scalar equation)}
+  \State{\textit{SOLVE} scalar equation as described in \textbf{(\ref{sec:discretetemperature})}}
+\EndIf
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Coupling to the Temperature Equation}
+\label{sec:temperaturecoupling}
+
+Since the present work also aims at analyzing the efficiency of different methods to couple the temperature equation to the velocities and vice-versa this subsection discusses different approaches to handle the coupling of the energy equation to the Navier-Stokes equations if the Boussinesq-Approximation, as introduced in subsection \ref{sec:boussinesq}, is used. The effectiveness of realizing a strong coupling of the temperature equation to the Navier-Stokes equations depends on the flow problem. The physical coupling tends to increase in flow scenarios of natural convection, where the temperature difference and hence the buoyancy term in the Navier-Stokes equations dominates the fluid movement. Generally speaking: The higher the physical coupling of temperature and flow, the greater are the benefits of using an implementation that uses a strong coupling to the temperature equation. The following subsection present different approaches that can be used for different intensities of coupling.
       
-\subsubsection{Characteristic Properties of Coupled Solution Methods}
+\subsubsection{Decoupled Approach -- Explicit Velocity-Temperature Coupling}
 
-Subsection \ref{sec:simple} presented a common solution approach to solve incompressible Navier-Stokes equations. After the linearization of the equations, momentum balances were solved using the pressure from the previous iteration as a guess. Since in general the velocity field obtained by solving a momentum balance with a guessed pressure does not obey continuity the velocity field and the pressure field had to be corrected. This in turn would lead to an inferior solution regarding the residual of the momentum balances. To avoid this iterative guess-and-correct solution process another class of approaches to the pressure-velocity coupling problematic is represented by algorithms that are \emph{fully coupled}. 
+The decoupled approach is similar to the treatment of the velocity-temperature coupling described in subsection \ref{sec:segdiscretization}. If this approach is chosen no special measures have to be taken. The momentum balances receive a contribution \( b_P^{u_i,T}\) with
+\begin{displaymath}
+  b_P^{u_i,T} := - \rho \beta \left( T_P^{(n-1)} - T_0 \right) V_P,
+\end{displaymath}
+that handles the coupling explicitly by using the temperature result of the previous outer iteration. In some cases it might be necessary to under-relax the temperature each iteration
 
-The central aspect of fully coupled solution methods for Navier-Stokes equations is, that instead of solving for the velocities and pressure corrections sequentially, the velocity field and the pressure are solved for simultaneously \cite{schäfer99}, so every velocity field that is calculated obeys conservation of momentum and mass, without needing to be corrected. As a result under-relaxation of pressure and velocities is no longer required. The only reason for the need of an iterative solution process is the non-linearity of the Navier-Stokes equations. This furthermore makes room for deferred corrections as introduced in subsection \ref{sec:segdiscretization}.
+\subsubsection{Implicit Velocity-Temperature Coupling}
 
-On the downside implementations of fully coupled solution methods require significantly more system memory than segregated methods. This is due to the higher amount of information that has to be available at all times and the resulting linear systems which are, due to the increased amount of unknowns to solve for, also require more memory. Furthermore the bad condition of the linear algebraic system REFERENCE tends to slow down the convergence of the equation solver algorithm. 
+In the same way it is possible to realize the coupling described in the previous subsection by implicitly considering the temperature in the momentum balances, which leads to an additional matrix coefficient \(a_P^{u_i,T}\) and an additional contribution to the right hand side accounting for the coupling to the energy equation
+\begin{displaymath}
+  a_P^{u_i,T} = \rho \beta V_P 
+  \quad \text{and} \quad
+  b_P^{u_i,T} = \rho \beta T_0 V_P.
+\end{displaymath}
 
-\subsubsection{Pressure Equation and Pressure-Velocity Coupling}
-
-As in the case of segregated methods it is not advisable to solve the mass balance equation directly \cite{schaefer99}. Instead as in \ref{sec:simple} an equation for the pressure is derived by using the pressure-weighted interpolation method, which has been introduced in \ref{sec:massflux}
-
-\subsubsection{Momentum Balance and Velocity-Pressure Coupling}
-
-Talk about the additional coefficients \(A_{P,u_i,p}\)
-
-\subsection{Coupling the Temperature Equation}
-
-Since the present work also aims at analyzing the efficiency of different methods to couple the temperature equation to the velocities and vice-versa this subsection discusses different approaches to handle the coupling of the energy equation to the Navier-Stokes equations if a Boussinesq-Approximation REFERENCE is used.
-      
-\subsubsection{Decoupled Approach}
-\subsubsection{Velocity-Temperature Coupling}
 \subsubsection{Temperature-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
+
+The previous section discussed the velocity temperature coupling and so far only the momentum balances were affected by the realization of the coupling methods. Independently it is possible to couple the energy equation not only to the momentum balances but also to the pressure equation. In section \ref{sec:discretetemperature} the non-linear partial differential equation was linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid however if an implicit temperature coupling sought a coupling of the energy equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization} which can be interpreted as an bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial.
 
 \subsection{Boundary Conditions on Domain and Block Boundaries}
 
 \subsubsection{Dirichlet Boundary Condition for Velocity}
 
-%\subsubsection{Dirichlet Boundary Condition for Pressure}
+Mention that the Newton-Raphson linearization is not considered on Dirichlet boundaries.
+
+%\subsubsection{Dirichlet Boundary Condition for Pressure} NOT TO BE USED
 
 \subsubsection{Wall Boundary Condition}
 

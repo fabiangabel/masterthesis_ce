@@ -135,6 +135,7 @@
       Since in incompressible fluids only pressure differences matter, this has no effect on the solution. After finishing the calculations \(p_{hyd}\) can be calculated and added to the resulting pressure \(\hat{p}\).
 
       \subsubsection{Variation of Fluid Properties -- The Boussinesq Approximation}
+      \label{sec:boussinesq}
 
       If modelling of an incompressible flow involves heat transfer fluid properties like the density change with varying temperature. If the variation of temperature is small one can still assume a constant density to maintain the structure of the advection and diffusion terms in (\ref{eq:nsfull}) and only consider the changes of the density in the gravitational term. If linear variation of density with respect to temperature is assumed this approximation is called \emph{Boussinesq}-approximation. In this case the Navier-Stokes equations are formulated using a reference pressure \(\rho_0\) at the reference temperature \(T_0\) and the now temperature dependent density \(\rho\), with
       \begin{equation}
