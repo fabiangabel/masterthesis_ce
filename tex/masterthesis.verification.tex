@@ -1,18 +1,25 @@
-  \section{Verification of the developed CAFFA Framework}
+\section{Verification of the developed CAFFA Framework}
 
-    Different parts, describe incremental approach, only present final results.
-    Refer to next section for Validation of CAFFA
+The systematical verification of program code is an essential part of development process of software for scientific calculations, since it insures that the respective equations are solved correctly \cite{oberkampf02}. In addition the method of manufactured solutions will be used to proof that both solvers within the framework, namely the segregated and the fully coupled solver, use the same discretization of the underlying partial differential equations. Before the performance of the developed CAFFA framework will be discussed in section \ref{sec:performance}, this section presents the results of the verification process performed in the present work via the \emph{Method of Manufactured Solutions} \cite{salari00}. After mentioning the main aspects of this procedure, this section will furthermore present the theoretical discretization error of the finite volume method as it is applied in the present thesis. The subsections that follow will then present a concrete manufactured solution and the results of using it in the verification process.
 
-    \subsection{Theoretical Discretization Error}
-      present the Taylor-Series Expansion
+\subsection{The Method of Manufactured Solutions for Navier-Stokes Equations}
 
-    \subsection{Method of Manufactured Solutions}
-      basically sum up the important points of salari's technical report, symmetry of solution/domain/grid is bad
-      point out that mms is not able to detect errors in the physical model
-      Also loose a word or two about discontinuous manufactured solutions
+The method of manufactured solutions comprises a systematical, formal procedure for code verification based on analytical solutions of the partial differential equations to be solved \cite{salari00}. Using this analytical solutions the accuracy of the produced results can be assessed and, after the establishment of an acceptance criterion, used to verify the computer program. A common acceptance criterion is the \emph{Order-of-Accuracy} criterion, since additional to the formal order of accuracy of a developed solver algorithm verifies its consistency. 
 
-    \subsection{Exact and Manufactured Solutions for the Navier-Stokes Equations and the Energy Equation}
-    Not always there is an exact solution. Divergence free approach. Presentation of the used manufactured solution. What if solution is not divergence free? Derivation of equations and modifications to continuity equation. analyze the problem of too complicated manufactured solutions. also use temperature dependent density function. Explain why global mass conservation in a discrete sense is important and how it can be achived. Special domain, vanishing manufactured solution or symmetric manufactured solutions if a higher approximation of boundary fluxes is not feasible.
+The basic idea of the method of manufactured solutions is the inversion of the solution process of partial differential equations. Instead of trying to find the solution \(x\) to a given equation \(F(x) = b\) with source term \(b\), a solution \(x\) is \emph{manufactured} and the source term is constructed by applying \(F\) to \(x\). This has the advantage of choosing a solution that exercises all parts of the solution process and hence provides a thorough testing environment. On the downside the integration of boundary conditions other than Dirichlet boundary conditions REFERENCE might be challenging. Furthermore the program code has to be able to handle arbitrary source terms. 
+
+The different guidelines that have to be followed in order to apply the method of manufactured solutions successfully, can be found in \cite{salari00}. According to the reference, manufactured solutions should be composed of infinitely often differentiable analytic functions whose derivatives are bounded by small constants. Furthermore the solution domain should not be chosen to be symmetric, but as arbitrary as possible within the limitations of the code. This may however conflict with the application of the method of manufactured solutions to verify a code to solve the Navier-Stokes equations. Subsection \ref{sec:manufacturedsolution} presents the manufactured solution including the resulting source terms for the set of partial differential equations (\ref{eq:completeset}).
+
+The verification of a solver for incompressible Navier-Stokes equations comes with additional conditions, that have to be considered: First, if the solver is not able to handle source terms in the continuity equation and respectively the pressure correction equation, a velocity field should be chosen that is inherently divergence free. This can be achieved by defining the velocity field \(\vec{u}\) through the curl of a vector field \(\vecg{\Psi}\) as
+\begin{displaymath}
+  \vec{u} = \nabla \times \vecg{\Psi}.
+\end{displaymath}
+Using the property that the divergence of the rotation of a vector field vanishes, one gets
+\begin{displaymath}
+  \nabla \cdot \vec{u} = \nabla \cdot \left( \nabla \times \vecg{\Psi}\right) = 0,
+\end{displaymath}
+i.e. a locally divergence free velocity field, which implies that globally the continuity equation also is fulfilled in an integral sense for arbitrary domains of integration. This is not necessarily true in the discrete sense as integrals are to be approximated by, in the case of the present thesis, the midpoint rule of integration, as shown in subsection \ref{sec:approxintegralderivative}. In the general case for arbitrary solution domains global mass conservation cannot be guaranteed even though the integrands are exact quantities at the domain boundaries. Thus in the case of finding manufactured solutions the problem domain should be fixed before manufacturing a solution. The velocity field for the manufactured solution should then either vanish on the domain boundaries, which is the case of the commonly used Taylor-Green vortex REFERENCE, or should exhibit further symmetry that leads to cancelling non-zero mass fluxes across the domain boundaries. The studies performed within the scope of the present worked, that convergence of the pressure correction equation can no longer be guaranteed if the velocity field does not obey continuity in the discrete sense at the domain boundaries.
+
     \begin{itemize}
       \item \url{http://scicomp.stackexchange.com/questions/6943/manufactured-solutions-for-incompressible-navier-stokes-how-to-find-divergenc}
       \item \url{http://link.springer.com/article/10.1007/BF00948290}
@@ -20,14 +27,27 @@
       \item \url{http://www.annualreviews.org/doi/pdf/10.1146/annurev.fl.23.010191.001111}
     \end{itemize}
 
-    \subsection{Measurement of Error and Calculation of Order}
+
+
+      basically sum up the important points of salari's technical report, symmetry of solution/domain/grid is bad
+      point out that mms is not able to detect errors in the physical model
+      Also loose a word or two about discontinuous manufactured solutions
+
+\subsection{Theoretical Order of Accuracy}
+      present the Taylor-Series Expansion
+
+
+\subsection{Manufactured Solution for the Navier-Stokes Equations and the Energy Equation}
+\label{sec:manufacturedsolution}
+
+\subsection{Measurement of Error and Calculation of Order}
       Different error measures (L2-Norm,completeness of function space, consistency etc.)
 
-      \subsubsection{Testcase on Single Processor on Orthogonal Locally Refined Grid}
-      \subsubsection{Testcase on Multiple Processors on Non-Orthogonal Locally Refined Grid}
+\subsubsection{Testcase on Single Processor on Orthogonal Locally Refined Grid}
+\subsubsection{Testcase on Multiple Processors on Non-Orthogonal Locally Refined Grid}
 
-        Give a measure of the grid quality.
+Give a measure of the grid quality.
 
-    \subsection{Independence of Under-Relaxation Factor}
-    \label{sec:independence}
+\subsection{Independence of Under-Relaxation Factor}
+\label{sec:independence}
 
