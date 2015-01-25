@@ -4,7 +4,7 @@ The systematical verification of program code is an essential part of developmen
 
 \subsection{The Method of Manufactured Solutions for Navier-Stokes Equations}
 
-The method of manufactured solutions comprises a systematical, formal procedure for code verification based on analytical solutions of the partial differential equations to be solved \cite{salari00}. Using this analytical solutions the accuracy of the produced results can be assessed and, after the establishment of an acceptance criterion, used to verify the computer program. A common acceptance criterion is the \emph{Order-of-Accuracy} criterion, since additional to the formal order of accuracy of a developed solver algorithm verifies its consistency. 
+The method of manufactured solutions comprises a systematical, formal procedure for code verification based on analytical solutions of the partial differential equations to be solved \cite{salari00}. Using this analytical solutions the accuracy of the produced results can be assessed and, after the establishment of an acceptance criterion, used to verify the computer program. A common acceptance criterion is the \emph{Order-of-Accuracy} criterion, since additional to the formal order of accuracy of a developed solver algorithm verifies its consistency. It should be noted that by the method of manufactured solutions it is not possible to detect errors in the physical model.
 
 The basic idea of the method of manufactured solutions is the inversion of the solution process of partial differential equations. Instead of trying to find the solution \(x\) to a given equation \(F(x) = b\) with source term \(b\), a solution \(x\) is \emph{manufactured} and the source term is constructed by applying \(F\) to \(x\). This has the advantage of choosing a solution that exercises all parts of the solution process and hence provides a thorough testing environment. On the downside the integration of boundary conditions other than Dirichlet boundary conditions REFERENCE might be challenging. Furthermore the program code has to be able to handle arbitrary source terms. 
 
@@ -18,36 +18,121 @@ Using the property that the divergence of the rotation of a vector field vanishe
 \begin{displaymath}
   \nabla \cdot \vec{u} = \nabla \cdot \left( \nabla \times \vecg{\Psi}\right) = 0,
 \end{displaymath}
-i.e. a locally divergence free velocity field, which implies that globally the continuity equation also is fulfilled in an integral sense for arbitrary domains of integration. This is not necessarily true in the discrete sense as integrals are to be approximated by, in the case of the present thesis, the midpoint rule of integration, as shown in subsection \ref{sec:approxintegralderivative}. In the general case for arbitrary solution domains global mass conservation cannot be guaranteed even though the integrands are exact quantities at the domain boundaries. Thus in the case of finding manufactured solutions the problem domain should be fixed before manufacturing a solution. The velocity field for the manufactured solution should then either vanish on the domain boundaries, which is the case of the commonly used Taylor-Green vortex REFERENCE, or should exhibit further symmetry that leads to cancelling non-zero mass fluxes across the domain boundaries. The studies performed within the scope of the present worked, that convergence of the pressure correction equation can no longer be guaranteed if the velocity field does not obey continuity in the discrete sense at the domain boundaries.
-
-    \begin{itemize}
-      \item \url{http://scicomp.stackexchange.com/questions/6943/manufactured-solutions-for-incompressible-navier-stokes-how-to-find-divergenc}
-      \item \url{http://link.springer.com/article/10.1007/BF00948290}
-      \item \url{http://physics.stackexchange.com/questions/60476/exact-solutions-to-the-navier-stokes-equations}
-      \item \url{http://www.annualreviews.org/doi/pdf/10.1146/annurev.fl.23.010191.001111}
-    \end{itemize}
-
-
-
-      basically sum up the important points of salari's technical report, symmetry of solution/domain/grid is bad
-      point out that mms is not able to detect errors in the physical model
-      Also loose a word or two about discontinuous manufactured solutions
+i.e. a locally divergence free velocity field, which implies that globally the continuity equation also is fulfilled in an integral sense for arbitrary domains of integration. This is not necessarily true in the discrete sense as integrals are to be approximated by, in the case of the present thesis, the midpoint rule of integration, as shown in subsection \ref{sec:approxintegralderivative}. In the general case for arbitrary solution domains global mass conservation cannot be guaranteed even though the integrands are exact quantities at the domain boundaries. Thus in the case of finding manufactured solutions the problem domain should be fixed before manufacturing a solution. The velocity field for the manufactured solution should then either vanish on the domain boundaries, which is the case of the commonly used Taylor-Green vortex \cite{taylor37}, or should exhibit further symmetry that leads to cancelling non-zero mass fluxes across the domain boundaries. The studies performed within the scope of the present showed, that convergence of the pressure correction equation can no longer be guaranteed if the velocity field does not obey continuity in the discrete sense at the domain boundaries.
 
 \subsection{Theoretical Order of Accuracy}
       present the Taylor-Series Expansion
 
-
 \subsection{Manufactured Solution for the Navier-Stokes Equations and the Energy Equation}
 \label{sec:manufacturedsolution}
 
+This subsection presents the manufactured solution for the system of partial differential equations (\ref{eq:completeset}). The manufactured solutions and the computations needed to derive the respective source terms were performed by the computer algebra system Maple \cite{maple}. After the computation the code needed to evaluate the terms were directly translated into FORTRAN source code, such that the manufactured solution could be directly integrated into the solver framework. In the following paragraphs the used solutions for the velocity vector \((u_1,u_2,u_3)\), the pressure \(p\) and the temperature \(T\) will be formulated.
+
 \subsection{Measurement of Error and Calculation of Order}
-      Different error measures (L2-Norm,completeness of function space, consistency etc.)
 
-\subsubsection{Testcase on Single Processor on Orthogonal Locally Refined Grid}
-\subsubsection{Testcase on Multiple Processors on Non-Orthogonal Locally Refined Grid}
+In this subsection the result of the verification process via the formerly in subsection \ref{sec:manufacturedsolution} stated manufactured solutions will be presented. To verify the solver framework using the Order-of-Accuracy test criterion a error measure has to be chosen on which the evaluation is based upon. According to \cite{salari00} the error measure for each variable \(\phi\) will be calculated at the end of each computation as the normalized L2-norm of the deviation of the exact solution \(\tilde{\phi}\), sometimes referred to as the normalized global error or the RMS error
+\begin{displaymath}
+  \operatorname{err}(\phi) = \sqrt{ \frac {\iiint\limits_V \left( \phi - \tilde{\phi} \right)^2 \mathrm{d}V }{\iiint\limits_V \mathrm{d}V }} \approx \sqrt{ \frac{ \sum_{n=1}^N \left(\phi_n - \tilde{\phi}_n \right)^2 V_n }{\sum_{n=1}^{N} V_n}} .
+\end{displaymath}
+Herein \(N\) denotes the number of control volumes of the discretized solution domain \(V\). Each control volume has the volume \(V_n\). The numerical and the exact solution are evaluated at the center of each control volume for the error calculations. In order to calculate the normalized global error of the pressure \(p\) the same modification as in subsection \ref{sec:singularitytreatment} has to be performed on the analytical solution \(\tilde{p}\), which in the case of the present work means to subtract the weighted mean value
+\begin{displaymath}
+  \operatorname{mean}\left( \tilde{p} \right) = \frac{\iiint\limits_V \tilde{p} \mathrm{d}V}{\iiint\limits_V \mathrm{d}V} \approx \frac{\sum_{n=1}^N \tilde{p}_n V_n}{\sum_{n=1}^N V_n}
+\end{displaymath}
+from it and to calculate the error as
+\begin{displaymath}
+  \operatorname{err}(p,N) \approx \sqrt{ \frac{ \sum_{n=1}^N \left(p_n - \tilde{p}_n -\operatorname{mean}\left(\tilde{p}\right) \right)^2 V_n }{\sum_{n=1}^{N} V_n}} .
+\end{displaymath}
+The following tables will list the calculated error terms for the velocities, the pressure and the temperature for different grid resolutions and both solver algorithms. The grid resolutions \((n \times n \times n)\) are chosen such that \(n\), the number of control volumes in each coordinate direction, will be a power of two. The Errors were evaluated after the maximal relative residual of all linear systems in one outer iteration fell below the threshold \(1\e{-14}\). The concrete implementation of the tolerance criterion to accept a converged solution is found in section \ref{sec:convergence}.
 
-Give a measure of the grid quality.
+\begin{table}[h!]
+    \doublespacing
+    \centering \begin{tabular}{ |c|c|c|c| }
+    \hline
+    Grid Resolution & \(u_1\) Error Segregated & \(u_1\) Error Coupled & Observed Order \(\hat{p}\) \\ \hline
+    \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 & \\ \hline 
+    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 &\\ \hline
+    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 &\\ \hline
+    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004& \\ \hline
+    \((128\times128\times128)\)  &  XXXXXX & XXXXXX &\\ \hline
+    \((256\times256\times256)\)  &  XXXXXX & XXXXXX &\\ \hline
+    \end{tabular}
+    \caption{Comparison of the errors of the velocity in x-direction calculated by the segregated and the coupled solver for different grid resolutions}
+    \label{tab:fehler}
+\end{table}
 
-\subsection{Independence of Under-Relaxation Factor}
+\begin{table}[h!]
+    \doublespacing
+    \centering \begin{tabular}{ |c|c|c| }
+    \hline
+    Grid Resolution & \(u_2\) Error Segregated & \(u_2\) Error Coupled \\ \hline
+  \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 \\ \hline 
+    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 \\ \hline
+    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 \\ \hline
+    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004 \\ \hline
+    \((128\times128\times128)\)  &  XXXXXX & XXXXXX \\ \hline
+    \((256\times256\times256)\)  &  XXXXXX & XXXXXX \\ \hline
+    \end{tabular}
+    \caption{Comparison of the errors of the velocity in y-direction calculated by the segregated and the coupled solver for different grid resolutions}
+    \label{tab:fehler}
+\end{table}
+
+\begin{table}[h!]
+    \doublespacing
+    \centering \begin{tabular}{ |c|c|c| }
+    \hline
+    Grid Resolution & \(u_3\) Error Segregated & \(u_3\) Error Coupled \\ \hline
+  \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 \\ \hline 
+    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 \\ \hline
+    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 \\ \hline
+    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004 \\ \hline
+    \((128\times128\times128)\)  &  XXXXXX & XXXXXX \\ \hline
+    \((256\times256\times256)\)  &  XXXXXX & XXXXXX \\ \hline
+    \end{tabular}
+    \caption{Comparison of the errors of the velocity in z-direction calculated by the segregated and the coupled solver for different grid resolutions}
+    \label{tab:fehler}
+\end{table}
+
+\begin{table}[h!]
+    \doublespacing
+    \centering \begin{tabular}{ |c|c|c| }
+    \hline
+    Grid Resolution & \(p\) Error Segregated & \(p\) Error Coupled \\ \hline
+  \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 \\ \hline 
+    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 \\ \hline
+    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 \\ \hline
+    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004 \\ \hline
+    \((128\times128\times128)\)  &  XXXXXX & XXXXXX \\ \hline
+    \((256\times256\times256)\)  &  XXXXXX & XXXXXX \\ \hline
+    \end{tabular}
+    \caption{Comparison of the errors of the pressure calculated by the segregated and the coupled solver for different grid resolutions}
+    \label{tab:fehler}
+\end{table}
+
+\begin{table}[h!]
+    \doublespacing
+    \centering \begin{tabular}{ |c|c|c| }
+    \hline
+    Grid Resolution & \(T\) Error Segregated & \(T\) Error Coupled \\ \hline
+  \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 \\ \hline 
+    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 \\ \hline
+    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 \\ \hline
+    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004 \\ \hline
+    \((128\times128\times128)\)  &  XXXXXX & XXXXXX \\ \hline
+    \((256\times256\times256)\)  &  XXXXXX & XXXXXX \\ \hline
+    \end{tabular}
+    \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions}
+    \label{tab:fehler}
+\end{table}
+
+A comparison of the results leads to the first conclusion, namely that the results from the segregates solver algorithm and the coupled solver algorithm coincide which implies that the same discretization is used in both cases.
+
+According to \cite{salari00} the next step comprises the calculation of the formal order of accuracy \(\hat{p}_\phi\) for each variable that the program solves for. This can be done by evaluating the quotient of two different resolutions \(n1\) and \(n2\) as 
+\begin{displaymath}
+  \hat{p}_{\phi} = \frac{\log\left(\frac{\operatorname{err}(\phi,{n1})}{\operatorname{err}(\phi,{n2})}\right)}{\log\left(\frac{n1}{n2}\right)}.
+\end{displaymath}
+
+\subsection{Influence of the Under-Relaxation Factor for the Velocities}
 \label{sec:independence}
+
+In section \ref{sec:pwim} the main purpose of introducing the pressure weighted interpolation method was to assure comparability of the generated results from the segregated solver algorithm and the coupled solver algorithm. Section \ref{sec:error} showed good agreement of the error calculated with the segregated solver using the pressure weighted interpolation method and the coupled solver. This section presents the results that are attained if the Rhie-Chow interpolation technique with different under-relaxation factors \(\alpha_\vec{u}\) is used to interpolate the velocities to the boundary faces instead of the pressure weighted interpolation technique. Figure \ref{fig:underrelaxation} shows the error for the velocities \(u_1, u_2\) and \(u_3\) for different under-relaxation factors. It is evident that the higher the under-relaxation factor the smaller the deviation of the results obtained with the standard Rhie-Chow interpolation technique. This can be justified by the fact that for an under-relaxation factor \(\alpha_\vec{u} = 1\) the pressure weighted interpolation and the Rhie-Chow interpolation would yield the same result in equation (\ref{eq:pwim}).
 

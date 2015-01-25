@@ -3,12 +3,11 @@
 \usepackage[utf8]{inputenc} %input and fontencoding
 \usepackage[T1]{fontenc}
 
-
-\usepackage[intoc,noprefix]{nomencl} %for printing a list of symbols
-
 \usepackage{amsmath,amsthm} %math environments; no errors with TUDesign
 %\usepackage{amsmath,amsthm,amssymb} %math environments
 
+\usepackage{cite} %use bibtex
+\bibliographystyle{acm}
 % literaturverwaltung
 %\usepackage[backend=biber,
 %            hyperref=true,
@@ -20,17 +19,13 @@
 %\addbibresource{./bib/masterthesis.articles.bib}
 %\addbibresource{./bib/masterthesis.books.bib}
 
-\usepackage{cite} %use bibtex
-\bibliographystyle{acm}
+\usepackage[intoc,noprefix]{nomencl} %for printing a list of symbols
 
 %hyperlinks and urls
 \usepackage{hyperref} %use hyperlinks in document
 \usepackage{url} %display urls as such
 
-%\usepackage{subdepth} %vertical alignment of subscripts
-
-\usepackage{listings} %load source code printer % use with \lstset{language=[77]Fortran} \begin{lstlisting} SOURCE \end{lstlisting}
-
+\usepackage{pgfplots}
 \usepackage{tikz}
 \usetikzlibrary{calc,arrows.meta}
 \usepackage{tkz-euclide} % loads  TikZ and tkz-base
@@ -43,23 +38,29 @@
 \usepackage{algorithm} %algorithms
 \usepackage{algpseudocode}
 \usepackage{algpascal}
-\algnewcommand\algorithmicto{\textbf{to}}
-\algrenewtext{For}[2]%
-{\algorithmicfor\ #1 \algorithmicto\ #2 \algorithmicdo}
 
-\usepackage{nomencl} %create nomenclature (Symbolverzeichnis)
-\makenomenclature
+\usepackage{setspace} %to use \doublespacing in tables
+
+%\usepackage{subdepth} %vertical alignment of subscripts
+
+\usepackage{listings} %load source code printer % use with \lstset{language=[77]Fortran} \begin{lstlisting} SOURCE \end{lstlisting}
 
 %\usepackage{todonotes} %self explaining but not compatible with TUDesign
 
 %selective compilation of files
 %\includeonly{./tex/masterthesis.fvm,./tex/masterthesis.seg}
 
-%commands
+%custom commands commands
 \renewcommand{\vec}[1]{\mathbf{#1}}
 \newcommand{\vecg}[1]{\boldsymbol{#1}}
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+\algnewcommand\algorithmicto{\textbf{to}}
+\algrenewtext{For}[2]%
+{\algorithmicfor\ #1 \algorithmicto\ #2 \algorithmicdo}
 
 %proof environment
 \everymath=\expandafter{\the\everymath\displaystyle}
 \theoremstyle{plain}
 \newtheorem*{prop}{Proposition}
+
+\makenomenclature

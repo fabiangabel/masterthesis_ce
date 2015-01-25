@@ -4,6 +4,7 @@
   The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling, at least between the dependent variables pressure and velocity, a first solution algorithm, namely the \emph{SIMPLE} algorithm, addressed to resolve the pressure velocity coupling, is introduced. Furthermore an under-relaxation factor independent method of calculating mass fluxes by interpolation is introduced and the detailed derivation of all coefficients that result from the discretization process is presented. Finally the boundary conditions, that are relevant for the present thesis will be introduced.
 
 \subsection{Discretization of the Mass Balance}
+
 Integration of equation (\ref{eq:contidiff}) over the integration domain of a single control volume \(P\), after the application of Gauss' integration theorem and the additivity of the Riemann integral, yields
 \begin{displaymath}
   \iint\limits_{S_f} u_i n_i \mathrm{d}S = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f} u_i n_{i} \mathrm{d}S = 0.
@@ -15,8 +16,8 @@ In the present work the mass balance is discretized using the midpoint rule for 
 \end{align}
 where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is performed yet, since the straightforward linear interpolation will lead to undesired oscillations in the solution fields. An interpolation method to circumvent this so called \emph{checker boarding} effect is presented in subsection \ref{sec:massflux}.
 
-  \subsection{A Pressure-Weighted Interpolation Method for Velocities}
-  \label{sec:massflux}
+\subsection{A Pressure-Weighted Interpolation Method for Velocities}
+\label{sec:massflux}
 
   The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified and the conservation property of finite volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major drawback with cell centered variable arrangements is that pressure field may delink, which will then lead to unphysical oscillations in both the pressure and the velocity results. If the oscillations are severe enough the solution algorithm might even get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances and the mass fluxes in the continuity equation are discretized using central differences. 
   
@@ -642,6 +643,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
   Once the geometric data including the information regarding the interpolation has been provided the fluxes through this boundaries can be calculated as presented in the antecedent subsections. The connectivity of neighbouring control volumes of different grid blocks is represented by matrix coefficients \(a_L\) and \(a_R\).
 
   \subsection{Treatment of the Singularity of the Pressure Correction Equation with Neumann Boundaries}
+  \label{sec:singularitytreatment}
 
   It has to be noted that the derived pressure correction equation is a Poisson equation. As can be proven \ref{hackbusch} the linear \(N \times N\) systems surging from the presented discretization on a grid with \(N\) control volumes have a nullspace of dimension one, i.e.
   \begin{displaymath}
