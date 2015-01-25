@@ -44,85 +44,59 @@ from it and to calculate the error as
 \end{displaymath}
 The following tables will list the calculated error terms for the velocities, the pressure and the temperature for different grid resolutions and both solver algorithms. The grid resolutions \((n \times n \times n)\) are chosen such that \(n\), the number of control volumes in each coordinate direction, will be a power of two. The Errors were evaluated after the maximal relative residual of all linear systems in one outer iteration fell below the threshold \(1\e{-14}\). The concrete implementation of the tolerance criterion to accept a converged solution is found in section \ref{sec:convergence}.
 
-\begin{table}[h!]
-    \doublespacing
-    \centering \begin{tabular}{ |c|c|c|c| }
-    \hline
-    Grid Resolution & \(u_1\) Error Segregated & \(u_1\) Error Coupled & Observed Order \(\hat{p}\) \\ \hline
-    \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 & \\ \hline 
-    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 &\\ \hline
-    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 &\\ \hline
-    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004& \\ \hline
-    \((128\times128\times128)\)  &  XXXXXX & XXXXXX &\\ \hline
-    \((256\times256\times256)\)  &  XXXXXX & XXXXXX &\\ \hline
-    \end{tabular}
-    \caption{Comparison of the errors of the velocity in x-direction calculated by the segregated and the coupled solver for different grid resolutions}
-    \label{tab:fehler}
+\begin{table}[h!]\centering
+\ra{1.3}
+  \begin{tabular}{cccc}\toprule
+    Resolution & Error of \(\vec{u}\) from Segregated Solver & Error of \(\vec{u}\) from Coupled Solver & Observed Order \(\hat{p}\) \\
+    \midrule
+    \rowcolor{black!20}\multirow{3}{*}{}          & 3.1704502301157865E-002 &  XXXXXXXXXXXXXXXXXXXXXXX &   \\
+    \rowcolor{black!20}                           & 3.0370110307466745E-002 & XXXXXXXXXXXXXXXXXXXXXXX  & 1 \\
+    \rowcolor{black!20} \multirow{-3}{*}{8x8x8}   & 3.1636095150284566E-002 & 1 & 1  \\ %\hline
+    %
+    \rowcolor{black!00}\multirow{3}{*}{}          & 7.9143566730061794E-003 &  7.9143566730065350E-003 &   \\
+    \rowcolor{black!00}                           & 7.5343146124403392E-003 &  7.5343146124409056E-003 & 1 \\
+    \rowcolor{black!00} \multirow{-3}{*}{16x16x16}& 7.8113167415358713E-003 &  7.8113167415361021E-003 & 1 \\ %\hline
+    %
+    \rowcolor{black!20}\multirow{3}{*}{}          & 1.9333028867476348E-003  & 1.9333250814097063E-003 &   \\
+    \rowcolor{black!20}                           & 1.8675991971385400E-003  & 1.8676512523175990E-003 & 1 \\
+    \rowcolor{black!20} \multirow{-3}{*}{32x32x32}&  1.8948139100889829E-003 & 1.8948223205995562E-003 & 1 \\ %\hline
+    %
+    \rowcolor{black!00}\multirow{3}{*}{}          & 4.74689419949359882E-004 & 4.74689420015271242E-004 &  \\
+    \rowcolor{black!00}                           & 4.62925993339559415E-004 & 4.62925993487765027E-004 &  \\
+    \rowcolor{black!00} \multirow{-3}{*}{64x64x64}& 4.63000820355029328E-004 & 4.63000820380278229E-004 &  \\ %\hline
+    %\rowcolor{black!00}\multirow{3}{*}{} &  &  &  \\\rowcolor{black!00} &  &   &  \\\rowcolor{black!00} \multirow{-3}{*}{16x16x16}& &  &  \\ \hline
+  \end{tabular}
+  \caption{Comparison of the errors of the velocity calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
 \end{table}
 
-\begin{table}[h!]
-    \doublespacing
-    \centering \begin{tabular}{ |c|c|c| }
-    \hline
-    Grid Resolution & \(u_2\) Error Segregated & \(u_2\) Error Coupled \\ \hline
-  \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 \\ \hline 
-    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 \\ \hline
-    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 \\ \hline
-    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004 \\ \hline
-    \((128\times128\times128)\)  &  XXXXXX & XXXXXX \\ \hline
-    \((256\times256\times256)\)  &  XXXXXX & XXXXXX \\ \hline
-    \end{tabular}
-    \caption{Comparison of the errors of the velocity in y-direction calculated by the segregated and the coupled solver for different grid resolutions}
-    \label{tab:fehler}
+\begin{table}[h!]\centering
+\ra{1.3}
+  \begin{tabular}{cccc}\toprule
+    Resolution & Error of \(p\) from Segregated Solver & Error of \(p\) from Coupled Solver & Observed Order \(\hat{p}\) \\
+    \midrule
+    \rowcolor{black!20} 8x8x8    &   &   &    \\%\hline
+    \rowcolor{black!00} 16x16x16 &   &   &    \\%\hline
+    \rowcolor{black!20} 32x32x32 &   &   &    \\%\hline
+    \rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
+    %\rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
+  \end{tabular}
+  \caption{Comparison of the errors of the pressure calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
 \end{table}
 
-\begin{table}[h!]
-    \doublespacing
-    \centering \begin{tabular}{ |c|c|c| }
-    \hline
-    Grid Resolution & \(u_3\) Error Segregated & \(u_3\) Error Coupled \\ \hline
-  \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 \\ \hline 
-    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 \\ \hline
-    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 \\ \hline
-    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004 \\ \hline
-    \((128\times128\times128)\)  &  XXXXXX & XXXXXX \\ \hline
-    \((256\times256\times256)\)  &  XXXXXX & XXXXXX \\ \hline
-    \end{tabular}
-    \caption{Comparison of the errors of the velocity in z-direction calculated by the segregated and the coupled solver for different grid resolutions}
-    \label{tab:fehler}
+\begin{table}[h!]\centering
+\ra{1.3}
+  \begin{tabular}{cccc}\toprule
+    Resolution & Error of \(T\) from Segregated Solver & Error of \(T\) from Coupled Solver & Observed Order \(\hat{p}\) \\
+    \midrule
+    \rowcolor{black!20} 8x8x8    &   &   &    \\%\hline
+    \rowcolor{black!00} 16x16x16 &   &   &    \\%\hline
+    \rowcolor{black!20} 32x32x32 &   &   &    \\%\hline
+    \rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
+    %\rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
+  \end{tabular}
+  \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
 \end{table}
 
-\begin{table}[h!]
-    \doublespacing
-    \centering \begin{tabular}{ |c|c|c| }
-    \hline
-    Grid Resolution & \(p\) Error Segregated & \(p\) Error Coupled \\ \hline
-  \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 \\ \hline 
-    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 \\ \hline
-    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 \\ \hline
-    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004 \\ \hline
-    \((128\times128\times128)\)  &  XXXXXX & XXXXXX \\ \hline
-    \((256\times256\times256)\)  &  XXXXXX & XXXXXX \\ \hline
-    \end{tabular}
-    \caption{Comparison of the errors of the pressure calculated by the segregated and the coupled solver for different grid resolutions}
-    \label{tab:fehler}
-\end{table}
-
-\begin{table}[h!]
-    \doublespacing
-    \centering \begin{tabular}{ |c|c|c| }
-    \hline
-    Grid Resolution & \(T\) Error Segregated & \(T\) Error Coupled \\ \hline
-  \((8\times8\times8)\)        &  \(3.1704502301157865\e{-2}\)  &  000000 \\ \hline 
-    \((16\times16\times16)\)     &  7.9143566730061794E-003  &  7.9143566730065350E-003 \\ \hline
-    \((32\times32\times32)\)     &  1.9333028867476348E-003  &  1.9333250814097063E-003 \\ \hline
-    \((64\times64\times64)\)     &  4.74689419949359882E-004 &  4.74689420011499682E-004 \\ \hline
-    \((128\times128\times128)\)  &  XXXXXX & XXXXXX \\ \hline
-    \((256\times256\times256)\)  &  XXXXXX & XXXXXX \\ \hline
-    \end{tabular}
-    \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions}
-    \label{tab:fehler}
-\end{table}
 
 A comparison of the results leads to the first conclusion, namely that the results from the segregates solver algorithm and the coupled solver algorithm coincide which implies that the same discretization is used in both cases.
 

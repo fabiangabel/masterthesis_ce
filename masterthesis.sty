@@ -40,6 +40,12 @@
 \usepackage{algpascal}
 
 \usepackage{setspace} %to use \doublespacing in tables
+\usepackage{multirow} %multiple rows in tabular environments
+\usepackage{booktabs} %provides extra tables commands and in general makes tables look a little nicer than without
+\usepackage{colortbl} 
+\usepackage{xcolor}   %are required to allow the colour of table and text elements to be altered
+\usepackage{xfrac}    %is required to make nicer fractions that look good in tables
+
 
 %\usepackage{subdepth} %vertical alignment of subscripts
 
@@ -51,6 +57,7 @@
 %\includeonly{./tex/masterthesis.fvm,./tex/masterthesis.seg}
 
 %custom commands commands
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
 \renewcommand{\vec}[1]{\mathbf{#1}}
 \newcommand{\vecg}[1]{\boldsymbol{#1}}
 \providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
