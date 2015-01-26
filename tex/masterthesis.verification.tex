@@ -26,11 +26,81 @@ i.e. a locally divergence free velocity field, which implies that globally the c
 \subsection{Manufactured Solution for the Navier-Stokes Equations and the Energy Equation}
 \label{sec:manufacturedsolution}
 
-This subsection presents the manufactured solution for the system of partial differential equations (\ref{eq:completeset}). The manufactured solutions and the computations needed to derive the respective source terms were performed by the computer algebra system Maple \cite{maple}. After the computation the code needed to evaluate the terms were directly translated into FORTRAN source code, such that the manufactured solution could be directly integrated into the solver framework. In the following paragraphs the used solutions for the velocity vector \((u_1,u_2,u_3)\), the pressure \(p\) and the temperature \(T\) will be formulated.
+This subsection presents the manufactured solution for the system of partial differential equations (\ref{eq:completeset}). The manufactured solutions and the computations needed to derive the respective source terms were performed by the computer algebra system Maple \cite{maple}. After the computation the code needed to evaluate the terms were directly translated into FORTRAN source code, such that the manufactured solution could be directly integrated into the solver framework. In the following paragraphs the used solutions for the velocity vector \((u_1,u_2,u_3)\), the pressure \(p\) and the temperature \(T\) will be formulated. The manufactured solution for the velocities was formulated as
+\begin{align*}
+  u_1 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2+2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3 \\[1.0em]
+  u_2 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3-2\,\cos \left( {x_1}^{2 }+{x_2}^{2}+{x_3}^{2} \right) x_1 \\[1.0em]
+  u_3 &= -2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1-2\,\cos \left( {x_1}^{ 2}+{x_2}^{2}+{x_3}^{2} \right) x_2.
+\end{align*}
+The manufactured solution for the pressure \(p\) was created as
+\begin{displaymath}
+  p = \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \cos \left( {x_1}^{2}+ {x_2}^{2 }+{x_3}^{2} \right).
+\end{displaymath}
+Since the velocity field was created as an solenoidal field no pressure sorce had to be calculated. The manufactured solution for the temperature \(T\) reads
+\begin{align*}
+  T=\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3 }^{2} \right)
+\end{align*}
+The resulting source terms for the momentum balances read
+\begin{align*}
+  b_1 &=8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_1}^{2}x_2
+       +8\,\cos\left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_2}^{3}
+       +8\,\cos \left( {x_1}^{2} +{x_2}^{2}+{x_3}^{2} \right) {x_3}^{2}x_2  \\[0.5em]
+&\quad +8\,\sin \left( {x_1}^{2}+{x_2}^{2} +{x_3}^{ 2} \right) {x_1}^{2}x_3 
+       +8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_2} ^{2}x_3 
+       +8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_3}^{3} \\[0.5em]
+&\quad +7\, \sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2 } \right) 
+       +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_1 
+       +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_3  \\[0.5em]
+&\quad -4\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2
+       -20\,\cos \left( {x_1}^ {2}+{x_2}^ {2}+{x_3}^{2} \right) x_3
+       +20\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2
+       -6\,x_1 \\[1.0em]
+  b_2 &=-8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_1}^{3} 
+        +8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_1}^{2}x_3
+        -8\,\cos \left( {x_1}^{2 }+{x_2}^{2}+{x_3}^{2} \right) {x_2}^{2}x_1  \\[0.5em]
+&\quad  -8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^ {2} \right) {x_3}^{2}x_1
+        +8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_2 }^{2}x_3
+        +8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_3}^{3}  \\[0.5em]
+&\quad  +13\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2 } \right) 
+        -4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_2
+        -4\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1  \\[0.5em]
+&\quad  -4\,\cos \left( {x_1}^{2} +{x_2}^{ 2}+{x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3 
+        -20\, \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1
+        +20\,\sin \left( {x_1}^{2}+ {x_2}^{2}+{x_3}^{2} \right) x_3
+        -2\,x_2 \\[1.0em]
+        b_3 &=-8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_1}^{2}x_2
+        -8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_2}^{3}
+        -8\,\cos \left( {x_1}^{2} +{x_2}^{2}+{x_3}^{2} \right) {x_3}^{2}x_2 \\[0.5em]
+&\quad  -8\,\sin \left( {x_1}^{2}+{x_2}^{2} +{x_3}^{ 2} \right) {x_1}^{3}
+        -8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2}\right) {x_2}^ {2}x_1
+        -8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_3}^{2} x_1 \\[0.5em]
+&\quad  -19\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2 } \right) 
+        +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_1 
+        +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_3 \\[0.5em]
+&\quad  -4\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2 
+        +20\,\cos \left( {x_1}^ {2}+{x_2}^ {2}+{x_3}^{2} \right) x_1-
+        20\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2
+        -6\,x_3. \\
+\end{align*}
+Finally the source term for the temperature equation was calculated as
+\begin{align*}
+  b_T &=-4\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \cos \left( {x_3}^{2} \right) \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2}\right) x_2x_3
+        -4\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \cos \left( {x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_3 \\[0.5em]
+&\quad  +4\,\sin \left( {x_1}^{2} \right) \sin \left( {x_3}^{2} \right) \sin \left( {x_2}^{2} \right) \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_2
+        -4\,\sin \left( {x_1}^{2} \right) \sin \left( {x_3}^{2} \right) \sin \left( {x_2}^{2} \right) \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2x_3 \\[0.5em]
+&\quad  +4\,\cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2} \right) \cos \left( {x_1}^{2} \right) \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_2
+        +4\,\cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2} \right) \cos \left( {x_1}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_3 \\[0.5em]
+&\quad  +4\,{x_1}^{2}\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2} \right) 
+        +4\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) {x_2}^{2}\sin \left( {x_3}^{2} \right) \\[0.5em]
+&\quad  +4\, {x_3}^{2} \sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3 }^{2} \right) 
+        -2\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^ {2} \right) \cos \left( {x_3}^{2} \right) \\[0.5em]
+&\quad  +2\,\sin \left( {x_1}^{2} \right) \sin \left( {x_3}^{2} \right) \sin \left( {x_2}^{2} \right) 
+        -2\,\cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2} \right) \cos \left( {x_1}^{2 } \right)
+\end{align*}
 
 \subsection{Measurement of Error and Calculation of Order}
 
-In this subsection the result of the verification process via the formerly in subsection \ref{sec:manufacturedsolution} stated manufactured solutions will be presented. To verify the solver framework using the Order-of-Accuracy test criterion a error measure has to be chosen on which the evaluation is based upon. According to \cite{salari00} the error measure for each variable \(\phi\) will be calculated at the end of each computation as the normalized L2-norm of the deviation of the exact solution \(\tilde{\phi}\), sometimes referred to as the normalized global error or the RMS error
+In this subsection the result of the verification process via the formerly in subsection \ref{sec:manufacturedsolution} stated manufactured solutions will be presented. To verify the solver framework using the Order-of-Accuracy test criterion an error measure has to be chosen on which the evaluation is based upon. According to \cite{salari00} the error measure for each variable \(\phi\) will be calculated at the end of each computation as the normalized L2-norm of the deviation of the exact solution \(\tilde{\phi}\), sometimes referred to as the normalized global error or the RMS error
 \begin{displaymath}
   \operatorname{err}(\phi) = \sqrt{ \frac {\iiint\limits_V \left( \phi - \tilde{\phi} \right)^2 \mathrm{d}V }{\iiint\limits_V \mathrm{d}V }} \approx \sqrt{ \frac{ \sum_{n=1}^N \left(\phi_n - \tilde{\phi}_n \right)^2 V_n }{\sum_{n=1}^{N} V_n}} .
 \end{displaymath}
@@ -49,21 +119,21 @@ The following tables will list the calculated error terms for the velocities, th
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(\vec{u}\) from Segregated Solver & Error of \(\vec{u}\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
-    \rowcolor{black!20}\multirow{3}{*}{}          & 3.1704502301157865E-002 &  XXXXXXXXXXXXXXXXXXXXXXX &   \\
-    \rowcolor{black!20}                           & 3.0370110307466745E-002 & XXXXXXXXXXXXXXXXXXXXXXX  & 1 \\
-    \rowcolor{black!20} \multirow{-3}{*}{8x8x8}   & 3.1636095150284566E-002 & 1 & 1  \\ %\hline
+    \rowcolor{black!20}\multirow{3}{*}{}          & 3.1704502301157865E-002 & 3.1704502290288525E-002 &  \\
+    \rowcolor{black!20}                           & 3.0370110307466745E-002 & 3.0370110306195783E-002 &  \\
+    \rowcolor{black!20} \multirow{-3}{*}{8x8x8}   & 3.1636095150284566E-002 & 3.1636095141306442E-002 &  \\ %\hline
     %
-    \rowcolor{black!00}\multirow{3}{*}{}          & 7.9143566730061794E-003 &  7.9143566730065350E-003 &   \\
-    \rowcolor{black!00}                           & 7.5343146124403392E-003 &  7.5343146124409056E-003 & 1 \\
-    \rowcolor{black!00} \multirow{-3}{*}{16x16x16}& 7.8113167415358713E-003 &  7.8113167415361021E-003 & 1 \\ %\hline
+    \rowcolor{black!00}\multirow{3}{*}{}          & 7.9143566730061794E-003 &  7.9143566730065350E-003 & 2.0021  \\
+    \rowcolor{black!00}                           & 7.5343146124403392E-003 &  7.5343146124409056E-003 & 2.0111  \\
+    \rowcolor{black!00} \multirow{-3}{*}{16x16x16}& 7.8113167415358713E-003 &  7.8113167415361021E-003 & 2.0179  \\ %\hline
     %
-    \rowcolor{black!20}\multirow{3}{*}{}          & 1.9333028867476348E-003  & 1.9333250814097063E-003 &   \\
-    \rowcolor{black!20}                           & 1.8675991971385400E-003  & 1.8676512523175990E-003 & 1 \\
-    \rowcolor{black!20} \multirow{-3}{*}{32x32x32}&  1.8948139100889829E-003 & 1.8948223205995562E-003 & 1 \\ %\hline
+    \rowcolor{black!20}\multirow{3}{*}{}          & 1.9333028867476348E-003  & 1.9333250814097063E-003 & 2.0334  \\
+    \rowcolor{black!20}                           & 1.8675991971385400E-003  & 1.8676512523175990E-003 & 2.0123  \\
+    \rowcolor{black!20} \multirow{-3}{*}{32x32x32}&  1.8948139100889829E-003 & 1.8948223205995562E-003 & 2.0435  \\ %\hline
     %
-    \rowcolor{black!00}\multirow{3}{*}{}          & 4.74689419949359882E-004 & 4.74689420015271242E-004 &  \\
-    \rowcolor{black!00}                           & 4.62925993339559415E-004 & 4.62925993487765027E-004 &  \\
-    \rowcolor{black!00} \multirow{-3}{*}{64x64x64}& 4.63000820355029328E-004 & 4.63000820380278229E-004 &  \\ %\hline
+    \rowcolor{black!00}\multirow{3}{*}{}          & 4.74689419949359882E-004 & 4.74689420015271242E-004 & 2.0260 \\
+    \rowcolor{black!00}                           & 4.62925993339559415E-004 & 4.62925993487765027E-004 & 2.0123 \\
+    \rowcolor{black!00} \multirow{-3}{*}{64x64x64}& 4.63000820355029328E-004 & 4.63000820380278229E-004 & 2.0330 \\ %\hline
     %\rowcolor{black!00}\multirow{3}{*}{} &  &  &  \\\rowcolor{black!00} &  &   &  \\\rowcolor{black!00} \multirow{-3}{*}{16x16x16}& &  &  \\ \hline
   \end{tabular}
   \caption{Comparison of the errors of the velocity calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
@@ -74,10 +144,10 @@ The following tables will list the calculated error terms for the velocities, th
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(p\) from Segregated Solver & Error of \(p\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
-    \rowcolor{black!20} 8x8x8    &   &   &    \\%\hline
-    \rowcolor{black!00} 16x16x16 &   &   &    \\%\hline
-    \rowcolor{black!20} 32x32x32 &   &   &    \\%\hline
-    \rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
+    \rowcolor{black!20} 8x8x8    & 0.18303589312168636      &  0.18303589466468098      &        \\%\hline
+    \rowcolor{black!00} 16x16x16 & 8.9677276839834036E-002  &  8.9677276839825765E-002  & 1.0293 \\%\hline
+    \rowcolor{black!20} 32x32x32 & 3.7964856888161008E-002  &  3.7964815814009345E-002  & 1.2401 \\%\hline
+    \rowcolor{black!00} 64x64x64 & 1.43878010062254581E-002 &  1.43878010061565496E-002 & 1.3998 \\%\hline
     %\rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
   \end{tabular}
   \caption{Comparison of the errors of the pressure calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
@@ -88,10 +158,10 @@ The following tables will list the calculated error terms for the velocities, th
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(T\) from Segregated Solver & Error of \(T\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
-    \rowcolor{black!20} 8x8x8    &   &   &    \\%\hline
-    \rowcolor{black!00} 16x16x16 &   &   &    \\%\hline
-    \rowcolor{black!20} 32x32x32 &   &   &    \\%\hline
-    \rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
+    \rowcolor{black!20} 8x8x8    & 4.0675323775412001E-003   & 4.0675323775378296E-003  &   \\%\hline
+    \rowcolor{black!00} 16x16x16 & 1.1324773183947739E-003   & 1.1324773183947821E-003  & 1.8447 \\%\hline
+    \rowcolor{black!20} 32x32x32 & 2.9310098015820527E-004   & 2.9310096243402903E-004  & 1.9500 \\%\hline
+    \rowcolor{black!00} 64x64x64 & 7.41002197446999740E-005  & 7.41002197433442199E-005 & 1.9838 \\%\hline
     %\rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
   \end{tabular}
   \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}

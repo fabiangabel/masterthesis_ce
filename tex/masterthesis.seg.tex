@@ -542,12 +542,12 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     b_{P,T} &= b_{P,T} - \left( \min(\dot{m}_f,0) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_f||_2}\right) T_f +
     \left( \frac{\partial T}{\partial x_j}\right)_P^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber 
   \end{align}
-  The reader should note, that instead the gradient discretization at boundaries is realized by one sided forward differencing schemes instead of a central differencing scheme. This does not affect accuracy drastically because the distance used in the differential quotient is half the distance used on an central difference inside the domain \cite{schaefer99}.
+  The reader should note, that instead the gradient discretization at boundaries is realized by one sided forward differencing schemes instead of a central differencing scheme. This does not affect accuracy drastically because the distance used in the differential quotient is half the distance used on a central difference inside the domain \cite{schaefer99}.
 
   \subsubsection{Treatment of Wall Boundaries}
   \label{seg:walls}
     
-    A common boundary to the solution domain is given by solid walls. In viscous flows this can be interpreted as a no-slip condition, i.e. a Dirichlet boundary condition for the velocities. Convective fluxes through solid walls are thus zero by definition however the diffusive fluxes require special treatment not only for the velocities but also for the temperature. To approximate the fluid behavior on a wall boundary correctly, special modifications have to be taken into account to model the normal an shear tension. Furthermore diffusive fluxes for the temperature can be given by Neumann boundary conditions.
+    A common boundary to the solution domain is given by solid walls. In viscous flows this can be interpreted as a no-slip condition, i.e. a Dirichlet boundary condition for the velocities. Convective fluxes through solid walls are thus zero by definition however the diffusive fluxes require special treatment not only for the velocities but also for the temperature. To approximate the fluid behavior on a wall boundary correctly, special modifications have to be taken into account to model the normal a shear tension. Furthermore diffusive fluxes for the temperature can be given by Neumann boundary conditions.
 
     The derivation of the discretized diffusive flux through wall boundaries starts from the integral momentum balance (\ref{eq:cauchy}) for the vector \(\vec{u}\). Here only the term for surface forces is needed
     \begin{equation}
@@ -587,7 +587,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     \begin{displaymath}
      \frac{ \partial u_n }{ \partial x_n } + \frac{ \partial u_t }{ \partial x_t } =  \frac{ \partial u_n }{ \partial x_n } = 0,
     \end{displaymath}
-    what is equivalent to \( \tau_{nn} = 0\) at the wall. An physical interpretation would be that the transfer of momentum at the wall occurs by shear forces exclusively. Furthermore the coordinate direction \(t\) is chosen to be parallel to the shear force which is no restriction because of the possibility to rotate the coordinate system within the plane. This leads to \(\tau_{ns} = 0 \). The absolute value of the surface force hence only depends on the normal derivative of the velocity tangential to the wall. After transforming the coordinates back to the system \((x_1, x_2, x_3)\) the surface force can be calculated and the integral can be discretized using the midpoint rule by
+    what is equivalent to \( \tau_{nn} = 0\) at the wall. A physical interpretation would be that the transfer of momentum at the wall occurs by shear forces exclusively. Furthermore the coordinate direction \(t\) is chosen to be parallel to the shear force which is no restriction because of the possibility to rotate the coordinate system within the plane. This leads to \(\tau_{ns} = 0 \). The absolute value of the surface force hence only depends on the normal derivative of the velocity tangential to the wall. After transforming the coordinates back to the system \((x_1, x_2, x_3)\) the surface force can be calculated and the integral can be discretized using the midpoint rule by
     \begin{equation}
       \label{eq:wallforce}
       \vec{F}_w 
@@ -630,6 +630,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     If the solution of the flow field is coupled with the solution of an energy equations, different options for the boundary condition at walls may be chosen. If the wall temperature is known a Dirichlet boundary condition for the temperature is the choice. A wall of this type is called to be \emph{isothermal}. If on the other side only the heat flux is known a Neumann boundary condition is used. In the special case of zero heat flux the wall is called to be \emph{adiabatic}. For adiabatic walls, which are besides isothermal walls used for the present thesis the implementation is straight forward since no coefficients have to be calculated.
 
   \subsubsection{Treatment of Block Boundaries}
+  \label{sec:blockboundaries}
 
   If block structured grids are used to decompose the problem domain, the characterizing property of structured grids, which is the constant amount of grid cells in each direction, gives each inner cell exactly six neighbours. If more then one grid block is used this property is violated if the number of grid cells of each block is chosen to be arbitrary. The arbitrariness of the grid resolution is a main benefactor for the adaptivity of block structured grids.
 

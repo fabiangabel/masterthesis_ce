@@ -1,11 +1,11 @@
 
   \section{Fundamentals of Continuum Physics for Thermo-Hydrodynamical Problems}
 
-      This section covers the set of fundamental equations for thermo-hydrodynamical problems which the numerical solution techniques of the following chapters are aiming to solve. Furthermore the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on (Kundu, Spurk, Ferziger, Anderson). For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods the focus lays on stating the integral forms of the relevant conservation laws. However in the process of deriving the final set of equations the use of differential formulations of the stated laws are required. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i \) are used. This approach is also known as \emph{Eulerian approach}.  
+  This section covers the set of fundamental equations for thermo-hydrodynamical problems which the numerical solution techniques of the following chapters are aiming to solve. Furthermore the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on \cite{andersson84,ferziger02,kundu12,spurk10}. For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods the focus lays on stating the integral forms of the relevant conservation laws. However in the process of deriving the final set of equations the use of differential formulations of the stated laws is required. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i \) are used. This approach is also known as \emph{Eulerian approach}.  
 
     \subsection{Conservation of Mass -- Continuity Equation}
 
-    The conservation law of mass embraces the physical concept that, neglecting relativistic and nuclear reactions, mass cannot be created or destroyed. Using the notion of a mathematical control volume, which is used to denote a constant domain of integration, one can state the integral mass balance of a control volume \(V\) with control surface \(S\) with surface normal unit vector \(\vec{n} = \left( n_i \right)_{i=1,\dots,3}\) using Gauss' theorem as
+    The conservation law of mass, also known as the continuity equation, embraces the physical concept that, neglecting relativistic and nuclear reactions, mass cannot be created or destroyed. Using the notion of a mathematical control volume, which is used to denote a constant domain of integration, one can state the integral mass balance of a control volume \(V\) with control surface \(S\) with surface unit normal vector \(\vec{n} = \left( n_i \right)_{i=1,\dots,3}\) using Gauss' theorem as
     \begin{displaymath}
       \iiint\limits_V \frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x_i}\left( \rho u_i \right) \mathrm{d}V 
       =  \iiint\limits_V \frac{\partial \rho}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i n_i \mathrm{d}S
@@ -23,27 +23,27 @@
     The conservation law of momentum, also known as Newton's Second Law, axiomatically demands the balance of the temporal change of momentum and the sum of all attacking forces on a body. Those forces can be divided into body forces and surface forces. Let \(\vec{k} = \left( k_i \right)_{i=1,\dots,3}\) denote a mass specific force and \(\vec{t} = \left(t_i\right)_{i=1,\dots,3}\) the stress vector. A first form of the integral momentum balance in the direction of \(x_i\) can be formulated as
     \begin{equation}
       \label{eq:cauchy}
-      \iiint\limits_V \frac{\partial \left(\rho u_i \right)}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i \left( u_j n_j \right) \mathrm{d}S = \iiint\limits_V \rho k_i \mathrm{d}V + \iint\limits_S t_i \mathrm{d}S.
+      \iiint\limits_V \frac{\partial }{\partial t}\left(\rho u_i \right) \mathrm{d}V + \iint\limits_S \rho u_i \left( u_j n_j \right) \mathrm{d}S = \iiint\limits_V \rho k_i \mathrm{d}V + \iint\limits_S t_i \mathrm{d}S.
     \end{equation}
 
-    In general the stress vector \(\vec{t}\) is a function not only of the location \(\vec{x} = \left( x_i \right)_{i = 1,\dots,3}\) and of the time \(t\) but also of the surface normal unit vector \(\vec{n}\). A central simplification can be introduced, namely Cauchy's stress theorem, which states that the stress vector is the image of the normal vector under a linear mapping \(\vec{T}\). With respect to the Cartesian canonical basis \(\left(\vec{e}_i \right)_{i = 1, \dots, 3}\) the mapping \(\vec{T}\) is represented by the coefficient matrix \( \left(\tau_{ji}\right)_{i,j = 1,\dots,3}\) and Cauchy's stress theorem reads
+    In general the stress vector \(\vec{t}\) is a function not only of the location \(\vec{x} = \left( x_i \right)_{i = 1,\dots,3}\) and of the time \(t\) but also of the surface unit normal vector \(\vec{n}\). A central simplification can be introduced, namely Cauchy's stress theorem, which states that the stress vector is the image of the unit normal vector under a linear mapping \(\vec{T}\). With respect to the Cartesian canonical basis \(\left(\vec{e}_i \right)_{i = 1, \dots, 3}\) the mapping \(\vec{T}\) is represented by the coefficient matrix \( \left(\tau_{ji}\right)_{i,j = 1,\dots,3}\) and Cauchy's stress theorem reads
     \begin{displaymath}
       \vec{t}\left(\vec{x},t,\vec{n}\right) = \vec{T}(\vec{x},t,\vec{n}) = \left(\tau_{ji} n_j\right)_{i = 1, \dots, 3}.
     \end{displaymath}
     Assuming the validity of Cauchy's stress theorem one can derive Cauchy's first law of motion, which in differential form can be formulated as
     \begin{equation}
       \label{eq:cauchymotion}
-      \frac{\partial \left(\rho u_i \right)}{\partial t} 
+      \frac{\partial }{\partial t} \left(\rho u_i \right)
       + \frac{\partial}{\partial x_j}\left( \rho u_i u_j \right) 
       = \rho k_i + \frac{\partial \tau_{ji}}{\partial x_j}
     \end{equation}
-    and represents the starting point for the modelling of fluid mechanical problems. One should note, that Cauchy's first law of motion does not take any assumptions regarding material properties, which is why the set of equations (1,2) is not closed in the sense that there exists a independent equation for each of the dependent variables.
+    and represents the starting point for the modelling of fluid mechanical problems. One should note, that Cauchy's first law of motion does not take any assumptions regarding material properties, which is why the set of equations (\ref{eq:contifull},\ref{eq:cauchymotion}) is not closed in the sense that there exists an independent equation for each of the dependent variables.
 
     %\subsection{Conservation of Angular Momentum}
     \subsection{Closing the System of Equations -- Newtonian Fluids}
     \label{sec:fundclosing}
 
-    As result of Cauchy's theorem the stress vector \( \vec{t} \) can be specified once the nine components \(\tau_{ji}\) of the coefficient matrix are known. As is shown in (Spurk usw.) by formulating the conservation law of angular momentum the coefficient matrix is symmetric, 
+    As result of Cauchy's theorem the stress vector \( \vec{t} \) can be specified once the nine components \(\tau_{ji}\) of the coefficient matrix are known. As is shown in \cite{kundu12,spurk10} by formulating the conservation law of angular momentum the coefficient matrix is symmetric, 
     \begin{equation}
       \label{eq:stresssymetry}
       \tau_{ji} = \tau_{ij},
@@ -54,19 +54,19 @@
     \end{displaymath}
     where \(p\) is the thermodynamic pressure, \(\delta_{ij}\) is the \emph{Kronecker}-Delta and \( \sigma_{ij} \) is the so called \emph{deviatoric stress tensor}. 
     
-    For the fluids the studies that the present thesis performs it is sufficient to consider viscous fluids for which there exists a linear relation between the components of the deviatoric stress tensor and the symmetric part of the transpose of the jacobian of the velocity field \(\left( S_{ij} \right)_{i,j=1,\dots,3}\),
+    For the fluids the studies that the present thesis performs it is sufficient to consider viscous fluids for which there exists a linear relation between the components of the deviatoric stress tensor and the symmetric part of the transpose of the Jacobian of the velocity field \(\left( S_{ij} \right)_{i,j=1,\dots,3}\),
     \begin{displaymath}
       S_{ij} = \frac{1}{2} \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i} \right).
     \end{displaymath}
 
-    If one now imposes material-isotropy and the mentioned stress-symmetry (\ref{eq:stresssymetry}) restriction it can be shown (Aries) that the constitutive equation for the deviatoric stress tensor reads 
+    If one now imposes material-isotropy and the mentioned stress-symmetry (\ref{eq:stresssymetry}) restriction it can be shown \cite{aris62} that the constitutive equation for the deviatoric stress tensor reads 
     \begin{displaymath}
       \sigma_{ij} = 2 \mu S_{ij} + \lambda S_{mm} \delta_{ij},
     \end{displaymath}
-    where \(\lambda\) and \(\mu\) denominate scalars which depend on the local thermodynamical state. Taking everything into account (\ref{eq:cauchymotion}) can be formulated as the differential conservation law of momentum for newtonian fluids, better known as the \emph{Navier-Stokes equations} in differential form:
+    where \(\lambda\) and \(\mu\) denominate scalars which depend on the local thermodynamical state. Taking everything into account (\ref{eq:cauchymotion}) can be formulated as the differential conservation law of momentum for Newtonian fluids, better known as the \emph{Navier-Stokes equations} in differential form:
     \begin{equation}
       \label{eq:nsfull}
-      \frac{\partial \left(\rho u_i \right)}{\partial t} 
+      \frac{\partial }{\partial t} \left(\rho u_i \right)
       + \frac{\partial}{\partial x_j} \left( \rho u_i  u_j \right) 
       = \rho k_i
       - \frac{\partial p}{\partial x_i}
@@ -75,37 +75,37 @@
       + \frac{\partial}{\partial x_i} \left(\lambda \frac{\partial u_m}{\partial x_m} \right)
     \end{equation}
 
-    \subsection{Conservation Law for Scalar Quantities}
+    \subsection{Conservation of Scalar Quantities}
 
-    The modelling of the transport of scalar quantities, convection, by a flow field \(\vec{u}\) is necessary if the fluid mechanical problem to be analyzed includes for example heat transfer. Other scenarios that involve the necessity to model scalar transport surge, when turbulent flows are to be modeled by two-equation models like the \(k\)-\(\varepsilon\)-model (REFERENCE,Pope). 
+    The modelling of the transport of scalar or vector quantities by a flow field \(\vec{u}\), also known as convection, is necessary if the fluid mechanical problem to be analyzed includes for example heat transfer. Other scenarios that involve the necessity to model scalar transport surge, when turbulent flows are to be modeled by two-equation models like the \(k\)-\(\varepsilon\)-model \cite{pope00}. 
     
-    Since this thesis focusses on the transport of the scalar temperature \(T\) this section introduces the conservation law for energy in differential form,
+    Since this thesis focusses on the transport of the scalar temperature \(T\) this section introduces the conservation law of energy in differential form, formulated in terms of the temperature,
     \begin{equation}
       \frac{\partial \left(\rho T \right)}{\partial t} + \frac{\partial}{x_j} \left( \rho u_j - \kappa \frac{\partial T}{\partial x_j} \right) = q_T,
     \end{equation}
-    where \(\kappa\) denotes the thermal conductivity of the modelled material and \(q_T\) is a scalar field representing sources and sinks of heat throughout the domain of the problem. 
+    where \(\kappa\) denotes the thermal conductivity of the modelled material and \(q_T\) is a scalar field representing sources and sinks of heat throughout the domain of the problem. This equation is also known as the temperature equation.
 
         %Check also Peric p12 or Bird et al. (1962).
 
     \subsection{Necessary Simplification of Equations}
-        Negligible viscous dissipation and pressure work source terms in the enery equation (vakilipour)
+        Negligible viscous dissipation and pressure work source terms in the every equation (vakilipour)
 
         The purpose of this section is to motivate and introduce further common simplifications of the previously presented set of constitutive equations. 
 
       \subsubsection{Incompressible Flows and Hydrostatic Pressure}
 
-      A common simplification when modelling low Mach number flows (\(Ma < 0.3\)), is the assumption of \emph{incompressibility}, or the assumption of an \emph{isochoric} flow. If one furthermore assumes homogeneous density \(\rho\) in space and time, a restrictive assumption that will be partially alleviated in the following section the continuity equation in differential form (\ref{eq:contifull}) can be simplified to
+      A common simplification when modelling low Mach number flows (\(Ma < 0.3\)), is the assumption of \emph{incompressibility}, or the assumption of an \emph{isochoric} flow. If one furthermore assumes homogeneous density \(\rho\) in space and time, a restrictive assumption that will be partially alleviated in the following section, the continuity equation in differential form (\ref{eq:contifull}) can be simplified to
       \begin{equation}
         \label{eq:contiinc}
         \frac{\partial u_i}{\partial x_i} = 0.
       \end{equation}
-      In other words: In order for a velocity vector field \(\vec{u}\) to be valid for an incompressible flow it has to be free of divergence, or \emph{solenoidal} (Aries).
+      In other words: In order for a velocity vector field \(\vec{u}\) to be valid for an incompressible flow it has to be free of divergence, or \emph{solenoidal} \cite{spurk10,aris62}.
 
-      If furthermore, one assumes also constant dynamic viscosity \(\mu\), which can be suitable in the case of isothermal flow or if the temperature differences within the flow are small, the Navier-Stokes equations in differential form can be reduced to 
+      If furthermore one assumes the dynamic viscosity \(\mu\) to be constant,  which can be suitable in the case of isothermal flow or if the temperature differences within the flow are small, the Navier-Stokes equations in differential form can be reduced to 
       \begin{subequations}
         \label{eq:navierstokes}
       \begin{align}
-        \frac{\partial \left(\rho u_i \right)}{\partial t} 
+        \frac{\partial}{\partial t}   \left(\rho u_i \right)
         + \rho \frac{\partial}{\partial x_j} \left( u_i  u_j \right) 
         =& \rho k_i
         - \frac{\partial p}{\partial x_i}
@@ -116,7 +116,7 @@
         + \mu \frac{\partial}{\partial x_j} \left( \frac{\partial u_i}{\partial x_j} \right)
       \end{align}
     \end{subequations}
-      by using \emph{Schwartz}'s lemma to interchange the order of differentiation. A common simplification to further simplify the set of equations is the assumption of a volume specific force \(\rho \vec{k}\) that can be modelled by a potential, such that is can be represented as the gradient of a scalar field \(\Phi_\vec{k}\) as
+      by using \emph{Schwartz}'s lemma to interchange the order of differentiation. Another common simplification to further simplify the set of equations is the assumption of a volume specific force \(\rho \vec{k}\) that can be modelled by a potential, such that it can be represented as the gradient of a scalar field \(\Phi_\vec{k}\) as
       \begin{displaymath}
        - \rho k_i = \frac{\partial \Phi_\vec{k}}{\partial x_i}.
       \end{displaymath}
@@ -137,7 +137,7 @@
       \subsubsection{Variation of Fluid Properties -- The Boussinesq Approximation}
       \label{sec:boussinesq}
 
-      If modelling of an incompressible flow involves heat transfer fluid properties like the density change with varying temperature. If the variation of temperature is small one can still assume a constant density to maintain the structure of the advection and diffusion terms in (\ref{eq:nsfull}) and only consider the changes of the density in the gravitational term. If linear variation of density with respect to temperature is assumed this approximation is called \emph{Boussinesq}-approximation. In this case the Navier-Stokes equations are formulated using a reference pressure \(\rho_0\) at the reference temperature \(T_0\) and the now temperature dependent density \(\rho\), with
+      If modelling of an incompressible flow involves heat transfer fluid properties like the density change with varying temperature. If the variation of temperature is small one can still assume a constant density to maintain the structure of the advection and diffusion terms in (\ref{eq:nsfull}) and only consider changes of the density in the gravitational term. If linear variation of density with respect to temperature is assumed this approximation is called \emph{Boussinesq}-approximation \cite{gray76} REFERENCE. In this case the Navier-Stokes equations are formulated using a reference density \(\rho_0\) at the reference temperature \(T_0\) and the now temperature dependent density \(\rho\)
       \begin{equation}
         \rho \left( T \right) = \rho_0 \left( 1 - \beta \left( T - T_0 \right) \right).
       \end{equation}
@@ -174,7 +174,7 @@
       
     \subsection{Final Form of the Set of Equations}
 
-    In the previous subsections different simplifications have been introduced which will be used throughout the thesis. The final form of the set of equations to be used is thereby presented. As further simplification the modified pressure \(\hat{p}\) will be treated as \(p\) and since the use of the Boussinesq-approximation replaces the variable \(\rho\) by a linear function of the temperature \(T\) the reference pressure \(\rho_0\) for the remainder of this thesis will be referred to as \(\rho\). Note that incompressibility has been taken into account:
+    In the previous subsections different simplifications have been introduced which will be used throughout the thesis. The final form of the set of equations to be used is thereby presented. As further simplification the modified pressure \(\hat{p}\) will be treated as \(p\) and since the use of the Boussinesq-approximation replaces the variable \(\rho\) by a linear function of the temperature \(T\) the reference density \(\rho_0\) for the remainder of this thesis will be referred to as \(\rho\). Note that incompressibility has been taken into account:
     \begin{subequations}
       \label{eq:completeset}
     \begin{align}

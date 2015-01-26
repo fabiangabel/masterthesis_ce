@@ -1,74 +1,59 @@
-  \section{CAFFA Framework}
+\section{CAFFA Framework}
 
-  CAFFA is an acronym and stands for Computer Aided Fluid Flow Analysis. Based on Peric caffa 2d code, 3 dimensional extension to blockstructured grids. Characteristic is the parallelisation with PETSc and the fully implicit treatment of arbitrary block boundaries.
+This section presents the CAFFA framework that has been extended for the present thesis. \emph{CAFFA} is an acronym and stands for \emph{Computer Aided Fluid Flow Analysis}. The solver framework is based on Peri\'c's caffa 2d code \cite{caffawebpage} that has been modified to handle three dimensional problem domains and block structured grids with non-matching blocks. Furthermore the framework has been parallelized making extensive use of the PETSc library. One characteristic of the solver framework is that arbitrary block boundaries are handled in a fully implicit manner. Details on the treatment of those transitional conditions can be found in section \ref{sec:blockboundaries}. The framework consists of two different solver algorithms, a segregated solver and a fully coupled solver, which have been introduced in sections \ref{sec:seg} and \ref{sec:cpld} respectively. In addition the framework features an own implementation of a grid generator for block structured grids as well as a mapper program to convert grids created with ICEM CFD. To prepare the grid data for the later use in the solvers a preprocessor program has been integrated into the framework. 
 
-    \subsection{PETSc Framework}
+The following subsections will now briefly introduce the PETSc Framework, present the components of the CAFFA framework and finally sketch the program flow.
 
-        PETSc is an acronym for Portable Extensible Toolkit for Scientific Calculations and is a software library.
-        Keep in mind not to copy the manual
+\subsection{PETSc Framework}
 
-      \subsubsection{About PETSc}
+\emph{PETSc} is an acronym for \emph{Portable Extensible Toolkit for Scientific Calculations} and is a software suite that comprises data structures and an extensive set of linear solver routines \cite{petsc-web-page,petsc-efficient}. A great part of the data structures are designed to work in parallel on high performance computers, also the solver routines have been parallelized using the MPI standard for message passing. PETSc provides the tools that can be used to build large-scale application codes for scientific calculations. The great advantage of PETSc is that adds multiple additional layers of abstraction that make its use in applications straightforward and allow the users to focus on the essential implementations of their own code instead of having to dealing with parallel data structures and algorithms, which represents an additional source for programming errors. PETSc provides different interfaces through which the user can parallelize his code, what furthermore increases readability and maintainability of the developed code. Last but not least, the implementations used for data structures and solvers in PETSc have are not only verified and updated on a regular basis, they have furthermore proven to be highly efficient in the creation of large-scale computer applications on high performance clusters REFERENCE.
 
-        Bell Prize, MPI Programming
+The data structures PETSc offers reflect the commonly used elements in scientific codes. Vectors, matrices and index sets are among this basic data structures. PETSc offers a variety of options for its data structures. Vectors can either be used sequentially or parallelly in which case PETSc handles the distribution of the vector components to the processes inside a MPI communicator. Furthermore parallel matrix formats are available that allow the processes to assemble different parts of one global matrix simultaneously. PETSc contains other data structures that can be used to fetch and distribute either vector or matrix elements from remote processes.
 
-      \subsubsection{Basic Data Types}
+On the other side PETSc contains a large collection of parallel solvers for linear systems. The major part comprises Krylov subspace methods which have been introduced in section \ref{sec:krylov}. Among the variety of solver options that are available for further optimization of the performance, the Krylov subspace methods can be combined with elements of another thorough collection of preconditioners. For further details on the available data structures and subroutines the reader is referred to \cite{petsc-user-ref,petsc-web-page}.
 
-        Vec,Mat (Different Matrix Types and Their effect on complex methods)
+In addition to the mentioned tools PETSc also comes with an internal profiler tool that collects a variety of information on the used PETSc objects and bundles them into a human readable log file. The log file and other dynamic output which can be triggered by command line arguments facilitate the optimization process of developed applications and allow the accurate determination of performance measures.
 
-      \subsubsection{KSP and PC Objects and Their Usage}
+\subsection{Grid Generation and Conversion}
 
-        Singularities
+Generation of block structured locally refined grids with non-matching block interfaces, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within an epsilon neighbourhood while maintaining the grid intact. 
 
-      \subsubsection{Profiling}
+\subsection{Preprocessing}
+Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement, arbitrary polygon matching, parallelizable due to easier interface
 
-        PETSc Log 
+\subsection{Implementation Details of CAFFA}
 
-      \subsubsection{Common Errors}
-
-      Optimization, Interfaces, (ROWMAJOR,COLUMNMAJOR), Compiler Errors not helpful, Preallocation vs. Mallocs
-
-    \subsection{Grid Generation and Conversion}
-
-      Generation of block structured locally refined grids with non-matching block interfaces, neighbouring relations are represented by a special type of boundary conditions; Random number generator to move grid points within a epsilon neighbourhood while maintaining the grid intact. Show in a graph how preallocation impacts on runtime.
-    \subsection{Preprocessing}
-    Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement, arbitrary polygon matching, parallelizable due to easier interface
-
-    \subsection{Implementation Details of CAFFA}
-
-      \subsubsection{MPI Programming Model}
-        Basic idea of distributed memory programming model, emphasize the differences to shared memory model. Have a diagram at hand that shows how CAFFA sequentially works (schedule) and point out the locations where and of which type (global reduce, etc.) communication is, or when synchronization is necessary.
-        \begin{itemize}
-          \item after each solve
-          \item pressure reference
-          \item error calculation
-          \item gradient calculation
-        \end{itemize}
+\subsubsection{MPI Programming Model}
+Basic idea of distributed memory programming model, emphasize the differences to shared memory model. Have a diagram at hand that shows how CAFFA sequentially works (schedule) and point out the locations where and of which type (global reduce, etc.) communication is, or when synchronization is necessary.
+\begin{itemize}
+  \item after each solve
+  \item pressure reference
+  \item error calculation
+  \item gradient calculation
+\end{itemize}
         
-        Point out that one should try to minimize the number of this points such that parallel performance stays high. Better to calculate Velocity and Pressure Gradients at once not by separately calling this routine.
+Point out that one should try to minimize the number of this points such that parallel performance stays high. Better to calculate Velocity and Pressure Gradients at once not by separately calling this routine.
 
-        \subsubsection{Convergence Control} 
-        \label{sec:convergence}
-        Explain how the criterion for convergence is met 
+\subsubsection{Convergence Control} 
+\label{sec:convergence}
+Explain how the criterion for convergence is met 
 
-        \subsubsection{Modi of Calculation}
-          there are different modi of calculation, (NS segregated, then scalar; NS and Scalar Segregated; NS coupled and Scalar segregated; Fully coupled (watch out with fully coupled, this term seems to have already another meaning)). Note that for comparison of solvers it is crucial to develop programs on the same basis. This establishes comparability.
+\subsubsection{Indexing of Variables and Treatment of Boundary Values}
+Describe MatZeroValues and how it is used to simplify the code. Also loose a word on PCREDISTRIBUTE its advantages (no boundary values involved, do not have to be reset when system is solved with high tolerance) and downsides (preliminary tests showed bad scaling behaviour (PROVE)). Compliance of PETSc zero based indexing and CAFFA indexing which considers boundary values.
+\subsubsection{Field Interlacing}
+Realization through special arrangement of variables and the use of index sets (subvector objects) and/or preprocessor directives. Advantages (there was a paper I cited in my thesis). Note that not all variables are interlaced (Velocities are, but their gradients are not). Great impact on Matrix structure.
+\subsubsection{Domain Decomposition, Exchange of Ghost Values and Parallel Matrix Assembly}
 
-      \subsubsection{Indexing of Variables and Treatment of Boundary Values}
-      Describe MatZeroValues and how it is used to simplify the code. Also loose a word on PCREDISTRIBUTE its advantages (no boundary values involved, do not have to be reset when system is solved with high tolerance) and downsides (preliminary tests showed bad scaling behaviour (PROVE)). Compliance of PETSc zero based indexing and CAFFA indexing which considers boundary values.
-      \subsubsection{Field Interlacing}
-      Realization through special arrangement of variables and the use of index sets (subvector objects) and/or preprocessor directives. Advantages (there was a paper I cited in my thesis). Note that not all variables are interlaced (Velocities are, but their gradients are not). Great impact on Matrix structure.
-      \subsubsection{Domain Decomposition, Exchange of Ghost Values and Parallel Matrix Assembly}
+\begin{itemize}
+\item Ghost values are stored in local representations of the global vector (state the mapping for those entries). 
+\item Matrix coefficients are calculated on one processor and sent to the neighbour. 
+\item Preallocation as crucial aspect for program performance. For the coupled system the matrix is assembled in a 2-3 step process to save memory for coefficients. 
+\item Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution. 
+\item Use Spy function of Matlab to visualize the sparse matrices. Point out advantages of calculating coefficients for the neighbouring cells locally (no need to update mass fluxes, geometric data doesn't need to be shared, small communication overhead since processors assemble matrix parts that don't belong to them (visualize)). 
+\item Paradigm: Each time new information is available perform global updates. Advantages of using matrices: Show structure of matrix when using arbitrary matching vs. higher memory requirements vs. better convergence
+\end{itemize}
 
-      \begin{itemize}
-        \item Ghost values are stored in local representations of the global vector (state the mapping for those entries). 
-        \item Matrix coefficients are calculated on one processor and sent to the neighbour. 
-        \item Preallocation as crucial aspect for program performance. For the coupled system the matrix is assembled in a 2-3 step process to save memory for coefficients. 
-        \item Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution. 
-        \item Use Spy function of Matlab to visualize the sparse matrices. Point out advantages of calculating coefficients for the neighbouring cells locally (no need to update mass fluxes, geometric data doesn't need to be shared, small communication overhead since processors assemble matrix parts that don't belong to them (visualize)). 
-        \item Paradigm: Each time new information is available perform global updates. Advantages of using matrices: Show structure of matrix when using arbitrary matching vs. higher memory requirements vs. better convergence
-      \end{itemize}
+\subsection{Postprocessing}
 
-    \subsection{Postprocessing}
-    
-      Visualization of Results with Paraview and Tecplot
-      Export matrices as binaries and visualize them using matlab scripts.
+Visualization of Results with Paraview and Tecplot
+Export matrices as binaries and visualize them using matlab scripts.
