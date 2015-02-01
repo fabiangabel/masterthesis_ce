@@ -20,3 +20,4 @@ rm -f masterthesis.pdf
 rm -f masterthesis.run.xml
 rm -f masterthesis.toc
 rm -f texput.log
+rm -f */texput.log
