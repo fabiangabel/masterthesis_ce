@@ -1,7 +1,7 @@
 
   \section{Fundamentals of Continuum Physics for Thermo-Hydrodynamical Problems}
 
-  This section covers the set of fundamental equations for thermo-hydrodynamical problems which the numerical solution techniques of the following chapters are aiming to solve. Furthermore the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on \cite{andersson84,ferziger02,kundu12,spurk10}. For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods the focus lays on stating the integral forms of the relevant conservation laws. However in the process of deriving the final set of equations the use of differential formulations of the stated laws is required. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i \) are used. This approach is also known as \emph{Eulerian approach}.  
+  This section covers the set of fundamental equations for thermo-hydrodynamical problems, which the numerical solution techniques of the following chapters are aiming to solve. Furthermore, the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on \cite{andersson84,ferziger02,kundu12,spurk10}. For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods, the focus lays on stating the integral forms of the relevant conservation laws. However, in the process of deriving the final set of equations, the use of differential formulations of the stated laws is required. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis, non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i \) are used. This approach is also known as \emph{Eulerian approach}.  
 
     \subsection{Conservation of Mass -- Continuity Equation}
 
@@ -11,7 +11,7 @@
       =  \iiint\limits_V \frac{\partial \rho}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i n_i \mathrm{d}S
       = 0,
     \end{displaymath}
-    where \( \rho \) denotes the material density, \(t \) denotes the independent variable of time and \(\vec{u} = \left( u_i \right)_{i=1,\dots,3}\) is the velocity vector field. Since this equation remains valid for arbitrary control volumes the equality has to hold for the integrands as well. In this sense the differential form of the conservation law of mass can be formulated as
+    where \( \rho \) denotes the material density, \(t \) denotes the independent variable of time and \(\vec{u} = \left( u_i \right)_{i=1,\dots,3}\) is the velocity vector field. Since this equation remains valid for arbitrary control volumes, the equality has to hold for the integrands as well. In this sense, the differential form of the conservation law of mass can be formulated as
     \begin{equation}
       \label{eq:contifull}
       \frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x_i}\left( \rho u_i \right)
@@ -26,11 +26,11 @@
       \iiint\limits_V \frac{\partial }{\partial t}\left(\rho u_i \right) \mathrm{d}V + \iint\limits_S \rho u_i \left( u_j n_j \right) \mathrm{d}S = \iiint\limits_V \rho k_i \mathrm{d}V + \iint\limits_S t_i \mathrm{d}S.
     \end{equation}
 
-    In general the stress vector \(\vec{t}\) is a function not only of the location \(\vec{x} = \left( x_i \right)_{i = 1,\dots,3}\) and of the time \(t\) but also of the surface unit normal vector \(\vec{n}\). A central simplification can be introduced, namely Cauchy's stress theorem, which states that the stress vector is the image of the unit normal vector under a linear mapping \(\vec{T}\). With respect to the Cartesian canonical basis \(\left(\vec{e}_i \right)_{i = 1, \dots, 3}\) the mapping \(\vec{T}\) is represented by the coefficient matrix \( \left(\tau_{ji}\right)_{i,j = 1,\dots,3}\) and Cauchy's stress theorem reads
+    In general, the stress vector \(\vec{t}\) is a function not only of the location \(\vec{x} = \left( x_i \right)_{i = 1,\dots,3}\) and of the time \(t\) but also of the surface unit normal vector \(\vec{n}\). A central simplification can be introduced, namely Cauchy's stress theorem, which states that the stress vector is the image of the unit normal vector under a linear mapping \(\vec{T}\). With respect to the Cartesian canonical basis \(\left(\vec{e}_i \right)_{i = 1, \dots, 3}\) the mapping \(\vec{T}\) is represented by the coefficient matrix \( \left(\tau_{ji}\right)_{i,j = 1,\dots,3}\) and Cauchy's stress theorem reads
     \begin{displaymath}
       \vec{t}\left(\vec{x},t,\vec{n}\right) = \vec{T}(\vec{x},t,\vec{n}) = \left(\tau_{ji} n_j\right)_{i = 1, \dots, 3}.
     \end{displaymath}
-    Assuming the validity of Cauchy's stress theorem one can derive Cauchy's first law of motion, which in differential form can be formulated as
+    Assuming the validity of Cauchy's stress theorem, one can derive Cauchy's first law of motion, which in differential form can be formulated as
     \begin{equation}
       \label{eq:cauchymotion}
       \frac{\partial }{\partial t} \left(\rho u_i \right)
@@ -43,7 +43,7 @@
     \subsection{Closing the System of Equations -- Newtonian Fluids}
     \label{sec:fundclosing}
 
-    As result of Cauchy's theorem the stress vector \( \vec{t} \) can be specified once the nine components \(\tau_{ji}\) of the coefficient matrix are known. As is shown in \cite{kundu12,spurk10} by formulating the conservation law of angular momentum the coefficient matrix is symmetric, 
+    Resulting from the application of Cauchy's theorem, the stress vector \( \vec{t} \) can be specified once the nine components \(\tau_{ji}\) of the coefficient matrix are known. As shown in \cite{kundu12,spurk10}, by formulating the conservation law of angular momentum, the coefficient matrix is symmetric, 
     \begin{equation}
       \label{eq:stresssymetry}
       \tau_{ji} = \tau_{ij},
@@ -54,16 +54,16 @@
     \end{displaymath}
     where \(p\) is the thermodynamic pressure, \(\delta_{ij}\) is the \emph{Kronecker}-Delta and \( \sigma_{ij} \) is the so called \emph{deviatoric stress tensor}. 
     
-    For the fluids the studies that the present thesis performs it is sufficient to consider viscous fluids for which there exists a linear relation between the components of the deviatoric stress tensor and the symmetric part of the transpose of the Jacobian of the velocity field \(\left( S_{ij} \right)_{i,j=1,\dots,3}\),
+    In the present thesis, viscous fluids are modelled using a linear relation between the components of the deviatoric stress tensor and the symmetric part of the transpose of the Jacobian of the velocity field \(\left( S_{ij} \right)_{i,j=1,\dots,3}\),
     \begin{displaymath}
       S_{ij} = \frac{1}{2} \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i} \right).
     \end{displaymath}
 
-    If one now imposes material-isotropy and the mentioned stress-symmetry (\ref{eq:stresssymetry}) restriction it can be shown \cite{aris62} that the constitutive equation for the deviatoric stress tensor reads 
+    If one now imposes material-isotropy and the mentioned stress-symmetry (\ref{eq:stresssymetry}) restriction, it can be shown \cite{aris62} that the constitutive equation for the deviatoric stress tensor reads 
     \begin{displaymath}
       \sigma_{ij} = 2 \mu S_{ij} + \lambda S_{mm} \delta_{ij},
     \end{displaymath}
-    where \(\lambda\) and \(\mu\) denominate scalars which depend on the local thermodynamical state. Taking everything into account (\ref{eq:cauchymotion}) can be formulated as the differential conservation law of momentum for Newtonian fluids, better known as the \emph{Navier-Stokes equations} in differential form:
+    where \(\lambda\) and \(\mu\) denominate scalars which depend on the local thermodynamical state. Taking everything into account, (\ref{eq:cauchymotion}) can be formulated as the differential conservation law of momentum for Newtonian fluids, better known as the \emph{Navier-Stokes equations} in differential form:
     \begin{equation}
       \label{eq:nsfull}
       \frac{\partial }{\partial t} \left(\rho u_i \right)
@@ -79,7 +79,7 @@
 
     The modelling of the transport of scalar or vector quantities by a flow field \(\vec{u}\), also known as convection, is necessary if the fluid mechanical problem to be analyzed includes for example heat transfer. Other scenarios that involve the necessity to model scalar transport surge, when turbulent flows are to be modeled by two-equation models like the \(k\)-\(\varepsilon\)-model \cite{pope00}. 
     
-    Since this thesis focusses on the transport of the scalar temperature \(T\) this section introduces the conservation law of energy in differential form, formulated in terms of the temperature,
+    Since this thesis focusses on the transport of the scalar temperature \(T\), this section introduces the conservation law of energy in differential form, formulated in terms of the temperature,
     \begin{equation}
       \frac{\partial \left(\rho T \right)}{\partial t} + \frac{\partial}{x_j} \left( \rho u_j - \kappa \frac{\partial T}{\partial x_j} \right) = q_T,
     \end{equation}

@@ -36,7 +36,7 @@ The manufactured solution for the pressure \(p\) was created as
 \begin{displaymath}
   p = \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \cos \left( {x_1}^{2}+ {x_2}^{2 }+{x_3}^{2} \right).
 \end{displaymath}
-Since the velocity field was created as an solenoidal field no pressure sorce had to be calculated. The manufactured solution for the temperature \(T\) reads
+Since the velocity field was created as an solenoidal field no pressure source had to be calculated. The manufactured solution for the temperature \(T\) reads
 \begin{align*}
   T=\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3 }^{2} \right)
 \end{align*}
@@ -114,6 +114,8 @@ from it and to calculate the error as
 \end{displaymath}
 The following tables will list the calculated error terms for the velocities, the pressure and the temperature for different grid resolutions and both solver algorithms. The grid resolutions \((n \times n \times n)\) are chosen such that \(n\), the number of control volumes in each coordinate direction, will be a power of two. The Errors were evaluated after the maximal relative residual of all linear systems in one outer iteration fell below the threshold \(1\e{-14}\). The concrete implementation of the tolerance criterion to accept a converged solution is found in section \ref{sec:convergence}.
 
+A comparison of the results leads to the first conclusion, namely that the results from the segregates solver algorithm and the coupled solver algorithm coincide which implies that the same discretization is used in both cases. According to \cite{salari00} the next step comprises the calculation of the formal order of accuracy \(\hat{p}_\phi\) for each variable that the program solves for. This can be done by evaluating the quotient of two different resolutions \(n1\) and \(n2\) as 
+
 \begin{table}[h!]\centering
 \ra{1.3}
   \begin{tabular}{cccc}\toprule
@@ -167,10 +169,6 @@ The following tables will list the calculated error terms for the velocities, th
   \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
 \end{table}
 
-
-A comparison of the results leads to the first conclusion, namely that the results from the segregates solver algorithm and the coupled solver algorithm coincide which implies that the same discretization is used in both cases.
-
-According to \cite{salari00} the next step comprises the calculation of the formal order of accuracy \(\hat{p}_\phi\) for each variable that the program solves for. This can be done by evaluating the quotient of two different resolutions \(n1\) and \(n2\) as 
 \begin{displaymath}
   \hat{p}_{\phi} = \frac{\log\left(\frac{\operatorname{err}(\phi,{n1})}{\operatorname{err}(\phi,{n2})}\right)}{\log\left(\frac{n1}{n2}\right)}.
 \end{displaymath}

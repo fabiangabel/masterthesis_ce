@@ -1,8 +1,28 @@
   \section{Comparison of Solver Concepts}
   
-    \subsection{Convergence Behaviour on Locally Refined Block Structured Grids with Different Degrees of Coupling}
+     \subsection{Convergence Behaviour on Locally Refined Block Structured Grids with Different Degrees of Coupling}
 
-      Show how the implicit treatment of block boundaries maintains (high) convergence rates. Plot Residual over number of iterations.
+      Show how the implicit treatment of block boundaries maintains (high) convergence rates. Plot Residual over number of iterations. Plot Wall time for a single block using SIP, KSP, COUPLED for different grid resolutions.
+
+\begin{figure} \centering
+\begin{tikzpicture}
+\begin{loglogaxis}[
+    ylabel=Fehler,
+    xtick={1,2,4,8},
+    %xticklabels={$1h_x, 1h_t$,$2h_x, 4h_t$,$4h_x, 16h_t$,$8h_x, 64h_t$}
+    xticklabels={${1h_x\text{, }1h_t}$,$2h_x\text{, }4h_t$,$4h_x\text{, }16h_t$,$8h_x\text{, }64h_t$}
+    ]
+    \addplot[color=black,mark=*] coordinates {
+        (1, 2.70705849688271719E-004) 
+        (2, 1.11517924567996834E-003) 
+        (4, 4.41834118871322311E-003)
+        (8, 1.67582264349951486E-002) };
+\end{loglogaxis}
+\end{tikzpicture}
+\caption{Fehlerverlauf f"ur ein sukzessiv verfeinertes Gitter}
+\label{fig:fehler}
+\end{figure}
+
 
     \subsection{Parallel Performance}
       \subsubsection{Employed Hardware and Software -- The Lichtenberg-High Performance Computer }
