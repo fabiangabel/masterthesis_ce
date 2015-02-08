@@ -142,9 +142,9 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!20}                              & 1.15002402649824759E-004 & & 2.0091  \\
     \rowcolor{black!20} \multirow{-3}{*}{128x128x128}& 1.14047118284635437E-004 & & 2.0214  \\ %\hline
     %
-    \rowcolor{black!00}\multirow{3}{*}{}             & 1.17226697229094981E-004 & & 2.0177  \\
-    \rowcolor{black!00}                              & 1.15002402649824759E-004 & & 2.0091  \\
-    \rowcolor{black!00} \multirow{-3}{*}{256x256x256}& 1.14047118284635437E-004 & & 2.0214  \\ %\hline
+    \rowcolor{black!00}\multirow{3}{*}{}             &  & &   \\
+    \rowcolor{black!00}                              &  & &   \\
+    \rowcolor{black!00} \multirow{-3}{*}{256x256x256}&  & &   \\ %\hline
     %\rowcolor{black!00}\multirow{3}{*}{} &  &  &  \\\rowcolor{black!00} &  &   &  \\\rowcolor{black!00} \multirow{-3}{*}{16x16x16}& &  &  \\ \hline
   \end{tabular}
   \caption{Comparison of the errors of the velocity calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
@@ -181,8 +181,70 @@ The discretization techniques used in the present thesis yield an asymptotic dis
   \end{tabular}
   \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
 \end{table}
+
 \subsection{Influence of the Under-Relaxation Factor for the Velocities}
 \label{sec:independence}
 
-In section \ref{sec:pwim} the main purpose of introducing the pressure weighted interpolation method was to assure comparability of the generated results from the segregated solver algorithm and the coupled solver algorithm. Section \ref{sec:error} showed good agreement of the error calculated with the segregated solver using the pressure weighted interpolation method and the coupled solver. This section presents the results that are attained if the Rhie-Chow interpolation technique with different under-relaxation factors \(\alpha_\vec{u}\) is used to interpolate the velocities to the boundary faces instead of the pressure weighted interpolation technique. Figure \ref{fig:underrelaxation} shows the error for the velocities \(u_1, u_2\) and \(u_3\) for different under-relaxation factors. It is evident that the higher the under-relaxation factor the smaller the deviation of the results obtained with the standard Rhie-Chow interpolation technique. This can be justified by the fact that for an under-relaxation factor \(\alpha_\vec{u} = 1\) the pressure weighted interpolation and the Rhie-Chow interpolation would yield the same result in equation (\ref{eq:pwim}).
+In section \ref{sec:pwim} the main purpose of introducing the pressure weighted interpolation method was to assure comparability of the generated results from the segregated solver algorithm and the coupled solver algorithm. Section \ref{sec:error} showed good agreement of the error calculated with the segregated solver using the pressure weighted interpolation method and the coupled solver. This section presents the results that are attained if the standard Rhie-Chow interpolation technique with different under-relaxation factors \(\alpha_\vec{u}\) is used to interpolate the velocities to the boundary faces instead of the pressure weighted interpolation technique. Figure \ref{fig:underrelaxation} shows the error for the velocities \(u_1, u_2\) and \(u_3\) for different under-relaxation factors. It is evident that the higher the under-relaxation factor the smaller the deviation of the results obtained with the standard Rhie-Chow interpolation technique from the results obtained with the pressure weighted interpolation method. This can be justified by the fact that for an under-relaxation factor \(\alpha_\vec{u} = 1\) the pressure weighted interpolation and the Rhie-Chow interpolation would yield the same result in equation (\ref{eq:pwim}).
 
+\begin{figure} \centering
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+    ylabel={$L2$-Norm of velocity $u_1$},
+    xlabel={Under relaxation factor $\alpha_\vec{u},\, \alpha_p = 1$},
+    xtick={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0},
+    ytick={1.7e-003,1.75e-3,1.8e-003,1.85e-3},
+    yticklabels={1.7E-3,1.75E-3,1.8E-3,1.85E-3},
+    ymin=1.65e-003,ymax=1.9e-003,
+    legend pos=outer north east,
+    %height=20cm,width=10cm
+    ]
+    \addplot[color=black,mark=*] coordinates {
+        (0.1,1.6980532519690480E-003) 
+        (0.2,1.7282825021960508E-003) 
+        (0.3,1.7521955081879139E-003) 
+        (0.4,1.7727921879969275E-003) 
+        (0.5,1.7913055903698858E-003) 
+        (0.6,1.8083681827555198E-003) 
+        (0.7,1.8243530147906699E-003) 
+        (0.8,1.8395041040354771E-003) 
+        (0.9,1.8539768371656300E-003) };
+        \addlegendentry{Standard Rhie-Chow Interpolation}
+    \addplot[color=black,mark=square*] coordinates {
+        (0.1,1.8678820615909990E-003) 
+        (0.2,1.8678874094430276E-003) 
+        (0.3,1.8678885567958217E-003) 
+        (0.4,1.8678886401015040E-003) 
+        (0.5,1.8678887243265083E-003) 
+        (0.6,1.8678889586393626E-003) 
+        (0.7,1.8678908675540127E-003) 
+        (0.8,1.8678937542763532E-003) 
+        (0.9,1.8678937453692470E-003) };
+        \addlegendentry{Pressure Weighted Interpolation Method}
+%   \addplot[color=black,mark=*] coordinates {
+%       (0.1,5.6980532519690480E-004) 
+%       (0.2,5.7282825021960508E-004) 
+%       (0.3,5.7521955081879139E-004) 
+%       (0.4,5.7727921879969275E-004) 
+%       (0.5,5.7913055903698858E-004) 
+%       (0.6,5.8083681827555198E-004) 
+%       (0.7,5.8243530147906699E-004) 
+%       (0.8,5.8395041040354771E-004) 
+%       (0.9,5.8539768371656300E-004) };
+%       \addlegendentry{Standard Rhie-Chow}
+%   \addplot[color=black,mark=square*] coordinates {
+%       (0.1,5.8678820615909990E-004) 
+%       (0.2,5.8678874094430276E-004) 
+%       (0.3,5.8678885567958217E-004) 
+%       (0.4,5.8678886401015040E-004) 
+%       (0.5,5.8678887243265083E-004) 
+%       (0.6,5.8678889586393626E-004) 
+%       (0.7,5.8678908675540127E-004) 
+%       (0.8,5.8678937542763532E-004) 
+%       (0.9,5.8678937453692470E-004) };
+%       \addlegendentry{Pressure Weighted Interpolation Method}
+\end{semilogyaxis}
+\end{tikzpicture}
+\caption{Comparison of calculated error for different under relaxation factors $\alpha_\vec{u}$ on a grid with $16\times16\times16$ unknowns}
+\label{fig:underrelaxation}
+\end{figure}
