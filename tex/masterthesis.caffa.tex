@@ -1,12 +1,12 @@
 \section{CAFFA Framework}
 
-This section presents the CAFFA framework that has been extended for the present thesis. \emph{CAFFA} is an acronym and stands for \emph{Computer Aided Fluid Flow Analysis}. The solver framework is based on Peri\'c's caffa 2d code \cite{caffawebpage} that has been modified to handle three dimensional problem domains and block structured grids with non-matching blocks. Furthermore the framework has been parallelized making extensive use of the PETSc library. One characteristic of the solver framework is that arbitrary block boundaries are handled in a fully implicit manner. Details on the treatment of those transitional conditions can be found in section \ref{sec:blockboundaries}. The framework consists of two different solver algorithms, a segregated solver and a fully coupled solver, which have been introduced in sections \ref{sec:seg} and \ref{sec:cpld} respectively. In addition the framework features an own implementation of a grid generator for block structured grids as well as a mapper program to convert grids created with ICEM CFD. To prepare the grid data for the later use in the solvers a preprocessor program has been integrated into the framework. 
+This section presents the CAFFA framework that has been extended for the present thesis. \emph{CAFFA} is an acronym and stands for \emph{Computer Aided Fluid Flow Analysis}. The solver framework is based on Peri\'c's caffa 2d code \cite{caffawebpage} that has been modified to handle three dimensional problem domains and block structured grids with non-matching blocks. Furthermore the framework has been parallelized making extensive use of the PETSc library. One characteristic of the solver framework is that arbitrary block boundaries are handled in a fully implicit manner. Details on the treatment of those transitional conditions can be found in section \ref{sec:blockboundaries}. The framework consists of two different solver algorithms, a segregated solver and a fully coupled solver, which have been introduced in sections \ref{sec:seg} and \ref{sec:cpld} respectively. In addition the framework features an own implementation of a grid generator for block structured grids as well as a mapper program to convert grids created with ICEM CFD. To prepare the grid data for the later use in the solvers a preprocessor program has been integrated into the framework. Furthermore the solver programs exhibit different export functionalities for the visualisation of the numerical grid and the results within ParaView \cite{paraview} and the export of binary vectors and matrices to MATLAB \textregistered \cite{matlab}.
 
 The following subsections will now briefly introduce the PETSc Framework, present the components of the CAFFA framework and finally sketch the program flow.
 
 \subsection{PETSc Framework}
 
-\emph{PETSc} is an acronym for \emph{Portable Extensible Toolkit for Scientific Calculations} and is a software suite that comprises data structures and an extensive set of linear solver routines \cite{petsc-web-page,petsc-efficient}. A great part of the data structures are designed to work in parallel on high performance computers, also the solver routines have been parallelized using the MPI standard for message passing. PETSc provides the tools that can be used to build large-scale application codes for scientific calculations. The great advantage of PETSc is that adds multiple additional layers of abstraction that make its use in applications straightforward and allow the users to focus on the essential implementations of their own code instead of having to dealing with parallel data structures and algorithms, which represents an additional source for programming errors. PETSc provides different interfaces through which the user can parallelize his code, what furthermore increases readability and maintainability of the developed code. Last but not least, the implementations used for data structures and solvers in PETSc have are not only verified and updated on a regular basis, they have furthermore proven to be highly efficient in the creation of large-scale computer applications on high performance clusters REFERENCE.
+\emph{PETSc} is an acronym for \emph{Portable Extensible Toolkit for Scientific Calculations} and is a software suite that comprises data structures and an extensive set of linear solver routines \cite{petsc-web-page,petsc-efficient}. A great part of the data structures are designed to work in parallel on high performance computers, also the solver routines have been parallelized using the MPI standard for message passing. PETSc provides the tools that can be used to build large-scale application codes for scientific calculations. The great advantage of PETSc is that adds multiple additional layers of abstraction that make its use in applications straightforward and allow the users to focus on the essential implementations of their own code instead of having to deal with parallel data structures and algorithms, which represents an additional source for programming errors. PETSc provides different interfaces through which the user can parallelize his code, what furthermore increases readability and maintainability of the developed code. Last but not least, the implementations used for data structures and solvers in PETSc have are not only verified and updated on a regular basis, they have furthermore proven to be highly efficient in the creation of large-scale computer applications on high performance clusters REFERENCE.
 
 The data structures PETSc offers reflect the commonly used elements in scientific codes. Vectors, matrices and index sets are among this basic data structures. PETSc offers a variety of options for its data structures. Vectors can either be used sequentially or parallelly in which case PETSc handles the distribution of the vector components to the processes inside a MPI communicator. Furthermore parallel matrix formats are available that allow the processes to assemble different parts of one global matrix simultaneously. PETSc contains other data structures that can be used to fetch and distribute either vector or matrix elements from remote processes.
 
@@ -21,7 +21,9 @@ Generation of block structured locally refined grids with non-matching block int
 \subsection{Preprocessing}
 Matching algorithm -- the idea behind clipper and the used projection technique; alt.: Opencascade. Efficient calculation of values for discretization. Important for dynamic mesh refinement, arbitrary polygon matching, parallelizable due to easier interface
 
-\subsection{Implementation Details of CAFFA}
+\subsection{Implementation of CAFFA}
+
+This section provides an overview of the implementation aspects of the developed CAFFA framework. Since applications for modern computers have to be able to efficiently use the provided resources the concept for the parallelization of the application is presented. A separate section presents how convergence is monitored and controlled. Later on the use of the data structures to save the variables is presented and the realization of the domain composition as central part of the parallelization is introduced.
 
 \subsubsection{MPI Programming Model}
 Basic idea of distributed memory programming model, emphasize the differences to shared memory model. Have a diagram at hand that shows how CAFFA sequentially works (schedule) and point out the locations where and of which type (global reduce, etc.) communication is, or when synchronization is necessary.
@@ -36,24 +38,52 @@ Point out that one should try to minimize the number of this points such that pa
 
 \subsubsection{Convergence Control} 
 \label{sec:convergence}
-Explain how the criterion for convergence is met 
+One part of the PETSc philosophy is to provide great flexibility in choosing solvers and parameters from within the command line. However, the developed framework uses an implementation of a non-linear iteration process without using the SNES objects provided by PETSc. This creates the need for a hard coded implementation of convergence control. Convergence control for the used Picard iteration method comprises two parts. One part controls the overall convergence, and determines when the calculations have finished. The other part controls convergence on an outer iteration basis. The convergence criteria are met if the actual residual falls below the upper bound for the residual \(r_{final}\). The bound for final convergence is hereby determined to
+\begin{displaymath}
+  r_{final} = r_{initial} * 10^{-8},
+\end{displaymath}
+which states that a decrease of the initial residual of \(10^{-8}\) indicates convergence. This criterion will be fixed for all further analyses since it controls the overall accuracy of the solver results and hence maintains comparability of solver performance. 
+
+The other convergence criterion can be handled with more flexibility, since it controls the relative decrease of the residual in each outer iteration. This parameter should not affect the overall accuracy but instead convergence speed, within the individual bounds on the solver algorithm. This means that, depending on the coupling algorithm, low relative solver tolerances will not always benefit convergence speed. On the other hand low relative solver tolerances will affect the number of inner iterations and hence the execution time of the solver program. The convergence criterion for each outer iteration is implemented as
+\begin{displaymath}
+  r_{final}^{(k)} = r_{initial}^{(k)} * \operatorname{rtol},
+\end{displaymath}
+where \(\operatorname{rtol}\) indicates the relative decrease of the residual in each outer iteration. 
 
 \subsubsection{Indexing of Variables and Treatment of Boundary Values}
-Describe MatZeroValues and how it is used to simplify the code. Also loose a word on PCREDISTRIBUTE its advantages (no boundary values involved, do not have to be reset when system is solved with high tolerance) and downsides (preliminary tests showed bad scaling behaviour (PROVE)). Compliance of PETSc zero based indexing and CAFFA indexing which considers boundary values.
-\subsubsection{Field Interlacing}
-Realization through special arrangement of variables and the use of index sets (subvector objects) and/or preprocessor directives. Advantages (there was a paper I cited in my thesis). Note that not all variables are interlaced (Velocities are, but their gradients are not). Great impact on Matrix structure.
+
+All variables needed by the CAFFA solver are represented by one dimensional arrays. To establish a mapping between a location \((i,j,k)\) of the numerical grid and the respective variable values location \((ijk)\) inside the array the following formula is used
+\begin{displaymath}
+  (ijk) = N_i \, N_j \left(k - 1\right) + N_j \left(i - 1\right) + j,
+\end{displaymath}
+where \(N_i\) and \(N_j\) are the Number of grid cells in the respective coordinate direction plus two additional boundary cells. The inclusion of the boundary cells circumvents the need to provide an additional data structure for boundary values. Furthermore the same mapping rule can be used for the grid vertex coordinates. 
+
+This simple indexing model is not capable to handle neither block structured grids nor grids that have been distributed across various processors within the MPI programming model. This characteristic is implemented through the use of additional mappings that return a constant offset \((ijk)_b)\) for each block and \((ijk)_p\) for each processor
+\begin{displaymath}
+  (ijk) = (ijk)_p + (ijk)_b +  N_i \, N_j \left(k - 1\right) + N_j \left(i - 1\right) + j.
+\end{displaymath}
+The introduction of the processor offset is needed to provide a mapping between locally and globally indexed values. Within a process only the local indexing 
+\begin{displaymath}
+  (ijk)_{loc} = (ijk)_b +  N_i \, N_j \left(k - 1\right) + N_j \left(i - 1\right) + j.
+\end{displaymath}
+will be used, since these indexes can be mapped directly to memory addresses. For inter process communication however, global indices have to be provided to the respective PETSc subroutines by adding the processor offset
+\begin{equation}
+  \label{eq:globalmap}
+  (ijk)_{glo} = (ijk)_{loc} + (ijk)_p.
+\end{equation}
+It should be noted that the presented mappings do not include the index mappings from FORTRAN applications, which use 1-based indexing to the PETSc subroutines which use 0-based indices.
+
+As presented in section REFERENCE, the use of a coupling algorithm leads to a global linear system that contains the linear algebraic equations for different variables. The implementation used for the present thesis interlaces this values, which increases data locality and hence improves memory efficiency. The presented mapping is easily extended to handle arrays of values that contain \(n_{eq}\) variables and use an interlaced storing approach by multiplying (\ref{eq:globalmap}) with the number of interlaced values
+\begin{displaymath}
+  (ijk)_{interglo} = n_{eq} * (ijk)_{glo} 
+\end{displaymath}
+
 \subsubsection{Domain Decomposition, Exchange of Ghost Values and Parallel Matrix Assembly}
 
-\begin{itemize}
-\item Ghost values are stored in local representations of the global vector (state the mapping for those entries). 
-\item Matrix coefficients are calculated on one processor and sent to the neighbour. 
-\item Preallocation as crucial aspect for program performance. For the coupled system the matrix is assembled in a 2-3 step process to save memory for coefficients. 
-\item Present a simple method for balancing the matrix related load by letting PETSc take care of matrix distribution. 
-\item Use Spy function of Matlab to visualize the sparse matrices. Point out advantages of calculating coefficients for the neighbouring cells locally (no need to update mass fluxes, geometric data doesn't need to be shared, small communication overhead since processors assemble matrix parts that don't belong to them (visualize)). 
-\item Paradigm: Each time new information is available perform global updates. Advantages of using matrices: Show structure of matrix when using arbitrary matching vs. higher memory requirements vs. better convergence
-\end{itemize}
+The developed CAFFA framework is able to solve a given problem across different processors. For this, before each solve, the relevant data has to be distributed among all involved processes. Within the solve parallelization three types of this data distribution are considered. The first refers to the distribution of stationary data that will not change throughout the solution process. This refers mostly to geometry related data as the coordinates of the grid points. The second type of data has to be distributed in a regular manner since this data changes at least every outer iteration. The necessity to interchange values, also known as \emph{ghosting}, between processors surges when calculations of variable gradients or coefficients are made for block boundary control volumes. The last type of data distribution refers to global reduce operations, in which a single processes gathers data from all other processes and after some modification redistributes the data. A common scenario for global reduce operations is the calculation of the mean pressure throughout the domain which has been introduced in section REFERENCE.
 
-\subsection{Postprocessing}
+The distribution of stationary data takes place throughout the preprocessing program within the developed framework before the CAFFA solver is launched. Each processor is assigned a binary file with the respective data. Since the solver is not able to handle adaptive grid refinement or dynamic load balancing this approach is straightforward.
 
-Visualization of Results with Paraview and Tecplot
-Export matrices as binaries and visualize them using matlab scripts.
+The present solver framework treats the calculation of matrix coefficients for block boundary control volumes in a special way. To reduce communication overhead and redundant data only one of the two involved processors calculates this coefficients and then sends them to the respective neighbour. The data needed to calculate the matrix coefficients of a neighbouring processor embraces not only the values of the dominant variables from the last outer iteration but also the values of the cell center gradients. For the ghosting of variable values PETSc offers special vector types, that offer an user friendly interface to use the gather and scatter routines provided by PETSc. During the creation of these vectors a set of global indices referring to the values that are to be ghosted has to be provided. After this the interchange of values is realized through a single subroutine call, since PETSc handles the concrete communication process necessary to accomplish the value interchange. The local representation of a ghosted vector hence not only comprises the data local to one processor but provides space for ghosted values that are repeatedly updated. The layout for one ghosted vector is shown for a simple two dimensional solution domain that consists of two grid blocks.
+
+FIGURE
