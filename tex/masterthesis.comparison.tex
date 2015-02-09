@@ -24,27 +24,168 @@
 \end{figure}
 
 
-    \subsection{Parallel Performance}
-      \subsubsection{Employed Hardware and Software -- The Lichtenberg-High Performance Computer }
+\subsection{Parallel Performance}
+\subsubsection{Employed Hardware and Software -- The Lichtenberg-High Performance Computer }
 
-        The Lichtenberg-High Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner})
-        \begin{itemize}
-          \item Networking
-          \item Mem Section and processes in between islands (calculating across islands)
-          \item Versioning information (PETSc,INTEL COMPILERS,CLIPPER,MPI IMPLEMENTATION,BLAS/LAPACK)
-          \item Software not designed to perform well on desktop PCs.
-        \end{itemize}
+The Lichtenberg-High Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner})
+\begin{itemize}
+\item Networking
+\item Mem Section and processes in between islands (calculating across islands)
+\item Versioning information (PETSc,INTEL COMPILERS,CLIPPER,MPI IMPLEMENTATION,BLAS/LAPACK)
+\item Software not designed to perform well on desktop PCs.
+\end{itemize}
 
-      \subsubsection{Measures of Performance}
-        \begin{itemize}
-          \item Maße definieren
-          \item Nochmal Hager,Wellein studieren
-          \item Guidelines for measuring performance (bias through system processes or user interaction), only measure calculation time do not consider I/O in the beginning and the end
-          \item Cite Schäfer and Peric with their different indicators for parallel efficiency, load balancing and numerical efficiency
-        \end{itemize}
+\subsubsection{Measures of Performance}
+\begin{itemize}
+\item Maße definieren
+\item Nochmal Hager,Wellein studieren
+\item Guidelines for measuring performance (bias through system processes or user interaction), only measure calculation time do not consider I/O in the beginning and the end
+\item Cite Schäfer and Peric with their different indicators for parallel efficiency, load balancing and numerical efficiency
+\end{itemize}
 
-      \subsubsection{Preliminary Upper Bounds on Performance -- The STREAM Benchmark}
+\subsubsection{Preliminary Upper Bounds on Performance -- The STREAM Benchmark}
+
+Scientific applications that solve partial differential equations rely on sparse matrix computations, which usually exhibit the sustainable memory bandwidth as bottleneck with respect to the runtime performance of the program \cite{hager11}. The purpose of this section is to establish a frame in terms of an upper bound on performance in which the efficiency developed solver framework can be evaluated critically. As common measure for the maximum sustainable bandwidth, low-level benchmarks can be used, which focus on evaluating specific properties of the hardware architecture to be used. In this case the STREAM benchmark suite provides apt tests, which are designed to work with data sets that exceed the cache size of the involved processor architecture. This forces the processors to stream the needed data directly from the memory instead of reusing the data residing in their caches. These types of tests can be used to calculate an upper bound on the memory bandwidht.
+
+In terms of parallel scalability, the STREAM benchmark can also be used as an upper performance bound. According to \cite{petsc-web-page} the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. Before presenting results the different binding configurations will be explained.
+
+The first configuration sequentially binds the processes to the cores beginning on the first socket. When every core has a bound process the binding algorithm binds the following processes to cores of the second socket. The second configuration binds the processes in a round robin manner regarding the sockets. The this configuration in difference to the second configuration binds one process to three cores. Figure REFERENCE demonstrates the different binding options for two sockets and processors with twelve cores when 8 processes are to be bound to the resources.
+
+    \begin{figure}[h]
+      \centering
+      \label{fig:blockstruc}
+        \input{./img/map.tikz.tex}
+        \centering{}
+      \caption{Block structured grid consisting of two blocks}
+     \end{figure}
+
+    \begin{figure}[h]
+      \centering
+      \label{fig:blockstruc}
+        \input{./img/map2.tikz.tex}
+        \centering{}
+      \caption{Block structured grid consisting of two blocks}
+     \end{figure}
+
+    \begin{figure}[h]
+      \centering
+      \label{fig:blockstruc}
+        \input{./img/map3.tikz.tex}
+        \centering{}
+      \caption{Block structured grid consisting of two blocks}
+     \end{figure}
+
+
         Pinning of processes (picture), preliminary constraints by hardware and operating systems, identification of bottlenecks and explain possible workarounds, history and results of STREAM. Bandwidth as Bottleneck, how to calculate a Speedup estimate based on the measured bandwidth. PETSc Implementation of STREAM
+
+\begin{figure} \centering
+\begin{tikzpicture}
+\begin{axis}[
+    ylabel={Sustainable memori bandwith MB/s},
+    xlabel={Number of bound cores},
+    %xtick={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0},
+    %ytick={1.7e-003,1.75e-3,1.8e-003,1.85e-3},
+    %yticklabels={1.7E-3,1.75E-3,1.8E-3,1.85E-3},
+    %ymin=1.65e-003,ymax=1.9e-003,
+    legend pos=outer north east,
+    %height=20cm,width=10cm
+    ]
+    \addplot[color=black,mark=*] coordinates {
+        (1,10056.2733)
+        (2,19114.3429)
+        (3,31197.8399)
+        (4,41210.0612)
+        (5,48699.7232)
+        (6,57803.5686)
+        (7,62187.9785)
+        (8,70658.3730)
+        (9,67558.4259)
+        (10,74413.8457)
+        (11,68849.0631)
+        (12,74223.3175)
+        (13,69109.0762)
+        (14,73729.0608)
+        (15,68784.2613)
+        (16,72872.4480) };
+        \addlegendentry{Default Binding};
+    \addplot[color=black,mark=square*] coordinates {
+        (1 ,10044.2323)
+        (2 ,19036.1755)
+        (3 ,27258.6888)
+        (4 ,33509.0570)
+        (5 ,44386.9342)
+        (6 ,53130.5978)
+        (7 ,62695.4511)
+        (8 ,71295.7113) };
+        \addlegendentry{map-by ppr:8:node map-by ppr:4:socket}
+\end{axis}
+\end{tikzpicture}
+\caption{Sustainable memory bandwidth for the STREAM benchmark (Triad) for different binding options on MPI1}
+\end{figure}
+
+\begin{figure} \centering
+\begin{tikzpicture}
+\begin{axis}[
+    ylabel={Sustainable memori bandwith MB/s},
+    xlabel={Number of bound cores},
+    %xtick={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0},
+    %ytick={1.7e-003,1.75e-3,1.8e-003,1.85e-3},
+    %yticklabels={1.7E-3,1.75E-3,1.8E-3,1.85E-3},
+    %ymin=1.65e-003,ymax=1.9e-003,
+    legend pos=outer north east,
+    %height=20cm,width=10cm
+    ]
+    \addplot[color=black,mark=*] coordinates {
+           
+      (1, 22201.8738 )
+      (2,    29846.0651 )
+      (3,    44558.8130 )
+      (4,    59096.4718 )
+      (5,    50460.8297 )
+      (6,    59912.1938 )
+      (7,    53222.7910 )
+      (8,    60491.6764 )
+      (9,    53922.4875 )
+      (10,    60144.1732 )
+      (11,    55273.7403 )
+      (12,    60248.1185 )
+      (13,    65200.5600 )
+      (14,    70118.7250 )
+      (15,    75192.3175 )
+      (16,    80439.8917 )
+      (17,    84793.6761 )
+      (18,    90263.9931 )
+      (19,    94881.4421 )
+      (20,    99735.0136 )
+      (21,   104804.3772 )
+      (22,   110256.7754 )
+      (23,   113478.3185 )
+    (24,   117880.3816 ) };
+     \addlegendentry{Default Binding};
+     \addplot[color=black,mark=square*] coordinates{
+       (1, 22211.6717)
+       (2, 29836.1141)
+       (3, 30113.6704)
+       (4, 29919.5219)
+       (5, 37713.7578)
+       (6, 45888.1496)
+       (7, 53019.1276)
+     (8, 60375.4338) };
+     \addlegendentry{map-by ppr:8:node map-by ppr:4:socket};
+     \addplot[color=black,mark=triangle*] coordinates{
+       (1, 22265.7147)
+       (2, 29467.1111)
+       (3, 44064.6918)
+       (4, 58503.9143)
+       (5, 72560.6185)
+       (6, 87667.8368)
+       (7,101388.5503)
+     (8,115464.4300) };
+     \addlegendentry{map-by ppr:8:node map-by ppr:4:socket:PE=3};
+\end{axis}
+\end{tikzpicture}
+\caption{Sustainable memory bandwidth for the STREAM benchmark (Triad) for different binding options on MPI1}
+\end{figure}
 
       \subsubsection{Discussion of Results for Parallel Efficiency}
       \subsubsection{Speedup Measurement for Analytic Test Cases}
