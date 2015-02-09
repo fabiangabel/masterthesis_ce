@@ -51,42 +51,47 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
 
 The first configuration sequentially binds the processes to the cores beginning on the first socket. When every core has a bound process the binding algorithm binds the following processes to cores of the second socket. The second configuration binds the processes in a round robin manner regarding the sockets. The this configuration in difference to the second configuration binds one process to three cores. Figure REFERENCE demonstrates the different binding options for two sockets and processors with twelve cores when 8 processes are to be bound to the resources.
 
-    \begin{figure}[h]
-      \centering
-      \label{fig:blockstruc}
-        \input{./img/map.tikz.tex}
-        \centering{}
-      \caption{Block structured grid consisting of two blocks}
-     \end{figure}
+\begin{figure}[h]
+  \centering
+  \label{fig:blockstruc}
+    \input{./img/map.tikz.tex}
+    \centering{}
+  \caption{Block structured grid consisting of two blocks}
+\end{figure}
 
-    \begin{figure}[h]
-      \centering
-      \label{fig:blockstruc}
-        \input{./img/map2.tikz.tex}
-        \centering{}
-      \caption{Block structured grid consisting of two blocks}
-     \end{figure}
+\begin{figure}[h]
+  \centering
+  \label{fig:blockstruc}
+    \input{./img/map2.tikz.tex}
+    \centering{}
+  \caption{Block structured grid consisting of two blocks}
+\end{figure}
 
-    \begin{figure}[h]
-      \centering
-      \label{fig:blockstruc}
-        \input{./img/map3.tikz.tex}
-        \centering{}
-      \caption{Block structured grid consisting of two blocks}
-     \end{figure}
-
+\begin{figure}[h]
+  \centering
+  \label{fig:blockstruc}
+    \input{./img/map3.tikz.tex}
+    \centering{}
+  \caption{Block structured grid consisting of two blocks}
+\end{figure}
 
         Pinning of processes (picture), preliminary constraints by hardware and operating systems, identification of bottlenecks and explain possible workarounds, history and results of STREAM. Bandwidth as Bottleneck, how to calculate a Speedup estimate based on the measured bandwidth. PETSc Implementation of STREAM
 
 \begin{figure} \centering
+  \pgfplotsset{every axis/.append style={
+      font=\large,
+      line width=1pt,
+  tick style={line width=0.8pt}}}
 \begin{tikzpicture}
 \begin{axis}[
     ylabel={Sustainable memori bandwith MB/s},
     xlabel={Number of bound cores},
-    %xtick={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0},
+    xtick={1,4,8,12,16},
     %ytick={1.7e-003,1.75e-3,1.8e-003,1.85e-3},
     %yticklabels={1.7E-3,1.75E-3,1.8E-3,1.85E-3},
     %ymin=1.65e-003,ymax=1.9e-003,
+    xmin=0,xmax=17,
+    ymin=0.5e4,ymax=1.3e5,
     legend pos=outer north east,
     %height=20cm,width=10cm
     ]
@@ -124,15 +129,21 @@ The first configuration sequentially binds the processes to the cores beginning 
 \end{figure}
 
 \begin{figure} \centering
+  \pgfplotsset{every axis/.append style={
+      font=\large,
+      line width=1pt,
+  tick style={line width=0.8pt}}}
 \begin{tikzpicture}
 \begin{axis}[
     ylabel={Sustainable memori bandwith MB/s},
     xlabel={Number of bound cores},
-    %xtick={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0},
+    xtick={1,4,8,12,16,20,24},
     %ytick={1.7e-003,1.75e-3,1.8e-003,1.85e-3},
     %yticklabels={1.7E-3,1.75E-3,1.8E-3,1.85E-3},
     %ymin=1.65e-003,ymax=1.9e-003,
     legend pos=outer north east,
+    xmin=0,xmax=25,
+    ymin=0.5e4,ymax=1.3e5,
     %height=20cm,width=10cm
     ]
     \addplot[color=black,mark=*] coordinates {
@@ -172,7 +183,7 @@ The first configuration sequentially binds the processes to the cores beginning 
        (7, 53019.1276)
      (8, 60375.4338) };
      \addlegendentry{map-by ppr:8:node map-by ppr:4:socket};
-     \addplot[color=black,mark=triangle*] coordinates{
+     \addplot[color=black,mark=diamond*] coordinates{
        (1, 22265.7147)
        (2, 29467.1111)
        (3, 44064.6918)
