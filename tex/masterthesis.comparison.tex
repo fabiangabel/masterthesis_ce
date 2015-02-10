@@ -11,13 +11,21 @@ In many cases scientific code is used to solve complex problems regarding memory
 The solver framework that has been developed in the curse of the present thesis has been parallelized using the PETSc library. After introducing the used hardware and software, the central measures of parallel performance are presented. Then preliminary test results using low-level benchmarks are performed, which establish upper performance bounds on the parallel efficiency and the scalability of the developed solver framework. The results of the efficiency evaluation is presented in the last subsections.
 \subsubsection{Employed Hardware and Software -- The Lichtenberg-High Performance Computer }
 
-All performance analyses that are presented in this thesis were conducted on the Lichtenberg-High Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner}) \cite{hhlr}. The cluster consist of different sections according to the used hardware. Throughout the thesis tests were performed using the first and the second mpi section of the cluster. The first section consists of 705 nodes of which each runs two Intel\textregistered Xeon\textregistered E5-2670 processors and offers 32GB of memory. The second section consists of 356 nodes of which each runs two Intel Xeon E5-2680 v3 processors and offers 64GB of memory. The interconnect for both sections uses a FDR-14 InfiniBand.
+All performance analyses that are presented in this thesis were conducted on the Lichtenberg-High Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner}) \cite{hhlr}. The cluster consist of different sections according to the used hardware. Throughout the thesis tests were performed using the first and the second MPI section of the cluster. The first section consists of 705 nodes of which each runs two Intel\textregistered Xeon\textregistered E5-2670 processors and offers 32GB of memory. The second section consists of 356 nodes of which each runs two Intel Xeon E5-2680 v3 processors and offers 64GB of memory. The interconnect for both sections uses a FDR-14 InfiniBand.
 
 All tests programs were compiled using the Intel compiler suite version 15.0.0 and the compiler options
+\lstset{language=bash,
+  commentstyle={\rmfamily\catcode`\$=11},
+  columns=flexible,
+  texcl,
+  keepspaces,
+  ,showspaces=false
+  ,showstringspaces=false,
+  }
 \begin{lstlisting}
 -O3 -xHost
 \end{lstlisting}
-As mpi implementation openmpi version 1.8.2 was chosen. The PETSc framework version 3.5.3 was configured using the options
+As MPI implementation Open MPI version 1.8.2 was chosen. Furthermore the PETSc version 3.5.3 was configured using the options
 \begin{lstlisting}
 --with-blas-lapack-dir=/shared/apps/intel/2015/composer_xe_2015/mkl/lib/intel64/ \
 --with-mpi-dir=/shared/apps/openmpi/1.8.2_intel \
@@ -27,14 +35,35 @@ CXXOPTFLAGS="-O3 -xHost" \
 --download-hypre \
 --download-ml
 \end{lstlisting}
+It should be noted that as the configurations options show, to maximize the efficiency of PETSc an math kernel library should be used that has been optimized for the underlying hardware architecture as is in the case of the present thesis the Intel \emph{MKL} (\emph{Math Kernel Library}). It should be noted that also the Open MPI library has been compiled using the Intel compiler suite.
 
 \subsubsection{Measures of Performance}
+
+This section establishes the needed set of measures to evaluate the performance of a solver program, which will be used in the following sections. The first measure is the plain measure of runtime \(T_P\) taken by a computer to solve a given problem, where \(P \in \mathbb{N}\) denotes the number of involved processes. This so called \emph{wall-clock} time can be measured directly by calling subroutines of the underlying operating system and corresponds to the human perception of the time, that has passed. It must be noted, that this time does not correspond to the often mentioned \emph{CPU} time. In fact CPU time is only one contributor to wall-clock time. Wall-clock time further contains the time needed for communication and I/O and hence considers idle states of the processor. On the other side CPU time only considers the time in which the processor is actively working. This makes wall-clock time not only a more complete but also accurate time measure when dealing with parallel processors, since processor idle times due to communication are actively considered while neglected in CPU time.
+
+While wall-clock time is an absolute measure that can be used to compare different solver programs, further relative measures are needed to evaluate the efficiency of one program regarding the parallelisation implementation. The main purpose of these measures is to attribute the different causes of degrading efficiency due to heavy parallelisation to the different contributing factors. A simple model \cite{ferziger02,schaefer99} considers three contributions, that form the total efficiency
+\begin{displaymath}
+  E^{tot}_P = E^{num}_P \cdot E^{par}_P \cdot E^{load}_P.
+\end{displaymath}
 \begin{itemize}
-\item Maße definieren
-\item Nochmal Hager,Wellein studieren
-\item Guidelines for measuring performance (bias through system processes or user interaction), only measure calculation time do not consider I/O in the beginning and the end
-\item Cite Schäfer and Peric with their different indicators for parallel efficiency, load balancing and numerical efficiency
+  \item[] The \emph{numerical efficiency}
+  \begin{displaymath} E^{num}_P := \frac{\operatorname{FLOPS}(1)}{P \cdot \operatorname{FLOPS}(P)}\end{displaymath} 
+    considers the degradation of the underlying algorithm due to the parallelisation. Many efficient algorithms owe their efficiency to recursions inside the algorithm. In the process of decomposing this recursions the efficiency of the algorithm degrades. It follows that this efficiency is completely independent of the underlying hardware.
+  \item[] The \emph{parallel efficiency}
+    \begin{displaymath} E^{par}_P :=\frac{\operatorname{TIME}(\text{parallel Algorithm on one processor})}{P \cdot \operatorname{TIME}(\text{parallel Algorithm on \(P\) processors})} \end{displaymath} 
+      describes the impact of the need for inter process communication, if more than one processor is involved in the solution process. It should be noted, that this form of efficiency does explicitly exclude any algorithm related degrading, since the time measured corresponds to the exact same algorithms. It follows that the parallel efficiency only depends on the implementation of the communication and the hardware related latencies.
+  \item[] The \emph{load balancing efficiency} 
+    \begin{displaymath} E^{load}_P :=\frac{\operatorname{TIME}(\text{calculation on complete domain})}{P \cdot \operatorname{TIME}(\text{calculation on biggest subdomain})} \end{displaymath}
+       is formed by the quotient of the wall times needed for the complete problem domain and partial solves on subdomains. This measure does neither depend on hardware nor on the used implementation. Instead it directly relates to the size and partition of the grid. 
 \end{itemize}
+
+It is not possible to calculate all three efficiencies at the same using only plain clock time measurements a given application.  Different solver configurations have to be used to calculate them separately, by achieving \(100 \% \) efficiency for the remaining two efficiencies. Since the focus of investigation of the present thesis does not lie on load balancing, for the remainder of the thesis \(E^{load}_P = 100\%  \) is assumed. This does not present a considerable drawback since an ideal load balancing is easily obtainable nowadays by the use of sophisticated grid partitioning algorithms \cite{loadbalancing} REFERENCES. Using identical algorithms on different processors implicitly achieves \(E^{num}_P = 100 \%\). In this case the parallel efficiency of an application can be measures through the quotient of the needed wall clock time. To measure the numerical efficiency of an algorithm the respective hardware counters have to be evaluated. This can be done using the built in log file functionality of PETSc as presented in section REFERENCE. Hence the determination of numerical efficiency does not rely on wall clock time.
+
+Another common performance measure is the \emph{Speed-Up}
+\begin{displaymath}
+  S_P = \frac{T_1}{T_P} = P \cdot E^{tot}_P.
+\end{displaymath}
+Speedup and parallel efficiency characterize the parallel scalability of an application and determine the regimes of efficient use of hardware resources.
 
 \subsubsection{Preliminary Upper Bounds on Performance -- The STREAM Benchmark}
 
