@@ -1,31 +1,38 @@
-  \section{Finite Volume Methods for Incompressible Flows -- Theoretical Basics}
+\section{Finite Volume Methods for Incompressible Flows -- Theoretical Basics}
 
-  This section deals with the fundamentals of the numerical solution via a finite volume method of the formerly presented set of partial differential equations. The focus of this section is, to provide an overview over the methods to be used in the present thesis. The information contained in this section is based on (Peric,Schäfer,Muzaferja,Jsak). The overview starts by mentioning the different grid types to be used and the discretization techniques to be applied. On the basis of integral formulations of the equations to be solved, the therein contained integrals and differential operators have to be discretized. Since the accuracy of the default concepts for discretizing differential operators degrades with decreasing grid quality, this chapter furthermore presents different approaches to handle corrections for cases in which the cause of degrading grid quality is increased non-orthogonality. 
+This section deals with the fundamentals of the numerical solution via a finite volume method of the formerly presented set of partial differential equations (\ref{eq:completeset}). The focus of this section is to provide an overview over the methods to be used in the present thesis. The information contained in this section is based on \cite{ferziger02,jasak96,schaefer99,muzaferja}. The overview starts by mentioning the different grid types to be used and the discretization techniques to be applied. On the basis of integral formulations of the equations to be solved, the therein contained integrals and differential operators have to be discretized. Since the accuracy of the default concepts for discretizing differential operators degrades with decreasing grid quality, this chapter furthermore presents different approaches to handle corrections for cases in which the cause of degrading grid quality is increased non-orthogonality. 
   
- The goal of the finite volume method is to provide algebraic equations which can be used to determine an approximate solution of a partial differential equation. This system of linear algebraic equations can be solved by means of algorithms to be presented in the end of this section. However since the Navier-Stokes equations are in general non-linear an intermediate step has to be taken, by linearizing the discrete equations. This leads to the need of an iteration process, the \emph{Picard iteration}, which will be explained briefly.
+The goal of the finite volume method is to provide linear algebraic equations which can be used to determine an approximate solution of a partial differential equation. This system of linear algebraic equations can be solved by means of algorithms to be presented in the end of this section. However since the Navier-Stokes equations are in general non-linear an intermediate step has to be taken, by linearizing the discrete equations. This leads to the need of an iteration process, the \emph{Picard iteration}, which will also be explained briefly.
       
-  \subsection{Numerical Grid}
+\subsection{Numerical Grid}
 
-  In this subsection a brief overview of the general grid structure to be used in the present thesis is given. The main idea behind finite volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so called control volumes. The result of the this finite partition of a continuous problem domain is called the numerical grid. The grid consists of a finite number of grid cells which represent the boundaries of a discrete domain of integration. Depending on whether the numerical solution of an equation is to be calculated on the boundary vertices of grid cell or in the center of the cell, the variable arrangement is denoted to be vertex or cell center oriented. As the methods of employed in the present thesis are intended to be generally applicable to complex geometries the cell centered approach offers more flexibility (\ref{fig:cellvertex}). DONT CONFUSE WITH STAGGERED AND COLLOCATED ARRANGEMENT.
+In this subsection a brief overview of the general grid structure to be used in the present thesis is given. The main idea behind finite volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so called \emph{control volumes}. The result of the this finite partition of a continuous problem domain is called the numerical grid. The grid consists of a finite number of control volumes which represent the boundaries of a discrete domain of integration. Depending on whether the numerical solution of an equation is to be calculated on the boundary vertices or in the center of a grid cell, the variable arrangement is denoted to be vertex or cell center oriented. For the remainder of the present thesis it is assumed that the variables reside in the cell centers of the respective control volumes.
 
-  \begin{figure}
-     \label{fig:cellvertex}
-      \subfigure{
-      \begin{minipage}[1\width]{0.5\textwidth}%
-        \input{./img/vertexoriented.tikz.tex}
-        \centering{}
-      \end{minipage}}\qquad
-      \subfigure{
-      \begin{minipage}[1\width]{0.4\textwidth}%
-        \centering{}
-        \input{./img/cellcenter.tikz.tex}
-      \end{minipage}}
-      \caption{Comparison of vertex oriented and cell center oriented variable arrangement}
-  \end{figure}
+Another option to arrange variables specifically for algorithms that solve the Navier-Stokes equations is the so called \emph{staggering}. This method stores the variable values of different variables at different grid locations, which facilitates the interpolation of the respective values. As the methods of employed in the present thesis are intended to be generally applicable to complex geometries the cell centered non-staggered approach offers more flexibility.  Figure \ref{fig:cellvertex} shows the different variable arrangement options on a two dimensional grid.
 
-    Regarding the treatment of domain boundaries and the ordering of the cells within the problem domain different types of numerical grids can be distinguished. The present thesis makes use of so called block structured grids with hexahedron cells. A structured grid is characterized by a constant amount of of grid cells in each coordinate direction. The high regularity of structured grids benefits the computational efficiency of algorithms to be used on this type of grid. A block structured grid consists of different grid blocks of which each considered individually is structured, but if the topology of the grid is considered it is unstructured. An example of a block structured grid with distinguishable grid blocks is given in figure \ref{fig:blockstruc}. The use of block structured grids is motivated by the need to increase the adaptivity of structured grids by maintaining high computational efficiency. Furthermore it naturally embraces the concept of domain decomposition which facilitates the implementation of parallel algorithms for the decomposed computational domain.
+\begin{figure}
+   \label{fig:cellvertex}
+    \subfigure{
+    \begin{minipage}[1\width]{0.3\textwidth}%
+      \input{./img/vertexoriented.tikz.tex}
+      \centering{}
+    \end{minipage}}\qquad
+    \subfigure{
+    \begin{minipage}[1\width]{0.3\textwidth}%
+      \centering{}
+      \input{./img/cellcenter.tikz.tex}
+    \end{minipage}}
+    \subfigure{
+    \begin{minipage}[1\width]{0.3\textwidth}%
+      \centering{}
+      \input{./img/stagger.tikz.tex}
+    \end{minipage}}
+    \caption{Comparison of vertex oriented and cell center oriented variable arrangement}
+\end{figure}
 
-    Inside a structured grid block, cells with the shape of hexahedrons are used. In addition to the geometric boundaries of each control volume a numerical grid also provides a mapping that assigns to each control volume with index \(P\) a set of indexes of neighbouring control volumes \(NB(P):=\{W,S,B,T,N,E\}\), which are named after the geographic directions. Figure \ref{fig:blockstruc} shows a single grid cell with its direct neighbours. The faces \(\{S_w,S_s,S,b,S_t,S_n,S_e\}\) of each hexahedral control volume represent the mentioned geometric boundaries. 
+Regarding the treatment of domain boundaries and the ordering of the cells within the problem domain different types of numerical grids can be distinguished. The present thesis makes use of so called boundary fitted, block structured grids with hexahedron cells. A structured grid is characterized by a constant amount of of grid cells in each coordinate direction. The high regularity of structured grids benefits the computational efficiency of algorithms to be used on this type of grid. A block structured grid consists of different grid blocks of which each considered individually is structured, but if the topology of the grid is considered, it is unstructured. An example of a block structured grid with distinguishable grid blocks is given in figure \ref{fig:blockstruc}. The use of block structured grids is motivated by the need to increase the adaptivity of structured grids while maintaining high computational efficiency. Furthermore it naturally embraces the concept of domain decomposition which facilitates the implementation of parallel algorithms for the decomposed computational domain. Boundary fitted grids represent domain boundaries by means of the geometry of the control volumes residing on those boundaries. This approach may lead to skewed cells which furthermore affects the accuracy of the results obtained in these boundary cells. The mentioned affects can be alleviated by using local grid refinement techniques to refine the grid in regions of geometrically complex boundaries.
+
+Inside a structured grid block, cells with the shape of hexahedrons are used. In addition to the geometric boundaries of each control volume a numerical grid also provides a mapping that assigns to each control volume with index \(P\) a set of indexes of neighbouring control volumes \(NB(P):=\{W,S,B,T,N,E\}\), which are named after the geographic directions. Figure \ref{fig:blockstruc} shows a single grid cell with its direct neighbours. The faces \(\{S_w,S_s,S,b,S_t,S_n,S_e\}\) of each hexahedral control volume represent the mentioned geometric boundaries. 
 
     \begin{itemize}
       \item talk about grid quality
@@ -90,7 +97,7 @@
       \label{eq:orthdecomp}
       \vec{S}_e = \vecg{\Delta} + \vec{k},
     \end{equation}
-    where \(\vecg{\Delta}\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \emph{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \emph{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented by stating the respective expression for \(\vecg{\Delta}\). The resulting vector \(\vec{k}\) can be calculated by using (\ref{eq:orthdecomp}). One important characteristic that all of the presented approaches have is common is that the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two dimensional. A geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}. The last subsection handles the integration of one generic approach into the discretization process.
+    where \(\vecg{\Delta}\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \emph{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \emph{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented by stating the respective expression for \(\vecg{\Delta}\). The resulting vector \(\vec{k}\) can be calculated by using (\ref{eq:orthdecomp}). One important characteristic that all of the presented approaches have is common is that the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two-dimensional. A geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}. The last subsection handles the integration of one generic approach into the discretization process.
 
       \subsubsection{Minimum Correction Approach}
 

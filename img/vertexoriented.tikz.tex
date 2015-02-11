@@ -1,5 +1,13 @@
 \begin{tikzpicture}
 
+  \foreach \j in {0,1.5,3,4.5} {
+    \draw[gray,thick,dashed] (-1.0,\j) -- (4.0,\j);
+    }
+
+  \foreach \i in {0,1.5,3} {
+    \draw[gray,thick,dashed] (\i,-1.0) -- (\i,5.5);
+    }
+
   \draw[thick] (0,0) rectangle (3,4.5);
   \draw[step=15mm,thick] (0,0) grid (3,4.5);
 
