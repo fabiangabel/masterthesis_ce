@@ -13,21 +13,21 @@ Another option to arrange variables specifically for algorithms that solve the N
 \begin{figure}
    \label{fig:cellvertex}
     \subfigure{
-    \begin{minipage}[1\width]{0.3\textwidth}%
+    \begin{minipage}[1\width]{0.33\textwidth}%
       \input{./img/vertexoriented.tikz.tex}
-      \centering{}
+      \raggedleft{}
     \end{minipage}}\qquad
     \subfigure{
-    \begin{minipage}[1\width]{0.3\textwidth}%
+    \begin{minipage}[1\width]{0.33\textwidth}%
       \centering{}
       \input{./img/cellcenter.tikz.tex}
     \end{minipage}}
     \subfigure{
-    \begin{minipage}[1\width]{0.3\textwidth}%
-      \centering{}
+    \begin{minipage}[1\width]{0.33\textwidth}%
+      \raggedright{}
       \input{./img/stagger.tikz.tex}
     \end{minipage}}
-    \caption{Comparison of vertex oriented and cell center oriented variable arrangement}
+    \caption{Vertex centered, cell centered and staggered variable arrangement}
 \end{figure}
 
 Regarding the treatment of domain boundaries and the ordering of the cells within the problem domain different types of numerical grids can be distinguished. The present thesis makes use of so called boundary fitted, block structured grids with hexahedron cells. A structured grid is characterized by a constant amount of of grid cells in each coordinate direction. The high regularity of structured grids benefits the computational efficiency of algorithms to be used on this type of grid. A block structured grid consists of different grid blocks of which each considered individually is structured, but if the topology of the grid is considered, it is unstructured. An example of a block structured grid with distinguishable grid blocks is given in figure \ref{fig:blockstruc}. The use of block structured grids is motivated by the need to increase the adaptivity of structured grids while maintaining high computational efficiency. Furthermore it naturally embraces the concept of domain decomposition which facilitates the implementation of parallel algorithms for the decomposed computational domain. Boundary fitted grids represent domain boundaries by means of the geometry of the control volumes residing on those boundaries. This approach may lead to skewed cells which furthermore affects the accuracy of the results obtained in these boundary cells. The mentioned affects can be alleviated by using local grid refinement techniques to refine the grid in regions of geometrically complex boundaries.
@@ -58,7 +58,7 @@ Inside a structured grid block, cells with the shape of hexahedrons are used. In
     \subsection{Approximation of Integrals and Derivatives}
     \label{sec:approxintegralderivative}
 
-    In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \emph{midipoint rule}. This rule is similar to the mean value theorem of integration, which states that there exists a point \(\vec{\xi} \in V\) for a Riemann integrable function \(\phi\) such that \(\phi(\xi) \int_V \mathrm{d}V = \int_V \phi(x) \mathrm{d}V\). For the midpoint rule \(\vec{\xi}\) is taken to be the center of mass of \(V\). If the integration domain \(V\) is indeed a Volume, fortunately the calculation of \(\phi(\mathbb{\xi})\) with \(\vec{\xi} := \left({ \int_V x_i \mathrm{d}V }/{ \int_V \mathrm{d}V } \right)_{i = 1,\dots,3}\) presents no difficulties since due to the collocated variable arrangement the value of \(\phi\) is stored in the cell center, which corresponds to the location \(\vec{\xi}\). However if the domain of integration is a surface, a preceding interpolation step is necessary.
+    In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \emph{midpoint rule}. This rule is similar to the mean value theorem of integration, which states that there exists a point \(\vec{\xi} \in V\) for a Riemann integrable function \(\phi\) such that \(\textstyle \phi(\xi) \int_V \mathrm{d}V = \int_V \phi(x) \mathrm{d}V\). For the midpoint rule \(\vec{\xi}\) is taken to be the center of mass of \(V\). If the integration domain \(V\) is indeed a volume, fortunately the calculation of \(\phi(\mathbb{\xi})\) with \(\textstyle \vec{\xi} := \left({ \int_V x_i \mathrm{d}V }/{ \int_V \mathrm{d}V } \right)_{i = 1,\dots,3}\) presents no difficulties since due to the collocated variable arrangement the value of \(\phi\) is stored in the cell center, which corresponds to the location \(\vec{\xi}\). However if the domain of integration is a surface, a preceding interpolation step is necessary.
 
     On the other hand to transform a partial differential equation into a linear algebraic equation it is necessary to discretize the differential operators of the equations. For numerical reasons two different discretization techniques are used in this thesis. A common task is to discretize expressions of the form
     \begin{displaymath}
@@ -97,11 +97,11 @@ Inside a structured grid block, cells with the shape of hexahedrons are used. In
       \label{eq:orthdecomp}
       \vec{S}_e = \vecg{\Delta} + \vec{k},
     \end{equation}
-    where \(\vecg{\Delta}\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center of the control volume \(P\) with the center of its neighbour \(E\). This vector controls the \emph{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \emph{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented by stating the respective expression for \(\vecg{\Delta}\). The resulting vector \(\vec{k}\) can be calculated by using (\ref{eq:orthdecomp}). One important characteristic that all of the presented approaches have is common is that the non-orthogonal contribution vanishes as expected, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two-dimensional. A geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}. The last subsection handles the integration of one generic approach into the discretization process.
+    where \(\vecg{\Delta}\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center \(\vec{x}_P\) of the control volume \(P\) with the center \(\vec{x}_E\) of its neighbour \(E\). This vector controls the \emph{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \emph{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented by stating the respective expression for \(\vecg{\Delta}\). The resulting vector \(\vec{k}\) can be calculated by using (\ref{eq:orthdecomp}). One important characteristic that all of the presented approaches have is common, is that the non-orthogonal contribution vanishes, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two-dimensional. A geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}. The last subsection handles the integration of one generic approach into the discretization process.
 
       \subsubsection{Minimum Correction Approach}
 
-      This is the approach as proposed in Muzaferja. The reader should note, that even though Ferziger/Peric reference the work of Muzaferja they use a different approach to be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by always choosing \(\vec{k}\) to be orthogonal to \(\vecg{\Delta}\), which leads to
+      This is the approach as proposed in \cite{muzaferja}. The reader should note, that even though \cite{ferziger02} references \cite{muzaferja}, they use a different approach to be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by always choosing \(\vec{k}\) to be orthogonal to \(\vecg{\Delta}\), which leads to
       \begin{displaymath}
         \vecg{\Delta} = \left( \vec{d} \cdot \vec{S}_e \right) \frac{\vec{d}}{||\vec{d}||_2}.
       \end{displaymath}
@@ -110,16 +110,16 @@ Inside a structured grid block, cells with the shape of hexahedrons are used. In
       \subsubsection{Orthogonal Correction Approach}
       \label{seq:orthcorrapproach}
 
-      The following method for decomposing the surface normal vector is presented in Ferziger/Peric and the approach implemented in the developed solvers. In this approach a simple projection is used which is independent of the non-orthogonality of the grid. As a result the orthogonal contribution \(||\vecg{\Delta}||_2 =  ||\vec{S}_e||_2\) and is thus modelled as 
+      The following method for decomposing the surface normal vector is presented in \cite{ferziger02} and the approach implemented in the developed solvers. In this approach a simple projection is used which is independent of the non-orthogonality of the grid. As a result the orthogonal contribution \(||\vecg{\Delta}||_2 =  ||\vec{S}_e||_2\) and is thus modelled as 
       \begin{displaymath}
         \vecg{\Delta} =  S_e \frac{\vec{d}}{ ||\vec{d}||_2}.
       \end{displaymath}
 
       \subsubsection{Over-Relaxed Approach}
 
-      The last approach is used in Jsak and Darwish and is characterized by an increasing influence of the orthogonal contribution with increasing grid non-orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
+      The last approach is used in \cite{jasak96,darwish09} and is characterized by an increasing influence of the orthogonal contribution with increasing grid non-orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
       \begin{displaymath}
-        \Delta =  S_e^2 \frac{\vec{d}}{ \vec{d} \cdot \vec{S}_e }.
+        \vecg{\Delta} =  S_e^2 \frac{\vec{d}}{ \vec{d} \cdot \vec{S}_e }.
       \end{displaymath} 
 
       \begin{figure}[h]
@@ -146,11 +146,11 @@ Inside a structured grid block, cells with the shape of hexahedrons are used. In
 
       In order to reduce the computational stencil that would be necessary to handle the non-orthogonal correction implicitly the correction will be treated explicitly using a deferred correction which guarantees that in the case of a fully converged solution only the face normal derivative has been taken into account. Generally the discretization using a non-orthogonal correction would yield 
       \begin{displaymath}
-        \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx \left(\nabla \phi \right)_e \cdot \Delta + \left( \nabla \phi \right)_e \cdot \vec{k}.
+        \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx \left(\nabla \phi \right)_e \cdot \vecg{\Delta} + \left( \nabla \phi \right)_e \cdot \vec{k}.
       \end{displaymath}
       Where the first term can be approximated using a central differencing scheme for the directional derivative and the second by interpolating cell center gradients. If one furthermore uses the fact that this method comes to play in a solution algorithm for a non-linear system of partial differential equations a deferred correction can be implemented which ensues a smaller error from the non-orthogonality. In the case of the previously mentioned discretization techniques for partial derivatives a possible deferred correction approach reads
       \begin{displaymath}
-        \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx ||\Delta||_2 \frac{\phi_P - \phi_E}{||\vec{x}_P - \vec{x}_E||_2} - \left(\nabla \phi \right)_e^{(n-1)} \cdot \left(\Delta - \vec{S}_e \right).
+        \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx ||\vecg{\Delta}||_2 \frac{\phi_P - \phi_E}{||\vec{x}_P - \vec{x}_E||_2} - \left(\nabla \phi \right)_e^{(n-1)} \cdot \left(\vecg{\Delta} - \vec{S}_e \right).
       \end{displaymath}
       It should be noted that the use of a deferred correction in conjunction with the requirement that the non-orthogonal correction vanishes on orthogonal grid introduces an inconsistent discretization of \( \left(\nabla \phi \right)_e \cdot \vecg{\Delta} \).
 

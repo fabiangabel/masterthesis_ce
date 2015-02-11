@@ -488,7 +488,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
         \end{align}
       \end{subequations}
 
-      \subsubsection{Discretization of the Source Terms}
+      \subsubsection{Discretization of the Source Term}
 
       Since in the segregated solution approach in every equation all other variables but the dominant one are treated as constants and furthermore the source terms in equation (\ref{eq:semidiscrete}) do not depend on the dominant variable the discretization is straightforward. The source terms of the momentum balance are discretized using the midpoint rule of integration, which leads to the source term
       \begin{equation}
@@ -627,7 +627,7 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
     \end{align*}
     The reader should note that since the deferred correction uses a Dirichlet boundary no correction of the value of the wall velocity \(u_{i,w}\) has to be accounted for.
 
-    If the solution of the flow field is coupled with the solution of an energy equations, different options for the boundary condition at walls may be chosen. If the wall temperature is known a Dirichlet boundary condition for the temperature is the choice. A wall of this type is called to be \emph{isothermal}. If on the other side only the heat flux is known a Neumann boundary condition is used. In the special case of zero heat flux the wall is called to be \emph{adiabatic}. For adiabatic walls, which are besides isothermal walls used for the present thesis the implementation is straight forward since no coefficients have to be calculated.
+    If the solution of the flow field is coupled to the solution of a temperature equation, different options for the boundary condition at walls may be chosen. If the wall temperature is known a Dirichlet boundary condition for the temperature is the choice. A wall of this type is called to be \emph{isothermal}. If on the other side only the heat flux is known a Neumann boundary condition is used. In the special case of zero heat flux the wall is called to be \emph{adiabatic}. For adiabatic walls, which are besides isothermal walls used for the present thesis the implementation is straight forward since no coefficients have to be calculated.
 
   \subsubsection{Treatment of Block Boundaries}
   \label{sec:blockboundaries}
