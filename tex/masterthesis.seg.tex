@@ -1,7 +1,7 @@
 \section{Implicit Finite Volume Method for Incompressible Flows -- Segregated Approach}
 \label{sec:seg}
 
-  The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling, at least between the dependent variables pressure and velocity, a first solution algorithm, namely the \emph{SIMPLE} algorithm, addressed to resolve the pressure velocity coupling, is introduced. Furthermore an under-relaxation factor independent method of calculating mass fluxes by interpolation is introduced and the detailed derivation of all coefficients that result from the discretization process is presented. Finally the boundary conditions, that are relevant for the present thesis will be introduced.
+The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling, at least between the dependent variables pressure and velocity, a first solution algorithm, namely the \emph{SIMPLE} algorithm, addressed to resolve the pressure velocity coupling, is introduced. Furthermore an under-relaxation factor independent method of calculating mass fluxes by interpolation is introduced and the detailed derivation of all coefficients that result from the discretization process is presented. Finally the boundary conditions, that are relevant for the present thesis will be introduced.
 
 \subsection{Discretization of the Mass Balance}
 
@@ -9,112 +9,118 @@ Integration of equation (\ref{eq:contidiff}) over the integration domain of a si
 \begin{displaymath}
   \iint\limits_{S_f} u_i n_i \mathrm{d}S = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f} u_i n_{i} \mathrm{d}S = 0.
 \end{displaymath}
-In the present work the mass balance is discretized using the midpoint rule for the surface integrals and linear interpolation of the velocity to the center of mass of the surface. This leads to the following form of the mass balance:
+In the present work the mass balance is discretized using the midpoint integration rule for the surface integrals and linear interpolation of the velocity to the center of mass of the surface. This leads to the following form of the mass balance:
 \begin{align}
   \label{eq:massbalance}
-\sum_{f \in \{w,s,b,t,n,e\}} u_{i,f} n_{f_i} S_f = 0,
+  \sum_{f \in \{w,s,b,t,n,e\}} u_{i,f} n_{f_i} S_f = 0,
 \end{align}
 where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is performed yet, since the straightforward linear interpolation will lead to undesired oscillations in the solution fields. An interpolation method to circumvent this so called \emph{checker boarding} effect is presented in subsection \ref{sec:massflux}.
 
 \subsection{A Pressure-Weighted Interpolation Method for Velocities}
 \label{sec:massflux}
 
-  The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified and the conservation property of finite volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major drawback with cell centered variable arrangements is that pressure field may delink, which will then lead to unphysical oscillations in both the pressure and the velocity results. If the oscillations are severe enough the solution algorithm might even get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances and the mass fluxes in the continuity equation are discretized using central differences. 
+The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified and the conservation property of finite volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major drawback with cell centered variable arrangements is that pressure field may delink, which will then lead to unphysical oscillations in both the pressure and the velocity results. If the oscillations are severe enough the solution algorithm might even get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances and the mass fluxes in the continuity equation are discretized using central differences. 
   
-  A common practice to eliminate this behaviour is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. The original interpolation scheme however does not guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms that are used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. This issues will be addressed in this subsection which at the end will present an interpolation method that assures an under-relaxation independent solution: the \emph{pressure-weighted interpolation method} \cite{miller88}.
+A common practice to eliminate this behaviour is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. The original interpolation scheme however does not guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms that are used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. These issues will be addressed in this subsection which at the end will present an interpolation method that assures an under-relaxation independent solution: the \emph{pressure-weighted interpolation method} \cite{miller88}.
 
-  The starting point of the pressure-weighted interpolation method is formed by the discretized momentum balances at node \(P\) and an arbitrary neighbouring node \(Q\). The discretization for finite volume methods and details including the incorporation of under-relaxation factors will be handled in subsection \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), read
-  \begin{subequations}
-  \begin{align}
+The starting point of the pressure-weighted interpolation method is formed by the discretized momentum balances at node \(P\) and an arbitrary neighbouring node \(Q\). The discretization for finite volume methods and details including the incorporation of under-relaxation factors will be handled in subsection \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), read
+\begin{subequations}
+\begin{align}
     u_{i,P}^{(n)} 
     &= 
-    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)}
+    - \frac{\alpha_{\vec{u}_P}}{a_P^{u_i}} \left(\sum_{F \in NB(P)} a_F^{u_i} u_{i,F}^{(n)}
     +                                     b_{P,u_i}^{(n-1)} 
     -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}  \\[1em]
     \text{and} \quad
     u_{i,Q}^{(n)} 
     &= 
-    - \frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}} \left(\sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)}
+    - \frac{\alpha_{\vec{u}_Q}}{a_Q^{u_i}} \left(\sum_{F \in NB(Q)} a_F^{u_i} u_{i,F}^{(n)}
     +                                     b_{Q,u_i}^{(n-1)} 
     -                                     V_Q\left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}   \right)
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,Q}^{(n-1)} \quad,
-  \end{align}
-  \end{subequations}
-  where the superscript \((n-1)\) denotes the previous outer iteration number. The reader should note, that the pressure gradient has not been discretized yet. This has the advantage that the selective interpolation technique \cite{schaefer99} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same way a semi-discrete implicit momentum balance can be formulated for a virtual control volume located between nodes \(P\) and \(Q\). Image \ref{fig:virt} gives an interpretation of the virtual control volume.
-  \begin{figure}
-     \label{fig:virt}
-        \input{./img/virt.tikz.tex}
-        \centering{}
-      \caption{Comparison of vertex oriented and cell center oriented variable arrangement}
-  \end{figure}
+\end{align}
+\end{subequations}
+where the superscript \((n-1)\) denotes the previous outer iteration number. The reader should note, that the pressure gradient has not been discretized yet. This has the advantage that the selective interpolation technique \cite{schaefer99} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same way a semi-discrete implicit momentum balance can be formulated for a virtual control volume located between nodes \(P\) and \(Q\). \begin{equation}
+  \label{eq:virtualu}
+  u_{i,f}^{(n)} 
+  = 
+  - \frac{\alpha_{\vec{u}_f}}{a_f^{u_i}} \left(\sum_{F \in NB(f)} a_F^{u_i} u_{i,F}^{(n)} 
+  +                                     b_{f,u_i}^{(n-1)} 
+  -                                     V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)}  \right)
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)}.
+\end{equation}
+Figure \ref{fig:virt} gives an interpretation of the virtual control volume.
+\begin{figure}
+\label{fig:virt}
+  \input{./img/virt.tikz.tex}
+  \centering{}
+  \caption{Possible interpretation of a virtual control volume located between nodes $P$ and $Q$ }
+\end{figure}
+To guarantee convergence of this expression for \(u_{i,f}\), under-relaxation is necessary \cite{majumdar88}. To eliminate the undefined artifacts surging form the virtualization of a control volume the following assumptions have to be made to derive a closed expression for the velocity on the boundary face \(S_f\)
+\begin{subequations}
+\label{eq:approxpwim}
+\begin{align}
+  \frac{\alpha_{\vec{u}_f}}{a_f^{u_i}} \left(\sum_{F \in NB(f)} a_F^{u_i} u_{i,F}^{(n)} \right)
+  &\approx
+  \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}_P}}{a_P^{u_i}} \left(\sum_{F \in NB(P)} a_F^{u_i} u_{i,F}^{(n)} \right)
+  +
+  \gamma_f \frac{\alpha_{\vec{u}_Q}}{a_Q^{u_i}} \left(\sum_{F \in NB(Q)} a_F^{u_i} u_{i,F}^{(n)} \right), \\[1em]
+  \quad
+  \frac{\alpha_{\vec{u}_f}}{a_f^{u_i}}b_{f,u_i}^{(n-1)} 
+  &\approx
+  \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}_P}}{a_P^{u_i}} b_{P,u_i}^{(n-1)} 
+  +
+  \gamma_f \frac{\alpha_{\vec{u}}}{a_Q^{u_i}} b_{Q,u_i}^{(n-1)} \\[1em]
+  \text{and}
+  \quad
+  \frac{\alpha_{\vec{u}}}{a_f^{u_i}} 
+  &\approx
+  \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}}}{a_P^{u_i}} 
+  +
+  \gamma_f \frac{\alpha_{\vec{u}}}{a_Q^{u_i}}, \\[1em]
+\end{align}
+\end{subequations}
+where \(\gamma_f\) is a geometric interpolation factor. 
 
-  \begin{equation}
-    \label{eq:virtualu}
-    u_{i,f}^{(n)} 
-    = 
-    - \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}} \left(\sum_{F \in NB(f)} a_{F,u_i} u_{i,F}^{(n)} 
-    +                                     b_{f,u_i}^{(n-1)} 
-    -                                     V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)}  \right)
-    + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)}.
-  \end{equation}
-  To guarantee convergence of this expression for \(u_{i,f}\), under-relaxation is necessary \cite{majumdar88}. To eliminate the undefined artifacts surging form the virtualization of a control volume the following assumptions have to be made to derive a closed expression for the velocity on the boundary face \(S_f\)
-  \begin{subequations}
-    \label{eq:approxpwim}
-  \begin{align}
-    \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}} \left(\sum_{F \in NB(f)} a_{F,u_i} u_{i,F}^{(n)} \right)
-    &\approx
-    \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} \right)
-    +
-    \gamma_f \frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}} \left(\sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)} \right) \\[1em]
-    \text{and} \quad
-    \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}} 
-    &\approx
-    \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} 
-    +
-    \gamma_f \frac{\alpha_{\vec{u}_Q}}{a_{Q,u_i}},
-  \end{align}
-  \end{subequations}
-  where \(\gamma_f\) is a geometric interpolation factor. 
-
-  Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in equation (\ref{eq:virtualu}) can be closed in a way that it only depends on the variable values in node \(P\) and \(Q\)
-  \begin{align}
-    \label{eq:closepwim}
-    u_{i,f}^{(n)} 
-    &\approx 
-    \left(1-\gamma_f\right)  \left( -\frac{\alpha_\vec{u}}{a_{P,u_i}} \sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)} \right)
-    +\gamma_f  \left( -\frac{\alpha_\vec{u}}{a_{Q,u_i}} \sum_{F \in NB(Q)} a_{F,u_i} u_{i,F}^{(n)}  \right) \nonumber \\[1em]
-    &\quad\quad+ \frac{\alpha_\vec{u}}{a_{f,u_i}}b_{f,u_i}^{(n-1)} 
-    - \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \\[1em]
-    &=
-    \left(1-\gamma_f\right) u_{i,P}^{(n)} - \left(1 - \gamma_f\right) \left(  b_{Q,u_i}^{(n-1)} - V_Q \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right) \nonumber
-    +\gamma_f  u_{i,Q}^{(n)} - \gamma_f\left( b_{Q,u_i}^{(n-1)} - V_Q \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}  \right) \nonumber \\[1em]
-    &\quad\quad+ \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}b_{f,u_i}^{(n-1)} 
-    - \frac{\alpha_{\vec{u}_f}}{a_{f,u_i}}V_f\left(\frac{\partial p^{(n-1)}}{\partial x_i}\right)_f 
-    + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber\\[1em]
-    &=
-    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
-    &\quad\quad - 
-    \left[ 
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    - \left(1 - \gamma_f \right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}}\left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-    - \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
-    \right] \nonumber \\[1em]
-    &\quad\quad + \left(1 - \alpha\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] \nonumber \\[1em]
-    &\approx
-    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
-    &\quad\quad - 
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-      \underline{\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    - \left(1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-  - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}}
-    \right] \nonumber \\[1em]
-    &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
-  \end{align}
-  It should be noted that the argumentation that led to the last expression, is that the task of the underlined pressure gradient corrector in equation (\ref{eq:closepwim}) is to suppress oscillations in the converged solution for the pressure field. If there are no oscillations this part should not become active. As long as the behaviour of this corrector remains consistent, i.e. that there are no oscillations in the pressure field, it can be multiplied with arbitrary constants \cite{ferziger02}. This is however true on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary orthogonal grids another modification has to be performed which is based on a special case of the mean value theorem of differential calculus and the following 
+Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in equation (\ref{eq:virtualu}) can be closed in a way that it only depends on the variable values in node \(P\) and \(Q\)
+\begin{align}
+  \label{eq:closepwim}
+  u_{i,f}^{(n)} 
+  &\approx 
+  \left(1-\gamma_f\right)  \left( -\frac{\alpha_\vec{u}}{a_P^{u_i}} \sum_{F \in NB(P)} a_F^{u_i} u_{i,F}^{(n)} \right)
+  +\gamma_f  \left( -\frac{\alpha_\vec{u}}{a_Q^{u_i}} \sum_{F \in NB(Q)} a_F^{u_i} u_{i,F}^{(n)}  \right) \nonumber \\[1em]
+  &\quad\quad+ \frac{\alpha_\vec{u}}{a_f^{u_i}}b_{f,u_i}^{(n-1)} 
+  - \frac{\alpha_{\vec{u}}}{a_f^{u_i}}V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \\[1em]
+  &=
+  \left(1-\gamma_f\right) u_{i,P}^{(n)} - \left(1 - \gamma_f\right) \frac{\alpha_{\vec{u}}}{a_P^{u_i}}\left(  b_{P,u_i}^{(n-1)} - V_P \left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right) 
+  +\gamma_f  u_{i,Q}^{(n)} - \gamma_f \frac{\alpha_{\vec{u}}}{a_Q^{u_i}} \left( b_{Q,u_i}^{(n-1)} - V_Q \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}  \right) \nonumber \\[1em]
+  &\quad\quad+ \frac{\alpha_{\vec{u}}}{a_f^{u_i}}b_{f,u_i}^{(n-1)} 
+  - \frac{\alpha_{\vec{u}}}{a_f^{u_i}}V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)}
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber\\[1em]
+  &=
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
+  &\quad\quad - 
+  \left[ 
+  \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+  - \left(1 - \gamma_f \right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}}\left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+  - \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
+  \right] \nonumber \\[1em]
+  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] \nonumber \\[1em]
+  &\approx
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
+  &\quad\quad - 
+  \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+    \underline{\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+  - \left(1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+- \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}}
+  \right] \nonumber \\[1em]
+  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
+\end{align}
+It should be noted that the argumentation that led to the last expression, is that the task of the underlined pressure gradient corrector in equation (\ref{eq:closepwim}) is to suppress oscillations in the converged solution for the pressure field. If there are no oscillations this part should not become active. As long as the behaviour of this corrector remains consistent, i.e. that there are no oscillations in the pressure field, it can be multiplied with arbitrary constants \cite{ferziger02}. This is however true on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary orthogonal grids another modification has to be performed which is based on a special case of the mean value theorem of differential calculus and the following 
 \begin{prop}
   Let \(x_1,x_2 \in \mathbb{R}\) with \(x_1 \neq x_2\) and \(p(x) = a_0 + a_1 x + a_2 x^2\) a real polynomial function. Then 
   \begin{displaymath}
@@ -124,220 +130,213 @@ where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is pe
 \end{prop}
 
 \begin{proof}
-  Evaluation of the derivative yields
-  \begin{displaymath}
-      \frac{dp}{dx}\left(\frac{x_1+x_2}{2}\right) = a_1 + 2 a_2 \frac{x_1 + x_2}{2} = a_1 + a_2(x_1 + x_2).
-  \end{displaymath}
-  On the other hand the slope of the secant, using the third binomial rule can be expressed as
-  \begin{displaymath}
-    \begin{array}{ll}
-    \frac{p(x_2) - p(x_1)}{x_2 - x_1} 
-  &= \frac{a_0 + a_1 x_2 + a_2 x_2^2 - \left(a_0 + a_1 x_1 + a_2 x_1 ^2\right)}{x_2 - x_1} \\[1.0em]
-    \quad &= \frac{a_1 (x_2 - x_1) + a_2 \left(x_2^2 - x_1^2\right)}{x_2 - x_1} \\[1.0em]
-    \quad &= a_1 + a_2 (x_2 + x_1).
-  \end{array}
-  \end{displaymath}
-  The comparison of both expressions completes the proof.
+Evaluation of the derivative yields
+\begin{displaymath}
+    \frac{dp}{dx}\left(\frac{x_1+x_2}{2}\right) = a_1 + 2 a_2 \frac{x_1 + x_2}{2} = a_1 + a_2(x_1 + x_2).
+\end{displaymath}
+On the other hand the slope of the secant, using the third binomial rule can be expressed as
+\begin{displaymath}
+  \begin{array}{ll}
+  \frac{p(x_2) - p(x_1)}{x_2 - x_1} 
+&= \frac{a_0 + a_1 x_2 + a_2 x_2^2 - \left(a_0 + a_1 x_1 + a_2 x_1 ^2\right)}{x_2 - x_1} \\[1.0em]
+  \quad &= \frac{a_1 (x_2 - x_1) + a_2 \left(x_2^2 - x_1^2\right)}{x_2 - x_1} \\[1.0em]
+  \quad &= a_1 + a_2 (x_2 + x_1).
+\end{array}
+\end{displaymath}
+The comparison of both expressions completes the proof.
 \end{proof}
   It is desirable for the pressure corrector to vanish independent of the grid spacing if the profile of the pressure is quadratic and hence does not exhibit oscillations. According to the preceding proposition this can be accomplished by modifying equation (\ref{eq:closepwim}) to average the pressure gradients from node \(P\) and \(Q\) instead of interpolating linearly
-  \begin{align}
-    u_{i,f}^{(n)} 
-    &=
-    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
-    &\quad\quad - 
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    - \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-    + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right)
-    \right] \nonumber \\[1em]
-    \label{eq:pwim}
-    &\quad\quad + \underline{\left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right]}.
-  \end{align}
-  Comparing this final expression with the standard interpolation scheme it is evident that the underlined term is not taken into consideration normally \cite{ferziger02}. However section \ref{sec:independence} shows that neglecting this term creates under-relaxation factor dependent results indeed. This section concludes with a final
-  \begin{prop}
-    The pressure weighted momentum interpolation scheme (\ref{eq:pwim}) guarantees the converged solution for \(u_{i,f}\) to be independent of the velocity under-relaxation \(\alpha_\vec{u}\).
-  \end{prop}
-  \begin{proof}
-    An equivalent formulation of (\ref{eq:pwim}) is given by
-  \begin{align*}
-    \alpha_\vec{u} u_{i,f}^{(n-1)} + u_{i,f}^{(n-1)} - u_{i,f}^{(n)} 
-    &=
-    \alpha_\vec{u} \left[\left(1 - \gamma_f\right) u_{i,P}^{(n-1)} + \gamma_f \, u_{i,Q}^{(n-1)} \right] \\[1em]
-    &\quad\quad + \left[\left(1 - \gamma_f\right) \left( u_{i,P}^{(n)} - u_{i,P}^{(n-1)}\right) + \gamma_f \left( u_{i,Q}^{(n)} - u_{i,Q}^{(n-1)} \right) \right] \nonumber\\[1em]
-    &\quad\quad - 
-    \alpha_\vec{u} \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_{P,u_i}} + \gamma_f \frac{V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    - \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-    + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right)
-    \right]. \nonumber
-  \end{align*}
-  Upon convergence \(u_{i,P}^{(n)} = u_{i,P}^{(n-1)}\) and \(u_{i,f}^{(n)} = u_{i,f}^{(n-1)}\). This leads to
-  \begin{align*}
-    \alpha_\vec{u} u_{i,f}^{(n-1)} 
-    &=
-    \alpha_\vec{u} \left[\left(1 - \gamma_f\right) u_{i,P}^{(n-1)} + \gamma_f \, u_{i,Q}^{(n-1)} \right] \\[1em]
-    &\quad\quad - 
-    \alpha_\vec{u} \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_{P,u_i}} + \gamma_f \frac{V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    - \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-    + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right)
-    \right], \nonumber
-  \end{align*}
-  which shows, after division by \(\alpha_\vec{u} > 0\), that \(u_{i,f}\) is independent of the under-relaxation factor.
-  \end{proof}
+\begin{align}
+  u_{i,f}^{(n)} 
+  &=
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
+  &\quad\quad - 
+  \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+  \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+  - \frac{1}{2} \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+  - \frac{1}{2} \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
+  \right] \nonumber \\[1em]
+  \label{eq:pwim}
+  &\quad\quad + \underline{\left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right]}.
+\end{align}
+Comparing this final expression with the standard interpolation scheme, it is evident that normally, the underlined term is not taken into consideration \cite{ferziger02}. However section \ref{sec:independence} shows, that neglecting this term indeed creates under-relaxation factor dependent results. This section concludes with a final
+\begin{prop}
+  The pressure weighted momentum interpolation scheme (\ref{eq:pwim}) guarantees the converged solution for \(u_{i,f}\) to be independent of the velocity under-relaxation \(\alpha_\vec{u}\).
+\end{prop}
+\begin{proof}
+  An equivalent formulation of (\ref{eq:pwim}) is given by
+\begin{align*}
+  \alpha_\vec{u} u_{i,f}^{(n-1)} + u_{i,f}^{(n-1)} - u_{i,f}^{(n)} 
+  &=
+  \alpha_\vec{u} \left[\left(1 - \gamma_f\right) u_{i,P}^{(n-1)} + \gamma_f \, u_{i,Q}^{(n-1)} \right] \\[1em]
+  &\quad\quad + \left[\left(1 - \gamma_f\right) \left( u_{i,P}^{(n)} - u_{i,P}^{(n-1)}\right) + \gamma_f \left( u_{i,Q}^{(n)} - u_{i,Q}^{(n-1)} \right) \right] \nonumber\\[1em]
+  &\quad\quad - 
+  \alpha_\vec{u} \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_P^{u_i}} + \gamma_f \frac{V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+  \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+  - \frac{1}{2} \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+  - \frac{1}{2} \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} 
+  \right]. \nonumber
+\end{align*}
+Upon convergence \(u_{i,P}^{(n)} = u_{i,P}^{(n-1)}\) and \(u_{i,f}^{(n)} = u_{i,f}^{(n-1)}\). This leads to
+\begin{align*}
+  \alpha_\vec{u} u_{i,f}^{(n-1)} 
+  &=
+  \alpha_\vec{u} \left[\left(1 - \gamma_f\right) u_{i,P}^{(n-1)} + \gamma_f \, u_{i,Q}^{(n-1)} \right] \\[1em]
+  &\quad\quad - 
+  \alpha_\vec{u} \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_P^{u_i}} + \gamma_f \frac{V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+  \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+  - \frac{1}{2} \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+  - \frac{1}{2} \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} 
+  \right], \nonumber
+\end{align*}
+which shows, after division by \(\alpha_\vec{u} > 0\), that \(u_{i,f}\) is independent of the under-relaxation factor.
+\end{proof}
 
-  \subsection{Implicit Pressure Correction and the SIMPLE Algorithm}
-  \label{sec:simple}
-  
-  The goal of finite volume methods is to deduce a system of linear algebraic equations from a partial differential equation. In the case of the momentum balances the general structure of this linear equations is
-  \begin{equation}
-    \label{eq:linfinal}
-    u_{i,P}^{(n)} 
-    = 
-    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)}
-    +                                     b_{P,u_i}^{(n-1)} 
-    -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
-    + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)},
-  \end{equation}
-  where the pressure gradient has been discretized only symbolically and \(b_{P,u_i}\) denotes the source term. 
-  
-  At this stage the equations are still coupled and non-linear. As described in section \ref{sec:nonlinear} the Picard iteration process can be used to linearize the equations. Every momentum balance equation then only depends on the one dominant variable \(u_i\). Furthermore the coupling of the momentum balances through the convective term \((u_i u_j)\) is resolved in the process of linearization. The decoupled momentum balances can then be solved sequentially for the dominant variable \(u_i\). All coefficients \(a_{\{P,F\},u_i}\), the source term and the pressure gradient will be evaluated explicitly by using results of the preceding outer iteration \((n-1)\). For the pressure gradient this means to take the pressure of the antecedent outer iteration as a first guess for the following iteration. This guess has to be corrected in an iterative way until all the non-linear equations are fulfilled up to a certain tolerance. Section (\ref{sec:convergence}) presents a suitable convergence criterion and its implementation. This linearization process in conjunction with the pressure guess leads to the following linear equation 
-  \begin{equation}
-    \label{eq:nodeinter}
-    u_{i,P}^{(n*)} 
-    = 
-    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n*)}
-    +                                     b_{P,u_i}^{(n-1)} 
-    -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
-    + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}.
+\subsection{Implicit Pressure Correction and the SIMPLE Algorithm}
+\label{sec:simple}
+
+The goal of finite volume methods is to deduce a system of linear algebraic equations from a partial differential equation. In the case of the momentum balances the general structure of this linear equations is
+\begin{equation}
+  \label{eq:linfinal}
+  u_{i,P}^{(n)} 
+  = 
+  - \frac{\alpha_{\vec{u}_P}}{a_P^{u_i}} \left(\sum_{F \in NB(P)} a_F^{u_i} u_{i,F}^{(n)}
+  +                                     b_{P,u_i}^{(n-1)} 
+  -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)},
+\end{equation}
+where the pressure gradient has been discretized only symbolically and \(b_{P,u_i}^{(n-1)}\) denotes the source term evaluated at the previous outer iteration.
+
+At this stage the equations are still coupled and non-linear. As described in section \ref{sec:nonlinear} the Picard iteration process can be used to linearize the equations. Every momentum balance equation then only depends on the one dominant variable \(u_i\). Furthermore the coupling of the momentum balances through the convective term \((u_i u_j)\) is resolved in the process of linearization. The decoupled momentum balances can then be solved sequentially for the dominant variable \(u_i\). All coefficients \(a_{\{P,F\}}^{u_i}\), the source term and the pressure gradient will be evaluated explicitly by using results of the preceding outer iteration \((n-1)\). For the pressure gradient this means to take the pressure of the antecedent outer iteration as a first guess for the following iteration. This guess has to be corrected in an iterative way until all the non-linear equations are fulfilled up to a certain tolerance. Section (\ref{sec:convergence}) presents a suitable convergence criterion and its implementation. This linearization process in conjunction with the pressure guess leads to the linear equation 
+\begin{equation}
+  \label{eq:nodeinter}
+  u_{i,P}^{(n*)} 
+  = 
+  - \frac{\alpha_{\vec{u}}}{a_P^{u_i}} \left(\sum_{F \in NB(P)} a_F^{u_i} u_{i,F}^{(n*)}
+  +                                     b_{P,u_i}^{(n-1)} 
+  -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}.
 \end{equation}
 Here \((*)\) indicates that the solution of this equation still needs to be corrected to also fulfill the discretized mass balance
-  \begin{equation}
-    \label{eq:contisemi}
-    \sum_{F \in NB(P)} \left(u_i\right)^{(n)}_f n_i S_f = 0.
-  \end{equation}
+\begin{equation}
+  \label{eq:contisemi}
+  \sum_{F \in NB(P)} (u_i)_f^{(n)} n_i S_f = 0.
+\end{equation}
 
-  Applying the same procedure as in section \ref{sec:massflux} to equation (\ref{eq:nodeinter}) results in the following expression for the face velocities after solving the discretized momentum balances using a pressure guess
-  \begin{align}
-    \label{eq:faceinter}
-    u_{i,f}^{(n*)} 
-    &=
-    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n*)} + \gamma_f u_{i,Q}^{(n*)} \right] \nonumber \\[1em]
-    &\quad\quad - 
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    - \left( 1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-    - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
-    \right] \nonumber \\[1em]
-    &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
-  \end{align}
+Applying the same procedure as in section \ref{sec:massflux} to equation (\ref{eq:nodeinter}) results in the following expression for the face velocities after solving the discretized momentum balances using as pressure guess the pressure from the previous outer iteration
+\begin{align}
+  \label{eq:faceinter}
+  u_{i,f}^{(n*)} 
+  &=
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n*)} + \gamma_f u_{i,Q}^{(n*)} \right] \nonumber \\[1em]
+  &\quad\quad - 
+  \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+  \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+  - \left( 1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+  - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
+  \right] \nonumber \\[1em]
+  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
+\end{align}
 
-  The lack of an equation with the pressure as dominant variable leads to the necessity to alter the mass balance as the only equation left. Methods of this type are called projection methods. A common class of algorithms of this family of methods uses an equation for the additive pressure correction \(p'\) instead of the pressure itself and enforces continuity by correcting the velocities with an additive corrector \(u_i'\) as in
-  \begin{displaymath}
-    u_{i,P}^{(n)} =  u_{i,P}^{(n*)}  + u_{i,P}',\quad u_{i,f}^{(n)} =  u_{i,f}^{(n*)}  + u_{i,f}' \quad \text{and} \quad   p_P^{(n)} =  p_P^{(n-1)}  + p_P'.
-  \end{displaymath}
-  It is now possible to formulate the discretized momentum balance for the corrected velocities and the corrected pressure as
-  \begin{equation}
-    \label{eq:nodecorr}
-    u_{i,P}^{(n)} 
-    = 
-    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}^{(n)}
-    +                                     b_{P,u_i}^{(n-1)} 
-    -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n)} \right)
-    + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}  .
-  \end{equation}
-  It should be noted that the only difference to the equation which will be solved in the next outer iteration is that the source term \(b_{P,u_i}\) has not been updated yet. The same applies for the equation for the face velocity \(u_{i,f}\)
-  \begin{align}
-    \label{eq:facecorr}
-    u_{i,f}^{(n)} 
-    &=
-    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
-    &\quad\quad - 
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)} 
-    -  \left(1 - \gamma_f\right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n)} 
-    - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n)} 
-    \right] \nonumber \\[1em]
-    &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
-  \end{align}
-  To couple velocity and pressure correctors one can subtract equation (\ref{eq:nodeinter}) from (\ref{eq:nodecorr}) and equation (\ref{eq:faceinter}) from (\ref{eq:facecorr}) to get
-  \begin{align}
-    \label{eq:nodeprime}
-    u_{i,P}' 
-    &=  
-    - \frac{\alpha_{\vec{u}_P}}{a_{P,u_i}} \left(\underline{\sum_{F \in NB(P)} a_{F,u_i} u_{i,F}'}
-    - V_P\left(\frac{\partial p'}{\partial x_i}\right)_P^{(n)} \right) \quad \text{and}\\[1em]
-    \label{eq:faceprime}
-    u_{i,f}' 
-    &= 
-    \left[\left(1 - \gamma_f\right) u_{i,P}' + \gamma_f u_{i,Q}' \right] 
-    - 
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-    \left(\frac{\partial p}{\partial x_i}\right)_f' 
-    - \left( 1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P' 
-    - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q' 
-    \right].
-  \end{align}
-  The majority of the class of pressure correction algorithms has this equations as a common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving the pressure equation, still unknown. The method used in the present work is the SIMPLE Algorithm (Semi-Implicit Method for Pressure-Linked Equations \cite{patankar72}). The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation (\ref{eq:nodeprime}). Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by inserting equation (\ref{eq:nodeprime}) in to equation (\ref{eq:faceprime}). This gives an update formula
-  \begin{align}
-    u_{i,f}' 
-    &= 
-    - \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left(\frac{\partial p}{\partial x_i}\right)_f',
-  \end{align}
-  which is then, together with (\ref{eq:faceinter}), inserted into the discretized continuity equation (\ref{eq:contisemi}) to obtain
-  \begin{equation}
-    \label{eq:presscorr}
-    \sum_{F \in NB(P)} \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_{F,u_i}}\right)
-    \left(\frac{\partial p}{\partial x_i}\right)_f' n_i S_f
-    = b_{P,p}
-    \quad,
-  \end{equation}
-  where the right hand side \(b_{P,p}\) is defined as
-  \begin{equation}
-    \label{eq:presscorrb}
-    b_{P,p} := \sum_{F \in NB(P)} u_{i,f}^{(n*)} n_i S_f.
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    - \left( 1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-    - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
-    \right] \nonumber \\[1em]
-    \quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
-  \end{equation}
-  The complete discretization with central differences as approximation for the gradient of the pressure correction is straightforward and will be presented in subsection \ref{sec:segpresscorr}.
-  
-  The approximation performed in the SIMPLE algorithm affects convergence in a way that the pressure correction has to be under-relaxed with a parameter \(\alpha_p \in [0,1]\)
-  \begin{equation}
-    \label{eq:pressupdate}
-    p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} p_P'.
-  \end{equation}
+The lack of an equation with the pressure as dominant variable leads to the necessity to alter the mass balance as the only equation left. Methods of this type are called projection methods. A common class of algorithms of this family of methods uses an equation for the additive pressure correction \(p'\) instead of the pressure itself and enforces continuity by correcting the velocities with an additive corrector \(u_i'\), such that
+\begin{displaymath}
+  u_{i,P}^{(n)} =  u_{i,P}^{(n*)}  + u_{i,P}',\quad u_{i,f}^{(n)} =  u_{i,f}^{(n*)}  + u_{i,f}' \quad \text{and} \quad   p_P^{(n)} =  p_P^{(n-1)}  + p_P'.
+\end{displaymath}
+It is now possible to formulate the discretized momentum balance for the corrected velocities and the corrected pressure as
+\begin{equation}
+  \label{eq:nodecorr}
+  u_{i,P}^{(n)} 
+  = 
+  - \frac{\alpha_{\vec{u}}}{a_P^{u_i}} \left(\sum_{F \in NB(P)} a_F^{u_i} u_{i,F}^{(n)}
+  +                                     b_{P,u_i}^{(n-1)} 
+  -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n)} \right)
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}  .
+\end{equation}
+It should be noted that the only difference to the equation which will be solved in the next outer iteration is that the source term \(b_{P,u_i}\) has not been updated yet. In the same way the discretized momentum balance for the face velocity \(u_{i,f}\) can be formulated as
+\begin{align}
+  \label{eq:facecorr}
+  u_{i,f}^{(n)} 
+  &=
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
+  &\quad\quad - 
+  \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+  \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)} 
+  -  \left(1 - \gamma_f\right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n)} 
+  - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n)} 
+  \right] \nonumber \\[1em]
+  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
+\end{align}
+To couple velocity and pressure correctors one can subtract equation (\ref{eq:nodeinter}) from (\ref{eq:nodecorr}) and equation (\ref{eq:faceinter}) from (\ref{eq:facecorr}) to get
+\begin{align}
+  \label{eq:nodeprime}
+  u_{i,P}' 
+  &=  
+  - \frac{\alpha_{\vec{u}}}{a_P^{u_i}} \left(\underline{\sum_{F \in NB(P)} a_F^{u_i} u_{i,F}'}
+  - V_P\left(\frac{\partial p'}{\partial x_i}\right)_P^{(n)} \right) \quad \text{and}\\[1em]
+  \label{eq:faceprime}
+  u_{i,f}' 
+  &= 
+  \left[\left(1 - \gamma_f\right) u_{i,P}' + \gamma_f u_{i,Q}' \right] 
+  - 
+  \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+  \left(\frac{\partial p}{\partial x_i}\right)_f' 
+  - \left( 1 - \gamma_f \right) \left( \frac{\partial p}{\partial x_i} \right)_P' 
+  - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q' 
+  \right].
+\end{align}
+The majority of the class of pressure correction algorithms has this equations as a common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving the pressure equation, still unknown. The method used in the present work is the SIMPLE Algorithm (Semi-Implicit Method for Pressure-Linked Equations \cite{patankar72}). The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation (\ref{eq:nodeprime}). Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by inserting equation (\ref{eq:nodeprime}) into equation (\ref{eq:faceprime}). This gives an update formula
+\begin{align}
+  u_{i,f}' 
+  &= 
+  - \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left(\frac{\partial p}{\partial x_i}\right)_f',
+\end{align}
+which is then, together with (\ref{eq:faceinter}), inserted into the discretized continuity equation (\ref{eq:contisemi}) to obtain
+\begin{equation}
+  \label{eq:presscorr}
+  \sum_{F \in NB(P)} \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_F^{u_i}}\right)
+  \left(\frac{\partial p}{\partial x_i}\right)_f' n_i S_f
+  = b_{P,p}
+  \quad,
+\end{equation}
+where the right hand side \(b_{P,p}\) is defined as
+\begin{equation}
+  \label{eq:presscorrb}
+  b_{P,p} := \sum_{F \in NB(P)} u_{i,f}^{(n*)} n_i S_f.
+\end{equation}
+The complete discretization with central differences as approximation for the gradient of the pressure correction is straightforward and will be presented in subsection \ref{sec:segpresscorr}.
 
-  It should be noted that there are better approximations for the pressure correction which will not rely on pressure under-relaxation for convergence. On example that uses a more consistent approximation is the \emph{SIMPLEC} algorithm (SIMPLE Consistent) \cite{doormaal84}. A similar derivation of the pressure weighted interpolation method for the SIMPLEC algorithm can be found in \cite{miller88}.
+The approximation performed in the SIMPLE algorithm affects convergence in a way that the pressure correction has to be under-relaxed with a parameter \(\alpha_p \in [0,1]\)
+\begin{equation}
+  \label{eq:pressupdate}
+  p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} p_P'.
+\end{equation}
 
-  As shown in section \ref{sec:massflux} the behaviour of the pressure weighted interpolation method on non-equidistant grids can be improved by replacing the linear interpolation of pressure gradients with a simple average in equation (\ref{eq:faceinter}). This leads to the following equation for calculating mass fluxes
-  \begin{align}
-    \label{eq:facecorr2}
-    u_{i,f}^{(n*)} 
-    &=
-    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n*)} + \gamma_f u_{i,Q}^{(n*)} \right] \nonumber\\[1em]
-    &\quad\quad - 
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-    -  \frac{1}{2} \left( \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
-    +  \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} \right)
-    \right] \nonumber \\[1em]
-    &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
-  \end{align}
+It should be noted that there are better approximations for the pressure correction which will not rely on pressure under-relaxation for convergence. On example that uses a more consistent approximation is the \emph{SIMPLEC} algorithm (SIMPLE Consistent) \cite{doormaal84}. A similar derivation of the pressure weighted interpolation method for the SIMPLEC algorithm can be found in \cite{miller88}.
 
-  Generally the SIMPLE algorithm can be represented by an iterative procedure as shown in Algorithm \ref{al:simple}.
+As shown in section \ref{sec:massflux} the behaviour of the pressure weighted interpolation method on non-equidistant grids can be improved by replacing the linear interpolation of pressure gradients with a simple average in equation (\ref{eq:faceinter}). This leads to the following equation for calculating mass fluxes
+\begin{align}
+  \label{eq:facecorr2}
+  u_{i,f}^{(n*)} 
+  &=
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n*)} + \gamma_f u_{i,Q}^{(n*)} \right] \nonumber\\[1em]
+  &\quad\quad - 
+  \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+  \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
+  -  \frac{1}{2} \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+  -  \frac{1}{2} \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} 
+  \right] \nonumber \\[1em]
+  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
+\end{align}
+
+Generally the SIMPLE algorithm can be represented by an iterative procedure as shown in Algorithm \ref{al:simple}.
 \alglanguage{pseudocode}
 \begin{algorithm}
 \label{al:simple}
@@ -357,349 +356,353 @@ Here \((*)\) indicates that the solution of this equation still needs to be corr
 \end{algorithmic}
 \end{algorithm}
 
-  \subsection{Discretization of the Mass Fluxes and the Pressure Correction Equation}
-  \label{sec:segpresscorr}
+\subsection{Discretization of the Mass Fluxes and the Pressure Correction Equation}
+\label{sec:segpresscorr}
 
-  Subsections \ref{sec:massflux} and \ref{sec:simple} introduced the concept of pressure weighted interpolation to avoid oscillating results and an algorithm to calculate a velocity field that obeys continuity. The derived equations have not been discretized completely, furthermore the approach has not been generalized to non-orthogonal grids.
+Subsections \ref{sec:massflux} and \ref{sec:simple} introduced the concept of pressure weighted interpolation to avoid oscillating results and an algorithm to calculate a velocity field that obeys continuity. The derived equations have not been discretized completely, furthermore the approach has not been generalized to non-orthogonal grids.
 
-  The discretized mass balance (\ref{eq:massbalance}) only depends on the normal velocities \(u_{i,f} n_{i,f}\). By analogy with equation (\ref{eq:facecorr2}) an interpolated normal face velocity and thus the mass flux can be calculated as
-  \begin{align}
-    \label{eq:facecorr3}
-    u_{i,f}^{(n*)} n_{i,f}
-    &=
-    \left[\left(1 - \gamma_f\right) u_{i,P}^{(n*)} + \gamma_f u_{i,Q}^{(n*)} \right]n_{i,f} \nonumber\\[1em]
-    &\quad\quad - 
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
-    \left[ 
-    \left(\frac{\partial p}{\partial n}\right)_f^{(n-1)} 
-    -  \frac{1}{2} \left( \left( \frac{\partial p}{\partial n} \right)_P^{(n-1)} 
-    +  \left(\frac{\partial p}{\partial n}\right)_Q^{(n-1)} \right)
-  \right] \nonumber \\[1em]
-  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] n_{i,f},
-  \end{align}
-  where the scalar product of pressure gradients and the normal vector has been replaced by a directional derivative in the direction of the face normal vector. In the present work pressure gradients in (\ref{eq:facecorr3}) and pressure correction gradients in equation (\ref{eq:presscorr}) will be discretized by central differences
-  \begin{displaymath}
-  \left(\frac{\partial p}{\partial n}\right)_f \approx \frac{p_P - p_Q}{\left(\vec{x}_P - \vec{x}_Q\right)\cdot \vec{n}_f} 
-  \quad \text{and} \quad 
-  \left(\frac{\partial p'}{\partial n}\right)_f \approx \frac{p_P' - p_Q'}{\left(\vec{x}_P - \vec{x}_Q\right)\cdot \vec{n}_f}.
-  \end{displaymath}
-  This discretization can then be inserted into the semi-discretized pressure correction equation (\ref{eq:presscorr}) 
-  \begin{equation}
+The discretized mass balance (\ref{eq:massbalance}) only depends on the normal velocities \(u_{i,f} n_{i,f}\). By analogy with equation (\ref{eq:facecorr2}) an interpolated normal face velocity and thus the mass flux can be calculated as
+\begin{align}
+  \label{eq:facecorr3}
+  u_{i,f}^{(n*)} n_{i,f}
+  &=
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n*)} + \gamma_f u_{i,Q}^{(n*)} \right]n_{i,f} \nonumber\\[1em]
+  &\quad\quad - 
+  \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+  \left(\frac{\partial p}{\partial n}\right)_f^{(n-1)} 
+  -  \frac{1}{2} \left( \frac{\partial p}{\partial n} \right)_P^{(n-1)} 
+  -  \frac{1}{2} \left(\frac{\partial p}{\partial n}\right)_Q^{(n-1)} 
+\right] \nonumber \\[1em]
+&\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] n_{i,f},
+\end{align}
+where the scalar product of pressure gradients and the normal vector has been replaced by a directional derivative in the direction of the face normal vector. In the present work pressure gradients in (\ref{eq:facecorr3}) and pressure correction gradients in equation (\ref{eq:presscorr}) will be discretized by central differences
+\begin{displaymath}
+\left(\frac{\partial p}{\partial n}\right)_f \approx \frac{p_P - p_Q}{\left(\vec{x}_P - \vec{x}_Q\right)\cdot \vec{n}_f} 
+\quad \text{and} \quad 
+\left(\frac{\partial p'}{\partial n}\right)_f \approx \frac{p_P' - p_Q'}{\left(\vec{x}_P - \vec{x}_Q\right)\cdot \vec{n}_f}.
+\end{displaymath}
+This discretization can then be inserted into the semi-discretized pressure correction equation (\ref{eq:presscorr}) 
+\begin{equation}
 %   \label{eq:discpresscorr}
-    \sum_{F \in NB(P)} \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_{F,u_i}}\right)
-     \frac{p_P' - p_F'}{\left(\vec{x}_P - \vec{x}_F\right)\cdot \vec{n}_f} S_f
-    = b_{P,p}.
-  \end{equation}
-  The resulting coefficients for the pressure correction equation
-  \begin{displaymath}
-    a_{P,p'} p_{P}' + \sum_{F \in NB(P)} a_{F,p'} p_{F}' = b_{P,p'},
-  \end{displaymath}
-  can be calculated as
-  \begin{equation}
-    \label{eq:segpresscorrcoeff}
-    a_{F,p'} = -\left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_{F,u_i}}\right) \frac{S_f}{\left(\vec{x}_P - \vec{x}_F\right) \cdot \vec{n}_f} \quad \text{and} \quad
-    a_{P,p'} = - \sum_{F \in NB(P)} a_{F,p'}.
-  \end{equation}
-  The right hand side can be calculated as in equation (\ref{eq:presscorrb}), if the presented discretization is applied. 
+  \sum_{F \in NB(P)} \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_F^{u_i}}\right)
+   \frac{p_P' - p_F'}{\left(\vec{x}_P - \vec{x}_F\right)\cdot \vec{n}_f} S_f
+  = b_{P,p}.
+\end{equation}
+The resulting coefficients for the pressure correction equation
+\begin{displaymath}
+  a_P^{p'} p_{P}' + \sum_{F \in NB(P)} a_F^{p'} p_{F}' = b_{P,p'},
+\end{displaymath}
+can be calculated as
+\begin{equation}
+  \label{eq:segpresscorrcoeff}
+  a_F^{p'} = -\left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_F^{u_i}}\right) \frac{S_f}{\left(\vec{x}_P - \vec{x}_F\right) \cdot \vec{n}_f} \quad \text{and} \quad
+  a_P^{p'} = - \sum_{F \in NB(P)} a_F^{p'}.
+\end{equation}
+The right hand side can be calculated as in equation (\ref{eq:presscorrb}), if the presented discretization is applied. 
 
-  \subsection{Discretization of the Momentum Balance}
-  \label{sec:segdiscretization}
+\subsection{Discretization of the Momentum Balance}
+\label{sec:segdiscretization}
 
-      The stationary momentum balance integrated over a single control volume \(P\) reads as
-      \begin{equation}
-        \label{eq:semidiscrete}
-        \underbrace{\iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S}_{\text{convective term}}
-        - \underbrace{\iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S}_{\text{diffusive term}}
-        = - \underbrace{\iiint\limits_V \frac{\partial p}{\partial x_i} \mathrm{d}V}_{\text{sourceterm pressure}}
-        - \underbrace{\iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V}_{\text{sourceterm temperature}},
-      \end{equation}
-      where the different terms to be addressed individually in the following sections are indicated. The reader should note that the form of this equation has been modified by using Gauss' integration theorem. The terms residing on the left will be treated in an implicit and due to deferred corrections also in an explicit way whereas the terms on the right will be treated exclusively in an  explicit way.
+The stationary momentum balance integrated over a single control volume \(P\) reads as
+\begin{equation}
+  \label{eq:semidiscrete}
+  \underbrace{\iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S}_{\text{convective term}}
+  - \underbrace{\iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S}_{\text{diffusive term}}
+  = - \underbrace{\iiint\limits_V \frac{\partial p}{\partial x_i} \mathrm{d}V}_{\text{pressure sourceterm}}
+  - \underbrace{\iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V}_{\text{temperature sourceterm}},
+\end{equation}
+where the different terms to be addressed individually in the following sections are indicated. The reader should note that the form of this equation has been modified by using Gauss' integration theorem. The terms residing on the left will be treated in an implicit and due to deferred corrections also in an explicit way, whereas the terms on the right will be treated exclusively in an  explicit way.
 
-      \subsubsection{Linearization and Discretization of the Convective Term}
+\subsubsection{Linearization and Discretization of the Convective Term}
 
-      The convective term \(\left( \rho u_i u_j \right)\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (\ref{sec:nonlinear}), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent on the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). However this linearization will not be directly visible because it will be covered by the mass flux \(\dot{m}_f = \iint\limits_{S_f} \rho u_j^{(n-1)} n_j \mathrm{d}S \). Using the additivity of the Riemann integral the first step is to decompose the surface integral into individual contributions from each boundary face of the control volume \(P\)
-      \begin{displaymath}
-      \iint\limits_S \rho u_i u_jn_j \mathrm{d}S
-      = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f}\rho u_{i} u_{j} n_{j} \mathrm{d}S
-      = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{c},
-      \end{displaymath}
-      where \(F_{i,f}^c := \iint\limits_{S_f} \rho u_{i}^{(n)} u_{j}^{(n-1)} n_{j} \mathrm{d}S \) is the convective flux of the velocity \(u_i\) through the boundary face \(S_f\). 
+The convective term \(\left( \rho u_i u_j \right)\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (\ref{sec:nonlinear}), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent on the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). However this linearization will not be directly visible because it will be covered by the mass flux \(\textstyle \dot{m}_f = \iint\limits_{S_f} \rho u_j^{(n-1)} n_j \mathrm{d}S \). 
+
+Using the additivity of the Riemann integral the first step is to decompose the surface integral into individual contributions from each boundary face of the control volume \(P\)
+\begin{displaymath}
+  \iint\limits_S \rho u_i u_jn_j \mathrm{d}S
+  = \sum_{f \in \{w,s,b,t,n,e\}} \iint\limits_{S_f}\rho u_{i} u_{j} n_{j} \mathrm{d}S
+  = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{c},
+\end{displaymath}
+where \(\textstyle F_{i,f}^c := \iint\limits_{S_f} \rho u_{i}^{(n)} u_{j}^{(n-1)} n_{j} \mathrm{d}S \) is the convective flux of the velocity \(u_i\) through the boundary face \(S_f\). 
       
-      To improve diagonal dominance of the resulting linear system while maintaining the smaller discretization error of a higher order discretization, a blended discretization scheme is applied and combined with a deferred correction. Since due to the non-linearity of the equations to be solved an iterative solution process is needed by all means, the overall convergence does not degrade noticeably when using a deferred correction \cite{ferziger02}. Blending and deferred correction result in a decomposition of the convective flux into a lower order approximation, which is treated implicitly, and the explicit difference between the higher and lower order approximation for the same convective flux. Since for coarse grid resolutions the use of higher order approximations may lead to oscillations of the solution, which in turn may degrade or even impede convergence, the schemes can be blended by a control factor \( \eta \in [0,1]\). To show the generality of this approach all further derivations are presented for the generic boundary face \(S_f\) that separates control volume \(P\) from its neighbour \(F \in NB(P)\). This decomposition then leads to
-      \begin{displaymath}
-        F_{i,f}^c \approx  \underbrace{F_{i,f}^{c,l}}_{\text{implicit}} + \eta \, \bigl[\underbrace{ F_{i,f}^{c,h} - F_{i,f}^{c,l} }_{\text{explicit}}\bigr]^{(n-1)}.
-      \end{displaymath}
-      It should be noted that the convective fluxes carrying an \(l\) for \emph{lower} or an \(h\) for \emph{higher} as exponent, already have been linearized and discretized. The discretization applied to the convective flux in the present work is using the midpoint integration rule and blends the upwind interpolation scheme with a linear interpolation scheme. Applied to above decomposition one can derive the following approximations
-      \begin{align*}
-        F_{i,f}^{c,l} &= u_{i,F} \min(\dot{m}_f ,0) + u_{i,P} \max(0,\dot{m}_f) \\
-        F_{i,f}^{c,h} &= u_{i,F} \, \gamma_f + u_{i,P} \, (1 - \gamma_f),
-      \end{align*}
-      where the variable values have to be taken from the previous iteration step \((n-1)\) as necessary and the mass flux \(\dot{m}_f\) has been used as result of the linearization process. The results can now be summarized by presenting the convective contribution to the matrix coefficients \(a_{F,u_i}\) and \(a_{P,u_i}\) and the right hand side \(b_{P,u_i}\) which are calculated as
-      \begin{subequations}
-      \begin{align}
-        a_{F,u_i}^c &= \min(\dot{m}_f ,0), \quad \quad a_{P,u_i}^c = \sum_{F \in NB(P)} \max(0,\dot{m}_f) \\[1em]
-        b_{P,u_i}^c &= \sum_{F \in NB(P)} \eta  \left(u_{i,F}^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right) \nonumber \\
-                    &\quad \quad \quad  \quad+ \eta \left( u_{i,P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right).
-      \end{align}
-    \end{subequations}
+To improve diagonal dominance of the resulting linear system while maintaining the smaller discretization error of a higher order discretization, a blended discretization scheme is applied and combined with a deferred correction. Since due to the non-linearity of the equations to be solved, an iterative solution process is needed by all means, the overall convergence does not degrade noticeably when using a deferred correction \cite{ferziger02}. Blending and deferred correction result in a decomposition of the convective flux into a lower order approximation, which is treated implicitly, and the explicit difference between the higher and lower order approximation for the same convective flux. Since for coarse grid resolutions the use of higher order approximations may lead to oscillations of the solution, which in turn may degrade or even impede convergence, the schemes can be blended by a control factor \( \eta \in [0,1]\). Furthermore the use of low-order approximations increases the diagonal dominance of the matrix, which then benefits the convergence of iterative solvers for the linear systems \cite{schaefer99}.
 
-      \subsubsection{Discretization of the Diffusive Term}
+To show the generality of this approach all further derivations are presented for the generic boundary face \(S_f\) that separates control volume \(P\) from its neighbour \(F \in NB(P)\). This decomposition then leads to
+\begin{displaymath}
+  F_{i,f}^c \approx  \underbrace{F_{i,f}^{c,l}}_{\text{implicit}} + \eta \, \bigl[\underbrace{ F_{i,f}^{c,h} - F_{i,f}^{c,l} }_{\text{explicit}}\bigr]^{(n-1)}.
+\end{displaymath}
+It should be noted that the convective fluxes carrying an \(l\) for \emph{lower} or an \(h\) for \emph{higher} as exponent, already have been linearized and discretized. The discretization applied to the convective flux in the present work is using the midpoint integration rule and blends the upwind interpolation scheme with a linear interpolation scheme. Applied to above decomposition one can derive the following approximations
+\begin{align*}
+  F_{i,f}^{c,l} &= u_{i,F} \min(\dot{m}_f ,0) + u_{i,P} \max(0,\dot{m}_f) \\
+  F_{i,f}^{c,h} &= u_{i,F} \, \gamma_f + u_{i,P} \, (1 - \gamma_f),
+\end{align*}
+where the variable values have to be taken from the previous iteration step \((n-1)\) as necessary and the mass flux \(\dot{m}_f\) has been used as result of the linearization process. The results can now be summarized by presenting the convective contribution to the matrix coefficients \(a_{F,u_i}\) and \(a_P^{u_i}\) and the right hand side \(b_{P,u_i}\) which are calculated as
+\begin{subequations}
+\begin{align}
+  a_F^{u_i,c} &= \min(\dot{m}_f ,0), \quad \quad a_P^{u_i,c} = \sum_{F \in NB(P)} \max(0,\dot{m}_f) \\[1em]
+  \text{and} \quad b_{P,u_i}^c &= \sum_{F \in NB(P)} \eta  \left(u_{i,F}^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right)
+                   + \eta \left( u_{i,P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right).
+\end{align}
+\end{subequations}
 
-      The diffusive term contains the first partial derivatives of the velocity as a result of the material constitutive equation that characterizes the behaviour of Newtonian fluids. As pointed out in section \ref{sec:nonorth} directional derivatives can be discretized using central differences on orthogonal grids or in the more general case of non-orthogonal grids using central differences implicitly and an explicit deferred correction comprising the non-orthogonality of the grid. As seen in equation (\ref{eq:navierstokes}) the diffusive term of the Navier-Stokes equations can be simplified using the mass balance in the case of an incompressible flow with constant viscosity \(\mu\). To sustain the generality of the presented approach this simplification will be omitted.
+\subsubsection{Discretization of the Diffusive Term}
 
-      As before, by using the additivity and furthermore linearity of the Riemann integral, the integration of the diffusive term will be divided into integration over individual boundary faces \(S_f\) 
-      \begin{displaymath}
-      \iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S \mathrm{d}S
-      = \sum_{f \in \{w,s,b,t,n,e\}} \left[
-        \iint\limits_{S_f} \mu \underline{\frac{\partial u_i}{\partial x_j}n_j \mathrm{d}S}
-    + \iint\limits_{S_f} \mu \frac{\partial u_j}{\partial x_i}n_j \mathrm{d}S \right]
-       = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{d},
-      \end{displaymath}
-      where \(F_{i,f}^{d}\) denotes the diffusive flux through an individual boundary face. Section \ref{sec:nonorth} only covered the non-orthogonal corrector for directional derivatives. Since the velocity is a vector field and not a scalar field, the results of section \ref{sec:nonorth} may only be applied to the underlined term. The other term will be treated explicitly since it is considerably smaller than the underlined term, furthermore does not cause oscillations and thus will not derogate convergence \cite{ferziger02}. To begin with all present integrals will be approximated using the midpoint rule of integration. The diffusive flux \(F_{i,f}^d\) for a generic face \(S_f\) then reads 
-      \begin{displaymath}
-        F_{i,f}^d \approx \mu \underline{\left(\frac{\partial u_i}{\partial x_j}\right)_f n_j S_f} + \mu \left(\frac{\partial u_j}{\partial x_i}\right)_f n_j S_f.
-      \end{displaymath}
+The diffusive term contains the first partial derivatives of the velocity as a result of the material constitutive equation that characterizes the behaviour of Newtonian fluids. As pointed out in section \ref{sec:nonorth}, directional derivatives can be discretized using central differences on orthogonal grids or in the more general case of non-orthogonal grids using central differences implicitly and an explicit deferred correction comprising the non-orthogonality of the grid. As seen in equation (\ref{eq:navierstokes}) the diffusive term of the Navier-Stokes equations can be simplified using the mass balance in the case of an incompressible flow with constant viscosity \(\mu\). To sustain the generality of the presented approach this simplification will be omitted.
 
-      Using central differences for the implicit discretization of the directional derivative and furthermore using the \emph{orthogonal correction} approach from \ref{seq:orthcorrapproach} the approximation can be derived as
-      \begin{align*}
-        F_{i,f}^d 
-        &\approx 
-        \mu \left( \underline{||\vecg{\vecg{\Delta}_f}||_2 \frac{u_{P_i} - u_{F_i}}{ || \vec{x}_P - \vec{x}_F ||_2 }  
-        -  \left(\nabla u_i \right)_f^{(n-1)} \cdot \left(\vecg{\Delta}_f - \vec{S}_f\right)  }  \right)
-        + \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i} \\[1em]
-        &= \mu \left(\underline{  S_f \frac{u_{P_i} - u_{F_i}}{ || \vec{x}_P - \vec{x}_F ||_2 }  
-    - \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} - n_{f_i}\right)S_f  } \right)
-      + \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i},
-    \end{align*}
-      where the unit vector pointing in direction of the straight line connecting control volume \(P\) and control volume \(F\) is denoted as
-      \begin{displaymath}
-        \vecg{\xi}_f = \frac{\vec{x}_P - \vec{x}_F}{|| \vec{x}_p - \vec{x}_F ||_2}.
-      \end{displaymath}
-      The interpolation of the cell center gradients to the boundary faces is performed as in (\ref{eq:interpolgrad}). Now the contribution of the diffusive part to the matrix coefficients and the right hand side can be calculated as
-      \begin{subequations}
-        \begin{align}
-          a_{F,u_i}^d &= - \frac{\mu S_f}{||\vec{x}_P - \vec{x}_F||_2}, 
-          \quad \quad a_{P,u_i}^d = \sum_{F \in NB(P)} \frac{\mu S_f}{|| \vec{x}_P - \vec{x}_F ||} \\[1em]
-          b_{F,u_i}^d &=  \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} - n_{f_i}\right)S_f  
-          - \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i} S_f   \nonumber \\[0.5em]
-          &=  \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \xi_{f_i} S_f
-          - \mu \left( \left( \frac{\partial u_i}{\partial x_j} \right)_f^{(n-1)}
-          - \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} \right) n_{f_i} S_f.
-        \end{align}
-      \end{subequations}
+As before, by using the additivity and furthermore linearity of the Riemann integral, the integration of the diffusive term will be divided into integration over individual boundary faces \(S_f\) 
+\begin{displaymath}
+  \iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S \mathrm{d}S
+  = \sum_{f \in \{w,s,b,t,n,e\}} \left[
+    \iint\limits_{S_f} \mu \underline{\frac{\partial u_i}{\partial x_j}n_j \mathrm{d}S}
+  + \iint\limits_{S_f} \mu \frac{\partial u_j}{\partial x_i}n_j \mathrm{d}S \right]
+   = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{d},
+\end{displaymath}
+where \(F_{i,f}^{d}\) denotes the diffusive flux through an individual boundary face. Section \ref{sec:nonorth} only covered the non-orthogonal corrector for directional derivatives. Since the velocity is a vector field and not a scalar field, the results of section \ref{sec:nonorth} may only be applied to the underlined term. The other term will be treated explicitly since it is considerably smaller than the underlined term, furthermore does not cause oscillations and thus will not derogate convergence \cite{ferziger02}. First all present integrals will be approximated using the midpoint integration rule. The diffusive flux \(F_{i,f}^d\) for a generic face \(S_f\) located between the control volumes \(P\) and \(F\) then reads 
+\begin{displaymath}
+  F_{i,f}^d \approx \mu \underline{\left(\frac{\partial u_i}{\partial x_j}\right)_f n_j S_f} + \mu \left(\frac{\partial u_j}{\partial x_i}\right)_f n_j S_f.
+\end{displaymath}
 
-      \subsubsection{Discretization of the Source Term}
+Using central differences for the implicit discretization of the directional derivative and furthermore using the \emph{orthogonal correction} approach from \ref{seq:orthcorrapproach} the approximation can be derived as
+\begin{align*}
+  F_{i,f}^d 
+  &\approx 
+  \mu \left( \underline{||\vecg{\vecg{\Delta}_f}||_2 \frac{u_{P_i} - u_{F_i}}{ || \vec{x}_P - \vec{x}_F ||_2 }  
+  -  \left(\nabla u_i \right)_f^{(n-1)} \cdot \left(\vecg{\Delta}_f - \vec{S}_f\right)  }  \right)
+  + \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i} \\[1em]
+  &= \mu \left(\underline{  S_f \frac{u_{P_i} - u_{F_i}}{ || \vec{x}_P - \vec{x}_F ||_2 }  
+  - \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} - n_{f_i}\right)S_f  } \right)
+  + \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i},
+\end{align*}
+where the unit vector pointing in direction of the straight line connecting control volume \(P\) and control volume \(F\) is denoted as
+\begin{displaymath}
+  \vecg{\xi}_f = \frac{\vec{x}_P - \vec{x}_F}{|| \vec{x}_p - \vec{x}_F ||_2}.
+\end{displaymath}
+The interpolation of the cell center gradients to the boundary faces is performed as in (\ref{eq:interpolgrad}). Now the contribution of the diffusive part to the matrix coefficients and the right hand side can be calculated as
+\begin{subequations}
+\begin{align}
+  a_F^{u_i,d} &= - \frac{\mu S_f}{||\vec{x}_P - \vec{x}_F||_2}, 
+  \quad \quad a_P^{u_i,d} = \sum_{F \in NB(P)} \frac{\mu S_f}{|| \vec{x}_P - \vec{x}_F ||} \\[1em]
+  b_{F,u_i}^d &=  \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} - n_{f_i}\right)S_f  
+  - \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i} S_f   \nonumber \\[0.5em]
+  &=  \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \xi_{f_i} S_f
+  - \mu \left( \left( \frac{\partial u_i}{\partial x_j} \right)_f^{(n-1)}
+  - \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} \right) n_{f_i} S_f.
+\end{align}
+\end{subequations}
 
-      Since in the segregated solution approach in every equation all other variables but the dominant one are treated as constants and furthermore the source terms in equation (\ref{eq:semidiscrete}) do not depend on the dominant variable the discretization is straightforward. The source terms of the momentum balance are discretized using the midpoint rule of integration, which leads to the source term
-      \begin{equation}
-        - \iiint\limits_V \frac{\partial p}{\partial x_i} \mathrm{d}V
-        - \iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V
-        \approx
-        - \left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} V_P
-        - \rho \beta \left(T_P^{(n-1)} - T_0\right) V_P
-        = b_{P,u_i}^{sc}
-      \end{equation}
+\subsubsection{Discretization of the Source Terms}
 
-  \subsection{Discretization of the Temperature Equation}
-  \label{sec:discretetemperature}
+Since in the segregated solution approach in every equation all other variables but the dominant one are treated as constants and furthermore the source terms in equation (\ref{eq:semidiscrete}) do not depend on the dominant variable the discretization is straightforward. The source terms of the momentum balance are discretized using the midpoint integration rule for volume integrals, which leads to the source term
+\begin{equation}
+  - \iiint\limits_V \frac{\partial p}{\partial x_i} \mathrm{d}V
+  - \iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V
+  \approx
+  - \left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} V_P
+  - \rho \beta \left(T_P^{(n-1)} - T_0\right) V_P
+  = b_{P,u_i}^{sc}.
+\end{equation}
 
-    The discretization of the temperature equation is performed by the same means as for the momentum balance. The only difference is a simpler diffusion term. The integral form of the temperature equation after applying the Gauss' theorem of integration is
-    \begin{displaymath}
-    \underbrace{ \iint\limits_S \rho u_j T n_j \mathrm{d}S }_{\text{advective term}}
-    - \underbrace{ \iint\limits_S \kappa \frac{\partial T}{\partial x_j} n_j \mathrm{d}V }_{\text{diffusive term}}
-    = \underbrace{\iiint\limits_V \vphantom{\frac{ T}{ x_j} } q_T \mathrm{d}V }_{\text{source term}}.
-    \end{displaymath}
-    Proceeding as in the previous subsections one can now discretize the advective, the diffusive term and the source term. Since this process does not provide further insight, just the final results will be presented. The discretization yields the matrix coefficients as
-    \begin{subequations}
-      \begin{align}
-        a_{F,T} &= \min(\dot{m}_f,0) + \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
-        a_{P,T} &= \sum_{F \in NB(P)}\max(0,\dot{m}_f) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
-        b_{P,T} &= \sum_{F \in NB(P)} \eta  \left(T_F^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right) \nonumber \\
-                &\quad \quad \quad  \quad+ \eta \left( T_{P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right) \nonumber \\[0.5em]
-                &\quad + \sum_{F \in NB(P)} \left( \frac{\partial T}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber \\[0.5em]
-                &\quad + q_{T_P} V_P.
-      \end{align}
-    \end{subequations}
-    Again it is possible though not always necessary, as in the case of the velocities, to under-relax the solution of the resulting linear system with a factor \(\alpha_T\). This can be accomplished as shown in subsection \ref{sec:structure}.
+\subsection{Discretization of the Temperature Equation}
+\label{sec:discretetemperature}
 
-  \subsection{Boundary Conditions}
-  \label{sec:segboundary}
-
-  As the antecedent subsections showed, it is possible to deduce a linear algebraic equation for each control volume by the finite volume method. The approach presented in the preceding subsections however did not cover the treatment of control volumes at the domain boundaries yet. This subsection introduces the boundary conditions which are relevant for the present work and furthermore deals with transition conditions at block boundaries.
-
-  \subsubsection{Dirichlet Boundary Conditions}
-
-  The first boundary condition is the Dirichlet boundary condition. This type of boundary condition is used to model inlet conditions for flow problems. For the temperature equation it may also be used at walls as will be shown in subsection \ref{seg:walls}. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. Especially the mass flux \(\dot{m}_f\) is known and hence has not to be calculated using the pressure weighted interpolation method. Since no special modifications have to be made as the resulting coefficient for a neighbouring control volume laying past the boundary is considered on the right hand side of the linear system, the implementation approach will be presented only for the temperature equation. Since there is no boundary condition that fixes the gradient at Dirichlet boundaries it is assumed that the partial derivatives of the respective variable is constant and can hence be extrapolated
-  \begin{displaymath}
-    \left( \frac{\partial T}{\partial x_j} \right)_f \approx \left( \frac{\partial T}{\partial x_j} \right)_P.
-  \end{displaymath}
-  The modification to the central coefficient of the linear equation can be recursively formulated as
-  \begin{displaymath}
-    a_{P,T} = a_{P,T} + \left( \max(0,\dot{m}_f )  - \frac{\kappa S_f}{|| \vec{x}_P - \vec{x}_f ||_2} \right),
-  \end{displaymath}
-  whereas the contribution to the right hand side reads
+The discretization of the temperature equation is performed by the same means as for the momentum balance. The only difference is a simpler diffusion term. The integral form of the temperature equation, after applying the Gauss' theorem of integration, is
+\begin{displaymath}
+  \underbrace{ \iint\limits_S \rho u_j T n_j \mathrm{d}S }_{\text{advective term}}
+  - \underbrace{ \iint\limits_S \kappa \frac{\partial T}{\partial x_j} n_j \mathrm{d}V }_{\text{diffusive term}}
+  = \underbrace{\iiint\limits_V \vphantom{\frac{ T}{ x_j} } q_T \mathrm{d}V }_{\text{source term}}.
+\end{displaymath}
+Proceeding as in the previous subsections one can now discretize the advective, the diffusive term and the source term. Since this process does not provide further insight, just the final results will be presented. The discretization yields the matrix coefficients as
+\begin{subequations}
   \begin{align}
-    b_{P,T} &= b_{P,T} - \left( \min(\dot{m}_f,0) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_f||_2}\right) T_f +
-    \left( \frac{\partial T}{\partial x_j}\right)_P^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber 
+    a_F^{T} &= \min(\dot{m}_f,0) + \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
+    a_P^{T} &= \sum_{F \in NB(P)}\max(0,\dot{m}_f) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
+    b_{P,T} &= \sum_{F \in NB(P)} \eta  \left(T_F^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right) 
+             + \eta \left( T_{P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right) \nonumber \\[0.5em]
+            &\quad + \sum_{F \in NB(P)} \left( \frac{\partial T}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber \\[0.5em]
+            &\quad + q_{T_P} V_P.
   \end{align}
-  The reader should note, that instead the gradient discretization at boundaries is realized by one sided forward differencing schemes instead of a central differencing scheme. This does not affect accuracy drastically because the distance used in the differential quotient is half the distance used on a central difference inside the domain \cite{schaefer99}.
+\end{subequations}
+Again it is possible though not always necessary, as in the case of the velocities, to under-relax the solution of the resulting linear system with a factor \(\alpha_T\). This can be accomplished as shown in subsection \ref{sec:structure}.
 
-  \subsubsection{Treatment of Wall Boundaries}
-  \label{seg:walls}
+\subsection{Boundary Conditions}
+\label{sec:segboundary}
+
+As the antecedent subsections showed, it is possible to deduce a linear algebraic equation for each control volume by the finite volume method. The approach presented in the preceding subsections however did not cover the treatment of control volumes at domain boundaries yet. This subsection introduces the boundary conditions which are relevant for the present work and furthermore deals with transitional conditions at block boundaries.
+
+\subsubsection{Dirichlet Boundary Conditions}
+
+The first boundary condition is the Dirichlet boundary condition. This type of boundary condition is used to model inlet conditions for flow problems. For the temperature equation it may also be used at walls as will be shown in subsection \ref{seg:walls}. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. Especially the mass flux \(\dot{m}_f\) is known and hence does not have to be calculated using the pressure weighted interpolation method. Since no special modifications have to be made, as the resulting coefficient for a neighbouring control volume laying past the boundary is considered on the right hand side of the linear system, the implementation approach will be presented only for the temperature equation. Since there is no boundary condition that fixes the gradient at Dirichlet boundaries it is assumed that the partial derivatives of the respective variable are constant and can hence be extrapolated
+\begin{displaymath}
+  \left( \frac{\partial T}{\partial x_j} \right)_f \approx \left( \frac{\partial T}{\partial x_j} \right)_P.
+\end{displaymath}
+The modification to the central coefficient of the linear equation can be recursively formulated as
+\begin{displaymath}
+  a_P^{T} = a_P^{T} + \left( \max(0,\dot{m}_f )  - \frac{\kappa S_f}{|| \vec{x}_P - \vec{x}_f ||_2} \right),
+\end{displaymath}
+whereas the contribution to the right hand side reads
+\begin{align}
+  b_{P,T} &= b_{P,T} - \left( \min(\dot{m}_f,0) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_f||_2}\right) T_f +
+  \left( \frac{\partial T}{\partial x_j}\right)_P^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber 
+\end{align}
+The reader should note, that even though the gradient discretization at domain boundaries is realized by a one sided forward differencing scheme instead of a central differencing scheme. This does not drastically affect accuracy because the distance used in the differential quotient is half the distance used on a central difference inside the domain \cite{schaefer99}.
+
+\subsubsection{Treatment of Wall Boundaries}
+\label{seg:walls}
     
-    A common boundary to the solution domain is given by solid walls. In viscous flows this can be interpreted as a no-slip condition, i.e. a Dirichlet boundary condition for the velocities. Convective fluxes through solid walls are thus zero by definition however the diffusive fluxes require special treatment not only for the velocities but also for the temperature. To approximate the fluid behavior on a wall boundary correctly, special modifications have to be taken into account to model the normal a shear tension. Furthermore diffusive fluxes for the temperature can be given by Neumann boundary conditions.
+A common boundary to the solution domain is given by solid walls. For all kind of flows this boundary condition first of all has a kinematic character, since the concept of impermeable walls dictates a zero normal velocity at the wall. In viscous flows wall boundaries can be interpreted furthermore as a no-slip condition, i.e. a Dirichlet boundary condition for the velocities. Convective fluxes through solid walls are thus zero by definition however the diffusive fluxes require special treatment not only for the velocities but also for the temperature. To approximate the fluid behavior on a wall boundary correctly, special modifications have to be taken into account to model the normal a shear tension. Furthermore diffusive fluxes for the temperature can be given by Neumann or Dirichlet boundary conditions.
 
-    The derivation of the discretized diffusive flux through wall boundaries starts from the integral momentum balance (\ref{eq:cauchy}) for the vector \(\vec{u}\). Here only the term for surface forces is needed
-    \begin{equation}
-      \vec{F}_w =  \iint\limits_{S_w} \vec{t} \mathrm{d}S = \iint\limits_{S_w} \vec{T}(\vec{n}_w) \mathrm{d}S 
-    \end{equation}
-    For the purpose of treating wall boundary conditions it is appropriate to use a local coordinate system \(n,t,s\) where \(n\) denotes the wall normal coordinate, \(t\) denotes the coordinate tangential to the wall shear force and, \(s\) is the binormal coordinate. (FIGURE). With respect to this coordinate system the wall normal vector is represented by \(\vec{n}_w = \left( 1, 0 , 0 \right)^T\) and the image of the wall normal vector \(\vec{T}(\vec{n_w})\) is represented by 
-    \begin{displaymath}
-    \vec{T}(\vec{n}_w) =
-    \left[
-      \begin{array}{ccc}
-        \tau_{nn} & \tau_{nt} & \tau_{ns}\\
-        \tau_{nt} & \tau_{tt} & \tau_{ts}\\
-        \tau_{ns} & \tau_{ts} & \tau_{ss}
-      \end{array}
-    \right]
-    \left[
-    \begin{array}{c}
-      1\\
-      0\\
-      0
-    \end{array}
-    \right]
-    =
-    \left[
-    \begin{array}{c}
-      \tau_{nn}\\
-      \tau_{nt}\\
-      \tau_{ns}
-    \end{array}
-    \right]
-    \end{displaymath}
-    The velocity of the wall is assumed to be constant, so the directional derivative of the tangential velocity vanishes on the wall
-    \begin{displaymath}
-      \tau_{tt} =  \frac{ \partial u_t }{ \partial x_t }  =  0,
-    \end{displaymath}
-    which in conjunction with the continuity equation in differential form leads to
-    \begin{displaymath}
-     \frac{ \partial u_n }{ \partial x_n } + \frac{ \partial u_t }{ \partial x_t } =  \frac{ \partial u_n }{ \partial x_n } = 0,
-    \end{displaymath}
-    what is equivalent to \( \tau_{nn} = 0\) at the wall. A physical interpretation would be that the transfer of momentum at the wall occurs by shear forces exclusively. Furthermore the coordinate direction \(t\) is chosen to be parallel to the shear force which is no restriction because of the possibility to rotate the coordinate system within the plane. This leads to \(\tau_{ns} = 0 \). The absolute value of the surface force hence only depends on the normal derivative of the velocity tangential to the wall. After transforming the coordinates back to the system \((x_1, x_2, x_3)\) the surface force can be calculated and the integral can be discretized using the midpoint rule by
-    \begin{equation}
-      \label{eq:wallforce}
-      \vec{F}_w 
-      =  
-      \iint\limits_{S_w} \vec{t_w} \, \tau_{nt} \mathrm{d}S
-      =
-      \iint\limits_{S_w} \vec{t_w} \, \mu \frac{\partial u_t}{\partial n} \mathrm{d}S
-      =
-      \vec{t_w} \, \mu \left(\frac{\partial u_t}{\partial n}\right)_w S_w
-    \end{equation}
-    where \( \vec{t_w} \) denotes the transformed tangential vector \((0,1,0)^T\) with respect to the coordinate system \((x_1,x_2,x_3)\). In the discretization process this tangential vector will be calculated from the velocity vector as
-    \begin{displaymath}
-      \vec{t_w} = \frac{\vec{u}_t}{|| \vec{u}_t ||_2} \quad \text{, where} \quad \vec{u}_t = \vec{u} - \left( \vec{u} \cdot \vec{n}_w \right) \vec{n}.
-    \end{displaymath}
+The derivation of the discretized diffusive flux through wall boundaries starts from the integral momentum balance (\ref{eq:cauchy}) for the vector \(\vec{u}\). Here only the term for surface forces is needed
+\begin{equation}
+  \vec{F}_w =  \iint\limits_{S_w} \vec{t} \mathrm{d}S = \iint\limits_{S_w} \vec{T}(\vec{n}_w) \mathrm{d}S 
+\end{equation}
+For the purpose of treating wall boundary conditions it is appropriate to use a local coordinate system \(n,t,s\) where \(n\) denotes the wall normal coordinate, \(t\) denotes the coordinate tangential to the wall shear force and, \(s\) is the binormal coordinate. (FIGURE). With respect to this coordinate system the wall normal vector is represented by \(\vec{n}_w = \left( 1, 0 , 0 \right)^T\) and the image of the wall normal vector \(\vec{T}(\vec{n_w})\) is represented by 
+\begin{displaymath}
+\vec{T}(\vec{n}_w) =
+\left[
+  \begin{array}{ccc}
+    \tau_{nn} & \tau_{nt} & \tau_{ns}\\
+    \tau_{nt} & \tau_{tt} & \tau_{ts}\\
+    \tau_{ns} & \tau_{ts} & \tau_{ss}
+  \end{array}
+\right]
+\left[
+\begin{array}{c}
+  1\\
+  0\\
+  0
+\end{array}
+\right]
+=
+\left[
+\begin{array}{c}
+  \tau_{nn}\\
+  \tau_{nt}\\
+  \tau_{ns}
+\end{array}
+\right]
+\end{displaymath}
+The velocity of the wall is assumed to be constant, so the directional derivative of the tangential velocity vanishes on the wall
+\begin{displaymath}
+  \tau_{tt} =  \frac{ \partial u_t }{ \partial x_t }  =  0,
+\end{displaymath}
+which in conjunction with the continuity equation in differential form leads to
+\begin{displaymath}
+ \frac{ \partial u_n }{ \partial x_n } + \frac{ \partial u_t }{ \partial x_t } =  \frac{ \partial u_n }{ \partial x_n } = 0,
+\end{displaymath}
+what is equivalent to \( \tau_{nn} = 0\) at the wall. A physical interpretation would be that the transfer of momentum at the wall occurs by shear forces exclusively. Furthermore the coordinate direction \(t\) is chosen to be parallel to the shear force which is no restriction because of the possibility to rotate the coordinate system within the plane. This leads to \(\tau_{ns} = 0 \). The absolute value of the surface force hence only depends on the normal derivative of the velocity tangential to the wall. After transforming the coordinates back to the system \((x_1, x_2, x_3)\) the surface force can be calculated and the integral can be discretized using the midpoint integration rule by
+\begin{equation}
+  \label{eq:wallforce}
+  \vec{F}_w 
+  =  
+  \iint\limits_{S_w} \vec{t_w} \, \tau_{nt} \mathrm{d}S
+  =
+  \iint\limits_{S_w} \vec{t_w} \, \mu \frac{\partial u_t}{\partial n} \mathrm{d}S
+  =
+  \vec{t_w} \, \mu \left(\frac{\partial u_t}{\partial n}\right)_w S_w,
+\end{equation}
+where \( \vec{t_w} \) denotes the transformed tangential vector \((0,1,0)^T\) with respect to the coordinate system \((x_1,x_2,x_3)\). In the discretization process this tangential vector will be calculated from the velocity vector as
+\begin{displaymath}
+  \vec{t_w} = \frac{\vec{u}_t}{|| \vec{u}_t ||_2} \quad \text{, where} \quad \vec{u}_t = \vec{u} - \left( \vec{u} \cdot \vec{n}_w \right) \vec{n}_w.
+\end{displaymath}
 
-    According to \cite{ferziger02} this force should not be handled explicitly for convergence reasons. On the other side, if the surface force is expressed by the velocities \(u_i\) the discretization process would lead to different central matrix coefficients, which would affect memory efficiency.
+According to \cite{ferziger02} this force should not be handled explicitly for convergence reasons. On the other side, if the surface force is expressed by the velocities \(u_i\) the discretization process would lead to different central matrix coefficients, which would affect memory efficiency.
 
-    The discretization approach used in the present thesis uses a simpler implicit discretization coupled with a deferred correction that combines the explicit discretization of the surface force (\ref{eq:wallforce}) with a central difference. At first the contained directional derivative is discretized implicitly by
-    \begin{displaymath}
-      \left(\frac{\partial u_t}{\partial n}\right) {t_w}_i
-      \approx
-      \left(\frac{\partial u_i}{\partial \xi}\right)
-      \approx
-      \frac{u_{i,P} - u_{i,w}}{|| \vec{x}_P - \vec{x}_w ||_2}
-    \end{displaymath}
-    and explicitly by
-    \begin{displaymath}
-      \left(\frac{\partial u_t}{\partial n}\right) {t_w}_i
-      \approx
-      \frac{\left(u_{i,P}- u_{i,w} \right) - \left(u_{j,P} - u_{j,w}\right) n_j n_i  }{\left( \vec{x}_P - \vec{x}_w \right) \cdot \vec{n}_w}.
-    \end{displaymath}
-    Therefore the contributions to the central coefficient and the right hand side of the linear equation that results from the presented discretization process are
-    \begin{align*}
-      a_{P,u_i} &= a_{P,u_i} + \mu \frac{S_f}{|| \vec{x}_P - \vec{x}_w ||_2} \quad \text{and} \\
-      b_{P,u_i} &= a_{P,u_i} + \mu \frac{S_f}{|| \vec{x}_P - \vec{x}_w ||_2} u_{i,P}^{(n-1)} + 
-      \frac{\left(u_{i,P}^{(n-1)}- u_{i,w} \right) - \left(u_{j,P}^{(n-1)} - u_{j,w}\right) n_j n_i  }{\left( \vec{x}_P - \vec{x}_w \right) \cdot \vec{n}_w}.
-    \end{align*}
-    The reader should note that since the deferred correction uses a Dirichlet boundary no correction of the value of the wall velocity \(u_{i,w}\) has to be accounted for.
+The discretization approach used in the present thesis uses a simpler implicit discretization coupled with a deferred correction that combines the explicit discretization of the surface force (\ref{eq:wallforce}) with a central difference. At first the contained directional derivative is discretized implicitly by
+\begin{displaymath}
+  \left(\frac{\partial u_t}{\partial n}\right) {t_w}_i
+  \approx
+  \left(\frac{\partial u_i}{\partial \xi}\right)
+  \approx
+  \frac{u_{i,P} - u_{i,w}}{|| \vec{x}_P - \vec{x}_w ||_2}
+\end{displaymath}
+and explicitly by
+\begin{displaymath}
+  \left(\frac{\partial u_t}{\partial n}\right) {t_w}_i
+  \approx
+  \frac{\left(u_{i,P}- u_{i,w} \right) - \left(u_{j,P} - u_{j,w}\right) n_j n_i  }{\left( \vec{x}_P - \vec{x}_w \right) \cdot \vec{n}_w}.
+\end{displaymath}
+Therefore the contributions to the central coefficient and the right hand side of the linear equation that results from the presented discretization process are
+\begin{align*}
+  a_P^{u_i} &= a_P^{u_i} + \mu \frac{S_f}{|| \vec{x}_P - \vec{x}_w ||_2} \quad \text{and} \\
+  b_{P,u_i} &= b_P^{u_i} + \mu \frac{S_f}{|| \vec{x}_P - \vec{x}_w ||_2} u_{i,P}^{(n-1)} + 
+  \frac{\left(u_{i,P}^{(n-1)}- u_{i,w} \right) - \left(u_{j,P}^{(n-1)} - u_{j,w}\right) n_j n_i  }{\left( \vec{x}_P - \vec{x}_w \right) \cdot \vec{n}_w}.
+\end{align*}
+The reader should note that since the deferred correction uses a Dirichlet boundary condition, no correction of the value of the wall velocity \(u_{i,w}\) has to be accounted for.
 
-    If the solution of the flow field is coupled to the solution of a temperature equation, different options for the boundary condition at walls may be chosen. If the wall temperature is known a Dirichlet boundary condition for the temperature is the choice. A wall of this type is called to be \emph{isothermal}. If on the other side only the heat flux is known a Neumann boundary condition is used. In the special case of zero heat flux the wall is called to be \emph{adiabatic}. For adiabatic walls, which are besides isothermal walls used for the present thesis the implementation is straight forward since no coefficients have to be calculated.
+If the solution of the flow field is coupled to the solution of a temperature equation, different options for the boundary condition at walls may be chosen. If the wall temperature is known, a Dirichlet boundary condition for the temperature is the choice. A wall of this type is called to be \emph{isothermal}. If on the other side only the heat flux is known a Neumann boundary condition is used. In the special case of zero heat flux the wall is called to be \emph{adiabatic}. For adiabatic walls, which are besides isothermal walls used for the present thesis the implementation is straight forward since no coefficients have to be calculated.
 
-  \subsubsection{Treatment of Block Boundaries}
-  \label{sec:blockboundaries}
+\subsubsection{Treatment of Block Boundaries}
+\label{sec:blockboundaries}
 
-  If block structured grids are used to decompose the problem domain, the characterizing property of structured grids, which is the constant amount of grid cells in each direction, gives each inner cell exactly six neighbours. If more then one grid block is used this property is violated if the number of grid cells of each block is chosen to be arbitrary. The arbitrariness of the grid resolution is a main benefactor for the adaptivity of block structured grids.
+If block structured grids are used to decompose the problem domain, the characterizing property of structured grids, which is the constant amount of grid cells in each direction, gives each inner cell exactly six neighbours. If more then one grid block is used this property is violated if the number of grid cells of each block is chosen to be arbitrary. The arbitrariness of the grid resolution is a main benefactor for the adaptivity of block structured grids.
 
-  To maintain the conservation property of finite volume methods block boundaries should not be interpreted as boundaries in the classical sense. Instead conditions have to be formulated to guarantee that flows through block boundaries are conserved. The method to treat block boundaries used in the present thesis was presented by \cite{lilek97}. Another method was presented in \cite{lange02}. However the first method was chosen since it allows a fully implicit consideration of the block boundary fluxes. This method calculates fluxes through separate face segments \(S_l\) that come up on \emph{non-matching} grid blocks. Each of this face segments gets assigned a control volume \(L\) and a control volume \(R\) which exclusively share this face segment. Figure \ref{fig:non-matching} shows a block boundary when non matching blocks are used. An algorithm to provide this needed information will be presented in REFERENCE.
+To maintain the conservation property of finite volume methods block boundaries should not be interpreted as boundaries in the classical sense. Instead conditions have to be formulated to guarantee that flows through block boundaries are conserved. The method to treat block boundaries used in the present thesis was presented by \cite{lilek97}. Another method was presented in \cite{lange02}. However the first method was chosen since it allows a fully implicit consideration of the block boundary fluxes. This method calculates fluxes through separate face segments \(S_l\) that come up on \emph{non-matching} grid blocks. Each of this face segments gets assigned a control volume \(L\) and a control volume \(R\) which exclusively share this face segment. Figure \ref{fig:non-matching} shows a block boundary when non matching blocks are used. An algorithm to provide this needed information will be presented in REFERENCE.
 
 % \begin{figure}
 %   \label{fig:nonmatching}
 %   \caption{Non-matching grid cells at a block boundary}
 % \end{figure}
 
-  Once the geometric data including the information regarding the interpolation has been provided the fluxes through this boundaries can be calculated as presented in the antecedent subsections. The connectivity of neighbouring control volumes of different grid blocks is represented by matrix coefficients \(a_L\) and \(a_R\).
+Once the geometric data including the information regarding the interpolation has been provided, the fluxes through this boundaries can be calculated as presented in the antecedent subsections. The connectivity of neighbouring control volumes of different grid blocks is represented by matrix coefficients \(a_L^{\phi}\) and \(a_R^{\phi}\), where \(\phi \in \{u_1,u_2,u_3,p,T\}\).
 
-  \subsection{Treatment of the Singularity of the Pressure Correction Equation with Neumann Boundaries}
-  \label{sec:singularitytreatment}
+\subsection{Treatment of the Singularity of the Pressure Correction Equation with Neumann Boundaries}
+\label{sec:singularitytreatment}
 
-  It has to be noted that the derived pressure correction equation is a Poisson equation. As can be proven \ref{hackbusch} the linear \(N \times N\) systems surging from the presented discretization on a grid with \(N\) control volumes have a nullspace of dimension one, i.e.
-  \begin{displaymath}
-    \operatorname{null}(A_{p'}) = \operatorname{span}(\mathbb{1}),
-  \end{displaymath}
-  where \(\mathbb{1} = (1)_{i = 1,\dots,N} \in \mathbb{R}^N\) is the vector spanning the nullspace. This singularity accounts for the property of incompressible flows, that pressure can only be determined up to a constant. To fix this constraint various possibilities exist \cite{ferziger02}. A common method is to set the pressure correction to zero in one reference control volume and hence at one reference point in the problem domain. This can be done before solving the system by applying this Dirichlet-type condition, or it can be done afterwards when pressure is calculated from the pressure correction. This approach is not suitable for grid convergence studies since without proper interpolation it is not guaranteed that the reference pressure correction is taken at the correct location.
+It has to be noted that the derived pressure correction equation is a Poisson equation. As can be proven \ref{hackbusch}, the linear \(N \times N\) systems surging from the presented discretization on a grid with \(N\) control volumes have a nullspace of dimension one, i.e.
+\begin{displaymath}
+  \operatorname{null}(A_{p'}) = \operatorname{span}(\mathbb{1}),
+\end{displaymath}
+where \(\mathbb{1} = (1)_{i = 1,\dots,N} \in \mathbb{R}^N\) is the vector spanning the nullspace. This singularity accounts for the property of incompressible flows, that pressure can only be determined up to a constant. To fix this constraint various possibilities exist \cite{ferziger02}. A common method is to set the pressure correction to zero in one reference control volume and hence fix the pressure at one reference point in the problem domain. This can be done before solving the system by applying this Dirichlet-type condition, or it can be done afterwards when pressure is calculated from the pressure correction. This approach is not suitable for grid convergence studies since without proper interpolation it is not guaranteed that the reference pressure correction is taken at the correct location.
 
-  Since some comparisons performed in the present work rely on grid convergence studies another approach for reducing the lose constraint of the pressure correction system has been used: The reference pressure correction is taken to be the mean value of the pressure correction over the domain 
-  \begin{displaymath}
-    p_{\text{ref}}' 
-    = \frac{\iiint\limits_V p' \mathrm{d}V}{\iiint\limits_V \mathrm{d}V} 
-      \approx \frac{\sum_{P = 1}^N p'_P V_P}{\sum_{P = 1}^N V_P}
-  \end{displaymath}
-  such that the net pressure correction amounts to zero. This modifies equation (\ref{eq:pressupdate}) to 
-  \begin{equation}
-    \label{eq:pressupdate2}
-    p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} \left( p_P' - p_{\text{ref}}' \right)
-  \end{equation}
+Since some comparisons performed in the present work rely on grid convergence studies another approach for reducing the lose constraint of the pressure correction system has been used: The reference pressure correction is taken to be the mean value of the pressure correction over the domain 
+\begin{displaymath}
+  p_{\text{ref}}' 
+  = \frac{\iiint\limits_V p' \mathrm{d}V}{\iiint\limits_V \mathrm{d}V} 
+    \approx \frac{\sum_{P = 1}^N p'_P V_P}{\sum_{P = 1}^N V_P}
+\end{displaymath}
+such that the net pressure correction amounts to zero. This modifies equation (\ref{eq:pressupdate}) to read
+\begin{equation}
+  \label{eq:pressupdate2}
+  p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} \left( p_P' - p_{\text{ref}}' \right).
+\end{equation}
 
-  \subsection{Structure of the Assembled Linear Systems}
-  \label{sec:structure}
+\subsection{Structure of the Assembled Linear Systems}
+\label{sec:structure}
 
-    The objective of a finite volume method is to create a set of linear algebraic equations by discretizing partial differential equations. In the case of the discretized momentum balance taking all contributions together leads to the following linear algebraic equation for each control volume \(P\)
-    \begin{displaymath}
-      a_{P,u_i} u_{P_i} + \sum_{F \in NB(P)} a_F u_{F_i} = b_{P,u_i},
-    \end{displaymath}
-    where the coefficients are composed as
-    \begin{subequations}
-    \begin{align}
-      a_{P,u_i} &= a_{P,u_i}^c - a_{P,u_i}^d \\
-      a_{F,u_i} &= a_{F,u_i}^c - a_{F,u_i}^d \\
-      b_{P,u_i} &= b_{P,u_i}^c - b_{P,u_i}^d + b_{P,u_i}^{sc}.
-    \end{align}
-    \end{subequations}
-    Similar expressions for the pressure correction equation and the temperature equation exist.
+The objective of a finite volume method is to create a set of linear algebraic equations by discretizing partial differential equations. In the case of the discretized momentum balance, taking all contributions together leads to the following linear algebraic equation for each control volume \(P\)
+\begin{displaymath}
+  a_P^{u_i} u_{P_i} + \sum_{F \in NB(P)} a_F u_{F_i} = b_{P,u_i},
+\end{displaymath}
+where the coefficients are composed as
+\begin{subequations}
+\begin{align}
+  a_P^{u_i} &= a_P^{u_i,c} - a_P^{u_i,d} \\
+  a_F^{u_i} &= a_F^{u_i,c} - a_F^{u_i,d} \\
+  b_{P,u_i} &= b_{P,u_i,c} - b_{P,u_i,d} + b_{P,u_i}^{sc}.
+\end{align}
+\end{subequations}
+Similar expressions for the pressure correction equation and the temperature equation exist. In the case of control volumes located at boundaries some of the coefficients will be calculated in a different way. This aspect is addressed in section \ref{sec:segboundary}.
 
-    In the case of control volumes located at boundaries some of the coefficients will be calculated in a different way. This aspect is addressed in section \ref{sec:segboundary}. For the decoupled iterative solution process of the Navier-Stokes equations it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by an \emph{under-relaxation} technique, a convex combination of the solution of the linear system for the present iteration \((n)\) and from the previous iteration \((n-1)\) with the under-relaxation parameter \(\alpha_{u_i}\). Generally speaking this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\). This has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right hand side. This helps to increase memory efficiency.
+For the decoupled iterative solution process of the Navier-Stokes equations it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by an \emph{under-relaxation} technique, a convex combination of the solution of the linear system for the present iteration \((n)\) and from the previous iteration \((n-1)\) with the under-relaxation parameter \(\alpha_{u_i} \in (0,1]\), where \(\alpha_{u_i} = 1\) refers to no under-relaxation. Generally speaking this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\) \cite{schaefer99}. This has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right hand side. This helps to increase memory efficiency.
 
-    Let  the solution for the linear system without under-relaxation be denoted as
-    \begin{displaymath}
-      \tilde{u}_{P_i}^{(n)} := \frac{b_{P,u_i} - \sum_{F \in NB(P)} a_F u_{F_i}}{a_{P,u_i}},
-    \end{displaymath}
-    Which is only a formal expression for the case the underlying linear system is solved exactly. A convex combination as described yields
-    \begin{align*}
-      u_{P_i}^{(n)} :&= \alpha_{\vec{u}} \tilde{u}_{P_i}^{(n)} + (1 - \alpha_{\vec{u}} )\, u_{P_i}^{(n-1)} \\[0.5em]
-                     &= \alpha_{\vec{u}} \frac{b_{P,u_i} - \sum_{F \in NB(P)} a_F u_{F_i}}{a_{P,u_i}} + (1 - \alpha_{\vec{u}} )\, u_{P_i}^{(n-1)},
-    \end{align*}
-    an expression that can be modified to derive a linear system whose solution is the under-relaxed velocity
-    \begin{displaymath}
-      \frac{a_{P,u_i}}{\alpha_{\vec{u}}} u_{i,P} + \sum_{F \in NB(P)} a_{F,u_i} u_{i,F} 
-      = 
-      b_{P,u_i} + \frac{(1 - \alpha_{\vec{u}})\, a_{P,u_i}}{\alpha_{\vec{u}}}\, u_{i,P}^{(n-1)}. 
-    \end{displaymath}
+Let  the solution for the linear system without under-relaxation be denoted as
+\begin{displaymath}
+  \tilde{u}_{P_i}^{(n)} := \frac{b_{P,u_i} - \sum_{F \in NB(P)} a_F u_{F_i}}{a_P^{u_i}},
+\end{displaymath}
+Which is only a formal expression for the case the underlying linear system is solved exactly. A convex combination as described yields
+\begin{align*}
+  u_{P_i}^{(n)} :&= \alpha_{\vec{u}} \tilde{u}_{P_i}^{(n)} + (1 - \alpha_{\vec{u}} )\, u_{P_i}^{(n-1)} \\[0.5em]
+                 &= \alpha_{\vec{u}} \frac{b_{P,u_i} - \sum_{F \in NB(P)} a_F u_{F_i}}{a_P^{u_i}} + (1 - \alpha_{\vec{u}} )\, u_{P_i}^{(n-1)},
+\end{align*}
+an expression that can be modified to derive a linear system whose solution is the under-relaxed velocity
+\begin{displaymath}
+  \frac{a_P^{u_i}}{\alpha_{\vec{u}}} u_{i,P} + \sum_{F \in NB(P)} a_F^{u_i} u_{i,F} 
+  = 
+  b_{P,u_i} + \frac{(1 - \alpha_{\vec{u}})\, a_P^{u_i}}{\alpha_{\vec{u}}}\, u_{i,P}^{(n-1)}. 
+\end{displaymath}
 
-    After all matrix coefficients have been successfully calculated the linear system system can be represented by a system matrix \(A\) and a right hand side vector \(b\). Figure \ref{fig:segassemble} shows the non-zero structure of a linear system for a grid consisting in a \(2\times2\times2\) cell and a \(3\times3\times3\) cell block.
+After all matrix coefficients have been successfully calculated the linear system system can be represented by a system matrix \(A\) and a right hand side vector \(b\). Figure \ref{fig:segassemble} shows the non-zero structure of a linear system for a grid consisting in a \(2\times2\times2\) cell and a \(3\times3\times3\) cell block.
 
 %   \begin{figure}
 %     \label{fig:segassemble}
