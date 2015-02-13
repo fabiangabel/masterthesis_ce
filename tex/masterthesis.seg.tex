@@ -85,6 +85,7 @@ where \(\gamma_f\) is a geometric interpolation factor.
 
 Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in equation (\ref{eq:virtualu}) can be closed in a way that it only depends on the variable values in node \(P\) and \(Q\)
 \begin{align}
+  \allowdisplaybreaks
   \label{eq:closepwim}
   u_{i,f}^{(n)} 
   &\approx 
@@ -92,13 +93,13 @@ Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in e
   +\gamma_f  \left( -\frac{\alpha_\vec{u}}{a_Q^{u_i}} \sum_{F \in NB(Q)} a_F^{u_i} u_{i,F}^{(n)}  \right) \nonumber \\[1em]
   &\quad\quad+ \frac{\alpha_\vec{u}}{a_f^{u_i}}b_{f,u_i}^{(n-1)} 
   - \frac{\alpha_{\vec{u}}}{a_f^{u_i}}V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \displaybreak[3]\\[1em]
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \\[1em]
   &=
   \left(1-\gamma_f\right) u_{i,P}^{(n)} - \left(1 - \gamma_f\right) \frac{\alpha_{\vec{u}}}{a_P^{u_i}}\left(  b_{P,u_i}^{(n-1)} - V_P \left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right) 
   +\gamma_f  u_{i,Q}^{(n)} - \gamma_f \frac{\alpha_{\vec{u}}}{a_Q^{u_i}} \left( b_{Q,u_i}^{(n-1)} - V_Q \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}  \right) \nonumber \\[1em]
   &\quad\quad+ \frac{\alpha_{\vec{u}}}{a_f^{u_i}}b_{f,u_i}^{(n-1)} 
   - \frac{\alpha_{\vec{u}}}{a_f^{u_i}}V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)}
-  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \displaybreak[3]\\[1em]
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \\[1em]
   &=
   \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
   &\quad\quad - 
@@ -108,7 +109,7 @@ Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in e
   - \left(1 - \gamma_f \right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}}\left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
   - \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
   \right] \nonumber \\[1em]
-  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] \nonumber \displaybreak[3]\\[1em]
+  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] \nonumber \\[1em]
   &\approx
   \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
   &\quad\quad - 
@@ -415,6 +416,7 @@ The stationary momentum balance integrated over a single control volume \(P\) re
 where the different terms to be addressed individually in the following sections are indicated. The reader should note that the form of this equation has been modified by using Gauss' integration theorem. The terms residing on the left will be treated in an implicit and due to deferred corrections also in an explicit way, whereas the terms on the right will be treated exclusively in an  explicit way.
 
 \subsubsection{Linearization and Discretization of the Convective Term}
+\label{sec:segconvective}
 
 The convective term \(\left( \rho u_i u_j \right)\) of the Navier-Stokes equations is the reason for the non-linearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations this term has to be linearized. As introduced in section (\ref{sec:nonlinear}), the non linearity will be dealt with by means of an iterative process, the Picard iteration. The part dependent on the non dominant dependent variable therefore will be approximated by its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). However this linearization will not be directly visible because it will be covered by the mass flux \(\textstyle \dot{m}_f = \iint\limits_{S_f} \rho u_j^{(n-1)} n_j \mathrm{d}S \). 
 

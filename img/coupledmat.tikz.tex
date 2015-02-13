@@ -285,10 +285,10 @@
     %\draw[fill=black] (A3) circle (0.15em);
     %\draw[fill=black] (A4) circle (0.15em);
 
-    \draw[thick] (A1) -- (0,7.5);
-    \draw[thick] (A2) -- (7.5,7.5);
-    \draw[thick] (A3) -- (7.5,0);
-    \draw[thick] (A4) -- (0,0);
+    \draw[ultra thick] (A1) -- (0,7.5);
+    \draw[ultra thick] (A2) -- (7.5,7.5);
+    \draw[ultra thick] (A3) -- (7.5,0);
+    \draw[ultra thick] (A4) -- (0,0);
 
     %CPLD MATRIX%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \foreach \j in {0,...,5} {
@@ -320,6 +320,9 @@
     \markcellgreen{4}{3}{$a_P^{T,p}$};
 
    \draw[ultra thick] (0,\xStep*\nStep) -- (4*\xStep,\xStep*\nStep) -- (4*\xStep,\xStep*\nStep-4*\xStep) -- (0,\xStep*\nStep-4*\xStep) -- cycle;
+   \draw[ultra thick] (4*\xStep,\xStep*\nStep) -- (5*\xStep,\xStep*\nStep) -- (5*\xStep,\xStep*\nStep-3*\xStep) -- (4*\xStep,\xStep*\nStep-3*\xStep) -- cycle;
+   \draw[ultra thick] (0,\xStep*\nStep) -- (5*\xStep,\xStep*\nStep) -- (5*\xStep,\xStep*\nStep-5*\xStep) -- (0,\xStep*\nStep-5*\xStep) -- cycle;
+   \draw[ultra thick] (0,\xStep*\nStep-4*\xStep) -- (4*\xStep,\xStep*\nStep-4*\xStep) -- (4*\xStep,\xStep*\nStep-5*\xStep) -- (0,\xStep*\nStep-5*\xStep) -- cycle;
 
 
 \end{tikzpicture}

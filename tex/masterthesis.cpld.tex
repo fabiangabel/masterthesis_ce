@@ -16,7 +16,7 @@ As in the case of segregated methods it is not advisable to solve the mass balan
   u_{i,f}^{(n)} 
   =
   \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right]
-  - \left(\left(1 - \gamma_f\right) \frac{V_P}{a_{P,u_i}} + \gamma_f \frac{ V_Q}{a_{Q,u_i}}\right)
+  - \left(\left(1 - \gamma_f\right) \frac{V_P}{a_P^{u_i}} + \gamma_f \frac{ V_Q}{a_Q^{u_i}}\right)
   \left[ 
     \underline{ \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)}}
   - \frac{1}{2} 
@@ -31,14 +31,14 @@ The changes comprise the removal of last term of (\ref{eq:pwim}) accounting for 
   \sum_{F \in NB(P)} 
   \rho
   \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,F}^{(n)} \right]\,  S_f
-  - \rho \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_{P,u_i}} + \gamma_f \frac{ V_F}{a_{F,u_i}}\right)
+  - \rho \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_P^{u_i}} + \gamma_f \frac{ V_F}{a_F^{u_i}}\right)
   \left[ 
   \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)}
   \right]\,  S_f \nonumber \\
   =
   - \sum_{F \in NB(P)}
   \rho
-  \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_{P,u_i}} + \gamma_f \frac{ V_F}{a_{F,u_i}}\right)
+  \left(\left(1 - \gamma_f\right) \frac{ V_P}{a_P^{u_i}} + \gamma_f \frac{ V_F}{a_F^{u_i}}\right)
   \left[ 
   \frac{1}{2} 
   \left( 
@@ -81,7 +81,7 @@ If the Boussinesq approximation is used implicitly, an additional coefficient \(
 \subsection{Coupling to the Temperature Equation}
 \label{sec:temperaturecoupling}
 
-Since the present work also aims at analyzing the efficiency of different methods to couple the temperature equation to the velocities and vice-versa this subsection discusses different approaches to handle the coupling of the temperature equation to the Navier-Stokes equations if the Boussinesq-Approximation, as introduced in subsection \ref{sec:boussinesq}, is used. The effectiveness of realizing a strong coupling of the temperature equation to the Navier-Stokes equations depends on the flow problem. The physical coupling tends to increase in flow scenarios of natural convection, where the temperature difference and hence the buoyancy term in the Navier-Stokes equations dominates the fluid movement. Generally speaking: The higher the physical coupling of temperature and flow, the greater are the benefits of using an implementation that uses a strong coupling to the temperature equation. The following subsection present different approaches that can be used for different intensities of coupling.
+Since the present work also aims at analyzing the efficiency of different methods to couple the temperature equation to the velocities and vice-versa this subsection discusses different approaches to handle the coupling of the temperature equation to the Navier-Stokes equations if the Boussinesq-Approximation, as introduced in subsection \ref{sec:boussinesq}, is used. The effectiveness of realizing a strong coupling of the temperature equation to the Navier-Stokes equations depends on the flow problem. The physical coupling tends to increase in flow scenarios of natural convection, where the temperature difference and hence the buoyancy term in the Navier-Stokes equations dominates the fluid movement. Generally speaking: The higher the physical coupling of temperature and flow, the greater are the benefits of using an implementation that uses a strong coupling to the temperature equation. The following subsections present different approaches that can be used for different intensities of coupling.
       
 \subsubsection{Decoupled Approach -- Explicit Velocity-to-Temperature Coupling}
 
@@ -102,9 +102,9 @@ In the same way it is possible to realize the coupling described in the previous
 
 \subsubsection{Temperature-to-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
 
-The previous section discussed the velocity temperature coupling and so far only the momentum balances were affected by the realization of the coupling methods. Independently it is possible to couple the temperature equation not only to the momentum balances but also to the pressure equation. In section \ref{sec:discretetemperature} the non-linear partial differential equation was linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid however if an implicit temperature coupling sought a coupling of the temperature equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization} which can be interpreted as a bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial.
+The previous section discussed the velocity temperature coupling and so far only the momentum balances were affected by the realization of the coupling methods. Independently it is possible to couple the temperature equation not only to the momentum balances but also to the pressure equation. In section \ref{sec:discretetemperature} the non-linear partial differential equation was linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid. But, if an implicit temperature coupling is sought, a coupling of the temperature equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization} which can be interpreted as a bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial.
 
-The Newton-Raphson linearization technique is applied to the convective term of the temperature equation as follows. A first order Taylor approximation for the mass specific convective flux through the boundary face \(S_f\) can be formulated as
+The Newton-Raphson linearization technique is applied to the convective term of the temperature equation as follows. A first order Taylor approximation of the the mass specific convective flux through the boundary face \(S_f\) around the \(n-1\)nt iteration value yields for the approximation at the \(n\)th iteration
 \begin{align*}
   \left(u_{j,f} T_f \right)^{(n)} 
   &\approx 
@@ -118,21 +118,28 @@ The Newton-Raphson linearization technique is applied to the convective term of 
   &=
   \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  + \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} \vphantom{(u_jT)}{T_f}^{(n-1)}  -  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
 \end{align*}
-A comparison with REFERENCE shows, that the underlined term is the same as in the usual linearization. The first of the two new terms will be treated implicitly after using the pressure-weighted interpolation method from section \ref{sec:pwim} to interpolate the value of \(u_{j,f}\) and the second term will be treated explicitly. The use of the pressure-weighted interpolation method creates not only temperature-to-velocity but also temperature-to-pressure coupling. Applying the pressure-weighted interpolation the equation for the mass specific convective flux reads
+A comparison with section \ref{sec:segconvective} shows, that the underlined term coincides with the term from the usual linearization. The first of the two new terms will be treated implicitly and explicitly after using the pressure-weighted interpolation method from section \ref{sec:pwim} to interpolate the value of \(u_{j,f}\). The second term will be treated explicitly. The use of the pressure-weighted interpolation method does not only create a temperature-to-velocity but also a temperature-to-pressure coupling. Applying the pressure-weighted interpolation, the equation for the mass specific convective flux reads
 \begin{align*}
   \left(u_{j,f} T_f \right)^{(n)} 
   &\approx 
-  \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  \\[1em]
-  +  \vphantom{(u_jT)}{T_f}^{(n-1)}  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
-    &\quad\quad - 
-    \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_{P,u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_{Q,u_i}}\right)
+  \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}} + \vphantom{(u_jT)}{T_f}^{(n-1)}  \left[\left(1 - \gamma_f\right) u_{j,P}^{(n)} + \gamma_f u_{j,Q}^{(n)} \right] \nonumber\\[1em]
+    &\quad\quad 
+    - T_f^{(n-1)}\left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_j}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_j}}\right)
     \left[ 
-    \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)} 
-    -  \left(1 - \gamma_f\right) \left( \frac{\partial p}{\partial x_i} \right)_P^{(n)} 
-    - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n)} 
+    \left(\frac{\partial p}{\partial x_j}\right)_f^{(n)} 
+    -  \frac{1}{2} \left( \frac{\partial p}{\partial x_j} \right)_P^{(n-1)} 
+    - \frac{1}{2} \left(\frac{\partial p}{\partial x_j}\right)_Q^{(n-1)} 
     \right] \nonumber \\[1em]
-    &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right]. \\
--  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}. \\
+    &  \quad\quad -\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
+\end{align*}
+If this semi-implicit, semi-discrete equation is discretized completely new matrix and right hand side contributions can be calculated.
+\begin{align*}
+  \allowdisplaybreaks
+  &a_F^{T,u_i} = \rho T_f^{(n-1)} \gamma_f n_{f,i} S_f \\[1.0em] 
+  &a_P^{T,u_i} = \sum_{F \in NB(P)} \rho T_f^{(n-1)} \left(1-\gamma_f\right) n_{f,i} S_f \\[1.0em]
+  &a_F^{T,p} = -\rho T_f^{(n-1)} \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_F^{u_i}}\right) \frac{S_f}{\left(\vec{x}_P - \vec{x}_F\right) \cdot \vec{n}_f} = \rho T_f^{(n-1)} a_F^{p} \\[1.0em] 
+  &\text{and} \quad
+  a_P^{T,p} = - \sum_{F \in NB(P)} T_f^{(n-1)} a_F^{T,p}.
 \end{align*}
 
 \subsection{Boundary Conditions on Domain and Block Boundaries}
