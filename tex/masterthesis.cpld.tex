@@ -7,7 +7,7 @@ Since the antecedent section \ref{sec:seg} already discussed the discretization 
 
 This subsection motivates the use of a fully coupled algorithm to resolve pressure-velocity coupling and mentions the differences to the approach presented in subsection \ref{sec:simple}. The mentioned subsection presented a common solution approach to solve incompressible Navier-Stokes equations: After the linearization of the equations, momentum balances were solved using the pressure from the previous iteration as a guess. Since in general the velocity field obtained by solving a momentum balance with a guessed pressure does not obey continuity, the velocity field and the pressure field had to be corrected. This in turn would lead to an inferior solution regarding the residual of the momentum balances. To avoid this iterative guess-and-correct solution process another class of approaches to the pressure-velocity coupling problematic, represented by algorithms that are \emph{fully coupled}, will be introduced now. . 
 
-The central aspect of fully coupled solution methods for Navier-Stokes equations is, that instead of solving for the velocities and pressure corrections sequentially, the velocity field and the pressure are solved for simultaneously \cite{schaefer99}, so every velocity field that is calculated obeys conservation of momentum and mass, without needing to be corrected. As a result the under-relaxation of pressure and velocities is no longer required, which accelerates convergence significantly in terms of needed outer iterations. The only reason for still needing an iterative solution process is the non-linearity of the Navier-Stokes equations which is accounted for by the use of the Picard iteration process, which has been presented in subsection \ref{sec:nonlinear}. The iterations fortunately make room for deferred corrections as introduced in subsection \ref{sec:segdiscretization}.
+The central aspect of fully coupled solution methods for Navier-Stokes equations is, that instead of solving for the velocities and pressure corrections sequentially, the velocity field and the pressure are solved for simultaneously \cite{schaefer99}, so every velocity field that is calculated obeys conservation of momentum and mass, without the need to be corrected. As a result the under-relaxation of pressure and velocities is no longer required, which accelerates convergence significantly in terms of needed outer iterations. The only reason for still needing an iterative solution process is the non-linearity of the Navier-Stokes equations which is accounted for by the use of the Picard iteration process, which has been presented in subsection \ref{sec:nonlinear}. The iterations fortunately make room for deferred corrections as introduced in subsection \ref{sec:segdiscretization}. It should be noted that it is also possible to use the coupled solution algorithm to calculate pressure corrections. Reference \cite{klaij13} uses this approach to solve the Navier-Stokes equations.
 
 On the downside implementations of fully coupled solution methods require significantly more system memory than segregated methods. This is due to the higher amount of information that has to be available at the same time and the resulting linear systems which also require more memory, due to the increased amount of unknowns to solve for. Furthermore the bad condition of the linear algebraic system \cite{schaefer99} tends to slow down the convergence of the equation solver algorithm.
 
@@ -59,19 +59,20 @@ On the other side the discretized momentum balance gives matrix coefficients to 
 \end{displaymath}
 If the Boussinesq approximation is used implicitly, an additional coefficient \(a_P^{u_i,T}\) to account for the velocity temperature coupling has to be considered. This will be handled in subsection \ref{sec:temperaturecoupling}
 
+\alglanguage{pseudocode}
 \begin{algorithm}
-\label{al:simple}
+\label{al:coupled}
 \caption{Fully Coupled Solution Algorithm}
 \begin{algorithmic}
 \State{\textit{INITIALIZE} variables}
 \While{(convergence criterion not accomplished)}
-\If{(Temperature coupling)}
+\If{(temperature coupling)}
   \State{\textit{SOLVE} the linear system for velocities, pressure and temperature}
 \Else
   \State{\textit{SOLVE} the linear system for velocities and pressure}
 \EndIf
 \State{\textit{CALCULATE} mass fluxes using REFERENCE}
-\If{(Decoupled scalar equation)}
+\If{(decoupled scalar equation)}
   \State{\textit{SOLVE} scalar equation as described in \textbf{(\ref{sec:discretetemperature})}}
 \EndIf
 \EndWhile
@@ -132,7 +133,7 @@ A comparison with section \ref{sec:segconvective} shows, that the underlined ter
     \right] \nonumber \\[1em]
     &  \quad\quad -\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
 \end{align*}
-If this semi-implicit, semi-discrete equation is discretized completely new matrix and right hand side contributions can be calculated.
+If this semi-implicit, semi-discrete equation is discretized completely new matrix and contributions can be calculated
 \begin{align*}
   \allowdisplaybreaks
   &a_F^{T,u_i} = \rho T_f^{(n-1)} \gamma_f n_{f,i} S_f \\[1.0em] 
@@ -141,6 +142,7 @@ If this semi-implicit, semi-discrete equation is discretized completely new matr
   &\text{and} \quad
   a_P^{T,p} = - \sum_{F \in NB(P)} T_f^{(n-1)} a_F^{T,p}.
 \end{align*}
+The explicit parts resulting from the Newton-Raphson linearization result in additional contributions to the right hand side
 
 \subsection{Boundary Conditions on Domain and Block Boundaries}
 
@@ -160,5 +162,6 @@ Mention that the Newton-Raphson linearization is not considered on Dirichlet bou
   \centering
   \label{fig:segassemble}
   \input{./img/coupledmat.tikz.tex}
-  \caption{Non-zero structure of the linear systems used in the coupled solution algorithm for a block structured grid consisting of one  $2\times2\times2$ cell and one $3\times3\times3$ cell block}
+  \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The blue coefficients represent the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling and the green coefficients result from the Newton-Raphson linearization technique.}
+
 \end{figure}

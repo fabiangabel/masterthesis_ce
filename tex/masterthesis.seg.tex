@@ -350,7 +350,7 @@ Generally the SIMPLE algorithm can be represented by an iterative procedure as s
 \State{\textit{SOLVE} pressure correction equation to assure continuity, equation \textbf{(\ref{eq:presscorr})}}
 \State{\textit{UPDATE} pressure using \textbf{(\ref{eq:pressupdate})}}
 \State{\textit{UPDATE} velocities and mass fluxes using \textbf{(\ref{eq:nodeprime})}}
-\If{(Coupled scalar equation)}
+\If{(coupled scalar equation)}
   \State{\textit{SOLVE} scalar equation as described in \textbf{(\ref{sec:discretetemperature})}}
   \EndIf
 \EndWhile

@@ -25,7 +25,7 @@
   \node[anchor=center,font=\large] at (#2*\xStep+0.5*\xStep,\xStep*\nStep-#1*\xStep-0.5*\xStep) {#3};
   }
 
-\newcommand*{\xStepp}{0.15}%
+\newcommand*{\xStepp}{0.20}%
 \newcommand*{\nStepp}{35}
 \newcommand*{\offset}{5}
 \newcommand\markcelll[3] {
@@ -324,5 +324,9 @@
    \draw[ultra thick] (0,\xStep*\nStep) -- (5*\xStep,\xStep*\nStep) -- (5*\xStep,\xStep*\nStep-5*\xStep) -- (0,\xStep*\nStep-5*\xStep) -- cycle;
    \draw[ultra thick] (0,\xStep*\nStep-4*\xStep) -- (4*\xStep,\xStep*\nStep-4*\xStep) -- (4*\xStep,\xStep*\nStep-5*\xStep) -- (0,\xStep*\nStep-5*\xStep) -- cycle;
 
+   %LEGEND
+   %\node[draw,align=left,fill=red] at (-\offset,7) {Pressure-velocity coupling      };
+   %\node[draw,align=left,fill=cyan]at (-\offset,6) {Velocity-to-temperature coupling} ;
+   %\node[draw,align=left,fill=green] at (-\offset,5) {Temperature-to-velocity and \\temperature-to-pressure coupling};
 
 \end{tikzpicture}
