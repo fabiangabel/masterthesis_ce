@@ -533,6 +533,7 @@ Again it is possible though not always necessary, as in the case of the velociti
 As the antecedent subsections showed, it is possible to deduce a linear algebraic equation for each control volume by the finite volume method. The approach presented in the preceding subsections however did not cover the treatment of control volumes at domain boundaries yet. This subsection introduces the boundary conditions which are relevant for the present work and furthermore deals with transitional conditions at block boundaries.
 
 \subsubsection{Dirichlet Boundary Conditions}
+\label{sec:segdirichlet}
 
 The first boundary condition is the Dirichlet boundary condition. This type of boundary condition is used to model inlet conditions for flow problems. For the temperature equation it may also be used at walls as will be shown in subsection \ref{seg:walls}. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. Especially the mass flux \(\dot{m}_f\) is known and hence does not have to be calculated using the pressure weighted interpolation method. Since no special modifications have to be made, as the resulting coefficient for a neighbouring control volume laying past the boundary is considered on the right hand side of the linear system, the implementation approach will be presented only for the temperature equation. Since there is no boundary condition that fixes the gradient at Dirichlet boundaries it is assumed that the partial derivatives of the respective variable are constant and can hence be extrapolated
 \begin{displaymath}
@@ -550,7 +551,7 @@ whereas the contribution to the right hand side reads
 The reader should note, that even though the gradient discretization at domain boundaries is realized by a one sided forward differencing scheme instead of a central differencing scheme. This does not drastically affect accuracy because the distance used in the differential quotient is half the distance used on a central difference inside the domain \cite{schaefer99}.
 
 \subsubsection{Treatment of Wall Boundaries}
-\label{seg:walls}
+\label{sec:walls}
     
 A common boundary to the solution domain is given by solid walls. For all kind of flows this boundary condition first of all has a kinematic character, since the concept of impermeable walls dictates a zero normal velocity at the wall. In viscous flows wall boundaries can be interpreted furthermore as a no-slip condition, i.e. a Dirichlet boundary condition for the velocities. Convective fluxes through solid walls are thus zero by definition however the diffusive fluxes require special treatment not only for the velocities but also for the temperature. To approximate the fluid behavior on a wall boundary correctly, special modifications have to be taken into account to model the normal a shear tension. Furthermore diffusive fluxes for the temperature can be given by Neumann or Dirichlet boundary conditions.
 
