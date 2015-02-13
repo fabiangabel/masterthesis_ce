@@ -1,0 +1,110 @@
+\begin{tikzpicture}
+	\coordinate (P1) at (-30cm,10.5cm); % left vanishing point (To pick)
+	\coordinate (P2) at (20cm,8.5cm); % right vanishing point (To pick)
+
+	\coordinate (A1) at (0em,0cm); % central top point (To pick)
+	\coordinate (A2) at (0em,4cm); % central bottom point (To pick)
+
+	\coordinate (A3) at ($(P1)!.88!(A1)$); 
+	\coordinate (A4) at ($(P1)!.88!(A2)$);
+
+	\coordinate (A5) at ($(P1)!.77!(A1)$); 
+	\coordinate (A6) at ($(P1)!.77!(A2)$);
+
+	\coordinate (A7) at ($(P2)!.88!(A1)$); 
+	\coordinate (A8) at ($(P2)!.88!(A2)$);
+
+	\coordinate (A9) at
+	  (intersection cs: first line={(A7) -- (P1)},
+			    second line={(A3) -- (P2)});
+	\coordinate (A10) at
+	  (intersection cs: first line={(A8) -- (P1)}, 
+			    second line={(A4) -- (P2)});
+	\coordinate (A11) at
+	  (intersection cs: first line={(A7) -- (P1)}, 
+			    second line={(A5) -- (P2)});
+	\coordinate (A12) at
+	  (intersection cs: first line={(A8) -- (P1)},
+			    second line={(A6) -- (P2)});
+
+        \coordinate (C1) at ($(A1)!-0.4!(A7)$);
+        \coordinate (CC1) at ($(A1)!-0.3!(A3)$);
+
+        \coordinate (C3) at ($(A3)!-1.3!(A9)$);
+        \coordinate (C5) at ($(A5)!-1.5!(A11)$);
+        \coordinate (CC5) at ($(A5)!-0.8!(A3)$);
+        \coordinate (CC11) at ($(A11)!-1.0!(A9)$);
+
+        \coordinate (CC7) at ($(A7)!-0.8!(A9)$);
+        \coordinate (C7) at ($(A1)!1.9!(A7)$);
+
+        \draw[dashed] (A1) -- (C1);
+        \draw[dashed] (A1) -- (CC1);
+        \draw[dashed] (A3) -- (C3);
+        \draw[dashed] (A5) -- (C5);
+        \draw[dashed] (A5) -- (CC5);
+        \draw[dashed] (A7) -- (C7);
+        \draw[dashed] (A7) -- (CC7);
+         \draw[dashed] (A11) -- (CC11);
+
+        \coordinate (B1) at ($(A1)!0.5!(A3)$);
+        \coordinate (B2) at ($(A2)!0.5!(A4)$);
+        \coordinate (B3) at ($(A1)!1.5!(A3)$);
+        \coordinate (B4) at ($(A2)!1.5!(A4)$);
+
+        \coordinate (B5) at ($(A7)!0.5!(A9)$);
+        \coordinate (B6) at ($(A8)!0.5!(A10)$);
+        \coordinate (B7) at ($(A7)!1.5!(A9)$);
+        \coordinate (B8) at ($(A8)!1.5!(A10)$);
+
+        \foreach \i in {1,2,3,4,5,6,7,8} {
+          %\draw[fill=black] (B\i) circle (0.15em);
+        }
+
+        \fill[gray!30] (B5) -- (B6) -- (B8) -- (B7) -- cycle;  %back
+        \fill[gray!50] (B3) -- (B4) -- (B8) -- (B7) -- cycle;  %left
+%       \fill[gray!50,opacity=0.2] (B1) -- (B2) -- (B4) -- (B3) -- cycle;  %front
+%       \fill[gray!50,opacity=0.7] (B1) -- (B2) -- (B6) -- (B5) -- cycle;  %right
+        \fill[gray!90] (B1) -- (B5) -- (B7) -- (B3) -- cycle;  %bottom
+%       \fill[gray!90,opacity=0.2] (B2) -- (B6) -- (B8) -- (B4) -- cycle;  %top
+        \fill[white] (A5) -- (B3) -- (B4) -- (A6) -- cycle;
+
+
+        %Vertical Lines
+        \draw[thick] (A1) -- (A2);
+        \draw        (A3) -- (A4);
+        \draw[thick] (A5) -- (A6);
+
+        \draw[thick] (A7) -- (A8);
+        \draw[dashed] (A9) -- (A10);
+        %\draw (A11) -- (A12);
+
+        %Horizontal lines to P1
+        \draw[thick] (A1) -- (A3) -- (A5);
+        \draw[thick] (A2) -- (A4) -- (A6);
+        \draw        (A7) -- (B5); %-- (A11);
+        \draw[thick] (A8) -- (A10) -- (A12);
+
+        %Horizontal lines to P2
+        \draw[thick] (A1) -- (A7);
+        \draw[thick] (A2) -- (A8);
+        \draw[dashed]        (A3) -- (A9);
+        \draw        (A4) -- (A10);
+        %\draw        (A5) -- (A11);
+        \draw[thick] (A6) -- (A12);
+
+%       \draw[gray,thick] (B5) -- (B6) -- (B8) -- (B7) -- cycle;  %back
+%       \draw[gray,thick] (B3) -- (B4) -- (B8) -- (B7) -- cycle;  %left
+%       \draw[gray,thick] (B1) -- (B2) -- (B4) -- (B3) -- cycle;  %front
+        \draw[gray,dashed,thick,opacity=0.7] (B1) -- (B2) -- (B6) -- (B5) -- cycle;  %right
+%       \draw[gray,thick] (B1) -- (B5) -- (B7) -- (B3) -- cycle;  %bottom
+%       \draw[gray,thick] (B2) -- (B6) -- (B8) -- (B4) -- cycle;  %top
+
+        \node (P) at (barycentric cs:B1=1,B5=1,B6=1,B2=1) {};
+        \node (Q) at (barycentric cs:B3=1,B4=1,B7=1,B8=1) {};
+        \foreach \i in {P,Q} {
+        \draw[fill=black] (\i) circle (0.15em) node[above right] {\i};
+        }
+
+
+\end{tikzpicture}

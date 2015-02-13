@@ -55,7 +55,7 @@ Figure \ref{fig:virt} gives an interpretation of the virtual control volume.
 \label{fig:virt}
   \input{./img/virt.tikz.tex}
   \centering{}
-  \caption{Possible interpretation of a virtual control volume located between nodes $P$ and $Q$ }
+  \caption{Possible interpretation of a virtual control volume (grey) located between nodes $P$ and $Q$ }
 \end{figure}
 To guarantee convergence of this expression for \(u_{i,f}\), under-relaxation is necessary \cite{majumdar88}. To eliminate the undefined artifacts surging form the virtualization of a control volume the following assumptions have to be made to derive a closed expression for the velocity on the boundary face \(S_f\)
 \begin{subequations}
@@ -92,13 +92,13 @@ Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in e
   +\gamma_f  \left( -\frac{\alpha_\vec{u}}{a_Q^{u_i}} \sum_{F \in NB(Q)} a_F^{u_i} u_{i,F}^{(n)}  \right) \nonumber \\[1em]
   &\quad\quad+ \frac{\alpha_\vec{u}}{a_f^{u_i}}b_{f,u_i}^{(n-1)} 
   - \frac{\alpha_{\vec{u}}}{a_f^{u_i}}V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
-  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \\[1em]
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \displaybreak[3]\\[1em]
   &=
   \left(1-\gamma_f\right) u_{i,P}^{(n)} - \left(1 - \gamma_f\right) \frac{\alpha_{\vec{u}}}{a_P^{u_i}}\left(  b_{P,u_i}^{(n-1)} - V_P \left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right) 
   +\gamma_f  u_{i,Q}^{(n)} - \gamma_f \frac{\alpha_{\vec{u}}}{a_Q^{u_i}} \left( b_{Q,u_i}^{(n-1)} - V_Q \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}  \right) \nonumber \\[1em]
   &\quad\quad+ \frac{\alpha_{\vec{u}}}{a_f^{u_i}}b_{f,u_i}^{(n-1)} 
   - \frac{\alpha_{\vec{u}}}{a_f^{u_i}}V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)}
-  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber\\[1em]
+  + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)} \nonumber \displaybreak[3]\\[1em]
   &=
   \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
   &\quad\quad - 
@@ -108,7 +108,7 @@ Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in e
   - \left(1 - \gamma_f \right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}}\left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
   - \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
   \right] \nonumber \\[1em]
-  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] \nonumber \\[1em]
+  &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] \nonumber \displaybreak[3]\\[1em]
   &\approx
   \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
   &\quad\quad - 
@@ -704,7 +704,9 @@ an expression that can be modified to derive a linear system whose solution is t
 
 After all matrix coefficients have been successfully calculated the linear system system can be represented by a system matrix \(A\) and a right hand side vector \(b\). Figure \ref{fig:segassemble} shows the non-zero structure of a linear system for a grid consisting in a \(2\times2\times2\) cell and a \(3\times3\times3\) cell block.
 
-%   \begin{figure}
-%     \label{fig:segassemble}
-%     \caption{Non-zero structure of the linear systems used in the simple algorithm for a block structured grid consisting of one  \(2\times2\times2\) cell and one \(3\times3\times3\) cell block}
-%   \end{figure}
+    \begin{figure}
+      \centering
+      \label{fig:segassemble}
+      \input{./img/matrix.tikz.tex}
+      \caption{Non-zero structure of the linear systems used in the simple algorithm for a block structured grid consisting of one  $2\times2\times2$ cell and one $3\times3\times3$ cell block}
+    \end{figure}
