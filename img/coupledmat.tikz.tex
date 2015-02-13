@@ -1,0 +1,325 @@
+
+\newcommand*{\xMin}{0}%
+\newcommand*{\xMax}{12}%
+\newcommand*{\xStep}{1.5}%
+\newcommand*{\nStep}{5}
+\newcommand*{\yMin}{0}%
+\newcommand*{\yMax}{1}%
+\newcommand\markcell[3] {
+  \fill[gray,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
+  \node[anchor=center,font=\large] at (#2*\xStep+0.5*\xStep,\xStep*\nStep-#1*\xStep-0.5*\xStep) {#3};
+  }
+
+\newcommand\markcellblue[3] {
+  \fill[cyan,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
+  \node[anchor=center,font=\large] at (#2*\xStep+0.5*\xStep,\xStep*\nStep-#1*\xStep-0.5*\xStep) {#3};
+  }
+
+\newcommand\markcellred[3] {
+  \fill[red,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
+  \node[anchor=center,font=\large] at (#2*\xStep+0.5*\xStep,\xStep*\nStep-#1*\xStep-0.5*\xStep) {#3};
+  }
+
+\newcommand\markcellgreen[3] {
+  \fill[green,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
+  \node[anchor=center,font=\large] at (#2*\xStep+0.5*\xStep,\xStep*\nStep-#1*\xStep-0.5*\xStep) {#3};
+  }
+
+\newcommand*{\xStepp}{0.15}%
+\newcommand*{\nStepp}{35}
+\newcommand*{\offset}{5}
+\newcommand\markcelll[3] {
+  \fill[gray,draw=black] (#2*\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\offset) -- (#2*\xStepp+\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\offset) -- (#2*\xStepp+\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\xStepp-\offset) -- (#2*\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\xStepp-\offset) -- cycle;
+  }
+
+\newcommand\markcellbluee[3] {
+  \fill[orange,draw=black] (#2*\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\offset) -- (#2*\xStepp+\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\offset) -- (#2*\xStepp+\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\xStepp-\offset) -- (#2*\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\xStepp-\offset) -- cycle;
+  }
+
+\newcommand\markcellblackk[3] {
+  \fill[black,draw=black] (#2*\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\offset) -- (#2*\xStepp+\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\offset) -- (#2*\xStepp+\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\xStepp-\offset) -- (#2*\xStepp-\offset,\xStepp*\nStepp-#1*\xStepp-\xStepp-\offset) -- cycle;
+  }
+
+\begin{tikzpicture}
+
+
+    %SMALL MATRIX%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %BACKGROUND COLORING
+    \fill[gray!40] (0-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- (8*\xStepp-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- (8*\xStepp-\offset,0-\offset) -- (0*\xStepp-\offset,0-\offset) -- cycle;
+    \fill[gray!40] (8*\xStepp-\offset,\xStepp*\nStepp-\offset) -- (35*\xStepp-\offset,\xStepp*\nStepp-\offset) -- (35*\xStepp-\offset,\xStepp*\nStepp-\offset-8*\xStepp) -- (8*\xStepp-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- cycle;
+
+    \foreach \j in {0,...,35} {
+        \draw [very thin,gray] (0-\offset,\j*\xStepp-\offset) -- (\xStepp*\nStepp-\offset,\j*\xStepp-\offset)  ;
+        \draw [very thin,gray] (\j*\xStepp-\offset,0-\offset) -- (\j*\xStepp-\offset,\xStepp*\nStepp-\offset)  ;
+    }
+
+    \foreach \i in {0,...,34} {
+      \markcelll {\i}{\i}{};
+    }
+
+    %BLOCK 1
+    \markcelll {0}{1}{};
+    \markcelll {0}{2}{};
+    \markcelll {0}{4}{};
+
+    \markcelll {1}{0}{};
+    \markcelll {1}{3}{};
+    \markcelll {1}{5}{};
+
+    \markcelll {2}{3}{};
+    \markcelll {2}{0}{};
+    \markcelll {2}{6}{};
+
+    \markcelll {3}{2}{};
+    \markcelll {3}{1}{};
+    \markcelll {3}{7}{};
+
+    \markcelll {4}{5}{};
+    \markcelll {4}{6}{};
+    \markcelll {4}{0}{};
+
+    \markcelll {5}{4}{};
+    \markcelll {5}{7}{};
+    \markcelll {5}{1}{};
+
+    \markcelll {6}{7}{};
+    \markcelll {6}{4}{};
+    \markcelll {6}{2}{};
+
+    \markcelll {7}{6}{};
+    \markcelll {7}{5}{};
+    \markcelll {7}{3}{};
+     
+    %BLOCK2
+    \markcelll {8 }{9 }{};
+    \markcelll {8 }{11}{};
+    \markcelll {8 }{17}{};
+
+    \markcelll {9 }{8 }{};
+    \markcelll {9 }{10}{};
+    \markcelll {9 }{12}{};
+    \markcelll {9 }{18}{};
+
+    \markcelll {10}{9 }{};
+    \markcelll {10}{13}{};
+    \markcelll {10}{19}{};
+
+    \markcelll {11}{8 }{};
+    \markcelll {11}{12}{};
+    \markcelll {11}{14}{};
+    \markcelll {11}{20}{};
+
+    \markcelll {12 }{9 }{};
+    \markcelll {12 }{11}{};
+    \markcelll {12 }{13}{};
+    \markcelll {12 }{15}{};
+    \markcelll {12 }{21}{};
+
+    \markcelll {13}{10}{};
+    \markcelll {13}{12}{};
+    \markcelll {13}{16}{};
+    \markcelll {13}{22}{};
+
+    \markcelll {14}{11}{};
+    \markcelll {14}{15}{};
+    \markcelll {14}{23}{};
+
+    \markcelll {15 }{12}{};
+    \markcelll {15 }{14}{};
+    \markcelll {15 }{16}{};
+    \markcelll {15 }{24}{};
+
+    \markcelll {16}{13}{};
+    \markcelll {16}{15}{};
+    \markcelll {16}{25}{};
+
+    \markcelll {17}{18 }{};
+    \markcelll {17}{20}{};
+    \markcelll {17}{26}{};
+    \markcelll {17}{8 }{};
+
+    \markcelll {18}{17}{};
+    \markcelll {18}{19}{};
+    \markcelll {18}{21}{};
+    \markcelll {18}{27}{};
+    \markcelll {18}{9 }{};
+
+    \markcelll {19}{18}{};
+    \markcelll {19}{22}{};
+    \markcelll {19}{28}{};
+    \markcelll {19}{10}{};
+
+    \markcelll {20}{17}{};
+    \markcelll {20}{21}{};
+    \markcelll {20}{23}{};
+    \markcelll {20}{29}{};
+    \markcelll {20}{11}{};
+
+    \markcelll {21}{18}{};
+    \markcelll {21}{20}{};
+    \markcelll {21}{22}{};
+    \markcelll {21}{24}{};
+    \markcelll {21}{30}{};
+    \markcelll {21}{12}{};
+
+    \markcelll {22}{19}{};
+    \markcelll {22}{21}{};
+    \markcelll {22}{25}{};
+    \markcelll {22}{31}{};
+    \markcelll {22}{13}{};
+
+    \markcelll {23}{20}{};
+    \markcelll {23}{24}{};
+    \markcelll {23}{32}{};
+    \markcelll {23}{14}{};
+
+    \markcelll {24}{21}{};
+    \markcelll {24}{23}{};
+    \markcelll {24}{25}{};
+    \markcelll {24}{33}{};
+    \markcelll {24}{15}{};
+
+    \markcelll {25}{22}{};
+    \markcelll {25}{24}{};
+    \markcelll {25}{34}{};
+    \markcelll {25}{16}{};
+
+
+
+    \markcelll {26}{27}{};
+    \markcelll {26}{29}{};
+    \markcelll {26}{17}{};
+
+    \markcelll {27}{26}{};
+    \markcelll {27}{28}{};
+    \markcelll {27}{30}{};
+    \markcelll {27}{18}{};
+
+    \markcelll {28}{27}{};
+    \markcelll {28}{31}{};
+    \markcelll {28}{19}{};
+
+    \markcelll {29}{26}{};
+    \markcelll {29}{30}{};
+    \markcelll {29}{32}{};
+    \markcelll {29}{20}{};
+
+    \markcelll {30}{27}{};
+    \markcelll {30}{29}{};
+    \markcelll {30}{31}{};
+    \markcelll {30}{33}{};
+    \markcelll {30}{21}{};
+
+    \markcelll {31}{28}{};
+    \markcelll {31}{30}{};
+    \markcelll {31}{34}{};
+    \markcelll {31}{22}{};
+
+    \markcelll {32}{29}{};
+    \markcelll {32}{33}{};
+    \markcelll {32}{23}{};
+
+    \markcelll {33}{30}{};
+    \markcelll {33}{32}{};
+    \markcelll {33}{34}{};
+    \markcelll {33}{24}{};
+
+    \markcelll {34}{31}{};
+    \markcelll {34}{33}{};
+    \markcelll {34}{25}{};
+
+    %Connectivities
+    \markcellbluee {2}{8}{};
+    \markcellbluee {2}{9}{};
+    \markcellbluee {2}{17}{};
+    \markcellbluee {2}{18}{};
+
+    \markcellbluee {3}{9}{};
+    \markcellbluee {3}{10}{};
+    \markcellbluee {3}{18}{};
+    \markcellbluee {3}{19}{};
+
+    \markcellbluee {6}{17}{};
+    \markcellbluee {6}{18}{};
+    \markcellbluee {6}{26}{};
+    \markcellbluee {6}{27}{};
+
+    \markcellbluee {7}{18}{};
+    \markcellbluee {7}{19}{};
+    \markcellbluee {7}{27}{};
+    \markcellbluee {7}{28}{};
+
+    \markcellbluee {8}{2}{};
+    \markcellbluee {9}{2}{};
+    \markcellbluee {17}{2}{};
+    \markcellbluee {18}{2}{};
+
+    \markcellbluee {9}{3}{};
+    \markcellbluee {10}{3}{};
+    \markcellbluee {18}{3}{};
+    \markcellbluee {19}{3}{};
+
+    \markcellbluee {17}{6}{};
+    \markcellbluee {18}{6}{};
+    \markcellbluee {26}{6}{};
+    \markcellbluee {27}{6}{};
+
+    \markcellbluee {18}{7}{};
+    \markcellbluee {19}{7}{};
+    \markcellbluee {27}{7}{};
+    \markcellbluee {28}{7}{};
+
+    \draw[ultra thick] (0-\offset,\xStepp*\nStepp-\offset) -- (8*\xStepp-\offset,\xStepp*\nStepp-\offset) -- (8*\xStepp-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- (0-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- cycle;
+    \draw[ultra thick] (8*\xStepp-\offset,\xStepp*\nStepp-\offset) -- (35*\xStepp-\offset,\xStepp*\nStepp-\offset) -- (35*\xStepp-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- (8*\xStepp-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- cycle;
+    \draw[ultra thick] (8*\xStepp-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- (35*\xStepp-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- (35*\xStepp-\offset,0-\offset) -- (8*\xStepp-\offset,0-\offset) -- cycle;
+    \draw[ultra thick] (0-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- (8*\xStepp-\offset,\xStepp*\nStepp-8*\xStepp-\offset) -- (8*\xStepp-\offset,0-\offset) -- (0*\xStepp-\offset,0-\offset) -- cycle;
+
+    \coordinate (A1) at (21*\xStepp-\offset,\xStepp*\nStepp-21*\xStepp-\offset);
+    \coordinate (A2) at (21*\xStepp+\xStepp-\offset,\xStepp*\nStepp-21*\xStepp-\offset);
+    \coordinate (A3) at (21*\xStepp+\xStepp-\offset,\xStepp*\nStepp-21*\xStepp-\xStepp-\offset);
+    \coordinate (A4) at (21*\xStepp-\offset,\xStepp*\nStepp-21*\xStepp-\xStepp-\offset);
+    \markcellblackk {21}{21}{};
+
+    %\draw[fill=black] (A1) circle (0.15em);
+    %\draw[fill=black] (A2) circle (0.15em);
+    %\draw[fill=black] (A3) circle (0.15em);
+    %\draw[fill=black] (A4) circle (0.15em);
+
+    \draw[thick] (A1) -- (0,7.5);
+    \draw[thick] (A2) -- (7.5,7.5);
+    \draw[thick] (A3) -- (7.5,0);
+    \draw[thick] (A4) -- (0,0);
+
+    %CPLD MATRIX%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \foreach \j in {0,...,5} {
+        \draw [very thin,gray] (0,\j*\xStep) -- (\xStep*\nStep,\j*\xStep)  ;
+        \draw [very thin,gray] (\j*\xStep,0) -- (\j*\xStep,\xStep*\nStep)  ;
+    }
+
+    \markcell {0}{0}{$a_P^{u_1}$};
+    \markcell {1}{1}{$a_P^{u_2}$};
+    \markcell {2}{2}{$a_P^{u_3}$};
+    \markcell {3}{3}{$a_P^{p}$};
+    \markcell {4}{4}{$a_P^{T}$};
+
+    \markcellblue{0}{3}{$a_P^{u_1,p}$};
+    \markcellblue{1}{3}{$a_P^{u_2,p}$};
+    \markcellblue{2}{3}{$a_P^{u_3,p}$};
+
+    \markcellblue{3}{0}{$a_P^{p,u_1}$};
+    \markcellblue{3}{1}{$a_P^{p,u_2}$};
+    \markcellblue{3}{2}{$a_P^{p,u_3}$};
+
+    \markcellred{0}{4}{$a_P^{u_1,T}$};
+    \markcellred{1}{4}{$a_P^{u_2,T}$};
+    \markcellred{2}{4}{$a_P^{u_3,T}$};
+
+    \markcellgreen{4}{0}{$a_P^{T,u_1}$};
+    \markcellgreen{4}{1}{$a_P^{T,u_2}$};
+    \markcellgreen{4}{2}{$a_P^{T,u_3}$};
+    \markcellgreen{4}{3}{$a_P^{T,p}$};
+
+   \draw[ultra thick] (0,\xStep*\nStep) -- (4*\xStep,\xStep*\nStep) -- (4*\xStep,\xStep*\nStep-4*\xStep) -- (0,\xStep*\nStep-4*\xStep) -- cycle;
+
+
+\end{tikzpicture}
