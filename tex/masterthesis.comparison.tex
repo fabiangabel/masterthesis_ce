@@ -343,11 +343,11 @@ The present test case shows one advantage of the treatment of block boundaries, 
   \caption{NONE}
 \end{figure}
 
-%\begin{figure}
-%  \centering
-%  \input{./img/test.tikz.tex}
-%  \caption{NONE}
-%\end{figure}
+\begin{figure}
+  \centering
+  \input{./img/blocking.tikz.tex}
+  \caption{NONE}
+\end{figure}
 
 The solution of the linear systems resulting from the discretization of the problem takes up more time for the coupled solution algorithm than in the segregated coupled algorithm. For small problem sizes the additional overhead for the solution methods for linear systems and the property that the segregated solution algorithm does not need many outer iterations to converge leads to the conclusion that moderate to big problems with respect to the number of involved unknowns are necessary for the coupled solution algorithm to dominate. In contrast to the segregated algorithm, the fully coupled solution algorithm achieves a approximately constant amount of needed outer iterations, independent of the number of involved unknowns. The tests regarding the weak scaling of the coupled solution algorithm emphasize this property. Table \ref{tab:channelcompare} compares the measured wall clock time for different numbers of unknowns. The mesh shown in \ref{fig:channel1} and \ref{fig:channel2} was generated for the first number of unknowns. The two other numbers result from up to two times bisectioning the mesh in each direction, every time scaling the number of unknowns by a factor of eight.
 \begin{table}[h!]\centering
