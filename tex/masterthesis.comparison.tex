@@ -1,9 +1,5 @@
 \section{Comparison of Solver Concepts}
   
-\subsection{Convergence Behaviour on Locally Refined Block Structured Grids with Different Degrees of Coupling}
-
-Show how the implicit treatment of block boundaries maintains (high) convergence rates. Plot Residual over number of iterations. Plot Wall time for a single block using SIP, KSP, COUPLED for different grid resolutions.
-
 \subsection{Parallel Performance}
 
 In many cases, scientific code is used to solve complex problems regarding memory requirements to make calculation results available within short time. In both scenarios, code that is able to run in parallel can alleviate the mentioned challenges. Code that runs in parallel can allocate more memory resources which makes the calculation of complex problems feasible. If the code is scalable the program execution can be shortened by using more processors to solve a problem of constant size.
@@ -74,30 +70,30 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
 
 The first configuration sequentially binds the processes to the cores beginning on the first socket. When every core has a bound process the binding algorithm binds the following processes to cores of the second socket. The second configuration binds the processes in a round robin manner regarding the sockets. This configuration in difference to the second configuration binds one process to three cores. Figures \ref{fig:binding1},\ref{fig:binding2} and \ref{fig:binding3} demonstrate the different binding options for two sockets and processors with twelve cores each, when eight processes are to be bound to the resources.
 
-\begin{figure}[h]
-  \centering
-  \label{fig:binding1}
-    \input{./img/map2.tikz.tex}
-    \centering{}
-  \caption{Default binding using Open MPI on a node with two sockets and processors with each twelve cores}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \label{fig:binding2}
-    \input{./img/map.tikz.tex}
-    \centering{}
-  \caption{Process binding using Open MPI and map-by ppr:8:node map-by ppr:4:socket on a node with two sockets and processors with each twelve cores}
-\end{figure}
-
-
-\begin{figure}[h]
-  \centering
-  \label{fig:binding3}
-    \input{./img/map3.tikz.tex}
-    \centering{}
-  \caption{Process binding using Open MPI and map-by ppr:8:node map-by ppr:4:socket:PE=3 on a node with two sockets and processors with each twelve cores}
-\end{figure}
+%\begin{figure}[h]
+%  \centering
+%  \label{fig:binding1}
+%    \input{./img/map2.tikz.tex}
+%    \centering{}
+%  \caption{Default binding using Open MPI on a node with two sockets and processors with each twelve cores}
+%\end{figure}
+%
+%\begin{figure}[h]
+%  \centering
+%  \label{fig:binding2}
+%    \input{./img/map.tikz.tex}
+%    \centering{}
+%  \caption{Process binding using Open MPI and map-by ppr:8:node map-by ppr:4:socket on a node with two sockets and processors with each twelve cores}
+%\end{figure}
+%
+%
+%\begin{figure}[h]
+%  \centering
+%  \label{fig:binding3}
+%    \input{./img/map3.tikz.tex}
+%    \centering{}
+%  \caption{Process binding using Open MPI and map-by ppr:8:node map-by ppr:4:socket:PE=3 on a node with two sockets and processors with each twelve cores}
+%\end{figure}
 
 \begin{figure} \centering
   \pgfplotsset{every axis/.append style={
@@ -238,37 +234,142 @@ The first configuration sequentially binds the processes to the cores beginning 
 \caption{Sustainable memory bandwidth as determined by the STREAM benchmark (Triad) for different process binding options on one node of the MPI2 section}
 \end{figure}
 
+As can be seen from figures REFERENCE, the scaling of the sustainable bandwith behaves rather erratic, such that for process counts up until eight for the MPI1 section no reliable results can be obtained from the STREAM benchmark. It is assumed that this kind of behaviour is due to the automatic turbo boost the deployed processors apply, which can be controlled other than by turning it off. Since all performance measures are relative but the plain measurement of wall clock time the reference value for the following performance measurements will be taken from the program execution for the maximum number of processes that can be bound without overlap to one deployed socket.
+
 \subsubsection{Optimization of Sequential Solver Configuration}
 
 Compare runtime for different solver configurations BiCGStab+ICC, different multigrid algorithms
 
-\subsubsection{Evaluation of Numerical Efficiency of the Solver Algorithm}
-\subsubsection{Discussion of Results for Parallel Efficiency}
+\subsubsection{Speedup Measurement and Impact of Coupling Algorithm for Analytic Test Cases}
 
-\subsubsection{Speedup Measurement for Analytic Test Cases}
+This section presents the results from the speedup measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown.
 
-\subsection{Test Cases with Varying Degree of Non-Linearity}
-      
-As Peric says I want to prove that the higher the non-linearity of NS, the better relative convergence rates can be achieved with a coupled solver. Fi
+\begin{figure}
+\centering
+\begin{tikzpicture}
+  \begin{loglogaxis}[
+    xlabel=Number of Processes,
+    ylabel=Wall Clock Time s,
+    xtick={1,2,4,8,16,32,64,128,256,512},
+    xticklabels={1,2,4,8,16,32,64,128,256,512},
+  ]
+  \addplot file {./files/seg.128};
+  \addplot file {./files/cpld.gamg.128};
+\end{loglogaxis}
+\end{tikzpicture}
+\caption{Wall clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+\end{figure}
 
-\subsubsection{Transport of a Passive Scalar -- Forced Convection}
-\subsubsection{Buoyancy Driven Flow -- Natural Convection}
-\subsubsection{Flow with Temperature Dependent Density -- A Highly Non-Linear Test Case}
-Maybe I could consider two test cases, one with oscillating density and one with a quadratic polynomial. Interesting would be also to consider the dependence of convergence on another scalar transport equation
+\begin{figure}
+\centering
+\begin{tikzpicture}
+  \begin{loglogaxis}[
+    xlabel=Number of Processes,
+    ylabel=Wall Clock Time s,
+    xtick={1,2,4,8,16,32,64,128,256,512,1024},
+    xticklabels={1,2,4,8,16,32,64,128,256,512,1024},
+  ]
+  \addplot file {./files/seg.256};
+  \addplot file {./files/cpld.gamg.256};
+\end{loglogaxis}
+\end{tikzpicture}
+\caption{Wall clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
+\end{figure}
 
-\subsection{Realistic Testing Scenarios -- Benchmarking}
-Also consider simple load balancing by distributing matrix rows equally
+\subsection{Realistic Testing Scenario -- Complex Geometry}
 
-\subsubsection{Flow Around a Cylinder 3D -- Stationary}
-Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
-\subsubsection{Flow Around a Cylinder 3D -- Instationary}
-\begin{itemize}
-\item\url{http://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_flow3d/dfg_flow3d_configuration.html}
-\end{itemize}
-Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
-      \subsubsection{Heat-Driven Cavity Flow}
+The flow inside closed systems is This section compares the single process performance of the segregated and the fully coupled solution algorithm for a flow problem within a complex geometry. The geometry of the domain is based on a channel flow problem with square cross section, with the difference that inside the channel reside two obstacles with a square cross section of which one has been twisted against the other. Figure \ref{fig:sketch} shows a sketch of the problem domain. 
+
+\begin{figure}
+  \centering
+  \includegraphics{./img/channel3d.pdf}
+  \caption{Sketch of the channel flow problem domain}
+  \label{fig:sketch}
+\end{figure}
+
+This case exercises all of the previously introduced boundary conditions for flow problems including the treatment of non-matching block boundaries. For the velocities at the inflow boundary the parabolic distribution
+\begin{displaymath}
+  \vec{u}(x_1,x_2,x_3) 
+  =
+\left[
+  \begin{array}{ccc}
+    u_1 \\
+    u_2 \\
+    u_3 
+  \end{array}
+\right]
+  =
+\left[
+  \begin{array}{ccc}
+    \frac{ 16 * 0.45 * x_2 * x_3 * \left( 0.41 - x_2 \right) * \left( 0.41 - x_3 \right)}{0.41^4}
+    \\[0.9em]
+    0 \\[0.3em]
+    0 
+  \end{array}
+\right]
+\end{displaymath}
+was chosen. All the other problem parameters were chosen such that the flow problem resides in the regime of a non-turbulent stationary flow for which the presented solver framework has been developed. Table \ref{tab:channel} lists the remaining material and geometrical characteristics of the test case.
+
+\begin{table}[h!]\centering
+\ra{1.3}
+  \begin{tabular}{lcc}\toprule
+    Property & Value & Unit \\
+    \midrule
+    \rowcolor{black!20} Density    & 1E-3 & $\frac{kg}{m^3}$      \\
+    \rowcolor{black!00} Viscosity  & 1E-0 & K.A.  \\
+    \rowcolor{black!20} Height     & 0.41 & m   \\
+    \rowcolor{black!00} Length     & 2.5  & m  \\
+    \rowcolor{black!20} Sidelength & 0.1  & m  \\
+    \rowcolor{black!00} Under relaxation u & 0.9 &  \\
+    \rowcolor{black!20} Under relaxation p & 0.1 &  \\
+  \end{tabular}
+  \caption{Characteristic problem properties used in the channel flow test case}
+  \label{tab:channel}
+\end{table}
+
+The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section REFERENCE. Since no assumptions on the geometry of a neighboring block are necessary each block can be constructed independently which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not impact on the convergence properties of the deployed linear solvers. Figure \ref{fig:channel1} and figure \ref{fig:channel2} show the mesh at the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks.
+
+\begin{figure}
+  \centering
+  \label{fig:channel1}
+  \input{./img/channel.tikz.tex}
+  \caption{NONE}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \label{fig:channel2}
+  \input{./img/channel2.tikz.tex}
+  \caption{NONE}
+\end{figure}
+
+%\begin{figure}
+%  \centering
+%  \input{./img/test.tikz.tex}
+%  \caption{NONE}
+%\end{figure}
+
+The solution of the linear systems resulting from the discretization of the problem takes up more time for the coupled solution algorithm than in the segregated coupled algorithm. For small problem sizes the additional overhead for the solution methods for linear systems and the property that the segregated solution algorithm does not need many outer iterations to converge leads to the conclusion that moderate to big problems with respect to the number of involved unknowns are necessary for the coupled solution algorithm to dominate. In contrast to the segregated algorithm, the fully coupled solution algorithm achieves a approximately constant amount of needed outer iterations, independent of the number of involved unknowns. The tests regarding the weak scaling of the coupled solution algorithm emphasize this property. Table \ref{tab:channelcompare} compares the measured wall clock time for different numbers of unknowns. The mesh shown in \ref{fig:channel1} and \ref{fig:channel2} was generated for the first number of unknowns. The two other numbers result from up to two times bisectioning the mesh in each direction, every time scaling the number of unknowns by a factor of eight.
+\begin{table}[h!]\centering
+\ra{1.3}
+  \begin{tabular}{lcccc}\toprule
+    No. of Unknowns & Seg. - time & Cpld - time & Seg. - its & Cpld - its \\
+    \midrule
+    \rowcolor{black!20} 75768    & 0.2226E+02 & 0.3645E+02 & 151  & 67 \\
+    \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1500E+03 & 355  & 42 \\
+    \rowcolor{black!20} 2611080  & 1.1352E+05 & 0.3105E+04 & 1592 & 39 \\
+  \end{tabular}
+  \caption{Characteristic problem properties used in the channel flow test case}
+  \label{tab:channelcompare}
+\end{table}
+
+\subsection{Classical Benchmarking Case -- Heat-Driven Cavity Flow}
+
+This section deals with the evaluation and comparison not only of the pressure-velocity coupling but also of the velocity-to-temperature coupling through the Boussinesq approximation and the temperature-velocity/pressure coupling through the Newton-Raphson linearization of the convective term in the temperature equation. For this the standard heat-driven cavity flow CITATION is adapted for a three dimensional domain and the material and geometric parameters are chosen such that a non-turbulent stationary flow exists, which means that the solution lies within the regime of approximations made by the solver.
+
+Essential for this benchmarking case is the nature of the flow. The fluid motion is a consequence of the effect of volume forces caused by temperature differences in the solution domain. This relation is represented by the Rayleigh and Prandtl number. It is assumed that for this kind of flow the fully implicit treatment of the temperature coupling will yield further benefits with respect to wall time, compared with solution approaches that solve for the temperature separately.
+
       \begin{itemize}
       \item \url{http://www.featflow.de/en/benchmarks/cfdbenchmarking/mit_benchmark.html}
       \end{itemize}
       Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
-\subsection{Realistic Testing Scenario -- Complex Geometry}

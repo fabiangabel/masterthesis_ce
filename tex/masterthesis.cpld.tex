@@ -105,7 +105,7 @@ In the same way it is possible to realize the coupling described in the previous
 
 The previous section discussed the velocity temperature coupling and so far only the momentum balances were affected by the realization of the coupling methods. Independently it is possible to couple the temperature equation not only to the momentum balances but also to the pressure equation. In section \ref{sec:discretetemperature} the non-linear partial differential equation was linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid. But, if an implicit temperature coupling is sought, a coupling of the temperature equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization} which can be interpreted as a bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial.
 
-The Newton-Raphson linearization technique is applied to the convective term of the temperature equation as follows. A first order Taylor approximation of the mass specific convective flux through the boundary face \(S_f\) around the \(n-1\)th iteration value yields for the approximation at the \(n\)th iteration
+The Newton-Raphson linearization technique is applied to the convective term of the temperature equation as follows. A first order Taylor approximation of the mass specific convective flux through the boundary face \(S_f\) around the \((n-1)\)st iteration value yields for the approximation at the \(n\)th iteration
 \begin{align*}
   \left(u_{j,f} T_f \right)^{(n)} 
   &\approx 
@@ -194,7 +194,7 @@ The different degrees of coupling between the different equations will affect th
 \begin{figure}
   \centering
   %\label{fig:cpldassemble}
-  \input{./img/nointerlacemat.tikz.tex}
+   \input{./img/nointerlacemat.tikz.tex}
   \caption{Non-zero structure the linear system used in the coupled solution algorithm for a block structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The variables have been ordered such that each major matrix block refers to only one variable or the coupling between exactly two variables.}
 \end{figure}
 

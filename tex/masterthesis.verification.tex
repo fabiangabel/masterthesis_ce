@@ -235,9 +235,9 @@ It is evident that the higher the under-relaxation factor the smaller the deviat
 %       (0.9, 4.5870477939666558E-004 ) };
 %       \addlegendentry{Standard Rhie-Chow}
 %   \addplot[color=black,mark=*] coordinates {
-%       (0.1,  ) 
-%       (0.2,  ) 
-%       (0.3,  ) 
+%       (0.1, 1.10143097701211154E-004 ) 
+%       (0.2, 1.10821179355990171E-004 ) 
+%       (0.3, 1.11299633553750511E-004 ) 
 %       (0.4, 1.116946409468240E-004 ) 
 %       (0.5, 1.120421700016533E-004 ) 
 %       (0.6, 1.123539066637007E-004 ) 
@@ -336,16 +336,16 @@ It is evident that the higher the under-relaxation factor the smaller the deviat
         (0.8, 0.991543275095164 ) 
         (0.9, 0.995853762602418 ) };
       \addplot[color=black,mark=*] coordinates {
-%       (0.1,  ) 
-%       (0.2,  ) 
-%       (0.3,  ) 
+        (0.1, 0.971052034681996 ) 
+        (0.2, 0.977030190229609 ) 
+        (0.3, 0.981248374863363 ) 
         (0.4, 0.984730869370635 ) 
         (0.5, 0.987794781706918 ) 
         (0.6, 0.990543138401835 ) 
         (0.7, 0.993088325777100 ) 
         (0.8, 0.995492640274918 ) 
         (0.9, 0.997796414291477 ) };
-      \addplot[color=black,mark=*] coordinates {
+%     \addplot[color=black,mark=*] coordinates {
 %       (0.1,  ) 
 %       (0.2,  ) 
 %       (0.3,  ) 
@@ -353,10 +353,11 @@ It is evident that the higher the under-relaxation factor the smaller the deviat
 %       (0.5,  ) 
 %       (0.6,  ) 
 %       (0.7,  ) 
-        (0.8, 0.997658915282247 ) 
-        (0.9, 0.998852505214927 ) };
+%       (0.8, 0.997658915282247 ) 
+%       (0.9, 0.998852505214927 ) };
      \draw (axis cs:0.1,0.909079479312898) -- (axis cs:0.2,0.925263183224726) node [midway,fill,white,color=gray,text=white,font=\footnotesize,draw=gray,below right]{$16^3$};
      \draw (axis cs:0.1,0.948916949696145) -- (axis cs:0.2,0.958238530304379) node [midway,fill,white,color=gray,text=white,font=\footnotesize,draw=gray,below right]{$32^3$};
+     \draw (axis cs:0.1,0.971052034681996) -- (axis cs:0.2,0.977030190229609) node [midway,fill,white,color=gray,text=white,font=\footnotesize,draw=gray,below right]{$64^3$};
 \end{semilogyaxis}
 \end{tikzpicture}
 \caption{Comparison of calculated error for different under relaxation factors $\alpha_\vec{u}$ on a grid with different grid resolutions unknowns}

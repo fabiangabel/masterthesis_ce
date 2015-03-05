@@ -18,7 +18,7 @@
 \usepackage{masterthesis}
 
 %selective compilation of files
-%\includeonly{./tex/masterthesis.cpld,./tex/masterthesis.seg}
+%\includeonly{./tex/masterthesis.comparison}
 
 \begin{document}
 \thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
@@ -41,6 +41,9 @@
   \section*{TODO LIST}
 
   \begin{itemize}
+    \item Bilder zum Konvergenzverlauf sind gut
+    \item wall boundary condition treatment could improve convergence
+    \item say that viscous dissipation is not accounted for in the energy balance
     \item midpoint integration rule or midpoint rule of integration
     \item remove equation numbering when there is no reference
     \item change the matrix coefficient indexing to \(a_P^{u_i,p}\) like in \cite{darwish09}.
@@ -65,6 +68,7 @@
     \item read klaij again and use some of its arguments
       grids
     \item emphasize the flexibility of the implementation
+    \item This is often referred to as "matrix-free", though it is still a Mat in PETSc (Mat in PETSc means "finite-dimensional linear operator").  
   \end{itemize}
 
   \include{./tex/masterthesis.introduction}

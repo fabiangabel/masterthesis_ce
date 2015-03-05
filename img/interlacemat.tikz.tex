@@ -1,15 +1,11 @@
 \newcommand*{\xMin}{0}%
 \newcommand*{\xMax}{12}%
-\newcommand*{\xStep}{0.075}%
+\newcommand*{\xStep}{0.094}%
 \newcommand*{\nStep}{175}
 \newcommand*{\yMin}{0}%
 \newcommand*{\yMax}{1}%
 \newcommand\markcell[2] {
   \fill[gray,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
-  }
-
-\newcommand\markcellblue[2] {
-  \fill[orange,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
   }
 
 \begin{tikzpicture}

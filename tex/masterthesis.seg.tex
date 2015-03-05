@@ -78,7 +78,7 @@ To guarantee convergence of this expression for \(u_{i,f}\), under-relaxation is
   &\approx
   \left(1-\gamma_f\right) \frac{\alpha_{\vec{u}}}{a_P^{u_i}} 
   +
-  \gamma_f \frac{\alpha_{\vec{u}}}{a_Q^{u_i}}, \\[1em]
+  \gamma_f \frac{\alpha_{\vec{u}}}{a_Q^{u_i}},
 \end{align}
 \end{subequations}
 where \(\gamma_f\) is a geometric interpolation factor. 
@@ -291,7 +291,7 @@ To couple velocity and pressure correctors one can subtract equation (\ref{eq:no
   - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q' 
   \right].
 \end{align}
-The majority of the class of pressure correction algorithms has this equations as a common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving the pressure equation, still unknown. The method used in the present work is the SIMPLE Algorithm (Semi-Implicit Method for Pressure-Linked Equations \cite{patankar72}). The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation (\ref{eq:nodeprime}). Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by inserting equation (\ref{eq:nodeprime}) into equation (\ref{eq:faceprime}). This gives an update formula
+The majority of the class of pressure correction algorithms has these equations as a common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving for the pressure correction, still unknown. The method used in the present work is the SIMPLE Algorithm (Semi-Implicit Method for Pressure-Linked Equations \cite{patankar72}). The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation (\ref{eq:nodeprime}). Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by inserting equation (\ref{eq:nodeprime}) into equation (\ref{eq:faceprime}). This gives an update formula
 \begin{align}
   u_{i,f}' 
   &= 
@@ -409,7 +409,7 @@ The stationary momentum balance integrated over a single control volume \(P\) re
 \begin{equation}
   \label{eq:semidiscrete}
   \underbrace{\iint\limits_S (\rho u_i u_j)n_j \mathrm{d}S}_{\text{convective term}}
-  - \underbrace{\iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S}_{\text{diffusive term}}
+  \,- \underbrace{\iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S}_{\text{diffusive term}}
   = - \underbrace{\iiint\limits_V \frac{\partial p}{\partial x_i} \mathrm{d}V}_{\text{pressure sourceterm}}
   - \underbrace{\iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V}_{\text{temperature sourceterm}},
 \end{equation}
@@ -454,13 +454,13 @@ The diffusive term contains the first partial derivatives of the velocity as a r
 
 As before, by using the additivity and furthermore linearity of the Riemann integral, the integration of the diffusive term will be divided into integration over individual boundary faces \(S_f\) 
 \begin{displaymath}
-  \iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S \mathrm{d}S
+  \iint\limits_S \left(\mu \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i}\right)\right)n_j \mathrm{d}S 
   = \sum_{f \in \{w,s,b,t,n,e\}} \left[
     \iint\limits_{S_f} \mu \underline{\frac{\partial u_i}{\partial x_j}n_j \mathrm{d}S}
   + \iint\limits_{S_f} \mu \frac{\partial u_j}{\partial x_i}n_j \mathrm{d}S \right]
    = \sum_{f \in \{w,s,b,t,n,e\}} F_{i,f}^{d},
 \end{displaymath}
-where \(F_{i,f}^{d}\) denotes the diffusive flux through an individual boundary face. Section \ref{sec:nonorth} only covered the non-orthogonal corrector for directional derivatives. Since the velocity is a vector field and not a scalar field, the results of section \ref{sec:nonorth} may only be applied to the underlined term. The other term will be treated explicitly since it is considerably smaller than the underlined term, furthermore does not cause oscillations and thus will not derogate convergence \cite{ferziger02}. First all present integrals will be approximated using the midpoint integration rule. The diffusive flux \(F_{i,f}^d\) for a generic face \(S_f\) located between the control volumes \(P\) and \(F\) then reads 
+where \(F_{i,f}^{d}\) denotes the diffusive flux through an individual boundary face. Section \ref{sec:nonorth} only covered the non-orthogonal corrector for directional derivatives. Since the velocity is a vector field and not a scalar field, the results of section \ref{sec:nonorth} may only be applied to the underlined term. The other term will be treated explicitly since it is considerably smaller than the underlined term, furthermore does not cause oscillations and thus will not derogate convergence \cite{ferziger02}. First, all present integrals will be approximated using the midpoint integration rule. The diffusive flux \(F_{i,f}^d\) for a generic face \(S_f\) located between the control volumes \(P\) and \(F\) then reads 
 \begin{displaymath}
   F_{i,f}^d \approx \mu \underline{\left(\frac{\partial u_i}{\partial x_j}\right)_f n_j S_f} + \mu \left(\frac{\partial u_j}{\partial x_i}\right)_f n_j S_f.
 \end{displaymath}
@@ -485,11 +485,11 @@ The interpolation of the cell center gradients to the boundary faces is performe
 \begin{align}
   a_F^{u_i,d} &= - \frac{\mu S_f}{||\vec{x}_P - \vec{x}_F||_2}, 
   \quad \quad a_P^{u_i,d} = \sum_{F \in NB(P)} \frac{\mu S_f}{|| \vec{x}_P - \vec{x}_F ||} \\[1em]
-  b_{F,u_i}^d &=  \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} - n_{f_i}\right)S_f  
+  b_{F,u_i}^d &=  - \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} + n_{f_i}\right)S_f  
   - \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i} S_f   \nonumber \\[0.5em]
-  &=  \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \xi_{f_i} S_f
-  - \mu \left( \left( \frac{\partial u_i}{\partial x_j} \right)_f^{(n-1)}
-  - \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} \right) n_{f_i} S_f.
+  &=  - \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \xi_{f_i} S_f
+  + \mu \left( \left( \frac{\partial u_i}{\partial x_j} \right)_f^{(n-1)}
+  + \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} \right) n_{f_i} S_f.
 \end{align}
 \end{subequations}
 
@@ -585,11 +585,11 @@ For the purpose of treating wall boundary conditions it is appropriate to use a 
 \end{array}
 \right]
 \end{displaymath}
-The velocity of the wall is assumed to be constant, so the directional derivative of the tangential velocity vanishes on the wall
+The velocity of the wall is assumed to be constant \cite{schaefer99}, so the directional derivative of the tangential velocity vanishes on the wall
 \begin{displaymath}
   \tau_{tt} =  \frac{ \partial u_t }{ \partial x_t }  =  0,
 \end{displaymath}
-which in conjunction with the continuity equation in differential form leads to
+which in conjunction with the continuity equation in differential form (\ref{eq:contifull}) leads to
 \begin{displaymath}
  \frac{ \partial u_n }{ \partial x_n } + \frac{ \partial u_t }{ \partial x_t } =  \frac{ \partial u_n }{ \partial x_n } = 0,
 \end{displaymath}

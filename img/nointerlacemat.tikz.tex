@@ -1,15 +1,11 @@
 \newcommand*{\xMin}{0}%
 \newcommand*{\xMax}{12}%
-\newcommand*{\xStep}{0.075}%
+\newcommand*{\xStep}{0.094}%
 \newcommand*{\nStep}{175}
 \newcommand*{\yMin}{0}%
 \newcommand*{\yMax}{1}%
 \newcommand\markcell[2] {
   \fill[gray,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
-  }
-
-\newcommand\markcellblue[2] {
-  \fill[orange,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
   }
 
 \begin{tikzpicture}
@@ -2126,5 +2122,27 @@
 %   \draw[ultra thick] (8*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep-8*\xStep) -- (8*\xStep,\xStep*\nStep-8*\xStep) -- cycle;
 %   \draw[ultra thick] (8*\xStep,\xStep*\nStep-8*\xStep) -- (35*\xStep,\xStep*\nStep-8*\xStep) -- (35*\xStep,0) -- (8*\xStep,0) -- cycle;
 %   \draw[ultra thick] (0,\xStep*\nStep-8*\xStep) -- (8*\xStep,\xStep*\nStep-8*\xStep) -- (8*\xStep,0) -- (0*\xStep,0) -- cycle;
+    \node at (\xStep*35*0.5,\xStep*\nStep-\xStep*35+\xStep*0.08*35) {$A_{u_1u_1}$};
+    \node at (\xStep*35*3+\xStep*35*0.5,\xStep*\nStep-\xStep*35+\xStep*0.08*35) {$A_{u_1p}$};
+    \node at (\xStep*35*4+\xStep*35*0.5,\xStep*\nStep-\xStep*35+\xStep*0.08*35) {$A_{u_1T}$};
+
+    \node at (\xStep*35*1+\xStep*35*0.5,\xStep*\nStep-\xStep*35*2+\xStep*0.08*35) {$A_{u_2u_2}$};
+    \node at (\xStep*35*3+\xStep*35*0.5,\xStep*\nStep-\xStep*35*2+\xStep*0.08*35) {$A_{u_2p}$};
+    \node at (\xStep*35*4+\xStep*35*0.5,\xStep*\nStep-\xStep*35*2+\xStep*0.08*35) {$A_{u_2T}$};
+
+    \node at (\xStep*35*2+\xStep*35*0.5,\xStep*\nStep-\xStep*35*3+\xStep*0.08*35) {$A_{u_3u_3}$};
+    \node at (\xStep*35*3+\xStep*35*0.5,\xStep*\nStep-\xStep*35*3+\xStep*0.08*35) {$A_{u_3p}$};
+    \node at (\xStep*35*4+\xStep*35*0.5,\xStep*\nStep-\xStep*35*3+\xStep*0.08*35) {$A_{u_3T}$};
+
+    \node at (\xStep*35*0+\xStep*35*0.5,\xStep*\nStep-\xStep*35*4+\xStep*0.08*35) {$A_{pu_1}$};
+    \node at (\xStep*35*1+\xStep*35*0.5,\xStep*\nStep-\xStep*35*4+\xStep*0.08*35) {$A_{pu_2}$};
+    \node at (\xStep*35*2+\xStep*35*0.5,\xStep*\nStep-\xStep*35*4+\xStep*0.08*35) {$A_{pu_3}$};
+    \node at (\xStep*35*3+\xStep*35*0.5,\xStep*\nStep-\xStep*35*4+\xStep*0.08*35) {$A_{pp}$};
+
+    \node at (\xStep*35*0+\xStep*35*0.5,\xStep*\nStep-\xStep*35*5+\xStep*0.08*35) {$A_{Tu_1}$};
+    \node at (\xStep*35*1+\xStep*35*0.5,\xStep*\nStep-\xStep*35*5+\xStep*0.08*35) {$A_{Tu_2}$};
+    \node at (\xStep*35*2+\xStep*35*0.5,\xStep*\nStep-\xStep*35*5+\xStep*0.08*35) {$A_{Tu_3}$};
+    \node at (\xStep*35*3+\xStep*35*0.5,\xStep*\nStep-\xStep*35*5+\xStep*0.08*35) {$A_{pp}$};
+    \node at (\xStep*35*4+\xStep*35*0.5,\xStep*\nStep-\xStep*35*5+\xStep*0.08*35) {$A_{TT}$};
 
 \end{tikzpicture}
