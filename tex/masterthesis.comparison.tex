@@ -66,9 +66,9 @@ Speedup and parallel efficiency characterize the parallel scalability of an appl
 
 Scientific applications that solve partial differential equations rely on sparse matrix computations, which usually exhibit the sustainable memory bandwidth as bottleneck with respect to the runtime performance of the program \cite{hager11}. The purpose of this section is to establish a frame in terms of an upper bound on performance in which the efficiency of the developed solver framework can be evaluated critically. As common measure for the maximum sustainable bandwidth, low-level benchmarks can be used, which focus on evaluating specific properties of the deployed hardware architecture. In this case the STREAM benchmark suite \cite{mccalpin07,mccalpin95} provides apt tests, which are designed to work with data sets that exceed the cache size of the involved processor architecture. This forces the processors to stream the needed data directly from the memory instead of reusing the data residing in their caches. These types of tests can be used to calculate an upper bound on the memory bandwidth for the CAFFA framework.
 
-In terms of parallel scalability, the STREAM benchmark can also be used as an upper performance bound. According to \cite{petsc-web-page} the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. Before presenting results the different binding configurations will be explained.
+In terms of parallel scalability, the STREAM benchmark can also be used as an upper performance bound. According to \cite{petsc-web-page} the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. %Before presenting results the different binding configurations will be explained.
 
-The first configuration sequentially binds the processes to the cores beginning on the first socket. When every core has a bound process the binding algorithm binds the following processes to cores of the second socket. The second configuration binds the processes in a round robin manner regarding the sockets. This configuration in difference to the second configuration binds one process to three cores. Figures \ref{fig:binding1},\ref{fig:binding2} and \ref{fig:binding3} demonstrate the different binding options for two sockets and processors with twelve cores each, when eight processes are to be bound to the resources.
+%The first configuration sequentially binds the processes to the cores beginning on the first socket. When every core has a bound process the binding algorithm binds the following processes to cores of the second socket. The second configuration binds the processes in a round robin manner regarding the sockets. This configuration in difference to the second configuration binds one process to three cores. Figures \ref{fig:binding1},\ref{fig:binding2} and \ref{fig:binding3} demonstrate the different binding options for two sockets and processors with twelve cores each, when eight processes are to be bound to the resources.
 
 %\begin{figure}[h]
 %  \centering
@@ -101,6 +101,9 @@ The first configuration sequentially binds the processes to the cores beginning 
       line width=1pt,
   tick style={line width=0.8pt}}}
 \begin{tikzpicture}
+  \pgfplotsset{every axis legend/.append style={
+      at={(0.5,1.03)},
+  anchor=south}}
 \begin{axis}[
     ylabel={Sustainable memori bandwidth MB/s},
     xlabel={Number of bound cores},
@@ -109,41 +112,23 @@ The first configuration sequentially binds the processes to the cores beginning 
     %yticklabels={1.7E-3,1.75E-3,1.8E-3,1.85E-3},
     %ymin=1.65e-003,ymax=1.9e-003,
     xmin=0,xmax=17,
-    ymin=0.5e4,ymax=1.3e5,
-    legend pos=outer north east,
+    %ymin=0.5e4,ymax=1.3e5,
+    ymin=0,ymax=1.3e5,
+    %legend pos=outer north east,
     %height=20cm,width=10cm
+    height=12cm,width=15cm,
+    grid=major,
     ]
-    \addplot[color=black,mark=*] coordinates {
-        (1,10056.2733)
-        (2,19114.3429)
-        (3,31197.8399)
-        (4,41210.0612)
-        (5,48699.7232)
-        (6,57803.5686)
-        (7,62187.9785)
-        (8,70658.3730)
-        (9,67558.4259)
-        (10,74413.8457)
-        (11,68849.0631)
-        (12,74223.3175)
-        (13,69109.0762)
-        (14,73729.0608)
-        (15,68784.2613)
-        (16,72872.4480) };
-        \addlegendentry{Default Binding};
-    \addplot[color=black,mark=square*] coordinates {
-        (1 ,10044.2323)
-        (2 ,19036.1755)
-        (3 ,27258.6888)
-        (4 ,33509.0570)
-        (5 ,44386.9342)
-        (6 ,53130.5978)
-        (7 ,62695.4511)
-        (8 ,71295.7113) };
-        \addlegendentry{map-by ppr:8:node map-by ppr:4:socket}
+    \addplot file {./files/mpi1.def};
+    \addplot file {./files/mpi1.op1};
+    \addplot file {./files/mpi1.core};
+    \addlegendentry{Default Binding};
+    \addlegendentry{map-by ppr:8:node map-by ppr:4:socket}
+    \addlegendentry{map-by core}
 \end{axis}
 \end{tikzpicture}
 \caption{Sustainable memory bandwidth as determined by the STREAM benchmark (Triad) for different process binding options on one node of the MPI1 section}
+\label{fig:mpi1band}
 \end{figure}
 
 \begin{figure} \centering
@@ -163,122 +148,137 @@ The first configuration sequentially binds the processes to the cores beginning 
     %yticklabels={1.7E-3,1.75E-3,1.8E-3,1.85E-3},
     %ymin=1.65e-003,ymax=1.9e-003,
     xmin=0,xmax=25,
-    ymin=0.5e4,ymax=1.3e5,
+    %ymin=0.5e4,ymax=1.3e5,
+    ymin=0,ymax=1.3e5,
     height=12cm,width=15cm,
     grid=major,
     ]
-    \addplot coordinates {
-           
-      (1, 22201.8738 )
-      (2,    29846.0651 )
-      (3,    44558.8130 )
-      (4,    59096.4718 )
-      (5,    50460.8297 )
-      (6,    59912.1938 )
-      (7,    53222.7910 )
-      (8,    60491.6764 )
-      (9,    53922.4875 )
-      (10,    60144.1732 )
-      (11,    55273.7403 )
-      (12,    60248.1185 )
-      (13,    65200.5600 )
-      (14,    70118.7250 )
-      (15,    75192.3175 )
-      (16,    80439.8917 )
-      (17,    84793.6761 )
-      (18,    90263.9931 )
-      (19,    94881.4421 )
-      (20,    99735.0136 )
-      (21,   104804.3772 )
-      (22,   110256.7754 )
-      (23,   113478.3185 )
-      (24,   117880.3816 ) };
+    \addplot file {./files/mpi2.def};
      \addlegendentry{Default Binding};
-     \addplot coordinates{
-       (1, 22211.6717)
-       (2, 29836.1141)
-       (3, 30113.6704)
-       (4, 29919.5219)
-       (5, 37713.7578)
-       (6, 45888.1496)
-       (7, 53019.1276)
-     (8, 60375.4338) };
+     \addplot file {./files/mpi2.op1};
      \addlegendentry{map-by ppr:8:node map-by ppr:4:socket};
-     \addplot coordinates{
-       (1, 22265.7147)
-       (2, 29467.1111)
-       (3, 44064.6918)
-       (4, 58503.9143)
-       (5, 72560.6185)
-       (6, 87667.8368)
-       (7,101388.5503)
-     (8,115464.4300) };
-     \addlegendentry{map-by ppr:8:node map-by ppr:4:socket:PE=3};
-     \addplot coordinates{
-       (1, 22140.8327)
-       (2, 43291.3883)
-       (3, 64431.3899)
-      (4, 84515.5468) };
-      \addlegendentry{map-by ppr:4:node map-by ppr:4:socket:PE=6};
-      \addplot[color=green,mark=square] coordinates{
-        (1,22140.8327)
-        (2,42536.7826)
-        (3,44307.1664)
-        (4,58452.9712)
-        (5,71870.5626)
-        (6,86478.5257)
-      };
-      \addlegendentry{map-by ppr:6:node map-by ppr:4:socket:PE=4};
+     %\addplot file {./files/mpi2.op2};
+     %\addlegendentry{map-by ppr:8:node map-by ppr:4:socket:PE=3};
+     \addplot file {./files/mpi2.op3};
+     \addlegendentry{map-by ppr:4:node map-by ppr:4:socket:PE=6};
+     \addplot file{./files/mpi2.core};
+    \addlegendentry{map-by core}
+     %\addplot file {./files/mpi2.op4};
+     % \addlegendentry{map-by ppr:6:node map-by ppr:4:socket:PE=4};
 \end{axis}
 \end{tikzpicture}
 \caption{Sustainable memory bandwidth as determined by the STREAM benchmark (Triad) for different process binding options on one node of the MPI2 section}
+\label{fig:mpi2band}
 \end{figure}
 
-As can be seen from figures REFERENCE, the scaling of the sustainable bandwith behaves rather erratic, such that for process counts up until eight for the MPI1 section no reliable results can be obtained from the STREAM benchmark. It is assumed that this kind of behaviour is due to the automatic turbo boost the deployed processors apply, which can be controlled other than by turning it off. Since all performance measures are relative but the plain measurement of wall clock time the reference value for the following performance measurements will be taken from the program execution for the maximum number of processes that can be bound without overlap to one deployed socket.
+As can be seen from figure \ref{fig:mpi1band} and \ref{fig:mpi2band}, the scaling of the sustainable bandwidth behaves rather erratic, such that for process counts up until eight for the MPI1 section no reliable results can be obtained from the STREAM benchmark. It is assumed that this kind of behaviour is due to the automatic turbo boost the deployed processors apply, which cannot be controlled other than by turning it off. For the following performance analyses with respect to parallel performance it is desirable to minimize this kind of unpredictable side effects. Since all performance measures are relative but the plain measurement of wall clock time the reference value for the following performance measurements will be taken from the program execution for the maximum number of processes that can be bound without overlap to one deployed socket.
 
-\subsubsection{Optimization of Sequential Solver Configuration}
-
-Compare runtime for different solver configurations BiCGStab+ICC, different multigrid algorithms
+It should be taken into account that the STREAM benchmark used to test the present architecture was provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem, by always using all available cores per socket but only running the benchmark on \(n\) processes while the other \(24 - n\) or \(16 - n\) processes run calculations that only use data from the L\(1\) cache of their corresponding core. The intention of this approach was to regulate the turbo boost effects by keeping a constant load on the processors for different number of STREAM benchmark processes. However this approach didn't generate results different from figures \ref{fig:mpi1band} and \ref{fig:mpi2band}.
 
 \subsubsection{Speedup Measurement and Impact of Coupling Algorithm for Analytic Test Cases}
 
-This section presents the results from the speedup measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown.
+This section presents the results from the speedup measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. All tests are conducted on the previously introduced HHLR cluster using the MPI1 and MEM2 section. The performance analyses will present the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance furthermore the speedup will be calculated based on the presented results. 
 
-\begin{figure}
-\centering
-\begin{tikzpicture}
-  \begin{loglogaxis}[
-    xlabel=Number of Processes,
-    ylabel=Wall Clock Time s,
-    xtick={1,2,4,8,16,32,64,128,256,512},
-    xticklabels={1,2,4,8,16,32,64,128,256,512},
-  ]
-  \addplot file {./files/seg.128};
-  \addplot file {./files/cpld.gamg.128};
-\end{loglogaxis}
-\end{tikzpicture}
-\caption{Wall clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
-\end{figure}
+The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests the linear system for the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad} Krylov subspace solver and a incomplete LU-factorization as preconditioner. The pressure correction equation is solved by a CG (\emph{Conjugated Gradient}) solver with GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements. All further solver parameters are listed in table \ref{tab:performance}.
 
+\begin{table}[h!]\centering
+\ra{1.3}
+  \begin{tabular}{lcc}\toprule
+    Property & Value & Unit \\
+    \midrule
+    \rowcolor{black!20} Density    & 1E-0 & $kg/m^3$      \\
+    \rowcolor{black!00} Viscosity  & 1E-0 & K.A.  \\
+    \rowcolor{black!00} Under relaxation u & 0.9 &  \\
+    \rowcolor{black!20} Under relaxation p & 0.1 &  \\
+    \rowcolor{black!00} Relative tolerance & 1E-8/1E-4 &
+  \end{tabular}
+  \caption{Characteristic problem properties used in the channel flow test case}
+  \label{tab:performance}
+\end{table}
+ 
 \begin{figure}
-\centering
-\begin{tikzpicture}
-  \begin{loglogaxis}[
-    xlabel=Number of Processes,
-    ylabel=Wall Clock Time s,
-    xtick={1,2,4,8,16,32,64,128,256,512,1024},
-    xticklabels={1,2,4,8,16,32,64,128,256,512,1024},
-  ]
-  \addplot file {./files/seg.256};
-  \addplot file {./files/cpld.gamg.256};
-\end{loglogaxis}
-\end{tikzpicture}
-\caption{Wall clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
+  \centering
+  \begin{minipage}{0.45\textwidth}
+  \centering
+  \begin{tikzpicture}
+      \begin{loglogaxis}[
+        xlabel=Number of Processes,
+        ylabel=Wall Clock Time s,
+        xtick={1,2,4,8,16,32,64,128,256,512},
+        xticklabels={1,2,4,8,16,32,64,128,256,512},
+      ]
+      \addplot file {./files/seg.128};
+      \addplot file {./files/cpld.gamg.128};
+    \end{loglogaxis}
+    \end{tikzpicture}
+    \caption{Wall clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  \end{minipage}%
+  \hfil
+  \begin{minipage}{0.45\textwidth}
+  \centering
+  \begin{tikzpicture}
+      \begin{loglogaxis}[
+        xlabel=Number of Processes,
+        ylabel=Speedup,
+        xtick={1,2,4,8,16,32,64,128,256,512},
+        xticklabels={1,2,4,8,16,32,64,128,256,512},
+        ytick={1,2,4,8,16,32,64,128,256,512},
+        yticklabels={1,2,4,8,16,32,64,128,256,512},
+        grid=major
+      ]
+      \addplot file {./files/speedup.seg.128};
+      \addplot file {./files/speedup.cpld.128};
+      \addplot[mark=none,black] file {./files/speedup.ideal};
+    \end{loglogaxis}
+    \end{tikzpicture}
+    \caption{Speedup comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  \end{minipage}%
 \end{figure}
+From the comparison in figures REFERENCE it is evident that both algorithms are scalable and the coupled solution algorithm accelerates the solution process up to one order of magnitude. It has to be noted, that the presented results for the coupled solution algorithm were obtained using black-blox solvers from the PETSc framework. It is assumed that the performance of the coupled solution algorithm with respect to the needed walltime would benefit from multigrid solvers especially designed for the coupled system of linear equations. Examples for such spechial solvers can be found in \cite{darwish09,mangani14,klaij13}.
+
+%\begin{figure}
+%  \centering
+%  \begin{minipage}{0.45\textwidth}
+%  \centering
+%  \begin{tikzpicture}
+%      \begin{loglogaxis}[
+%        xlabel=Number of Processes,
+%        ylabel=Speedup,
+%        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+%        xticklabels={1,2,4,8,16,32,64,128,256,512,1024},
+%        ytick={1,2,4,8,16,32,64,128,256,512,1024},
+%        yticklabels={1,2,4,8,16,32,64,128,256,512,1024},
+%        grid=major
+%      ]
+%      \addplot file {./files/speedup.seg.256};
+%      %\addplot file {./files/speedup.cpld.128};
+%      \addplot[mark=none,black] file {./files/speedup.ideal};
+%    \end{loglogaxis}
+%    \end{tikzpicture}
+%    \caption{Speedup comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
+%  \end{minipage}
+%  \hfil
+%  \begin{minipage}{0.45\textwidth}
+%  \centering
+%    \begin{tikzpicture}
+%      \begin{loglogaxis}[
+%        xlabel=Number of Processes,
+%        ylabel=Wall Clock Time s,
+%        xtick={1,4,16,64,256,1024},
+%        xticklabels={1,4,16,64,256,1024},
+%      ]
+%      \addplot file {./files/seg.256};
+%      \addplot file {./files/cpld.gamg.256};
+%      \end{loglogaxis}
+%    \end{tikzpicture}
+%    \caption{Wall clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
+%  \end{minipage}
+%\end{figure}
+
 
 \subsection{Realistic Testing Scenario -- Complex Geometry}
 
-Fluid flow inside closed applications is a common situation in mechanical engineering. The flow through a channel with rectangular crosssection can be seen as a simple testcase that is a part of complex applications. This section compares the single process performance of the segregated and the fully coupled solution algorithm for a flow problem within a complex geometry. The geometry of the domain is based on a channel flow problem with square cross section, with the special property that inside the channel reside two obstacles with a square cross section of which one has been twisted against the other. Figure \ref{fig:sketch} shows a sketch of the problem domain. 
+Fluid flow inside closed applications is a common situation in mechanical engineering. The flow through a channel with rectangular cross section can be seen as a simple test case that is a part of complex applications. This section compares the single process performance of the segregated and the fully coupled solution algorithm for a flow problem within a complex geometry. The geometry of the domain is based on a channel flow problem with square cross section, with the special property that inside the channel reside two obstacles with a square cross section of which one has been twisted against the other. Figure \ref{fig:sketch} shows a sketch of the problem domain. 
 
 \begin{figure}
   \centering
@@ -336,12 +336,12 @@ The present test case shows one advantage of the treatment of block boundaries, 
   \caption{East boundary of the numerical grid for the channel flow problem}
 \end{figure}
 
-\begin{figure}
-  \centering
-  \label{fig:channel2}
-  \input{./img/channel2.tikz.tex}
-  \caption{West boundary of the numerical grid for the channel flow problem }
-\end{figure}
+%\begin{figure}
+%  \centering
+%  \label{fig:channel2}
+%  \input{./img/channel2.tikz.tex}
+%  \caption{West boundary of the numerical grid for the channel flow problem }
+%\end{figure}
 
 \begin{figure}
    \label{fig:cellvertex}
@@ -409,10 +409,10 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
   \begin{tabular}{cccc}\toprule
     Resolution & Solver configuration & Time & Non-linear it. \\
     \midrule
-    \rowcolor{black!20}\multirow{4}{*}{}            & SEG    &  &  \\
-    \rowcolor{black!20}                             & CPLD   &  &  \\
-    \rowcolor{black!20}                             & TCPLD  &  &  \\
-    \rowcolor{black!20} \multirow{-4}{*}{32x32x32}  & NRCPLD &  &  \\ %\hline
+    \rowcolor{black!20}\multirow{4}{*}{}            & SEG    & 0.3719E+02 & 203 \\
+    \rowcolor{black!20}                             & CPLD   & 0.6861E+02 & 62  \\
+    \rowcolor{black!20}                             & TCPLD  & 0.1012E+03 & 31  \\
+    \rowcolor{black!20} \multirow{-4}{*}{32x32x32}  & NRCPLD & 0.2153E+02 & 22  \\ %\hline
     %
     \rowcolor{black!00}\multirow{4}{*}{}            & SEG    & 0.1997E+04 &  804 \\
     \rowcolor{black!00}                             & CPLD   & 0.7687E+03 &  63  \\
@@ -434,6 +434,9 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
   \label{tab:cavitycompare}
 \end{table}
 
-The presended results are in good aggreement with \cite{vakilipour12}, which show monotonic decrease of the number of iterations with increased implicit coupling. It is notable that the pressure velocity coupling is responsible for the biggest decrease in the number of non-linear iterations. Different to the results presented in section \cite{sec:channel} this does not yield significant performance benefits with respect to wall-clock time. In order to achive the benefits of a fully coupled solution algorithm the coupling has to be increased to also involve temperature-to-velocity/pressure and velocity-to-temperature coupling. Furthermore, the solely use of velocity-to-temperature coupling results in no benefits compared to the coupled solution for velocities and pressure combined with a decoupled solve for the temperature equation. This is accredited to the treatment of the non-linearity of the temperature equation in the TCPLD solver configuration. Even though the momentum balances implicitly use the temperature from the next iteration, the temperature equation does not use the velocities of the next iteration. Instead the convective fluxes are calculated with the velocities from the previous iteration. Even though the implicit velocity-to-temperature coupling reduces the number of needed non-linear iterations an increase in the needed wall-clock time for computation can be noticed. This is attributed to the augmented costs during the application of the linear solver algorithm as a result of the additional degree of freedom that the linear system embraces.
+The presented results are in good agreement with \cite{vakilipour12}, which show monotonic decrease of the number of iterations with increased implicit coupling. It is notable that the pressure velocity coupling is responsible for the biggest decrease in the number of non-linear iterations. Different to the results presented in section \cite{sec:channel} this does not yield significant performance benefits with respect to wall-clock time.  In order to achieve the benefits of a fully coupled solution algorithm the coupling has to be increased to also involve temperature-to-velocity/pressure and velocity-to-temperature coupling. 
+
+Furthermore it can be noticed that the solely use of velocity-to-temperature coupling does not result in benefits compared to the coupled solution for velocities and pressure combined with a decoupled solve for the temperature equation. This is accredited to the treatment of the non-linearity of the temperature equation in the TCPLD solver configuration. Even though the momentum balances implicitly use the temperature from the next iteration, the temperature equation does not use the velocities of the next iteration. Instead the convective fluxes are calculated with the velocities from the previous iteration. Even though the implicit velocity-to-temperature coupling reduces the number of needed non-linear iterations an increase in the needed wall-clock time for computation can be noticed. This is attributed to the augmented costs during the application of the linear solver algorithm as a result of the additional degree of freedom that the linear system embraces. The necessary number of outer iterations is higher than in the NRCPLD configuration since the convective fluxes in the temperature equation are not coupled to the momentum balances which degrades the convergence of the non-linear iteration process.
+
 It can be concluded that in order to profit from the benefits of implicit coupling the key lays in the temperature-to-velocity/pressure coupling. However, it should be noted that the implicit consideration of the corresponding terms furthermore increases the amount of memory needed for computation and hence does not come without drawbacks.
 

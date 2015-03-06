@@ -142,10 +142,9 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!20}                              & 1.15002402649824759E-004 & & 2.0091  \\
     \rowcolor{black!20} \multirow{-3}{*}{128x128x128}& 1.14047118284635437E-004 & & 2.0214  \\ %\hline
     %
-    \rowcolor{black!00}\multirow{3}{*}{}             &  & &   \\
-    \rowcolor{black!00}                              &  & &   \\
-    \rowcolor{black!00} \multirow{-3}{*}{256x256x256}&  & &   \\ %\hline
-    %\rowcolor{black!00}\multirow{3}{*}{} &  &  &  \\\rowcolor{black!00} &  &   &  \\\rowcolor{black!00} \multirow{-3}{*}{16x16x16}& &  &  \\ \hline
+    \rowcolor{black!00}\multirow{3}{*}{}             & 2.876932445431025E-005 & & 2.0267 \\
+    \rowcolor{black!00}                              & 2.771472789328757E-005 & & 2.0529 \\
+    \rowcolor{black!00} \multirow{-3}{*}{256x256x256}& 2.826736500332136E-005 & & 2.0124 \\ %\hline
   \end{tabular}
   \caption{Comparison of the errors of the velocity calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
 \end{table}
@@ -160,8 +159,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!20} 32x32x32    & 3.7964856888161008E-002  &  3.7964815814009345E-002  & 1.2401 \\%\hline
     \rowcolor{black!00} 64x64x64    & 1.43878010062254581E-002 &  1.43878010061565496E-002 & 1.3998 \\%\hline
     \rowcolor{black!20} 128x128x128 & 5.16070564885203701E-003 &                           & 1.4792 \\%\hline
-    \rowcolor{black!00} 256x256x256 &                          &                           &        \\%\hline
-    %\rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
+    \rowcolor{black!00} 256x256x256 & 1.809811107444374E-003   &                           & 1.5117 \\%\hline
   \end{tabular}
   \caption{Comparison of the errors of the pressure calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
 \end{table}
@@ -171,13 +169,12 @@ The discretization techniques used in the present thesis yield an asymptotic dis
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(T\) from Segregated Solver & Error of \(T\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
-    \rowcolor{black!20} 8x8x8       & 4.0675323775412001E-003   & 4.0675323775378296E-003  &        \\%\hline
-    \rowcolor{black!00} 16x16x16    & 1.1324773183947739E-003   & 1.1324773183947821E-003  & 1.8447 \\%\hline
-    \rowcolor{black!20} 32x32x32    & 2.9310098015820527E-004   & 2.9310096243402903E-004  & 1.9500 \\%\hline
-    \rowcolor{black!00} 64x64x64    & 7.41002197446999740E-005  & 7.41002197433442199E-005 & 1.9838 \\%\hline
-    \rowcolor{black!20} 128x128x128 & 2.9310098015820527E-004   &                          & 1.9951 \\%\hline
-    \rowcolor{black!00} 256x256x256 &                           &                          &        \\%\hline
-    %\rowcolor{black!00} 64x64x64 &   &   &    \\%\hline
+    \rowcolor{black!20} 8x8x8       & 4.0675323775412001E-003  & 4.0675323775378296E-003  &        \\%\hline
+    \rowcolor{black!00} 16x16x16    & 1.1324773183947739E-003  & 1.1324773183947821E-003  & 1.8447 \\%\hline
+    \rowcolor{black!20} 32x32x32    & 2.9310098015820527E-004  & 2.9310096243402903E-004  & 1.9500 \\%\hline
+    \rowcolor{black!00} 64x64x64    & 7.41002197446999740E-005 & 7.41002197433442199E-005 & 1.9838 \\%\hline
+    \rowcolor{black!20} 128x128x128 & 1.85884642198498729E-005 &                          & 1.9951 \\%\hline
+    \rowcolor{black!00} 256x256x256 & 4.651911366447223E-006   &                          & 1.9985 \\%\hline
   \end{tabular}
   \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
 \end{table}
