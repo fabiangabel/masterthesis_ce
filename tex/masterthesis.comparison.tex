@@ -278,7 +278,7 @@ This section presents the results from the speedup measurements conducted on the
 
 \subsection{Realistic Testing Scenario -- Complex Geometry}
 
-The flow inside closed systems is This section compares the single process performance of the segregated and the fully coupled solution algorithm for a flow problem within a complex geometry. The geometry of the domain is based on a channel flow problem with square cross section, with the difference that inside the channel reside two obstacles with a square cross section of which one has been twisted against the other. Figure \ref{fig:sketch} shows a sketch of the problem domain. 
+Fluid flow inside closed applications is a common situation in mechanical engineering. The flow through a channel with rectangular crosssection can be seen as a simple testcase that is a part of complex applications. This section compares the single process performance of the segregated and the fully coupled solution algorithm for a flow problem within a complex geometry. The geometry of the domain is based on a channel flow problem with square cross section, with the special property that inside the channel reside two obstacles with a square cross section of which one has been twisted against the other. Figure \ref{fig:sketch} shows a sketch of the problem domain. 
 
 \begin{figure}
   \centering
@@ -315,11 +315,11 @@ was chosen. All the other problem parameters were chosen such that the flow prob
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{black!20} Density    & 1E-3 & $\frac{kg}{m^3}$      \\
+    \rowcolor{black!20} Density    & 1E-3 & $kg/m^3$      \\
     \rowcolor{black!00} Viscosity  & 1E-0 & K.A.  \\
     \rowcolor{black!20} Height     & 0.41 & m   \\
     \rowcolor{black!00} Length     & 2.5  & m  \\
-    \rowcolor{black!20} Sidelength & 0.1  & m  \\
+    \rowcolor{black!20} Side length cube & 0.1  & m  \\
     \rowcolor{black!00} Under relaxation u & 0.9 &  \\
     \rowcolor{black!20} Under relaxation p & 0.1 &  \\
   \end{tabular}
@@ -327,29 +327,42 @@ was chosen. All the other problem parameters were chosen such that the flow prob
   \label{tab:channel}
 \end{table}
 
-The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section REFERENCE. Since no assumptions on the geometry of a neighboring block are necessary each block can be constructed independently which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not impact on the convergence properties of the deployed linear solvers. Figure \ref{fig:channel1} and figure \ref{fig:channel2} show the mesh at the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks.
+The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section REFERENCE. Since no assumptions on the geometry of a neighboring block are necessary each block can be constructed independently which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not impact on the convergence properties of the deployed linear solvers. Figure \ref{fig:channel1} and figure \ref{fig:channel2} show the mesh at the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks. Figure \ref{fig:blocking} shows the domain decomposition into structured grid blocks around the two obstacles within the problem domain and emphasizes the need for accurate handling of non-matching block boundaries.
 
 \begin{figure}
   \centering
   \label{fig:channel1}
   \input{./img/channel.tikz.tex}
-  \caption{NONE}
+  \caption{East boundary of the numerical grid for the channel flow problem}
 \end{figure}
 
 \begin{figure}
   \centering
   \label{fig:channel2}
   \input{./img/channel2.tikz.tex}
-  \caption{NONE}
+  \caption{West boundary of the numerical grid for the channel flow problem }
 \end{figure}
 
 \begin{figure}
-  \centering
-  \input{./img/blocking.tikz.tex}
-  \caption{NONE}
+   \label{fig:cellvertex}
+   \centering
+    \subfigure{
+    \begin{minipage}[1\width]{0.4\textwidth}%
+      \input{./img/blocking2.tikz.tex}
+      \raggedleft{}
+    \end{minipage}}\qquad
+    \subfigure{
+    \begin{minipage}[1\width]{0.4\textwidth}%
+      \input{./img/blocking.tikz.tex}
+      \raggedleft{}
+    \end{minipage}}
+    \caption{Blocking for the two different obstacles within the problem domain of the channel flow}
 \end{figure}
 
-The solution of the linear systems resulting from the discretization of the problem takes up more time for the coupled solution algorithm than in the segregated coupled algorithm. For small problem sizes the additional overhead for the solution methods for linear systems and the property that the segregated solution algorithm does not need many outer iterations to converge leads to the conclusion that moderate to big problems with respect to the number of involved unknowns are necessary for the coupled solution algorithm to dominate. In contrast to the segregated algorithm, the fully coupled solution algorithm achieves a approximately constant amount of needed outer iterations, independent of the number of involved unknowns. The tests regarding the weak scaling of the coupled solution algorithm emphasize this property. Table \ref{tab:channelcompare} compares the measured wall clock time for different numbers of unknowns. The mesh shown in \ref{fig:channel1} and \ref{fig:channel2} was generated for the first number of unknowns. The two other numbers result from up to two times bisectioning the mesh in each direction, every time scaling the number of unknowns by a factor of eight.
+The solution of the linear systems resulting from the discretization of the problem takes up more time for the coupled solution algorithm than in the segregated coupled algorithm. For small problem sizes the additional overhead for the solution methods for linear systems and the property that the segregated solution algorithm does not need many outer iterations to converge leads to the conclusion that moderate to big problems with respect to the number of involved unknowns are necessary for the coupled solution algorithm to dominate through performance. 
+
+In contrast to the segregated algorithm, the fully coupled solution algorithm achieves an approximately constant amount of needed outer iterations, independent of the number of involved unknowns. The tests regarding the weak scaling of the coupled solution algorithm emphasize this property. Table \ref{tab:channelcompare} compares the measured wall clock time for different numbers of unknowns. The mesh shown in \ref{fig:channel1} and \ref{fig:channel2} was generated for the first number of unknowns and successively refined to achieve higher mesh resolutions. The two other numbers result from up to three times bisectioning the mesh in each direction, every time scaling the number of unknowns by a factor of eight. The tests were conducted on the formerly presented HHLR cluster, using the MPI2 and MEM2 section. 
+
 \begin{table}[h!]\centering
 \ra{1.3}
   \begin{tabular}{lcccc}\toprule
@@ -359,17 +372,68 @@ The solution of the linear systems resulting from the discretization of the prob
     \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1500E+03 & 355  & 42 \\
     \rowcolor{black!20} 2611080  & 1.1352E+05 & 0.3105E+04 & 1592 & 39 \\
   \end{tabular}
-  \caption{Characteristic problem properties used in the channel flow test case}
+  \caption{Performance analysis results of the channel flow problem}
   \label{tab:channelcompare}
 \end{table}
 
+The timing results show, that already after the first grid refinement step the fully coupled solution algorithm performs better with respect to the needed wall clock time for computation. This effect is even more clearly visible for higher mesh resolutions.
+
 \subsection{Classical Benchmarking Case -- Heat-Driven Cavity Flow}
 
-This section deals with the evaluation and comparison not only of the pressure-velocity coupling but also of the velocity-to-temperature coupling through the Boussinesq approximation and the temperature-velocity/pressure coupling through the Newton-Raphson linearization of the convective term in the temperature equation. For this the standard heat-driven cavity flow CITATION is adapted for a three dimensional domain and the material and geometric parameters are chosen such that a non-turbulent stationary flow exists, which means that the solution lies within the regime of approximations made by the solver.
+This section deals with the evaluation and comparison not only of the pressure-velocity coupling but also of the velocity-to-temperature coupling through the Boussinesq approximation and the temperature-velocity/pressure coupling through the Newton-Raphson linearization of the convective term in the temperature equation. For this the standard heat-driven cavity flow \cite{christon02,vahl83} is adapted for a three dimensional domain and the material and geometric parameters are chosen such that a non-turbulent stationary flow exists, which means that the solution lies within the regime of the approximations made by the solver.
 
-Essential for this benchmarking case is the nature of the flow. The fluid motion is a consequence of the effect of volume forces caused by temperature differences in the solution domain. This relation is represented by the Rayleigh and Prandtl number. It is assumed that for this kind of flow the fully implicit treatment of the temperature coupling will yield further benefits with respect to wall time, compared with solution approaches that solve for the temperature separately.
+Essential for this benchmarking case is the nature of the flow. The fluid motion is a consequence of the effect of volume forces caused by temperature differences in the solution domain, hence the mathematical problem exhibits a strong coupling bewteen the involved variables velocity, pressure and temperature. This relation is represented by the Rayleigh and Prandtl number. It is assumed that for this kind of flow the fully implicit treatment of the temperature coupling will yield further benefits with respect to wall time, compared with solution approaches that solve for the temperature separately. Table \ref{tab:cavity} lists the geometrical and solver parameters used for the performance analysis of this section.
 
-      \begin{itemize}
-      \item \url{http://www.featflow.de/en/benchmarks/cfdbenchmarking/mit_benchmark.html}
-      \end{itemize}
-      Describe Testing Setup (Boundary conditions and grid). Present results and compare them with literature.
+\begin{table}[h!]\centering
+\ra{1.3}
+  \begin{tabular}{lcc}\toprule
+    Property & Value & Unit \\
+    \midrule
+    \rowcolor{black!20} Density    & 1E-3 & $kg/m^3$      \\
+    \rowcolor{black!00} Viscosity  & 1E-0 & K.A.  \\
+    \rowcolor{black!20} Height     & 0.41 & m   \\
+    \rowcolor{black!00} Length     & 2.5  & m  \\
+    \rowcolor{black!20} Side length cube & 0.1  & m  \\
+    \rowcolor{black!00} Under relaxation u & 0.9 &  \\
+    \rowcolor{black!20} Under relaxation p & 0.1 &  \\
+    \rowcolor{black!00} Relative tolerance & 1E-8/1E-4 &
+  \end{tabular}
+  \caption{Characteristic problem properties used in the channel flow test case}
+  \label{tab:cavity}
+\end{table}
+
+The tests were conducted on the formerly presented HHLR cluster, using the MPI2 and MEM2 section. For the tests involving higher resolutions the relative tolerance for convergence was increased to $1E-4$. Table \ref{tab:cavitycompare}
+
+\begin{table}[h!]\centering
+\ra{1.3}
+  \begin{tabular}{cccc}\toprule
+    Resolution & Solver configuration & Time & Non-linear it. \\
+    \midrule
+    \rowcolor{black!20}\multirow{4}{*}{}            & SEG    &  &  \\
+    \rowcolor{black!20}                             & CPLD   &  &  \\
+    \rowcolor{black!20}                             & TCPLD  &  &  \\
+    \rowcolor{black!20} \multirow{-4}{*}{32x32x32}  & NRCPLD &  &  \\ %\hline
+    %
+    \rowcolor{black!00}\multirow{4}{*}{}            & SEG    & 0.1997E+04 &  804 \\
+    \rowcolor{black!00}                             & CPLD   & 0.7687E+03 &  63  \\
+    \rowcolor{black!00}                             & TCPLD  & 0.1278E+04 &  59  \\
+    \rowcolor{black!00} \multirow{-4}{*}{64x64x64}  & NRCPLD & 0.4240E+03 &  17  \\ %\hline
+    %
+    \rowcolor{black!20}\multirow{4}{*}{}               & SEG    & 0.5197E+05 &  3060 \\
+    \rowcolor{black!20}                                & CPLD   & 0.1860E+05 &  74   \\
+    \rowcolor{black!20}                                & TCPLD  & 0.1950E+05 &  50   \\
+    \rowcolor{black!20} \multirow{-4}{*}{128x128x128}  & NRCPLD & 0.6155E+04 &  18   \\ %\hline
+    %
+    \rowcolor{black!00}\multirow{4}{*}{}               & SEG    &  & \\
+    \rowcolor{black!00}                                & CPLD   &  & \\
+    \rowcolor{black!00}                                & TCPLD  &  & \\
+    \rowcolor{black!00} \multirow{-4}{*}{256x256x256}  & NRCPLD &  & \\ %\hline
+    %\rowcolor{black!00}\multirow{3}{*}{} &  &  &  \\\rowcolor{black!00} &  &   &  \\\rowcolor{black!00} \multirow{-3}{*}{16x16x16}& &  &  \\ \hline
+  \end{tabular}
+  \caption{Performance analysis results of the heated cavity flow problem}
+  \label{tab:cavitycompare}
+\end{table}
+
+The presended results are in good aggreement with \cite{vakilipour12}, which show monotonic decrease of the number of iterations with increased implicit coupling. It is notable that the pressure velocity coupling is responsible for the biggest decrease in the number of non-linear iterations. Different to the results presented in section \cite{sec:channel} this does not yield significant performance benefits with respect to wall-clock time. In order to achive the benefits of a fully coupled solution algorithm the coupling has to be increased to also involve temperature-to-velocity/pressure and velocity-to-temperature coupling. Furthermore, the solely use of velocity-to-temperature coupling results in no benefits compared to the coupled solution for velocities and pressure combined with a decoupled solve for the temperature equation. This is accredited to the treatment of the non-linearity of the temperature equation in the TCPLD solver configuration. Even though the momentum balances implicitly use the temperature from the next iteration, the temperature equation does not use the velocities of the next iteration. Instead the convective fluxes are calculated with the velocities from the previous iteration. Even though the implicit velocity-to-temperature coupling reduces the number of needed non-linear iterations an increase in the needed wall-clock time for computation can be noticed. This is attributed to the augmented costs during the application of the linear solver algorithm as a result of the additional degree of freedom that the linear system embraces.
+It can be concluded that in order to profit from the benefits of implicit coupling the key lays in the temperature-to-velocity/pressure coupling. However, it should be noted that the implicit consideration of the corresponding terms furthermore increases the amount of memory needed for computation and hence does not come without drawbacks.
+
