@@ -115,7 +115,7 @@ A comparison of the results leads to the first conclusion, namely that the resul
 \begin{displaymath}
   \hat{p}_{\phi} = \frac{\log\left(\frac{\operatorname{err}(\phi,{n1})}{\operatorname{err}(\phi,{n2})}\right)}{\log\left(\frac{n1}{n2}\right)}.
 \end{displaymath}
-The discretization techniques used in the present thesis yield an asymptotic discretization error of two \cite{schäfer99}. Comparing with the results in the following tables REFERENCE shows the asymptotic behavior of the calculated order which leads to the conclusion that the discretization has been implemented with success.
+The discretization techniques used in the present thesis yield an asymptotic discretization error of two \cite{schäfer99}. Comparing with the results in the tables \ref{tab:velorder}, \ref{tab:pressorder} and \ref{tab:temporder} shows the asymptotic behavior of the calculated order which leads to the conclusion that the discretization has been implemented with success.
 
 \begin{table}[h!]\centering
 \ra{1.3}
@@ -147,6 +147,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!00} \multirow{-3}{*}{256x256x256}& 2.826736500332136E-005 & & 2.0124 \\ %\hline
   \end{tabular}
   \caption{Comparison of the errors of the velocity calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
+  \label{tab:velorder}
 \end{table}
 
 \begin{table}[h!]\centering
@@ -162,6 +163,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!00} 256x256x256 & 1.809811107444374E-003   &                           & 1.5117 \\%\hline
   \end{tabular}
   \caption{Comparison of the errors of the pressure calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
+  \label{tab:pressorder}
 \end{table}
 
 \begin{table}[h!]\centering
@@ -177,6 +179,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!00} 256x256x256 & 4.651911366447223E-006   &                          & 1.9985 \\%\hline
   \end{tabular}
   \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
+  \label{tab:temporder}
 \end{table}
 
 \subsection{Influence of the Under-Relaxation Factor for the Velocities}

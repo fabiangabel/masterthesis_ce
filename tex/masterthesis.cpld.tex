@@ -194,14 +194,14 @@ The different degrees of coupling between the different equations will affect th
 \begin{figure}
   \centering
   %\label{fig:cpldassemble}
-   \input{./img/nointerlacemat.tikz.tex}
-  \caption{Non-zero structure the linear system used in the coupled solution algorithm for a block structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The variables have been ordered such that each major matrix block refers to only one variable or the coupling between exactly two variables.}
+  \input{./img/interlacemat.tikz.tex}
+  \caption{Non-zero structure of the linear system used in the coupled solution algorithm for a block structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The variables have been interlaced and the matrix consists of blocks as shown in figure \ref{fig:cpldassemble}.}
 \end{figure}
 
 \begin{figure}
   \centering
   %\label{fig:cpldassemble}
-  \input{./img/interlacemat.tikz.tex}
-  \caption{Non-zero structure of the linear system used in the coupled solution algorithm for a block structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The variables have been interlaced and the matrix consists of blocks as shown in figure \ref{fig:cpldassemble}.}
-
+   \input{./img/nointerlacemat.tikz.tex}
+  \caption{Non-zero structure the linear system used in the coupled solution algorithm for a block structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The variables have been ordered such that each major matrix block refers to only one variable or the coupling between exactly two variables.}
+  \label{fig:nointerlacemat}
 \end{figure}
