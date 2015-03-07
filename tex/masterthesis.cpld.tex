@@ -102,6 +102,7 @@ In the same way it is possible to realize the coupling described in the previous
 \end{displaymath}
 
 \subsubsection{Temperature-to-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
+\label{sec:nrcoupled}
 
 The previous section discussed the velocity temperature coupling and so far only the momentum balances were affected by the realization of the coupling methods. Independently it is possible to couple the temperature equation not only to the momentum balances but also to the pressure equation. In section \ref{sec:discretetemperature} the non-linear partial differential equation was linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid. But, if an implicit temperature coupling is sought, a coupling of the temperature equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization} which can be interpreted as a bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial.
 

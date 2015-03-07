@@ -1,5 +1,5 @@
-\documentclass[article,type=msc,colorback,accentcolor=tud2a]{tudthesis}
-%\documentclass[article,type=msc,colorback,accentcolor=tud2a]{tudreport}
+%\documentclass[article,type=msc,colorback,accentcolor=tud2a]{tudthesis}
+\documentclass[article,type=msc,colorback,accentcolor=tud2a]{tudreport}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\usepackage{ngerman}
@@ -18,19 +18,26 @@
 \usepackage{masterthesis}
 
 %selective compilation of files
-\includeonly{./tex/masterthesis.caffa}
+%\includeonly{./tex/masterthesis.comparison}
+
+\setinstitutionlogo[height]{./img/fnb_logo_schriftzug.pdf}
 
 \begin{document}
-\thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
-%\title{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
-  \author{Fabian Gabel}
-  \referee{Prof. Dr. rer. nat. Michael Schäfer}{Dipl.-Ing Ulrich Falk}
-  \department{Studienbereich CE}
-  \group{FNB}
+%\thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
+\title{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}
+\subtitle{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
+\subsubtitle{Masterarbeit | Fabian Gabel} 
+\institution{Fachgebiet Numerische Berechnungsverfahren im Maschinenbau}
+\sponsor{\hfil\includegraphics{ce_logo_2015.jpg}}
+  %\author{Fabian Gabel}
+  %\referee{Prof. Dr. rer. nat. Michael Schäfer}{Dipl.-Ing Ulrich Falk}
+  %\department{Studienbereich CE}
+  %\group{FNB}
 % \tuprints{12345}{1234}
-  \makethesistitle
-% \maketitle
-  \selectlanguage{ngerman} \affidavit{Fabian Gabel} \selectlanguage{english}
+% \makethesistitle
+  \maketitle
+ %\selectlanguage{ngerman} \affidavit{Fabian Gabel} \selectlanguage{english}
+  \include{./files/erklaerung}
   \tableofcontents
   \listoffigures
   \listoftables
@@ -41,10 +48,6 @@
   \section*{TODO LIST}
 
   \begin{itemize}
-    \item Bilder zum Konvergenzverlauf sind gut
-    \item wall boundary condition treatment could improve convergence
-    \item say that viscous dissipation is not accounted for in the energy balance
-    \item midpoint integration rule or midpoint rule of integration
     \item remove equation numbering when there is no reference
     \item change the matrix coefficient indexing to \(a_P^{u_i,p}\) like in \cite{darwish09}.
     \item extend nomenclature
@@ -53,22 +56,13 @@
     \item check simple chapter, since the right hand side lacks of deferred corrector and under-relaxed velocities
     \item mention the boundary conditions for the pressure correction
     \item check all headings for correct spelling
-    \item mention that for an unknown velocity field the partial differential equation for the temperature is non-linear as well
-    \item consistent use of either temperature or energy equation
-    \item check the signs in the Boussinesq approximation
-    \item pressure weighted interpolation method for large body forces?
-    \item not only speed but also improvement of robustness
-    \item instationary flows?
-    \item align exponents in the equation for the Newton-Raphson linearization
-    \item define the term consistent
-    \item add citations to clipper, opencascade and maple, ICEM CFD
-    \item a priori exact solution use this formulation
     \item Falsche Wahl der problem domain, führt zu global nicht erfüllter kontinuitätsgleichung. residuum der druckkorrectur entspricht dem massenfluss
     \item reference Comparison of finite-volume numerical methods with staggered and colocated
     \item read klaij again and use some of its arguments
       grids
     \item emphasize the flexibility of the implementation
     \item This is often referred to as "matrix-free", though it is still a Mat in PETSc (Mat in PETSc means "finite-dimensional linear operator").  
+    \item Rayleigh and Reynolds
   \end{itemize}
 
   \include{./tex/masterthesis.introduction}

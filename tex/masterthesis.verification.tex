@@ -119,66 +119,66 @@ The discretization techniques used in the present thesis yield an asymptotic dis
 
 \begin{table}[h!]\centering
 \ra{1.3}
+  \caption{Comparison of the errors of the velocity calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(\vec{u}\) from Segregated Solver & Error of \(\vec{u}\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
-    \rowcolor{black!20}\multirow{3}{*}{}          & 3.1704502301157865E-002 & 3.1704502290288525E-002 &  \\
-    \rowcolor{black!20}                           & 3.0370110307466745E-002 & 3.0370110306195783E-002 &  \\
-    \rowcolor{black!20} \multirow{-3}{*}{8x8x8}   & 3.1636095150284566E-002 & 3.1636095141306442E-002 &  \\ %\hline
+    \rowcolor{black!20}\multirow{3}{*}{}          &    3.170450230115786E-002 & 3.1704502290288525E-002 &  \\
+    \rowcolor{black!20}                           &    3.037011030746674E-002 & 3.0370110306195783E-002 &  \\
+    \rowcolor{black!20} \multirow{-3}{*}{8x8x8}   &    3.163609515028456E-002 & 3.1636095141306442E-002 &  \\ %\hline
     %
-    \rowcolor{black!00}\multirow{3}{*}{}          & 7.9143566730061794E-003 &  7.9143566730065350E-003 & 2.0021  \\
-    \rowcolor{black!00}                           & 7.5343146124403392E-003 &  7.5343146124409056E-003 & 2.0111  \\
-    \rowcolor{black!00} \multirow{-3}{*}{16x16x16}& 7.8113167415358713E-003 &  7.8113167415361021E-003 & 2.0179  \\ %\hline
+    \rowcolor{black!00}\multirow{3}{*}{}          &    7.914356673006179E-003 & 7.9143566730065350E-003 & 2.0021  \\
+    \rowcolor{black!00}                           &    7.534314612440339E-003 & 7.5343146124409056E-003 & 2.0111  \\
+    \rowcolor{black!00} \multirow{-3}{*}{16x16x16}&    7.811316741535871E-003 & 7.8113167415361021E-003 & 2.0179  \\ %\hline
     %
-    \rowcolor{black!20}\multirow{3}{*}{}          & 1.9333028867476348E-003  & 1.9333250814097063E-003 & 2.0334  \\
-    \rowcolor{black!20}                           & 1.8675991971385400E-003  & 1.8676512523175990E-003 & 2.0123  \\
-    \rowcolor{black!20} \multirow{-3}{*}{32x32x32}&  1.8948139100889829E-003 & 1.8948223205995562E-003 & 2.0435  \\ %\hline
+    \rowcolor{black!20}\multirow{3}{*}{}          &    1.933302886747634E-003 & 1.9333250814097063E-003 & 2.0334  \\
+    \rowcolor{black!20}                           &    1.867599197138540E-003 & 1.8676512523175990E-003 & 2.0123  \\
+    \rowcolor{black!20} \multirow{-3}{*}{32x32x32}&    1.894813910088982E-003 & 1.8948223205995562E-003 & 2.0435  \\ %\hline
     %
-    \rowcolor{black!00}\multirow{3}{*}{}          & 4.74689419949359882E-004 & 4.74689420015271242E-004 & 2.0260 \\
-    \rowcolor{black!00}                           & 4.62925993339559415E-004 & 4.62925993487765027E-004 & 2.0123 \\
-    \rowcolor{black!00} \multirow{-3}{*}{64x64x64}& 4.63000820355029328E-004 & 4.63000820380278229E-004 & 2.0330 \\ %\hline
+    \rowcolor{black!00}\multirow{3}{*}{}          &    4.746894199493598E-004 & 4.7468942001527124E-004 & 2.0260 \\
+    \rowcolor{black!00}                           &    4.629259933395594E-004 & 4.6292599348776502E-004 & 2.0123 \\
+    \rowcolor{black!00} \multirow{-3}{*}{64x64x64}&    4.630008203550293E-004 & 4.6300082038027822E-004 & 2.0330 \\ %\hline
     %
-    \rowcolor{black!20}\multirow{3}{*}{}             & 1.17226697229094981E-004 & & 2.0177  \\
-    \rowcolor{black!20}                              & 1.15002402649824759E-004 & & 2.0091  \\
-    \rowcolor{black!20} \multirow{-3}{*}{128x128x128}& 1.14047118284635437E-004 & & 2.0214  \\ %\hline
+    \rowcolor{black!20}\multirow{3}{*}{}             & 1.172266972290949E-004 & & 2.0177  \\
+    \rowcolor{black!20}                              & 1.150024026498247E-004 & & 2.0091  \\
+    \rowcolor{black!20} \multirow{-3}{*}{128x128x128}& 1.140471182846354E-004 & & 2.0214  \\ %\hline
     %
     \rowcolor{black!00}\multirow{3}{*}{}             & 2.876932445431025E-005 & & 2.0267 \\
     \rowcolor{black!00}                              & 2.771472789328757E-005 & & 2.0529 \\
     \rowcolor{black!00} \multirow{-3}{*}{256x256x256}& 2.826736500332136E-005 & & 2.0124 \\ %\hline
   \end{tabular}
-  \caption{Comparison of the errors of the velocity calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
   \label{tab:velorder}
 \end{table}
 
 \begin{table}[h!]\centering
 \ra{1.3}
+  \caption{Comparison of the errors of the pressure calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(p\) from Segregated Solver & Error of \(p\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
-    \rowcolor{black!20} 8x8x8       & 0.18303589312168636      &  0.18303589466468098      &        \\%\hline
-    \rowcolor{black!00} 16x16x16    & 8.9677276839834036E-002  &  8.9677276839825765E-002  & 1.0293 \\%\hline
-    \rowcolor{black!20} 32x32x32    & 3.7964856888161008E-002  &  3.7964815814009345E-002  & 1.2401 \\%\hline
-    \rowcolor{black!00} 64x64x64    & 1.43878010062254581E-002 &  1.43878010061565496E-002 & 1.3998 \\%\hline
-    \rowcolor{black!20} 128x128x128 & 5.16070564885203701E-003 &                           & 1.4792 \\%\hline
-    \rowcolor{black!00} 256x256x256 & 1.809811107444374E-003   &                           & 1.5117 \\%\hline
+    \rowcolor{black!20} 8x8x8       & 0.183035893121686      &  0.1830358946646808      &        \\%\hline
+    \rowcolor{black!00} 16x16x16    & 8.967727683983406E-002 &  8.9677276839825765E-002 & 1.0293 \\%\hline
+    \rowcolor{black!20} 32x32x32    & 3.796485688816108E-002 &  3.7964815814009345E-002 & 1.2401 \\%\hline
+    \rowcolor{black!00} 64x64x64    & 1.438780100622541E-002 &  1.4387801006156546E-002 & 1.3998 \\%\hline
+    \rowcolor{black!20} 128x128x128 & 5.160705648852031E-003 &                          & 1.4792 \\%\hline
+    \rowcolor{black!00} 256x256x256 & 1.809811107444374E-003 &                          & 1.5117 \\%\hline
   \end{tabular}
-  \caption{Comparison of the errors of the pressure calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
   \label{tab:pressorder}
 \end{table}
 
 \begin{table}[h!]\centering
 \ra{1.3}
+  \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(T\) from Segregated Solver & Error of \(T\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
-    \rowcolor{black!20} 8x8x8       & 4.0675323775412001E-003  & 4.0675323775378296E-003  &        \\%\hline
-    \rowcolor{black!00} 16x16x16    & 1.1324773183947739E-003  & 1.1324773183947821E-003  & 1.8447 \\%\hline
-    \rowcolor{black!20} 32x32x32    & 2.9310098015820527E-004  & 2.9310096243402903E-004  & 1.9500 \\%\hline
-    \rowcolor{black!00} 64x64x64    & 7.41002197446999740E-005 & 7.41002197433442199E-005 & 1.9838 \\%\hline
-    \rowcolor{black!20} 128x128x128 & 1.85884642198498729E-005 &                          & 1.9951 \\%\hline
-    \rowcolor{black!00} 256x256x256 & 4.651911366447223E-006   &                          & 1.9985 \\%\hline
+    \rowcolor{black!20} 8x8x8       & 4.067532377541200E-003  & 4.0675323775378296E-003  &        \\%\hline
+    \rowcolor{black!00} 16x16x16    & 1.132477318394773E-003  & 1.1324773183947821E-003  & 1.8447 \\%\hline
+    \rowcolor{black!20} 32x32x32    & 2.931009801582052E-004  & 2.9310096243402903E-004  & 1.9500 \\%\hline
+    \rowcolor{black!00} 64x64x64    & 7.410021974469997E-005  & 7.4100219743344219E-005  & 1.9838 \\%\hline
+    \rowcolor{black!20} 128x128x128 & 1.858846421984987E-005  &                          & 1.9951 \\%\hline
+    \rowcolor{black!00} 256x256x256 & 4.651911366447223E-006  &                          & 1.9985 \\%\hline
   \end{tabular}
-  \caption{Comparison of the errors of the temperature calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
   \label{tab:temporder}
 \end{table}
 

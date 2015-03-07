@@ -19,7 +19,7 @@ Another option to arrange variables specifically for algorithms that solve the N
     \end{minipage}}%
     \hfil
     \subfigure{
-    \begin{minipage}[1\width]{0.33\textwidth}%
+    \begin{minipage}[1\width]{0.3\textwidth}%
       \centering{}
       \input{./img/cellcenter.tikz.tex}
     \end{minipage}}
@@ -36,139 +36,127 @@ Regarding the treatment of domain boundaries and the ordering of the cells withi
 
 Inside a structured grid block, cells with the shape of hexahedrons are used. In addition to the geometric boundaries of each control volume a numerical grid also provides a mapping that assigns to each control volume with index \(P\) a set of indexes of neighbouring control volumes \(NB(P):=\{W,S,B,T,N,E\}\), which are named after the geographic directions. Figure \ref{fig:blockstruc} shows a single grid cell with its direct neighbours. The faces \(\{S_w,S_s,S,b,S_t,S_n,S_e\}\) of each hexahedral control volume represent the mentioned geometric boundaries. 
 
-    \begin{itemize}
-      \item talk about grid quality
-      \item talk about local refinement
-      \item talk about variable arrangement
-    \end{itemize}
+\begin{figure}[h]
+  \label{fig:blockstruc}
+  \subfigure{
+  \begin{minipage}[1\width]{0.5\textwidth}%
+    \input{./img/blockstruc.tikz.tex}
+    \centering{}
+  \end{minipage}}\qquad
+  \subfigure{
+  \begin{minipage}[1\width]{0.4\textwidth}%
+    \centering{}
+    \input{./img/cv.tikz.tex}
+  \end{minipage}}
+  \caption{Block structured grid consisting of two blocks}
+ \end{figure}
 
-    \begin{figure}[h]
-      \label{fig:blockstruc}
-      \subfigure{
-      \begin{minipage}[1\width]{0.5\textwidth}%
-        \input{./img/blockstruc.tikz.tex}
-        \centering{}
-      \end{minipage}}\qquad
-      \subfigure{
-      \begin{minipage}[1\width]{0.4\textwidth}%
-        \centering{}
-        \input{./img/cv.tikz.tex}
-      \end{minipage}}
-      \caption{Block structured grid consisting of two blocks}
-     \end{figure}
-    
-    \subsection{Approximation of Integrals and Derivatives}
-    \label{sec:approxintegralderivative}
+\subsection{Approximation of Integrals and Derivatives}
+\label{sec:approxintegralderivative}
 
-    In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \emph{midpoint rule}. This rule is similar to the mean value theorem of integration, which states that there exists a point \(\vec{\xi} \in V\) for a Riemann integrable function \(\phi\) such that \(\textstyle \phi(\xi) \int_V \mathrm{d}V = \int_V \phi(x) \mathrm{d}V\). For the midpoint rule \(\vec{\xi}\) is taken to be the center of mass of \(V\). If the integration domain \(V\) is indeed a volume, fortunately the calculation of \(\phi(\mathbb{\xi})\) with \(\textstyle \vec{\xi} := \left({ \int_V x_i \mathrm{d}V }/{ \int_V \mathrm{d}V } \right)_{i = 1,\dots,3}\) presents no difficulties since due to the collocated variable arrangement the value of \(\phi\) is stored in the cell center, which corresponds to the location \(\vec{\xi}\). However if the domain of integration is a surface, a preceding interpolation step is necessary.
+In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \emph{midpoint rule}. This rule is similar to the mean value theorem of integration, which states that there exists a point \(\vec{\xi} \in V\) for a Riemann integrable function \(\phi\) such that \(\textstyle \phi(\xi) \int_V \mathrm{d}V = \int_V \phi(x) \mathrm{d}V\). For the midpoint rule \(\vec{\xi}\) is taken to be the center of mass of \(V\). If the integration domain \(V\) is indeed a volume, fortunately the calculation of \(\phi(\mathbb{\xi})\) with \(\textstyle \vec{\xi} := \left({ \int_V x_i \mathrm{d}V }/{ \int_V \mathrm{d}V } \right)_{i = 1,\dots,3}\) presents no difficulties since due to the collocated variable arrangement the value of \(\phi\) is stored in the cell center, which corresponds to the location \(\vec{\xi}\). However if the domain of integration is a surface, a preceding interpolation step is necessary.
 
-    On the other hand to transform a partial differential equation into a linear algebraic equation it is necessary to discretize the differential operators of the equations. For numerical reasons two different discretization techniques are used in this thesis. A common task is to discretize expressions of the form
-    \begin{displaymath}
-      \left(\nabla \phi\right)_e \cdot \vec{n}_e,
-    \end{displaymath}
-    where \(\left(\nabla \phi\right)_e\) is the Gradient of \(\phi\) on a boundary face \(S_e\). One method is to directly interpret this expression as a directional derivative and approximate it with a central difference
-    \begin{equation}
-      \label{eq:cds}
-      \left(\nabla \phi\right)_e \cdot \vec{n}_e \approx \frac{\phi_P - \phi_E}{|| \vec{x}_P - \vec{x}_E ||_2}.
-    \end{equation}
-    Another method would be to first calculate the cell center gradients \(\left(\nabla \phi \right)_P\) and \(\left(\nabla \phi \right)_E\) and interpolate them linearly before calculating the projection onto \(\vec{n}_e\)
-    \begin{equation}
-      \label{eq:interpolgrad}
-      \left(\nabla \phi\right)_e \cdot \vec{n}_e 
-      \approx 
-      \left[\gamma_e \left(\nabla \phi \right)_P + (1-\gamma_e) \left(\nabla \phi \right)_E \right] \cdot \vec{n}_e,
-    \end{equation}
-    where \( \gamma_e := {||\vec{x}_P - \vec{x}_e||_2}/{||\vec{x}_P - \vec{x}_E||_2}\) is a geometric interpolation factor. For calculating the cell center gradients a method based on Gauss' integration theorem and the midpoint rule for volume integration is employed
+On the other hand to transform a partial differential equation into a linear algebraic equation it is necessary to discretize the differential operators of the equations. For numerical reasons two different discretization techniques are used in this thesis. A common task is to discretize expressions of the form
+\begin{displaymath}
+  \left(\nabla \phi\right)_e \cdot \vec{n}_e,
+\end{displaymath}
+where \(\left(\nabla \phi\right)_e\) is the Gradient of \(\phi\) on a boundary face \(S_e\). One method is to directly interpret this expression as a directional derivative and approximate it with a central difference
+\begin{equation}
+  \label{eq:cds}
+  \left(\nabla \phi\right)_e \cdot \vec{n}_e \approx \frac{\phi_P - \phi_E}{|| \vec{x}_P - \vec{x}_E ||_2}.
+\end{equation}
+Another method would be to first calculate the cell center gradients \(\left(\nabla \phi \right)_P\) and \(\left(\nabla \phi \right)_E\) and interpolate them linearly before calculating the projection onto \(\vec{n}_e\)
+\begin{equation}
+  \label{eq:interpolgrad}
+  \left(\nabla \phi\right)_e \cdot \vec{n}_e 
+  \approx 
+  \left[\gamma_e \left(\nabla \phi \right)_P + (1-\gamma_e) \left(\nabla \phi \right)_E \right] \cdot \vec{n}_e,
+\end{equation}
+where \( \gamma_e := {||\vec{x}_P - \vec{x}_e||_2}/{||\vec{x}_P - \vec{x}_E||_2}\) is a geometric interpolation factor. For calculating the cell center gradients a method based on Gauss' integration theorem and the midpoint rule for volume integration is employed
 
-    \begin{equation}
-      \label{eq:gaussgrad}
-      \left( \nabla \phi \right)_{i,P}
-      =
-      \left( \frac{\partial \phi}{\partial x_i}\right)_P
-      \approx
-      \frac{\int_V\left(\frac{\partial \phi}{\partial x_i}\right)_P\mathrm{d}V}{|V|}.
-    \end{equation}
+\begin{equation}
+  \label{eq:gaussgrad}
+  \left( \nabla \phi \right)_{i,P}
+  =
+  \left( \frac{\partial \phi}{\partial x_i}\right)_P
+  \approx
+  \frac{\int_V\left(\frac{\partial \phi}{\partial x_i}\right)_P\mathrm{d}V}{|V|}.
+\end{equation}
 
-    Briefly explain the idea behind the quadrature via the midpoint rule. Talk about central differences and the approximation via the gauss theorem. Maybe talk about the resulting order of the truncation error. 
+\subsection{Treatment of Non-Orthogonality of Grid Cells}
+\label{sec:nonorth}
 
-    \subsection{Treatment of Non-Orthogonality of Grid Cells}
-    \label{sec:nonorth}
+Unfortunately real applications involve complex geometries, which in turn affects the orthogonality of the grid. On non-orthogonal meshes the directional derivative in direction of the face unit normal vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other side the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error that comes with this approximation (PROOF?). Hence a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
+\begin{equation}
+  \label{eq:orthdecomp}
+  \vec{S}_e = \vecg{\Delta} + \vec{k},
+\end{equation}
+where \(\vecg{\Delta}\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center \(\vec{x}_P\) of the control volume \(P\) with the center \(\vec{x}_E\) of its neighbour \(E\). This vector controls the \emph{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \emph{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented by stating the respective expression for \(\vecg{\Delta}\). The resulting vector \(\vec{k}\) can be calculated by using (\ref{eq:orthdecomp}). One important characteristic that all of the presented approaches have is common, is that the non-orthogonal contribution vanishes, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two-dimensional. A geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}. The last subsection handles the integration of one generic approach into the discretization process.
 
-    Unfortunately real applications involve complex geometries, which in turn affects the orthogonality of the grid. On non-orthogonal meshes the directional derivative in direction of the face unit normal vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other side the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error that comes with this approximation (PROOF?). Hence a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
-    \begin{equation}
-      \label{eq:orthdecomp}
-      \vec{S}_e = \vecg{\Delta} + \vec{k},
-    \end{equation}
-    where \(\vecg{\Delta}\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center \(\vec{x}_P\) of the control volume \(P\) with the center \(\vec{x}_E\) of its neighbour \(E\). This vector controls the \emph{orthogonal} contribution to the directional derivative. The vector \(\vec{k}\) controls the influence of the \emph{non-orthogonal} contribution. In the next paragraphs the three main decompositions of the surface vector \(\vec{S}_e\) will be presented by stating the respective expression for \(\vecg{\Delta}\). The resulting vector \(\vec{k}\) can be calculated by using (\ref{eq:orthdecomp}). One important characteristic that all of the presented approaches have is common, is that the non-orthogonal contribution vanishes, when an orthogonal grid is used. For simplicity the presentation of the decompositions is chosen to be two-dimensional. A geometrical interpretation of the tree approaches is given in \ref{fig:nonorth}. The last subsection handles the integration of one generic approach into the discretization process.
+\subsubsection{Minimum Correction Approach}
 
-      \subsubsection{Minimum Correction Approach}
+This is the approach as proposed in \cite{muzaferja}. The reader should note, that even though \cite{ferziger02} references \cite{muzaferja}, they use a different approach to be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by always choosing \(\vec{k}\) to be orthogonal to \(\vecg{\Delta}\), which leads to
+\begin{displaymath}
+  \vecg{\Delta} = \left( \vec{d} \cdot \vec{S}_e \right) \frac{\vec{d}}{||\vec{d}||_2}.
+\end{displaymath}
+It should be noted that the Influence of the orthogonal contribution decreases with increasing non-orthogonality of the grid.
 
-      This is the approach as proposed in \cite{muzaferja}. The reader should note, that even though \cite{ferziger02} references \cite{muzaferja}, they use a different approach to be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by always choosing \(\vec{k}\) to be orthogonal to \(\vecg{\Delta}\), which leads to
-      \begin{displaymath}
-        \vecg{\Delta} = \left( \vec{d} \cdot \vec{S}_e \right) \frac{\vec{d}}{||\vec{d}||_2}.
-      \end{displaymath}
-      It should be noted that the Influence of the orthogonal contribution decreases with increasing non-orthogonality of the grid.
+\subsubsection{Orthogonal Correction Approach}
+\label{seq:orthcorrapproach}
 
-      \subsubsection{Orthogonal Correction Approach}
-      \label{seq:orthcorrapproach}
+The following method for decomposing the surface normal vector is presented in \cite{ferziger02} and the approach implemented in the developed solvers. In this approach a simple projection is used which is independent of the non-orthogonality of the grid. As a result the orthogonal contribution \(||\vecg{\Delta}||_2 =  ||\vec{S}_e||_2\) and is thus modelled as 
+\begin{displaymath}
+  \vecg{\Delta} =  S_e \frac{\vec{d}}{ ||\vec{d}||_2}.
+\end{displaymath}
 
-      The following method for decomposing the surface normal vector is presented in \cite{ferziger02} and the approach implemented in the developed solvers. In this approach a simple projection is used which is independent of the non-orthogonality of the grid. As a result the orthogonal contribution \(||\vecg{\Delta}||_2 =  ||\vec{S}_e||_2\) and is thus modelled as 
-      \begin{displaymath}
-        \vecg{\Delta} =  S_e \frac{\vec{d}}{ ||\vec{d}||_2}.
-      \end{displaymath}
+\subsubsection{Over-Relaxed Approach}
 
-      \subsubsection{Over-Relaxed Approach}
+The last approach is used in \cite{jasak96,darwish09} and is characterized by an increasing influence of the orthogonal contribution with increasing grid non-orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
+\begin{displaymath}
+  \vecg{\Delta} =  S_e^2 \frac{\vec{d}}{ \vec{d} \cdot \vec{S}_e }.
+\end{displaymath} 
 
-      The last approach is used in \cite{jasak96,darwish09} and is characterized by an increasing influence of the orthogonal contribution with increasing grid non-orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
-      \begin{displaymath}
-        \vecg{\Delta} =  S_e^2 \frac{\vec{d}}{ \vec{d} \cdot \vec{S}_e }.
-      \end{displaymath} 
+\begin{figure}[h]
+\label{fig:nonorth}
+\subfigure{
+\begin{minipage}[1\width]{0.31\textwidth}%
+  \centering{}
+\input{./img/mincorr.tikz.tex}
+\end{minipage}}
+\hfil
+\subfigure{
+\begin{minipage}[1\width]{0.31\textwidth}%
+  \centering{}
+\input{./img/orthcorr.tikz.tex}
+\end{minipage}}
+\hfil
+\subfigure{
+\begin{minipage}[1\width]{0.31\textwidth}%
+  \centering{}
+\input{./img/overcorr.tikz.tex}
+\end{minipage}}
+\caption{Minimum correction, orthogonal correction and over-relaxed approach}
+\end{figure}
 
-      \begin{figure}[h]
-      \label{fig:nonorth}
-      \subfigure{
-      \begin{minipage}[1\width]{0.31\textwidth}%
-        \centering{}
-      \input{./img/mincorr.tikz.tex}
-      \end{minipage}}\qquad
-      \subfigure{
-      \begin{minipage}[1\width]{0.31\textwidth}%
-        \centering{}
-      \input{./img/orthcorr.tikz.tex}
-      \end{minipage}}
-      \subfigure{
-      \begin{minipage}[1\width]{0.31\textwidth}%
-        \centering{}
-      \input{./img/overcorr.tikz.tex}
-      \end{minipage}}
-      \caption{Minimum correction, orthogonal correction and over-relaxed approach}
-      \end{figure}
+\subsubsection{Deferred Non-Orthogonal Correction}
 
-      \subsubsection{Deferred Non-Orthogonal Correction}
+In order to reduce the computational stencil that would be necessary to handle the non-orthogonal correction implicitly the correction will be treated explicitly using a deferred correction which guarantees that in the case of a fully converged solution only the face normal derivative has been taken into account. Generally the discretization using a non-orthogonal correction would yield 
+\begin{displaymath}
+  \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx \left(\nabla \phi \right)_e \cdot \vecg{\Delta} + \left( \nabla \phi \right)_e \cdot \vec{k}.
+\end{displaymath}
+Where the first term can be approximated using a central differencing scheme for the directional derivative and the second by interpolating cell center gradients. If one furthermore uses the fact that this method comes to play in a solution algorithm for a non-linear system of partial differential equations a deferred correction can be implemented which ensues a smaller error from the non-orthogonality. In the case of the previously mentioned discretization techniques for partial derivatives a possible deferred correction approach reads
+\begin{displaymath}
+  \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx ||\vecg{\Delta}||_2 \frac{\phi_P - \phi_E}{||\vec{x}_P - \vec{x}_E||_2} - \left(\nabla \phi \right)_e^{(n-1)} \cdot \left(\vecg{\Delta} - \vec{S}_e \right).
+\end{displaymath}
+It should be noted that the use of a deferred correction in conjunction with the requirement that the non-orthogonal correction vanishes on orthogonal grid introduces an inconsistent discretization of \( \left(\nabla \phi \right)_e \cdot \vecg{\Delta} \).
 
-      In order to reduce the computational stencil that would be necessary to handle the non-orthogonal correction implicitly the correction will be treated explicitly using a deferred correction which guarantees that in the case of a fully converged solution only the face normal derivative has been taken into account. Generally the discretization using a non-orthogonal correction would yield 
-      \begin{displaymath}
-        \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx \left(\nabla \phi \right)_e \cdot \vecg{\Delta} + \left( \nabla \phi \right)_e \cdot \vec{k}.
-      \end{displaymath}
-      Where the first term can be approximated using a central differencing scheme for the directional derivative and the second by interpolating cell center gradients. If one furthermore uses the fact that this method comes to play in a solution algorithm for a non-linear system of partial differential equations a deferred correction can be implemented which ensues a smaller error from the non-orthogonality. In the case of the previously mentioned discretization techniques for partial derivatives a possible deferred correction approach reads
-      \begin{displaymath}
-        \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx ||\vecg{\Delta}||_2 \frac{\phi_P - \phi_E}{||\vec{x}_P - \vec{x}_E||_2} - \left(\nabla \phi \right)_e^{(n-1)} \cdot \left(\vecg{\Delta} - \vec{S}_e \right).
-      \end{displaymath}
-      It should be noted that the use of a deferred correction in conjunction with the requirement that the non-orthogonal correction vanishes on orthogonal grid introduces an inconsistent discretization of \( \left(\nabla \phi \right)_e \cdot \vecg{\Delta} \).
+\subsection{Numerical Solution of Non-Linear Systems -- Linearization Techniques}
+\label{sec:nonlinear}
 
-    \subsection{Numerical Solution of Non-Linear Systems -- Linearization Techniques}
-    \label{sec:nonlinear}
+In the process of solving non-linear systems normally two levels of iterations are distinguished: The \emph{inner} iterations, which account for the iterations needed to solve a given system of linear equations, and \emph{outer} iterations within which is dealt with a possible non-linearity or coupling of the equations. As shown in section \ref{sec:nonorth} outer iterations is also necessary if one chooses the deferred correction approach for blending higher and lower order discretization schemes or to apply non-orthogonal correctors.
 
-      Introduce the concept of the Picard-Iteration as a linearization technique. Introduce the notions of inner and outer iterations. Refer to later chapters when it comes to deferred correction.
-
-      \subsection{Numerical Solution of Linear Systems with Krylov Subspace Methods}
-      \ref{sec:krylov}
-
-        \begin{itemize}
-          \item General concept of cyclic vector spaces of \(\mathbb{R}^n\), 
-          \item talk about bases of krylov subspaces and the arnoldi algorithm, talk about polynomials and linear combinations
-          \item mention the two major branches (minimum residual approach, petrov and ritz-galerkin approach) 
-          \item name some representative ksp algorithms, importance of preconditioning, not as detailed as in bachelor thesis
-          \item in cases there is a nonempty Nullspace what happens?
-        \end{itemize}
-
+The system of partial differential equations (\ref{eq:completeset}) is non-linear due to the terms \(\rho u_i u_j\) which often are denoted as the convective terms of the Navier-Stokes equations. It is a common approach to linearize those terms according to to the \emph{Picard-Iteration}. For the convective terms of the Navier-Stokes equations or the temperature equation this means to guess the mass flux \( \rho u_j\) and approximate as
+\begin{displaymath}
+  \rho u_j u_i \approx \left( \rho u_j \right)^o u_i.
+\end{displaymath}
+The same procedure is applied to the convective terms of the temperature equation \(\rho u_j T\). The advantages of this linearization technique are the low memory requirements and the small computational effort for one iteration, hence this method is commonly found to be implemented in solution programs for flow problems that use a segregated solution algorithm similar to the one implemented in this thesis. Comparing to Newton-like methods this approach does however need more iterations to converge. Another method to linearize convective terms that comes into play when using a fully coupled solution algorithm will be presented in section \ref{sec:nrcoupled}.

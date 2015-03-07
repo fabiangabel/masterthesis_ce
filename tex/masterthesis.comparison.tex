@@ -126,7 +126,7 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
     \addplot file {./files/mpi1.def};
     \addplot file {./files/mpi1.op1};
     \addplot file {./files/mpi1.core};
-    \addlegendentry{Default Binding};
+    \addlegendentry{Default binding};
     \addlegendentry{map-by ppr:8:node map-by ppr:4:socket}
     \addlegendentry{map-by core}
 \end{axis}
@@ -202,11 +202,13 @@ The performance of all solvers significantly depends on the performance of the l
 \end{table}
  
 \begin{figure}
-  \centering
-  \begin{minipage}{0.45\textwidth}
-  \centering
+  \setlength{\abovecaptionskip}{5pt plus 3pt minus 2pt}
+  \begin{center}
   \begin{tikzpicture}
       \begin{loglogaxis}[
+        legend columns=-1,
+        legend entries={SIMPLE algorithm,Fully coupled algorithm},
+        legend to name=named,
         xlabel=Number of Processes,
         ylabel=Wall-Clock Time s,
         xtick={1,2,4,8,16,32,64,128,256,512},
@@ -215,13 +217,10 @@ The performance of all solvers significantly depends on the performance of the l
       \addplot file {./files/seg.128};
       \addplot file {./files/cpld.gamg.128};
     \end{loglogaxis}
-    \end{tikzpicture}
-    \caption{Wall-clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
-    \label{fig:wall}
-  \end{minipage}%
-  \hfil
-  \begin{minipage}{0.45\textwidth}
-  \centering
+  % \caption{Wall-clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  % \label{fig:wall}
+  \end{tikzpicture}
+  %
   \begin{tikzpicture}
       \begin{loglogaxis}[
         xlabel=Number of Processes,
@@ -237,9 +236,11 @@ The performance of all solvers significantly depends on the performance of the l
       \addplot[mark=none,black] file {./files/speedup.ideal};
     \end{loglogaxis}
     \end{tikzpicture}
-    \caption{Speedup comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
-    \label{fig:speedup}
-  \end{minipage}%
+    \\
+  \ref{named}
+  \end{center}
+  \caption{Speedup comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+   \label{fig:speedup}
 \end{figure}
 
 From the comparison in figures \ref{fig:wall} and \ref{fig:speedup} it is evident that both algorithms are scalable and the coupled solution algorithm accelerates the solution process up to one order of magnitude. It has to be noted, that the presented results for the coupled solution algorithm were obtained using black-box solvers from the PETSc framework. It is assumed that the performance of the coupled solution algorithm with respect to the needed wall-clock time would benefit from multigrid solvers especially designed for the coupled system of linear equations. Examples for such special solvers can be found in \cite{darwish09,mangani14,klaij13}. Another approach is represented by \emph{physics-based} solvers which take advantage of the matrix structure as shown in figure \ref{fig:nointerlacemat}. References \cite{brown12,mcinnes14} describe how PETSc can be used to construct physics based preconditioners.
