@@ -15,5 +15,6 @@ masterthesis.out
 .*.swp
 tex/masterthesis.*.aux
 tex/.masterthesis.*
+files/*.aux
 texput.log
 tex/texput.log

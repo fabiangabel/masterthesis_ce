@@ -321,23 +321,29 @@ This case exercises all of the previously introduced boundary conditions for flo
 was chosen. All the other problem parameters were chosen such that the flow problem resides in the regime of a non-turbulent stationary flow for which the presented solver framework has been developed. Table \ref{tab:channel} lists the remaining material and geometrical characteristics of the test case.
 
 \begin{table}[h!]\centering
+  \caption{Characteristic problem properties used in the channel flow test case}
 \ra{1.3}
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{black!20} Density    & 1E-3 & $kg/m^3$  \\
-    \rowcolor{black!00} Viscosity  & 1E-0 & $Ns/m^2$  \\
+    \rowcolor{black!20} Density    & 1E-0 & $kg/m^3$  \\
+    \rowcolor{black!00} Viscosity  & 1E-3 & $Ns/m^2$  \\
     \rowcolor{black!20} Height     & 0.41 & m         \\
     \rowcolor{black!00} Length     & 2.5  & m         \\
     \rowcolor{black!20} Side length cube & 0.1  & m   \\
     \rowcolor{black!00} Under relaxation u & 0.9 &    \\
     \rowcolor{black!20} Under relaxation p & 0.1 &    \\
   \end{tabular}
-  \caption{Characteristic problem properties used in the channel flow test case}
   \label{tab:channel}
 \end{table}
 
-The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section REFERENCE. Since no assumptions on the geometry of a neighboring block are necessary each block can be constructed independently which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not impact on the convergence properties of the deployed linear solvers. Figure \ref{fig:channel1} shows the mesh at the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks. Figure \ref{fig:blocking} shows the domain decomposition into structured grid blocks around the two obstacles within the problem domain and emphasizes the need for accurate handling of non-matching block boundaries.
+Using the data from table \ref{tab:channel} and the maximal inflow velocity the Reynolds number \(Re\) can be calculated as
+\begin{displaymath}
+  Re = \frac{\rho max(u_1) l}{\mu} = 45,
+\end{displaymath}
+which shows that the flow resides in a laminar regime.
+
+The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section \ref{sec:blockboundaries}. Since no assumptions on the geometry of a neighboring block are necessary each block can be constructed independently which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not impact on the convergence properties of the deployed linear solvers. Figure \ref{fig:channel1} shows the mesh at the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks. Figure \ref{fig:blocking} shows the domain decomposition into structured grid blocks around the two obstacles within the problem domain and emphasizes the need for accurate handling of non-matching block boundaries.
 
 \begin{figure}
   \centering
@@ -394,24 +400,36 @@ The timing results show, that already after the first grid refinement step the f
 
 This section deals with the evaluation and comparison not only of the pressure-velocity coupling but also of the velocity-to-temperature coupling through the Boussinesq approximation and the temperature-velocity/pressure coupling through the Newton-Raphson linearization of the convective term in the temperature equation. For this the standard heat-driven cavity flow \cite{christon02,vahl83} is adapted for a three dimensional domain and the material and geometric parameters are chosen such that a non-turbulent stationary flow exists, which means that the solution lies within the regime of the approximations made by the solver.
 
-Essential for this benchmarking case is the nature of the flow. The fluid motion is a consequence of the effect of volume forces caused by temperature differences in the solution domain, hence the mathematical problem exhibits a strong coupling bewteen the involved variables velocity, pressure and temperature. This relation is represented by the Rayleigh and Prandtl number. It is assumed that for this kind of flow the fully implicit treatment of the temperature coupling will yield further benefits with respect to wall time, compared with solution approaches that solve for the temperature separately. Table \ref{tab:cavity} lists the geometrical and solver parameters used for the performance analysis of this section.
+Essential for this benchmarking case is the nature of the flow. The fluid motion is a consequence of the effect of volume forces caused by temperature differences in the solution domain, hence the mathematical problem exhibits a strong coupling between the involved variables velocity, pressure and temperature. This relation is represented by the Rayleigh and Prandtl number. It is assumed that for this kind of flow the fully implicit treatment of the temperature coupling will yield further benefits with respect to wall time, compared with solution approaches that solve for the temperature separately. Table \ref{tab:cavity} lists the geometrical and solver parameters used for the performance analysis of this section.
 
 \begin{table}[h!]\centering
+  \caption{Characteristic problem properties used in the heated cavity flow test case}
 \ra{1.3}
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{black!20} Density            & 1E-3      & $kg/m^3$  \\
+    \rowcolor{black!20} Density            & 1.19      & $kg/m^3$  \\
     \rowcolor{black!00} Viscosity          & 1.8E-5    & $Ns/m^2$  \\
     \rowcolor{black!20} Height             & 0.021277  & m         \\
+    \rowcolor{black!00} Temperature difference & 10    & K         \\
+    \rowcolor{black!20} Coefficient of thermal expansion & 0.00341 & $1/K$ \\
     \rowcolor{black!00} Under relaxation u & 0.8       &           \\
     \rowcolor{black!20} Under relaxation p & 0.2       &           \\
     \rowcolor{black!00} Under relaxation T & 1.0       &           \\
     \rowcolor{black!20} Relative tolerance & 1E-8/1E-4 &
   \end{tabular}
-  \caption{Characteristic problem properties used in the heated cavity flow test case}
   \label{tab:cavity}
 \end{table}
+
+Using the data from table \ref{tab:cavity} and given Prandtl number for the flow problem \(Pr = 0.71\) the Rayleigh number \(Ra\), a dimensionless number used to characterize buoyancy driven flows, can be calculated. From the definition of the Prandtl number the thermal diffusivity \(\alpha\) can be calculated as
+\begin{displaymath}
+  \alpha = \frac{mu}{\rho \, Pr} = 2.1304E-5.
+\end{displaymath}
+It follows that the Rayleigh number can be determined to 
+\begin{displaymath}
+  Ra = \frac{\rho g \beta \Delta T h^3}{\mu \alpha} \approx 10^4,
+\end{displaymath}
+which implies according to \ref{christon02} that the flow is still stationary and non-turbulent.
 
 The tests were conducted on the formerly presented HHLR cluster, using the MPI2 and MEM2 section. For the tests involving higher resolutions the relative tolerance for convergence was increased to $1E-4$. Table \ref{tab:cavitycompare}
 
