@@ -1,7 +1,7 @@
 
 \section{Fundamentals of Continuum Physics for Thermo-Hydrodynamical Problems}
 
-This section covers the set of fundamental equations for thermo-hydrodynamical problems, which the numerical solution techniques of the following chapters are aiming to solve. Furthermore, the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on \cite{andersson84,ferziger02,kundu12,spurk10}. For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods, the focus lays on stating the integral forms of the relevant conservation laws. However, in the process of deriving the final set of equations, the use of differential formulations of the stated laws is required. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis, non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i \) are used. This approach is also known as \emph{Eulerian approach}.  
+This section covers the set of fundamental equations for thermo-hydrodynamical problems, which the numerical solution techniques of the following chapters are aiming to solve. Furthermore, the notation regarding the physical quantities to be used throughout this thesis is introduced. The following paragraphs are based on \cite{andersson84,ferziger02,kundu12,spurk10}. For a thorough derivation of the matter to be presented the reader may consult the mentioned sources. Since the present thesis focusses on the application of finite-volume methods, the focus lays on stating the integral forms of the relevant conservation laws. However, in the process of deriving the final set of equations, the use of differential formulations of the stated laws is required. Einstein's convention for taking sums over repeated indices is used to simplify certain expressions. For the remainder of this thesis, non-moving inertial frames in a Cartesian coordinate system with the coordinates \( x_i, i=1,...,3 \) are used. This approach is also known as \emph{Eulerian approach}.  
 
 \subsection{Conservation of Mass -- Continuity Equation}
 
@@ -80,9 +80,9 @@ where \(\lambda\) and \(\mu\) denominate scalars which depend on the local therm
 The modelling of the transport of scalar or vector quantities by a flow field \(\vec{u}\), also known as convection, is necessary if the fluid mechanical problem to be analyzed includes for example heat transfer. Other scenarios that involve the necessity to model scalar transport surge, when turbulent flows are to be modeled by two-equation models like the \(k\)-\(\varepsilon\)-model \cite{pope00}. 
     
 Since this thesis focusses on the transport of the scalar temperature \(T\), this section introduces the conservation law of energy in differential form, formulated in terms of the temperature,
-\begin{equation}
+\begin{displaymath}
   \frac{\partial \left(\rho T \right)}{\partial t} + \frac{\partial}{x_j} \left( \rho u_j - \kappa \frac{\partial T}{\partial x_j} \right) = q_T,
-\end{equation}
+\end{displaymath}
 where \(\kappa\) denotes the thermal conductivity of the modelled material and \(q_T\) is a scalar field representing sources and sinks of heat throughout the domain of the problem. This equation is also known as the temperature equation.
 
         %Check also Peric p12 or Bird et al. (1962).
@@ -94,10 +94,10 @@ The purpose of this section is to motivate and introduce further common simplifi
 \subsubsection{Incompressible Flows and Hydrostatic Pressure}
 
 A common simplification when modelling low Mach number flows (\(Ma < 0.3\)), is the assumption of \emph{incompressibility}, or the assumption of an \emph{isochoric} flow. If one furthermore assumes homogeneous density \(\rho\) in space and time, a restrictive assumption that will be partially alleviated in the following section, the continuity equation in differential form (\ref{eq:contifull}) can be simplified to
-\begin{equation}
-  \label{eq:contiinc}
+\begin{displaymath}
+  %\label{eq:contiinc}
   \frac{\partial u_i}{\partial x_i} = 0.
-\end{equation}
+\end{displaymath}
 In other words: In order for a velocity vector field \(\vec{u}\) to be valid for an incompressible flow it has to be free of divergence, or \emph{solenoidal} \cite{spurk10,aris62}.
 
 If furthermore one assumes the dynamic viscosity \(\mu\) to be constant,  which can be suitable in the case of isothermal flow or if the temperature differences within the flow are small, the Navier-Stokes equations in differential form can be reduced to 
@@ -125,22 +125,22 @@ In the case of this thesis this assumption is valid since the mass specific forc
   \Phi_g = - \rho g_j x_j.
 \end{displaymath}
 This term can be interpreted as the hydrostatic pressure \(p_{hyd}\) and can be added to the thermodynamical pressure \(p\) to simplify calculations 
-\begin{align}
+\begin{align*}
   \rho g_i - \frac{\partial p}{\partial x_i} 
   =& \frac{\partial}{\partial x_i} \left( \rho g_j x_j \right) - \frac{\partial p}{\partial x_i} \nonumber \\[0.5em]
   =& \frac{\partial}{\partial x_i} \left( \rho g_j x_j \right) - \frac{\partial}{\partial x_i}  \left(\hat{p} + p_{hyd} \right) \nonumber \\[0.5em]
   =& - \frac{\partial \hat{p}}{\partial x_i}.
-\end{align}
+\end{align*}
 Since in incompressible fluids only pressure differences matter, this has no effect on the solution. After finishing the calculations \(p_{hyd}\) can be calculated and added to the resulting pressure \(\hat{p}\).
 
 \subsubsection{Variation of Fluid Properties -- The Boussinesq Approximation}
 \label{sec:boussinesq}
 
-If modelling of an incompressible flow involves heat transfer fluid properties like the density change with varying temperature. If the variation of temperature is small one can still assume a constant density to maintain the structure of the advection and diffusion terms in (\ref{eq:nsfull}) and only consider changes of the density in the gravitational term. If linear variation of density with respect to temperature is assumed this approximation is called \emph{Boussinesq}-approximation \cite{gray76}. This approximation furthermore consists in assuming, that all other fluid properties are constant and viscous dissipation can be neglected. In this case the Navier-Stokes equations are formulated using a reference density \(\rho_0\) at the reference temperature \(T_0\) and the now temperature dependent density \(\rho\)
+When modelling of an incompressible flow involves heat transfer, fluid properties like the density change with varying temperature. If the variation of temperature is small one can still assume a constant density to maintain the structure of the advection and diffusion terms in (\ref{eq:nsfull}) and only consider changes of the density in the gravitational term. If linear variation of density with respect to temperature is assumed this approximation is called \emph{Boussinesq}-approximation \cite{gray76}. This approximation furthermore consists in assuming, that all other fluid properties are constant and viscous dissipation can be neglected. In this case the Navier-Stokes equations are formulated using a reference density \(\rho_0\) at the reference temperature \(T_0\) and the now temperature dependent density \(\rho\)
 \begin{equation}
   \rho \left( T \right) = \rho_0 \left( 1 - \beta \left( T - T_0 \right) \right).
 \end{equation}
-Here \(\beta\) denotes the coefficient of thermal expansion. Under the use of the Boussinesq-approximation the incompressible Navier-Stokes equations in differential form can be formulated as
+Here \(\beta\) denotes the coefficient of thermal expansion. Under the use of the Boussinesq approximation the incompressible Navier-Stokes equations in differential form can be formulated as
 \begin{align*}
   \rho_0 \frac{\partial \left( u_i \right)}{\partial t} 
   + \rho_0 \frac{\partial}{\partial x_j} \left( u_i  u_j \right) 
@@ -166,7 +166,7 @@ using \(\rho \vec{g}\) as the mass specific force.
 
 \subsection{Final Form of the Set of Equations}
 
-In the previous subsections different simplifications have been introduced which will be used throughout the thesis. The final form of the set of equations to be used is thereby presented. As further simplification the modified pressure \(\hat{p}\) will be treated as \(p\) and since the use of the Boussinesq-approximation replaces the variable \(\rho\) by a linear function of the temperature \(T\) the reference density \(\rho_0\) for the remainder of this thesis will be referred to as \(\rho\). Note that incompressibility has been taken into account:
+In the previous subsections different simplifications have been introduced which will be used throughout the thesis. The final form of the set of equations to be used is thereby presented. As further simplification the modified pressure \(\hat{p}\) will be treated as \(p\) and since the use of the Boussinesq approximation replaces the variable \(\rho\) by a linear function of the temperature \(T\) the reference density \(\rho_0\) for the remainder of this thesis will be referred to as \(\rho\). Note that incompressibility has been taken into account:
 \begin{subequations}
 \label{eq:completeset}
 \begin{align}

@@ -1,5 +1,5 @@
 %\documentclass[article,type=msc,colorback,accentcolor=tud2a]{tudthesis}
-\documentclass[article,type=msc,colorback,accentcolor=tud2a]{tudreport}
+\documentclass[twoside,article,type=msc,colorback,accentcolor=tud2a]{tudreport}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\usepackage{ngerman}
@@ -25,8 +25,8 @@
 \begin{document}
 %\thesistitle{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
 \title{Implementation and Performance Analyses of a Highly Efficient Algorithm for Pressure-Velocity Coupling}
-\subtitle{Implementierung und Untersuchung einer hoch effizienten Methode zur Druck-Geschwindigkeits-Kopplung}
-\subsubtitle{Masterarbeit | Fabian Gabel} 
+\subtitle{Masterarbeit | Fabian Gabel} 
+\subsubtitle{Betreuer: Dipl.-Ing. U. Falk | Prof. Dr. rer. nat. M. Schäfer}
 \institution{Fachgebiet Numerische Berechnungsverfahren im Maschinenbau}
 \sponsor{\hfil\includegraphics{./img/ce_logo_2015.jpg}}
   %\author{Fabian Gabel}
@@ -37,6 +37,9 @@
 % \makethesistitle
   \maketitle
  %\selectlanguage{ngerman} \affidavit{Fabian Gabel} \selectlanguage{english}
+\cleardoublepage
+\setcounter{page}{1}
+\pagenumbering{roman} 
   \include{./tex/masterthesis.erklaerung}
   \include{./tex/masterthesis.abstract}
   \tableofcontents
@@ -44,7 +47,7 @@
   \listoftables
   \listofalgorithms
 
-\include{./tex/masterthesis.nomenclature}
+%\include{./tex/masterthesis.nomenclature}
 
 % \section*{TODO LIST}
 
@@ -66,6 +69,9 @@
 %   \item Rayleigh and Reynolds
 % \end{itemize}
 
+\cleardoublepage
+\setcounter{page}{1}
+\pagenumbering{arabic} 
   \include{./tex/masterthesis.introduction}
   \include{./tex/masterthesis.fundamentals}
   \include{./tex/masterthesis.fvm}

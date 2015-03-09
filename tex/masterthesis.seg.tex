@@ -1,4 +1,4 @@
-\section{Implicit Finite Volume Method for Incompressible Flows -- Segregated Approach}
+\section{Implicit Finite-Volume Method for Incompressible Flows -- Segregated Approach}
 \label{sec:seg}
 
 The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling, at least between the dependent variables pressure and velocity, a first solution algorithm, namely the \emph{SIMPLE} algorithm, addressed to resolve the pressure velocity coupling, is introduced. Furthermore an under-relaxation factor independent method of calculating mass fluxes by interpolation is introduced and the detailed derivation of all coefficients that result from the discretization process is presented. Finally the boundary conditions, that are relevant for the present thesis will be introduced.
@@ -19,11 +19,11 @@ where no interpolation to attain the values of \(u_i\) at the face \(S_f\) is pe
 \subsection{A Pressure-Weighted Interpolation Method for Velocities}
 \label{sec:massflux}
 
-The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified and the conservation property of finite volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major drawback with cell centered variable arrangements is that pressure field may delink, which will then lead to unphysical oscillations in both the pressure and the velocity results. If the oscillations are severe enough the solution algorithm might even get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances and the mass fluxes in the continuity equation are discretized using central differences. 
+The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified and the conservation property of finite-volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major drawback with cell centered variable arrangements is that pressure field may delink, which will then lead to unphysical oscillations in both the pressure and the velocity results. If the oscillations are severe enough the solution algorithm might even get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances and the mass fluxes in the continuity equation are discretized using central differences. 
   
 A common practice to eliminate this behaviour is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. The original interpolation scheme however does not guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms that are used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. These issues will be addressed in this subsection which at the end will present an interpolation method that assures an under-relaxation independent solution: the \emph{pressure-weighted interpolation method} \cite{miller88}.
 
-The starting point of the pressure-weighted interpolation method is formed by the discretized momentum balances at node \(P\) and an arbitrary neighbouring node \(Q\). The discretization for finite volume methods and details including the incorporation of under-relaxation factors will be handled in subsection \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), read
+The starting point of the pressure-weighted interpolation method is formed by the discretized momentum balances at node \(P\) and an arbitrary neighbouring node \(Q\). The discretization for finite-volume methods and details including the incorporation of under-relaxation factors will be handled in subsection \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), read
 \begin{subequations}
 \begin{align}
     u_{i,P}^{(n)} 
@@ -199,7 +199,7 @@ which shows, after division by \(\alpha_\vec{u} > 0\), that \(u_{i,f}\) is indep
 \subsection{Implicit Pressure Correction and the SIMPLE Algorithm}
 \label{sec:simple}
 
-The goal of finite volume methods is to deduce a system of linear algebraic equations from a partial differential equation. In the case of the momentum balances the general structure of this linear equations is
+The goal of finite-volume methods is to deduce a system of linear algebraic equations from a partial differential equation. In the case of the momentum balances the general structure of this linear equations is
 \begin{equation}
   \label{eq:linfinal}
   u_{i,P}^{(n)} 
@@ -530,7 +530,7 @@ Again it is possible though not always necessary, as in the case of the velociti
 \subsection{Boundary Conditions}
 \label{sec:segboundary}
 
-As the antecedent subsections showed, it is possible to deduce a linear algebraic equation for each control volume by the finite volume method. The approach presented in the preceding subsections however did not cover the treatment of control volumes at domain boundaries yet. This subsection introduces the boundary conditions which are relevant for the present work and furthermore deals with transitional conditions at block boundaries.
+As the antecedent subsections showed, it is possible to deduce a linear algebraic equation for each control volume by the finite-volume method. The approach presented in the preceding subsections however did not cover the treatment of control volumes at domain boundaries yet. This subsection introduces the boundary conditions which are relevant for the present work and furthermore deals with transitional conditions at block boundaries.
 
 \subsubsection{Dirichlet Boundary Conditions}
 \label{sec:segdirichlet}
@@ -640,7 +640,7 @@ If the solution of the flow field is coupled to the solution of a temperature eq
 
 If block structured grids are used to decompose the problem domain, the characterizing property of structured grids, which is the constant amount of grid cells in each direction, gives each inner cell exactly six neighbours. If more then one grid block is used this property is violated if the number of grid cells of each block is chosen to be arbitrary. The arbitrariness of the grid resolution is a main benefactor for the adaptivity of block structured grids.
 
-To maintain the conservation property of finite volume methods block boundaries should not be interpreted as boundaries in the classical sense. Instead conditions have to be formulated to guarantee that flows through block boundaries are conserved. The method to treat block boundaries used in the present thesis was presented by \cite{lilek97}. Another method was presented in \cite{lange02}. However the first method was chosen since it allows a fully implicit consideration of the block boundary fluxes. This method calculates fluxes through separate face segments \(S_l\) that come up on \emph{non-matching} grid blocks. Each of this face segments gets assigned a control volume \(L\) and a control volume \(R\) which exclusively share this face segment. Figure \ref{fig:non-matching} shows a block boundary when non matching blocks are used. An algorithm to provide this needed information will be presented in REFERENCE.
+To maintain the conservation property of finite-volume methods block boundaries should not be interpreted as boundaries in the classical sense. Instead conditions have to be formulated to guarantee that flows through block boundaries are conserved. The method to treat block boundaries used in the present thesis was presented by \cite{lilek97}. Another method was presented in \cite{lange02}. However the first method was chosen since it allows a fully implicit consideration of the block boundary fluxes. This method calculates fluxes through separate face segments \(S_l\) that come up on \emph{non-matching} grid blocks. Each of this face segments gets assigned a control volume \(L\) and a control volume \(R\) which exclusively share this face segment. Figure \ref{fig:non-matching} shows a block boundary when non matching blocks are used. An algorithm to provide this needed information will be presented in REFERENCE.
 
 % \begin{figure}
 %   \label{fig:nonmatching}
@@ -673,7 +673,7 @@ such that the net pressure correction amounts to zero. This modifies equation (\
 \subsection{Structure of the Assembled Linear Systems}
 \label{sec:structure}
 
-The objective of a finite volume method is to create a set of linear algebraic equations by discretizing partial differential equations. In the case of the discretized momentum balance, taking all contributions together leads to the following linear algebraic equation for each control volume \(P\)
+The objective of a finite-volume method is to create a set of linear algebraic equations by discretizing partial differential equations. In the case of the discretized momentum balance, taking all contributions together leads to the following linear algebraic equation for each control volume \(P\)
 \begin{displaymath}
   a_P^{u_i} u_{P_i} + \sum_{F \in NB(P)} a_F u_{F_i} = b_{P,u_i},
 \end{displaymath}

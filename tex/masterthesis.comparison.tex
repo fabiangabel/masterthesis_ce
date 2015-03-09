@@ -109,7 +109,7 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
       at={(0.5,1.03)},
   anchor=south}}
 \begin{axis}[
-    ylabel={Sustainable memori bandwidth MB/s},
+    ylabel={Sustainable memory bandwidth MB/s},
     xlabel={Number of bound cores},
     xtick={1,4,8,12,16},
     %ytick={1.7e-003,1.75e-3,1.8e-003,1.85e-3},
@@ -184,7 +184,7 @@ It should be taken into account that the STREAM benchmark used to test the prese
 
 This section presents the results from the speedup measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:hhlr}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. All tests are conducted on the previously introduced HHLR cluster using the MPI1 and MEM2 section. The performance analyses will present the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance furthermore the speedup will be calculated based on the presented results. 
 
-The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests the linear system for the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad} Krylov subspace solver and a incomplete LU-factorization as preconditioner. The pressure correction equation is solved by a CG (\emph{Conjugated Gradient}) solver with GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. All further solver parameters are listed in table \ref{tab:performance}.
+The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests the linear system for the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure correction equation is solved by a CG (\emph{Conjugated Gradient}) solver with GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. All further solver parameters are listed in table \ref{tab:performance}.
 
 \begin{table}[h!]\centering
 \ra{1.3}
@@ -337,11 +337,11 @@ was chosen. All the other problem parameters were chosen such that the flow prob
   \label{tab:channel}
 \end{table}
 
-Using the data from table \ref{tab:channel} and the maximal inflow velocity the Reynolds number \(Re\) can be calculated as
+Using the data from table \ref{tab:channel} and the maximal inflow velocity of $0.45m/s$ the Reynolds number \(Re\) can be calculated as
 \begin{displaymath}
-  Re = \frac{\rho max(u_1) l}{\mu} = 45,
+  Re = \frac{\rho \operatorname{mean}(u_1) l}{\mu} = 20,
 \end{displaymath}
-which shows that the flow resides in a laminar regime.
+where \(\operatorname{mean}(u_1) = 0.45*\frac{4}{9} m/s = 0.2 m/s\). This shows that the flow resides in a laminar regime.
 
 The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section \ref{sec:blockboundaries}. Since no assumptions on the geometry of a neighboring block are necessary each block can be constructed independently which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not impact on the convergence properties of the deployed linear solvers. Figure \ref{fig:channel1} shows the mesh at the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks. Figure \ref{fig:blocking} shows the domain decomposition into structured grid blocks around the two obstacles within the problem domain and emphasizes the need for accurate handling of non-matching block boundaries.
 
@@ -386,7 +386,7 @@ In contrast to the segregated algorithm, the fully coupled solution algorithm ac
   \begin{tabular}{lcccc}\toprule
     No. of Unknowns & Seg. - time & Cpld - time & Seg. - its & Cpld - its \\
     \midrule
-    \rowcolor{black!20} 75768    & 0.2226E+02 & 0.3645E+02 & 151  & 67 \\
+    \rowcolor{black!20} 75768    & 0.2226E+02 & 0.2674E+02 & 151  & 67 \\
     \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1500E+03 & 355  & 42 \\
     \rowcolor{black!20} 2611080  & 1.1352E+05 & 0.3105E+04 & 1592 & 39 \\
   \end{tabular}
@@ -423,7 +423,7 @@ Essential for this benchmarking case is the nature of the flow. The fluid motion
 
 Using the data from table \ref{tab:cavity} and given Prandtl number for the flow problem \(Pr = 0.71\) the Rayleigh number \(Ra\), a dimensionless number used to characterize buoyancy driven flows, can be calculated. From the definition of the Prandtl number the thermal diffusivity \(\alpha\) can be calculated as
 \begin{displaymath}
-  \alpha = \frac{mu}{\rho \, Pr} = 2.1304E-5.
+  \alpha = \frac{\mu}{\rho \, Pr} = 2.1304E-5.
 \end{displaymath}
 It follows that the Rayleigh number can be determined to 
 \begin{displaymath}
@@ -453,10 +453,10 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
     \rowcolor{black!20}                                & TCPLD  & 0.1950E+05 &  50   \\
     \rowcolor{black!20} \multirow{-4}{*}{128x128x128}  & NRCPLD & 0.6155E+04 &  18   \\ %\hline
     %
-    \rowcolor{black!00}\multirow{4}{*}{}               & SEG    &  & \\
-    \rowcolor{black!00}                                & CPLD   &  & \\
-    \rowcolor{black!00}                                & TCPLD  &  & \\
-    \rowcolor{black!00} \multirow{-4}{*}{256x256x256}  & NRCPLD &  & \\ %\hline
+    %\rowcolor{black!00}\multirow{4}{*}{}               & SEG    &  & \\
+    %\rowcolor{black!00}                                & CPLD   &  & \\
+    %\rowcolor{black!00}                                & TCPLD  &  & \\
+    %\rowcolor{black!00} \multirow{-4}{*}{256x256x256}  & NRCPLD &  & \\ %\hline
   \end{tabular}
   \caption{Performance analysis results of the heated cavity flow problem}
   \label{tab:cavitycompare}
