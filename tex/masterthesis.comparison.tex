@@ -1,4 +1,5 @@
 \section{Comparison of Solver Concepts}
+\label{sec:compare}
 
 This section conducts the performance analysis of both developed solvers. In the first part of this section the used hardware and software are described, furthermore important performance measures are introduced. After performing a preliminary benchmark to measure the sustainable bandwidth the Speedup is measured for both solver programs. The second part of this section tests the performance of the algorithm on a test case with complex geometry and on the heated cavity benchmark.
   
@@ -58,7 +59,7 @@ While wall-clock time is an absolute measure that can be used to compare differe
        is formed by the quotient of the wall times needed for the complete problem domain and partial solves on subdomains. This measure does neither depend on hardware nor on the used implementation. Instead it directly relates to the size and partition of the grid. 
 \end{itemize}
 
-It is not possible to calculate all three efficiencies at the same time using only plain wall-clock time measurements of a given application.  Different solver configurations have to be used to calculate them separately. Since the focus of investigation of the present thesis does not lie on load balancing, for the remainder of the thesis \(E^{load}_P = 100\%  \) is assumed. This does not present a considerable drawback, since an ideal load balancing is easily obtainable nowadays by the use of sophisticated grid partitioning algorithms \cite{loadbalancing} REFERENCES. Using identical algorithms for different numbers of involved processes implicitly achieves \(E^{num}_P = 100 \%\). In this case the parallel efficiency of an application can be measured through the quotient of the needed wall-clock time. To measure the numerical efficiency of an algorithm the respective hardware counters have to be evaluated. This can be done using the built in log file functionality of PETSc as presented in section REFERENCE. Hence the determination of numerical efficiency does not rely on wall-clock time.
+It is not possible to calculate all three efficiencies at the same time using only plain wall-clock time measurements of a given application.  Different solver configurations have to be used to calculate them separately. Since the focus of investigation of the present thesis does not lie on load balancing, for the remainder of the thesis \(E^{load}_P = 100\%  \) is assumed. This does not present a considerable drawback, since an ideal load balancing is easily obtainable nowadays by the use of grid partitioning algorithms. Using identical algorithms for different numbers of involved processes implicitly, achieves \(E^{num}_P = 100 \%\). In this case the parallel efficiency of an application can be measured through the quotient of the needed wall-clock time. To measure the numerical efficiency of an algorithm the respective hardware counters have to be evaluated. This can be done using the built in log file functionality of PETSc as presented in section \ref{sec:petsc}. Hence the determination of numerical efficiency does not rely on wall-clock time.
 
 Another common performance measure is the \emph{Speed-Up}
 \begin{displaymath}
@@ -70,7 +71,7 @@ Speedup and parallel efficiency characterize the parallel scalability of an appl
 
 Scientific applications that solve partial differential equations rely on sparse matrix computations, which usually exhibit the sustainable memory bandwidth as bottleneck with respect to the runtime performance of the program \cite{hager11}. The purpose of this section is to establish a frame in terms of an upper bound on performance in which the efficiency of the developed solver framework can be evaluated critically. As common measure for the maximum sustainable bandwidth, low-level benchmarks can be used, which focus on evaluating specific properties of the deployed hardware architecture. In this case the STREAM benchmark suite \cite{mccalpin07,mccalpin95} provides apt tests, which are designed to work with data sets that exceed the cache size of the involved processor architecture. This forces the processors to stream the needed data directly from memory instead of reusing the data residing in their caches. These types of tests can be used to calculate an upper bound on the memory bandwidth for the CAFFA framework.
 
-In terms of parallel scalability, the STREAM benchmark can also be used as an upper performance bound. According to \cite{petsc-web-page} the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. Figures \ref{mpi1band} and \ref{mpi2band} show the test results of the STREAM benchmark on the two different sections of the HHRL. It should be noted that it is central for the results to be reproducible to always run the tests exclusively on each node, i.e. that no other process is running on the node. %Before presenting results the different binding configurations will be explained.
+In terms of parallel scalability, the STREAM benchmark can also be used as an upper performance bound. According to \cite{petsc-web-page} the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. Figures \ref{fig:mpi1band} and \ref{fig:mpi2band} show the test results of the STREAM benchmark on the two different sections of the HHRL. It should be noted that it is central for the results to be reproducible to always run the tests exclusively on each node, i.e. that no other process is running on the node. %Before presenting results the different binding configurations will be explained.
 
 %The first configuration sequentially binds the processes to the cores beginning on the first socket. When every core has a bound process the binding algorithm binds the following processes to cores of the second socket. The second configuration binds the processes in a round robin manner regarding the sockets. This configuration in difference to the second configuration binds one process to three cores. Figures \ref{fig:binding1},\ref{fig:binding2} and \ref{fig:binding3} demonstrate the different binding options for two sockets and processors with twelve cores each, when eight processes are to be bound to the resources.
 
@@ -132,7 +133,6 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
 \end{axis}
 \end{tikzpicture}
 \caption{Sustainable memory bandwidth as determined by the STREAM benchmark (Triad) for different process binding options on one node of the MPI1 section}
-\label{fig:streammpi1}
 \label{fig:mpi1band}
 \end{figure}
 
@@ -211,13 +211,14 @@ The performance of all solvers significantly depends on the performance of the l
         legend to name=named,
         xlabel=Number of Processes,
         ylabel=Wall-Clock Time s,
-        xtick={1,2,4,8,16,32,64,128,256,512},
-        xticklabels={1,2,4,8,16,32,64,128,256,512},
+        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+        xticklabels={1,2,4,8,16,32,64,128,256,512,1024},
+        xmin=1,xmax=1200,
       ]
-      \addplot file {./files/seg.128};
-      \addplot file {./files/cpld.gamg.128};
+      \addplot[color=black,mark=*] file {./files/seg.128};
+      \addplot[color=black,mark=square*] file {./files/cpld.gamg.128};
     \end{loglogaxis}
-  % \caption{Wall-clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  % \caption{Wall-clock time comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
   % \label{fig:wall}
   \end{tikzpicture}
   %
@@ -225,21 +226,22 @@ The performance of all solvers significantly depends on the performance of the l
       \begin{loglogaxis}[
         xlabel=Number of Processes,
         ylabel=Speedup,
-        xtick={1,2,4,8,16,32,64,128,256,512},
-        xticklabels={1,2,4,8,16,32,64,128,256,512},
+        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+        xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
         ytick={1,2,4,8,16,32,64,128,256,512},
         yticklabels={1,2,4,8,16,32,64,128,256,512},
-        grid=major
+        grid=major,
+        xmin=8,xmax=1200,
       ]
-      \addplot file {./files/speedup.seg.128};
-      \addplot file {./files/speedup.cpld.128};
+      \addplot[color=black,mark=*] file {./files/speedup.seg.128};
+      \addplot[color=black,mark=square*] file {./files/speedup.cpld.128};
       \addplot[mark=none,black] file {./files/speedup.ideal};
     \end{loglogaxis}
     \end{tikzpicture}
     \\
   \ref{named}
   \end{center}
-  \caption{Speedup comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  \caption{Speedup comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
    \label{fig:speedup}
 \end{figure}
 
@@ -264,7 +266,7 @@ From the comparison in figures \ref{fig:wall} and \ref{fig:speedup} it is eviden
 %      \addplot[mark=none,black] file {./files/speedup.ideal};
 %    \end{loglogaxis}
 %    \end{tikzpicture}
-%    \caption{Speedup comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
+%    \caption{Speedup comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
 %  \end{minipage}
 %  \hfil
 %  \begin{minipage}{0.45\textwidth}
@@ -280,7 +282,7 @@ From the comparison in figures \ref{fig:wall} and \ref{fig:speedup} it is eviden
 %      \addplot file {./files/cpld.gamg.256};
 %      \end{loglogaxis}
 %    \end{tikzpicture}
-%    \caption{Wall clock time comparison for segregated and fully-coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
+%    \caption{Wall clock time comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
 %  \end{minipage}
 %\end{figure}
 
