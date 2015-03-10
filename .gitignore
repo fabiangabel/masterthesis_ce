@@ -18,3 +18,8 @@ tex/.masterthesis.*
 files/*.aux
 texput.log
 tex/texput.log
+*beamer*
+kolloquium.out
+kolloquium.aux
+kolloquium.toc
+kolloquium.log
