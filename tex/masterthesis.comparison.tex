@@ -182,7 +182,7 @@ It should be taken into account that the STREAM benchmark used to test the prese
 
 \subsubsection{Speed-Up Measurement and Impact of Coupling Algorithm for Analytic Test Case}
 
-This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:hhlr}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. All tests are conducted on the previously introduced HHLR cluster using the MPI1 and MEM2 section. The performance analyses will present the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance furthermore the Speed-Up will be calculated based on the presented results. 
+This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:hhlr}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. This property of applications if often termed \emph{strong} scalability \cite{hager11}. All tests are conducted on the previously introduced HHLR cluster using the MPI1 and MEM2 section. The performance analyses will present the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance furthermore the Speed-Up will be calculated based on the presented results. 
 
 The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests the linear system for the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. All further solver parameters are listed in table \ref{tab:performance}.
 
@@ -193,8 +193,8 @@ The performance of all solvers significantly depends on the performance of the l
     \midrule
     \rowcolor{black!20} Density    & 1E-0 & $kg/m^3$      \\
     \rowcolor{black!00} Viscosity  & 1E-0 & $Ns/m^2$  \\
-    \rowcolor{black!00} Under relaxation u & 0.9 &  \\
-    \rowcolor{black!20} Under relaxation p & 0.1 &  \\
+    \rowcolor{black!00} Under-relaxation u & 0.9 &  \\
+    \rowcolor{black!20} Under-relaxation p & 0.1 &  \\
     \rowcolor{black!00} Relative tolerance & 1E-8/1E-4 &
   \end{tabular}
   \caption{Characteristic problem properties used in the performance measurements solving for an analytic solution}
@@ -245,7 +245,7 @@ The performance of all solvers significantly depends on the performance of the l
    \label{fig:speedup}
 \end{figure}
 
-From the comparison in figure \ref{fig:speedup} it is evident that both algorithms are scalable and the coupled solution algorithm accelerates the solution process up to one order of magnitude. It has to be noted, that the presented results for the coupled solution algorithm were obtained using black-box solvers from the PETSc framework. It is assumed that the performance of the coupled solution algorithm with respect to the needed wall-clock time would benefit from multigrid solvers especially designed for the coupled system of linear equations. Examples for such special solvers can be found in \cite{darwish09,mangani14,klaij13}. Another approach is represented by \emph{physics-based} solvers which take advantage of the matrix structure as shown in figure \ref{fig:nointerlacemat}. References \cite{brown12,mcinnes14} describe how PETSc can be used to construct physics based preconditioners.
+From the comparison in figure \ref{fig:speedup} it is evident that both algorithms are scalable and the coupled solution algorithm accelerates the solution process up to one order of magnitude. It has to be noted, that the presented results for the coupled solution algorithm were obtained using black-box solvers from the PETSc framework. It is assumed that the performance of the coupled solution algorithm with respect to the needed wall-clock time would benefit from multigrid solvers especially designed for the coupled system of linear equations. Examples for such special solvers can be found in \cite{darwish09,mangani14,klaij13}. Another approach is represented by \emph{physics-based} solvers which take advantage of the matrix structure as shown in figure \ref{fig:nointerlacemat}. References \cite{brown12,mcinnes14} describe how PETSc can be used to construct physics based preconditioners in the context of multiphysics simulations.
 
 %\begin{figure}
 %  \centering
@@ -288,9 +288,9 @@ From the comparison in figure \ref{fig:speedup} it is evident that both algorith
 
 \subsection{Weak Scaling Comparison of Coupled and Segregated Solution Algorithm}
 
-It has been previously reported in \cite{darwish09,vakilipour12} that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. It is known that this is not true for the SIMPLE algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so called \emph{weak} scaling of the implementation \cite{hager11}. Starting from a moderate number of unknowns for a tree-dimensional test case solving for the analytical solution presented in section \ref{sec:mms}, this benchmark will investigate how the running-time and the number of needed inner and outer iterations behaves when the computational load per process is held constant, while the number of involved processes is continuously increased. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same time by involving more processes running the solver application. Each process will get assigned a block with \(32*32*32\) unknowns. The number of involved unknowns in each test run thus can be calculated as \( N = 32*32*32*PROC \). Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE algorithm and the fully coupled solution algorithm.
+It has been previously reported in \cite{darwish09,vakilipour12} that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. It is known that this is not true for the SIMPLE algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so called \emph{weak} scaling of the implementation \cite{hager11}. Starting from a moderate number of unknowns for a tree-dimensional test case solving for the analytical solution presented in section \ref{sec:manufacturedsolution}, this benchmark will investigate how the running-time and the number of needed inner and outer iterations behaves when the computational load per process is held constant, while the number of involved processes is continuously increased. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same time by involving more processes running the solver application. Each process will get assigned a block with \(32x32x32\) unknowns. The number of involved unknowns in each test run thus can be calculated as \( N = 32*32*32*PROC \). Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE algorithm and the fully coupled solution algorithm.
 
-\begin{figure}
+\begin{figure}[h!]
   \begin{center}
   \begin{tikzpicture}
       \begin{loglogaxis}[
@@ -329,7 +329,7 @@ It has been previously reported in \cite{darwish09,vakilipour12} that the couple
     \\
   \ref{named}
   \end{center}
-  \caption{Comparison of the number of outer iterations and the corresponding execution wall-clock time needed to achieve an reduction of 1E-8 of the initial residual for different methods to resolve pressure-velocity coupling}
+  \caption{Comparison of the number of outer iterations and the corresponding execution wall-clock time needed to achieve a reduction of 1E-8 of the initial residual for different methods to resolve pressure-velocity coupling}
   \label{fig:weak}
 \end{figure}
 
@@ -385,7 +385,7 @@ This case exercises all of the previously introduced boundary conditions for flo
   \end{array}
 \right]
 \end{displaymath}
-was chosen. All the other problem parameters were chosen such that the flow problem resides in the regime of a non-turbulent stationary flow for which the presented solver framework has been developed. Table \ref{tab:channel} lists the remaining material and geometrical characteristics of the test case.
+was chosen. At the outlet a Dirichlet pressure boundary condition was used. All other boundaries used a no-slip solid non-moving wall boundary condition. All problem parameters were chosen such that the flow problem resides in the regime of a non-turbulent stationary flow for which the presented solver framework has been developed. Table \ref{tab:channel} lists the remaining material and geometrical characteristics of the test case.
 
 \begin{table}[h!]\centering
   \caption{Characteristic problem properties used in the channel flow test case}
@@ -398,8 +398,9 @@ was chosen. All the other problem parameters were chosen such that the flow prob
     \rowcolor{black!20} Height             & 0.41 & m         \\
     \rowcolor{black!00} Length             & 2.5  & m         \\
     \rowcolor{black!20} Side length cube   & 0.1  & m   \\
-    \rowcolor{black!00} Under relaxation u & 0.9  &    \\
-    \rowcolor{black!20} Under relaxation p & 0.1  &    \\
+    \rowcolor{black!00} Under-relaxation u & 0.9  &    \\
+    \rowcolor{black!20} Under-relaxation p & 0.1  &    \\
+    \rowcolor{black!00} Relative tolerance & 1E-8      &
   \end{tabular}
   \label{tab:channel}
 \end{table}
@@ -410,7 +411,7 @@ Using the data from table \ref{tab:channel} and the maximal inflow velocity of $
 \end{displaymath}
 where \(\operatorname{mean}(u_1) = 0.45*\frac{4}{9} m/s = 0.2 m/s\). This shows that the flow resides in a laminar regime.
 
-The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section \ref{sec:blockboundaries}. Since no assumptions on the geometry of a neighboring block are necessary each block can be constructed independently which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not impact on the convergence properties of the deployed linear solvers. Figure \ref{fig:channel1} shows the mesh at the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks. Figure \ref{fig:blocking} shows the domain decomposition into structured grid blocks around the two obstacles within the problem domain and emphasizes the need for accurate handling of non-matching block boundaries.
+The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section \ref{sec:blockboundaries}. Since no assumptions on the geometry of a neighboring block are necessary, the mesh for each block can be constructed independently which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not negatively impact the convergence of the deployed linear solvers. Figure \ref{fig:channel1} shows the mesh at the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks. Figure \ref{fig:blocking} shows the domain decomposition into structured grid blocks around the two obstacles within the problem domain and emphasizes the need for accurate handling of non-matching block boundaries.
 
 \begin{figure}
   \centering
@@ -444,20 +445,20 @@ The present test case shows one advantage of the treatment of block boundaries, 
     \label{fig:blocking}
 \end{figure}
 
-The solution of the linear systems resulting from the discretization of the problem takes up more time for the coupled solution algorithm than in the segregated coupled algorithm. For small problem sizes the additional overhead for the solution methods for linear systems and the property that the segregated solution algorithm does not need many outer iterations to converge leads to the conclusion that moderate to big problems with respect to the number of involved unknowns are necessary for the coupled solution algorithm to dominate through performance. 
+The solution of the linear systems resulting from the discretization of the problem takes up more time for the coupled solution algorithm than in the segregated coupled algorithm. For small problem sizes the additional overhead for the solution methods for linear systems and the fact that the segregated solution algorithm for small number of unknowns does not need many outer iterations to converge leads to the conclusion that moderate to big problems with respect to the number of involved unknowns are necessary for the coupled solution algorithm to dominate through performance. 
 
-In contrast to the segregated algorithm, the fully coupled solution algorithm achieves an approximately constant amount of needed outer iterations, independent of the number of involved unknowns. The tests regarding the weak scaling of the coupled solution algorithm emphasize this property. Table \ref{tab:channelcompare} compares the measured wall-clock time for different numbers of unknowns. The mesh shown in figure \ref{fig:channel1} and was generated for the first number of unknowns and successively refined to achieve higher mesh resolutions. The two other numbers result from up to three times bisectioning the mesh in each direction, every time scaling the number of unknowns by a factor of approximately eight. The tests were conducted on the formerly presented HHLR cluster, using the MPI2 and MEM2 section. 
+In contrast to the segregated algorithm, the fully coupled solution algorithm achieves an approximately constant amount of needed outer iterations, independent of the number of involved unknowns. The tests regarding the weak scaling of the coupled solution algorithm emphasize this property. Table \ref{tab:channelcompare} compares the measured wall-clock time for different numbers of unknowns. The mesh shown in figure \ref{fig:channel1} was generated for the first number of unknowns and successively refined to achieve higher mesh resolutions. The two other numbers of unknowns result from up to two times bisectioning the mesh in each direction, every time scaling the number of unknowns by a factor of approximately eight. The tests were conducted on the formerly presented HHLR cluster, using the MPI2 section. 
 
 \begin{table}[h!]\centering
 \ra{1.3}
   \begin{tabular}{lcccc}\toprule
-    No. of Unknowns & Seg. - time & Cpld - time & Seg. - its & Cpld - its \\
+    No. of Unknowns & SEG - time & CPLD - time & SEG - its & CPLD - its \\
     \midrule
     \rowcolor{black!20} 75768    & 0.2226E+02 & 0.2674E+02 & 151  & 67 \\
-    \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1500E+03 & 355  & 42 \\
+    \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1499E+03 & 355  & 42 \\
     \rowcolor{black!20} 2611080  & 1.1352E+05 & 0.3105E+04 & 1592 & 39 \\
   \end{tabular}
-  \caption{Performance analysis results of the channel flow problem}
+  \caption{Performance analysis results of the channel flow problem for different numbers of unknowns comparint the segregated (SEG) to the fully coupled (CPLD) solution algorithm using one process on the MPI2 section of the HHLR supercomputer. }
   \label{tab:channelcompare}
 \end{table}
 
@@ -496,30 +497,30 @@ Essential for this benchmarking case is the nature of the flow. The fluid motion
     \rowcolor{black!20} Height             & 0.021277  & m         \\
     \rowcolor{black!00} Temperature difference & 10    & K         \\
     \rowcolor{black!20} Coefficient of thermal expansion & 0.00341 & $1/K$ \\
-    \rowcolor{black!00} Under relaxation u & 0.8       &           \\
-    \rowcolor{black!20} Under relaxation p & 0.2       &           \\
-    \rowcolor{black!00} Under relaxation T & 1.0       &           \\
-    \rowcolor{black!20} Relative tolerance & 1E-8/1E-4 &
+    \rowcolor{black!00} Under-relaxation u & 0.8       &           \\
+    \rowcolor{black!20} Under-relaxation p & 0.2       &           \\
+    \rowcolor{black!00} Under-relaxation T & 1.0       &           \\
+    \rowcolor{black!20} Relative tolerance & 1E-8      &
   \end{tabular}
   \label{tab:cavity}
 \end{table}
 
 Using the data from table \ref{tab:cavity} and given Prandtl number for the flow problem \(Pr = 0.71\) the Rayleigh number \(Ra\), a dimensionless number used to characterize buoyancy driven flows, can be calculated. From the definition of the Prandtl number the thermal diffusivity \(\alpha\) can be calculated as
 \begin{displaymath}
-  \alpha = \frac{\mu}{\rho \, Pr} = 2.1304E-5.
+  \alpha = \frac{\mu}{\rho \, Pr} = 2.1304 * 10^{-5}.
 \end{displaymath}
 It follows that the Rayleigh number can be determined to 
 \begin{displaymath}
   Ra = \frac{\rho g \beta \Delta T h^3}{\mu \alpha} \approx 10^4,
 \end{displaymath}
-which implies according to \ref{christon02} that the flow is still stationary and non-turbulent.
+which implies according to \cite{christon02} that the flow is still stationary and non-turbulent.
 
-The tests were conducted on the formerly presented HHLR cluster, using the MPI2 and MEM2 section. For the tests involving higher resolutions the relative tolerance for convergence was increased to $1E-4$. Table \ref{tab:cavitycompare}
+The tests were conducted on the formerly presented HHLR cluster, using the MPI2 section. Table \ref{tab:cavitycompare} compares the wall-clock times and number of  for different solver and coupling approaches. The presented results are in good agreement with \cite{vakilipour12}, which show monotonic decrease of the number of iterations with increased implicit coupling. It is notable that the pressure velocity coupling is responsible for the biggest decrease in the number of non-linear iterations. Different to the results presented in section \ref{sec:channel} this does not yield significant performance benefits with respect to wall-clock time.  In order to achieve the benefits of a fully coupled solution algorithm the coupling has to be increased to also involve semi-implicit temperature-to-velocity/pressure and implicit velocity-to-temperature coupling. 
 
 \begin{table}[h!]\centering
 \ra{1.3}
   \begin{tabular}{cccc}\toprule
-    Resolution & Solver configuration & Time & Non-linear it. \\
+    Resolution & Solver configuration & Time & No. Non-linear its. \\
     \midrule
     \rowcolor{black!20}\multirow{4}{*}{}            & SEG    & 0.3719E+02 & 203 \\
     \rowcolor{black!20}                             & CPLD   & 0.6861E+02 & 62  \\
@@ -541,13 +542,11 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
     %\rowcolor{black!00}                                & TCPLD  &  & \\
     %\rowcolor{black!00} \multirow{-4}{*}{256x256x256}  & NRCPLD &  & \\ %\hline
   \end{tabular}
-  \caption{Performance analysis results of the heated cavity flow problem}
+  \caption{Performance analysis results of the heated cavity flow problem comparing the SIMPLE algorithm with segregated temperature solve (SEG), the fully coupled solution algorithm with segregated temperature solve (CPLD), the fully coupled solution algorithm with an implicit Boussinesq approximation (TCPLD) and the fully coupled solution algorithm using an implicit Boussinesq approximation and a semi-implicit Newton-Raphson linearization of the convective part of the temperature equation (NRCPLD).}
   \label{tab:cavitycompare}
 \end{table}
 
-The presented results are in good agreement with \cite{vakilipour12}, which show monotonic decrease of the number of iterations with increased implicit coupling. It is notable that the pressure velocity coupling is responsible for the biggest decrease in the number of non-linear iterations. Different to the results presented in section \ref{sec:channel} this does not yield significant performance benefits with respect to wall-clock time.  In order to achieve the benefits of a fully coupled solution algorithm the coupling has to be increased to also involve temperature-to-velocity/pressure and velocity-to-temperature coupling. 
-
 Furthermore it can be noticed that the solely use of velocity-to-temperature coupling does not result in benefits compared to the coupled solution for velocities and pressure combined with a decoupled solve for the temperature equation. This is accredited to the treatment of the non-linearity of the temperature equation in the TCPLD solver configuration. Even though the momentum balances implicitly use the temperature from the next iteration, the temperature equation does not use the velocities of the next iteration. Instead the convective fluxes are calculated with the velocities from the previous iteration. Even though the implicit velocity-to-temperature coupling reduces the number of needed non-linear iterations an increase in the needed wall-clock time for computation can be noticed. This is attributed to the augmented costs during the application of the linear solver algorithm as a result of the additional degree of freedom that the linear system embraces. The necessary number of outer iterations is higher than in the NRCPLD configuration since the convective fluxes in the temperature equation are not coupled to the momentum balances which degrades the convergence of the non-linear iteration process.
 
-It can be concluded that in order to profit from the benefits of implicit coupling the key lays in the temperature-to-velocity/pressure coupling. However, it should be noted that the implicit consideration of the corresponding terms furthermore increases the amount of memory needed for computation and hence does not come without drawbacks.
+It can be concluded that in order to profit from the benefits of implicit coupling the key lays in the semi-implicit temperature-to-velocity/pressure coupling. However, it should be noted that the implicit consideration of the corresponding terms furthermore increases the amount of memory needed for computation and hence does not come without drawbacks.
 

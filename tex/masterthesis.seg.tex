@@ -661,7 +661,7 @@ If the solution of the flow field is coupled to the solution of a temperature eq
 \subsubsection{Treatment of Block Boundaries}
 \label{sec:blockboundaries}
 
-If block structured grids are used to decompose the problem domain, the characterizing property of structured grids, which is the constant amount of grid cells in each direction, gives each inner cell exactly six neighbours. If more than one grid block is used this property is violated if the number of grid cells of each block is chosen to be arbitrary. The arbitrariness of the grid resolution is a main benefactor for the adaptivity of block structured grids.
+If block-structured grids are used to decompose the problem domain, the characterizing property of structured grids, which is the constant amount of grid cells in each direction, gives each inner cell exactly six neighbours. If more than one grid block is used this property is violated if the number of grid cells of each block is chosen to be arbitrary. The arbitrariness of the grid resolution is a main benefactor for the adaptivity of block-structured grids.
 
 To maintain the conservation property of finite-volume methods, block boundaries should not be interpreted as boundaries in the classical sense. Instead conditions have to be formulated to guarantee that flows through block boundaries are conserved. The method to treat block boundaries used in the present thesis was presented by \cite{lilek97}. Another method was presented in \cite{lange02}. However, the first method was chosen since it allows a fully implicit consideration of the block boundary fluxes. This method calculates fluxes through separate face segments \(S_l\) that come up on \emph{non-matching} grid blocks. Each of this face segments gets assigned a control volume \(L\) and a control volume \(R\) which exclusively share this face segment.  An algorithm to provide this needed information has been implemented in the present thesis. Figure \ref{fig:nonmatching} shows an example of non-matching block boundaries and the used indexing for control volumes which is for the treatment of block boundaries based on the numbering of the face segments \(S_l\). A face segment is defined as the subset of a boundary face, that is only shared by two control volumes.
 
@@ -683,7 +683,7 @@ It has to be noted that the derived pressure correction equation is a Poisson eq
 \end{displaymath}
 where \(\mathbb{1} = (1)_{i = 1,\dots,N} \in \mathbb{R}^N\) is the vector spanning the nullspace. This singularity accounts for the property of incompressible flows, that pressure can only be determined up to a constant. To fix this constraint various possibilities exist \cite{ferziger02}. A common method is to set the pressure correction to zero in one reference control volume and hence fix the pressure at one reference point in the problem domain. This can be done before solving the system by applying this Dirichlet-type condition, or it can be done afterwards when pressure is calculated from the pressure correction. This approach is not suitable for grid convergence studies since without proper interpolation it is not guaranteed that the reference pressure correction is taken at the correct location.
 
-Since some comparisons performed in the present work rely on grid convergence studies another approach for reducing the lose constraint of the pressure correction system has been used: The reference pressure correction is taken to be the mean value of the pressure correction over the domain 
+Since some comparisons performed in the present work rely on grid convergence studies, another approach for reducing the lose constraint of the pressure correction system has been used: The reference pressure correction is taken to be the mean value of the pressure correction over the domain 
 \begin{displaymath}
   p_{\text{ref}}' 
   = \frac{\iiint\limits_V p' \mathrm{d}V}{\iiint\limits_V \mathrm{d}V} 
@@ -738,5 +738,5 @@ After all matrix coefficients have been successfully calculated, the linear syst
   \centering
   \label{fig:segassemble}
   \input{./img/matrix.tikz.tex}
-  \caption{Non-zero structure of the linear systems used in the SIMPLE algorithm for a block structured grid consisting of one  $2\times2\times2$ cell and one $3\times3\times3$ cell block}
+  \caption{Non-zero structure of the linear systems used in the SIMPLE algorithm for a block-structured grid consisting of one  $2\times2\times2$ cell and one $3\times3\times3$ cell block}
 \end{figure}
