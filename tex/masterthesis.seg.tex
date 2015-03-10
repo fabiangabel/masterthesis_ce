@@ -295,6 +295,7 @@ To couple velocity and pressure correctors one can subtract equation (\ref{eq:no
 \end{align}
 The majority of the class of pressure correction algorithms has these equations as a common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving for the pressure correction, still unknown. The method used in the present work is the \emph{SIMPLE} Algorithm (\emph{Semi-Implicit Method for Pressure-Linked Equations}) \cite{patankar72}. The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation (\ref{eq:nodeprime}). Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by inserting equation (\ref{eq:nodeprime}) into equation (\ref{eq:faceprime}). This gives an update formula
 \begin{align}
+  \label{eq:velcorr}
   u_{i,f}' 
   &= 
   - \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
@@ -535,22 +536,41 @@ Again it is possible, though not always necessary as in the case of the velociti
 As the antecedent subsections showed, it is possible to deduce a linear algebraic equation for each control volume by the finite-volume method. The approach presented in the preceding subsections however did not cover the treatment of control volumes at domain boundaries yet. This subsection introduces the boundary conditions which are relevant for the present work and furthermore deals with transitional conditions at block boundaries.
 
 \subsubsection{Dirichlet Boundary Conditions}
-\label{sec:segdirichlet}
+\label{sec:segDirichlet}
 
-The first boundary condition is the Dirichlet boundary condition. This type of boundary condition is used to model inlet conditions for flow problems. For the temperature equation it may also be used at walls as will be shown in subsection \ref{sec:walls}. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. Especially the mass flux \(\dot{m}_f\) is known and hence does not have to be calculated using the pressure weighted interpolation method. Since no special modifications have to be made, as the resulting coefficient for a neighbouring control volume laying past the boundary is considered on the right hand side of the linear system, the implementation approach will be presented only for the temperature equation. Since there is no boundary condition that fixes the gradient at Dirichlet boundaries it is assumed that the partial derivatives of the respective variable are constant and can hence be extrapolated
+The first boundary condition is the Dirichlet boundary condition. This type of boundary condition when used for the velocity or transported scalars is used to model inlet conditions for flow problems. For the temperature equation it may also be used at walls as will be shown in subsection \ref{sec:walls}. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. In the case of Dirichlet boundary conditions for the velocities, especially the mass flux \(\dot{m}_f\) is known and hence does not have to be calculated using the pressure weighted interpolation method. This furthermore implies that the boundary velocites do not have to be corrected at Dirichlet velocity boundaries, i.e. (\ref{eq:velcorr}) yields
+\begin{displaymath}
+  0 
+  =
+  u_{i,f}' 
+  = 
+  - \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\right)
+  \left(\frac{\partial p}{\partial x_i}\right)_f',
+\end{displaymath}
+which implies
+\begin{displaymath}
+  0 = \left(\frac{\partial p}{\partial x_i}\right)_f'.
+\end{displaymath}
+For the pressure correction at Dirichlet velocity boundaries, a Neumann zero gradient boundary condition applies.
+
+Since in the case of Dirichlet boundary conditions for the velocities or the temperature no special modifications have to be made to the discretized equations, as the resulting coefficient for a neighbouring control volume laying past the boundary is considered on the right hand side of the linear system, the implementation approach for inlet boundary conditions will be presented only for the temperature equation. Since furthermore there is no boundary condition that fixes the gradient at Dirichlet boundaries it is assumed that the partial derivatives of the respective variable are constant and can hence be extrapolated
 \begin{displaymath}
   \left( \frac{\partial T}{\partial x_j} \right)_f \approx \left( \frac{\partial T}{\partial x_j} \right)_P.
 \end{displaymath}
 The modification to the central coefficient of the linear equation can be recursively formulated as
-\begin{displaymath}
+\begin{equation}
+  \label{eq:dirichletcoeff}
   a_P^{T} = a_P^{T} + \left( \max(0,\dot{m}_f )  - \frac{\kappa S_f}{|| \vec{x}_P - \vec{x}_f ||_2} \right),
-\end{displaymath}
+\end{equation}
 whereas the contribution to the right hand side reads
 \begin{align}
+  \label{dirichletrhs}
   b_{P,T} &= b_{P,T} - \left( \min(\dot{m}_f,0) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_f||_2}\right) T_f +
-  \left( \frac{\partial T}{\partial x_j}\right)_P^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber 
+  \left( \frac{\partial T}{\partial x_j}\right)_P^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f 
 \end{align}
 The reader should note, that even though the gradient discretization at domain boundaries is realized by a one sided forward differencing scheme instead of a central differencing scheme. This does not drastically affect accuracy because the distance used in the differential quotient is half the distance used on a central difference inside the domain \cite{schaefer99}.
+
+The case of Dirichlet boundary conditions for the pressure needs special consideration since no equation for the pressure is solved but the pressure correction. This type  of boundary condition can be applied to inlet boundaries or pressure boundaries and is recomendable if no data on the velocity distribution is known, but on the other hand the pressure difference between inlet and outlet, or the reference pressure at the outlet is an established quantity. The pressure correction at Dirichlet pressure boundary conditions is assumed to \(p' = 0\), and the modification of the coefficients of the algebraic equation for the corresponding control volumes can be carried out as in (\ref{eq:dirichletcoeff}) and (\ref{eq:dirichletrhs}). The velocity correction at the boundaries is nonzero and will have to be extrapolated using the formula for the pressure weighted interpolation applied to boundary values (\ref{eq:faceprime}).
 
 \subsubsection{Treatment of Wall Boundaries}
 \label{sec:walls}
@@ -643,19 +663,21 @@ If the solution of the flow field is coupled to the solution of a temperature eq
 
 If block structured grids are used to decompose the problem domain, the characterizing property of structured grids, which is the constant amount of grid cells in each direction, gives each inner cell exactly six neighbours. If more than one grid block is used this property is violated if the number of grid cells of each block is chosen to be arbitrary. The arbitrariness of the grid resolution is a main benefactor for the adaptivity of block structured grids.
 
-To maintain the conservation property of finite-volume methods, block boundaries should not be interpreted as boundaries in the classical sense. Instead conditions have to be formulated to guarantee that flows through block boundaries are conserved. The method to treat block boundaries used in the present thesis was presented by \cite{lilek97}. Another method was presented in \cite{lange02}. However, the first method was chosen since it allows a fully implicit consideration of the block boundary fluxes. This method calculates fluxes through separate face segments \(S_l\) that come up on \emph{non-matching} grid blocks. Each of this face segments gets assigned a control volume \(L\) and a control volume \(R\) which exclusively share this face segment.  An algorithm to provide this needed information has been implemented in the present thesis.
+To maintain the conservation property of finite-volume methods, block boundaries should not be interpreted as boundaries in the classical sense. Instead conditions have to be formulated to guarantee that flows through block boundaries are conserved. The method to treat block boundaries used in the present thesis was presented by \cite{lilek97}. Another method was presented in \cite{lange02}. However, the first method was chosen since it allows a fully implicit consideration of the block boundary fluxes. This method calculates fluxes through separate face segments \(S_l\) that come up on \emph{non-matching} grid blocks. Each of this face segments gets assigned a control volume \(L\) and a control volume \(R\) which exclusively share this face segment.  An algorithm to provide this needed information has been implemented in the present thesis. Figure \ref{fig:nonmatching} shows an example of non-matching block boundaries and the used indexing for control volumes which is for the treatment of block boundaries based on the numbering of the face segments \(S_l\). A face segment is defined as the subset of a boundary face, that is only shared by two control volumes.
 
-% \begin{figure}
-%   \label{fig:nonmatching}
-%   \caption{Non-matching grid cells at a block boundary}
-% \end{figure}
+\begin{figure}
+  \centering
+  \label{fig:nonmatching}
+  \input{./img/nonmatching.tikz.tex}
+  \caption{Non-matching grid cells with hanging nodes at a two-dimensional block boundary. Indexing is based on the face segments $S_l$}
+\end{figure}
 
 Once the geometric data, including the information regarding the interpolation coefficients at block boundaries, has been provided, the fluxes through these boundaries can be calculated as presented in the antecedent subsections. The connectivity of neighbouring control volumes of different grid blocks is represented by matrix coefficients \(a_L^{\phi}\) and \(a_R^{\phi}\), where \(\phi \in \{u_1,u_2,u_3,p,T\}\).
 
 \subsection{Treatment of the Singularity of the Pressure Correction Equation with Neumann Boundaries}
 \label{sec:singularitytreatment}
 
-It has to be noted that the derived pressure correction equation is a Poisson equation. As can be proven \cite{hackbusch96}, the linear \(N \times N\) systems surging from the presented discretization on a grid with \(N\) control volumes have a nullspace of dimension one, i.e.
+It has to be noted that the derived pressure correction equation is a Poisson equation. As can be proven \cite{hackbusch96}, the linear \(N \times N\) systems surging from the presented discretization on a grid with \(N\) control volumes whith Neumann boundary conditions have a nullspace of dimension one, i.e.
 \begin{displaymath}
   \operatorname{null}(A_{p'}) = \operatorname{span}(\mathbb{1}),
 \end{displaymath}
@@ -672,6 +694,8 @@ such that the net pressure correction amounts to zero. This modifies equation (\
   %\label{eq:pressupdate2}
   p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} \left( p_P' - p_{\text{ref}}' \right).
 \end{displaymath}
+
+It should be noted, that as soon as one control volume has been provided with a Dirichlet pressure boundary condition, the systems is not singular anymore.
 
 \subsection{Structure of the Assembled Linear Systems}
 \label{sec:structure}

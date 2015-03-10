@@ -159,7 +159,7 @@ The explicit parts resulting from the Newton-Raphson linearization yield additio
 
 The treatment of boundary conditions and transitional conditions at block boundaries is very similar to the way presented in section \ref{sec:segboundary}. The main difference results from the fact that in addition to the necessary changes from section \ref{sec:segboundary}, modifications are necessary to the new matrix coefficients from the discretized momentum balance and the pressure equation in the coupled solution algorithm. The purpose of this section is therefore to only focus on these additional changes.
 
-How Dirichlet boundary conditions, also known as inlet boundaries, affect the matrix coefficients that only correspond to the velocities has been presented in section \ref{sec:segdirichlet}. It is common to use Neumann boundary conditions for the pressure at Dirichlet boundaries with respect to the velocities \cite{darwish09}. Under the assumption that the gradient of the pressure vanishes at inlet boundaries, the matrix coefficients for the velocity-to-pressure coupling have to be modified to 
+How Dirichlet boundary conditions, also known as inlet boundaries, affect the matrix coefficients that only correspond to the velocities has been presented in section \ref{sec:segDirichlet}. It is common to use Neumann boundary conditions for the pressure at Dirichlet boundaries with respect to the velocities \cite{darwish09}. Under the assumption that the gradient of the pressure vanishes at inlet boundaries, the matrix coefficients for the velocity-to-pressure coupling have to be modified to 
 \begin{displaymath}
   a_P^{u_i,p} = a_P^{u_i,p} + n_{f,i} S_f.
 \end{displaymath}
