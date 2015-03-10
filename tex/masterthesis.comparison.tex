@@ -1,7 +1,7 @@
 \section{Comparison of Solver Concepts}
 \label{sec:compare}
 
-This section conducts the performance analysis of both developed solvers. In the first part of this section the used hardware and software are described, furthermore important performance measures are introduced. After performing a preliminary benchmark to measure the sustainable bandwidth the Speedup is measured for both solver programs. The second part of this section tests the performance of the algorithm on a test case with complex geometry and on the heated cavity benchmark.
+This section conducts the performance analysis of both developed solvers. In the first part of this section the used hardware and software are described, furthermore important performance measures are introduced. After performing a preliminary benchmark to measure the sustainable bandwidth, the Speed-Up is measured for both solver programs. The second part of this section tests the performance of the algorithm on a test case with complex geometry and on the heated cavity benchmark.
   
 \subsection{Parallel Performance}
 
@@ -37,7 +37,7 @@ CXXOPTFLAGS="-O3 -xHost" \
 --download-hypre \
 --download-ml
 \end{lstlisting}
-It should be noted that as the configurations options show, to maximize the efficiency of PETSc, a math kernel library should be used that has been optimized for the underlying hardware architecture as is in the case of the present thesis the Intel \emph{MKL} (\emph{Math Kernel Library}). The Open MPI library was compiled using Intel compilers as well.
+It should be noted that as the configurations options show, to maximize the efficiency of PETSc, a math kernel library should be used that has been optimized for the underlying hardware architecture. Is in the case of the present thesis the Intel \emph{MKL} (\emph{Math Kernel Library}) has been used. The Open MPI library was compiled using Intel compilers as well.
 
 \subsubsection{Measures of Performance}
 
@@ -59,19 +59,19 @@ While wall-clock time is an absolute measure that can be used to compare differe
        is formed by the quotient of the wall times needed for the complete problem domain and partial solves on subdomains. This measure does neither depend on hardware nor on the used implementation. Instead it directly relates to the size and partition of the grid. 
 \end{itemize}
 
-It is not possible to calculate all three efficiencies at the same time using only plain wall-clock time measurements of a given application.  Different solver configurations have to be used to calculate them separately. Since the focus of investigation of the present thesis does not lie on load balancing, for the remainder of the thesis \(E^{load}_P = 100\%  \) is assumed. This does not present a considerable drawback, since an ideal load balancing is easily obtainable nowadays by the use of grid partitioning algorithms. Using identical algorithms for different numbers of involved processes implicitly, achieves \(E^{num}_P = 100 \%\). In this case the parallel efficiency of an application can be measured through the quotient of the needed wall-clock time. To measure the numerical efficiency of an algorithm the respective hardware counters have to be evaluated. This can be done using the built in log file functionality of PETSc as presented in section \ref{sec:petsc}. Hence the determination of numerical efficiency does not rely on wall-clock time.
+It is not possible to calculate all three efficiencies at the same time using only plain wall-clock time measurements of a given application.  Different solver configurations have to be used to calculate them separately. Since the focus of investigation of the present thesis does not lie on load balancing, for the remainder of the thesis \(E^{load}_P = 100\%  \) is assumed. This does not present a considerable drawback, since an ideal load balancing is easily obtainable nowadays by the use of grid partitioning algorithms \cite{ferziger02}. Using identical algorithms for different numbers of involved processes implicitly, achieves \(E^{num}_P = 100 \%\). In this case the parallel efficiency of an application can be measured through the quotient of the needed wall-clock time. To measure the numerical efficiency of an algorithm the respective hardware counters have to be evaluated. This can be done using the built in log file functionality of PETSc as presented in section \ref{sec:petsc}. Hence the determination of numerical efficiency does not rely on wall-clock time.
 
 Another common performance measure is the \emph{Speed-Up}
 \begin{displaymath}
   S_P = \frac{T_1}{T_P} = P \cdot E^{tot}_P.
 \end{displaymath}
-Speedup and parallel efficiency characterize the parallel scalability of an application and determine the regimes of efficient use of hardware resources.
+Speed-Up and parallel efficiency characterize the parallel scalability of an application and determine the regimes of efficient use of hardware resources.
 
 \subsubsection{Preliminary Upper Bounds on Performance -- The STREAM Benchmark}
 
 Scientific applications that solve partial differential equations rely on sparse matrix computations, which usually exhibit the sustainable memory bandwidth as bottleneck with respect to the runtime performance of the program \cite{hager11}. The purpose of this section is to establish a frame in terms of an upper bound on performance in which the efficiency of the developed solver framework can be evaluated critically. As common measure for the maximum sustainable bandwidth, low-level benchmarks can be used, which focus on evaluating specific properties of the deployed hardware architecture. In this case the STREAM benchmark suite \cite{mccalpin07,mccalpin95} provides apt tests, which are designed to work with data sets that exceed the cache size of the involved processor architecture. This forces the processors to stream the needed data directly from memory instead of reusing the data residing in their caches. These types of tests can be used to calculate an upper bound on the memory bandwidth for the CAFFA framework.
 
-In terms of parallel scalability, the STREAM benchmark can also be used as an upper performance bound. According to \cite{petsc-web-page} the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. Figures \ref{fig:mpi1band} and \ref{fig:mpi2band} show the test results of the STREAM benchmark on the two different sections of the HHRL. It should be noted that it is central for the results to be reproducible to always run the tests exclusively on each node, i.e. that no other process is running on the node. %Before presenting results the different binding configurations will be explained.
+In terms of parallel scalability, the STREAM benchmark can also be used as an upper performance bound. According to \cite{petsc-web-page} the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. Figures \ref{fig:mpi1band} and \ref{fig:mpi2band} show the test results of the STREAM benchmark on the two different MPI sections of the HHRL. It should be noted that it is central for the results to be reproducible to always run the tests exclusively on each node, i.e. that no other process is running on the node. %Before presenting results the different binding configurations will be explained.
 
 %The first configuration sequentially binds the processes to the cores beginning on the first socket. When every core has a bound process the binding algorithm binds the following processes to cores of the second socket. The second configuration binds the processes in a round robin manner regarding the sockets. This configuration in difference to the second configuration binds one process to three cores. Figures \ref{fig:binding1},\ref{fig:binding2} and \ref{fig:binding3} demonstrate the different binding options for two sockets and processors with twelve cores each, when eight processes are to be bound to the resources.
 
@@ -176,15 +176,15 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
 \label{fig:mpi2band}
 \end{figure}
 
-As can be seen from figure \ref{fig:mpi1band} and \ref{fig:mpi2band}, the scaling of the sustainable bandwidth behaves rather erratic, such that for process counts up until eight for the MPI1 section no reliable results can be obtained from the STREAM benchmark. It is assumed that this kind of behaviour is due to the automatic turbo boost the deployed processors apply, which cannot be controlled other than by turning it off directly from the nodes BIOS. For the following performance analyses with respect to parallel performance it is desirable to minimize this kind of unpredictable side effects. Since all performance measures are relative but the plain measurement of wall-clock time, the reference value for the following performance measurements will be taken from the program execution for the maximum number of processes that can be bound without overlap to one deployed socket.
+As can be seen from figure \ref{fig:mpi1band} and \ref{fig:mpi2band}, the scaling of the sustainable bandwidth behaves rather erratic, such that for process counts up until eight for the MPI1 section no reliable results can be obtained from the STREAM benchmark. It is assumed that this kind of behaviour is due to the automatic turbo-boost the deployed processors apply, which cannot be controlled other than by turning it off directly from the nodes from the BIOS. For the following performance analyses with respect to parallel performance it is desirable to minimize this kind of unpredictable side effects. Since all performance measures are relative but the plain measurement of wall-clock time, the reference value for the following performance measurements will be taken from the program execution for the maximum number of processes that can be bound without overlap to one deployed socket.
 
-It should be taken into account that the STREAM benchmark used to test the present architecture was provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem, by always using all available cores per socket but only running the benchmark on \(n\) processes while the other \(24 - n\) or \(16 - n\) processes run calculations that only use data from the L\(1\) cache of their corresponding core. The intention of this approach was to regulate the turbo boost effects by keeping a constant load on the processors for different numbers of STREAM benchmark processes. However this approach didn't generate results different from figures \ref{fig:mpi1band} and \ref{fig:mpi2band}.
+It should be taken into account that the STREAM benchmark used to test the present architecture was provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem, by always using all available cores per socket but only running the benchmark on \(n\) processes while the other \(24 - n\) or \(16 - n\) processes run calculations that only use data from the L\(1\)-cache of their corresponding core. The intention of this approach was to regulate the turbo-boost effects by keeping a constant load on the processors for different numbers of STREAM benchmark processes. However this approach didn't generate results different from figures \ref{fig:mpi1band} and \ref{fig:mpi2band}.
 
-\subsubsection{Speedup Measurement and Impact of Coupling Algorithm for Analytic Test Case}
+\subsubsection{Speed-Up Measurement and Impact of Coupling Algorithm for Analytic Test Case}
 
-This section presents the results from the speedup measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:hhlr}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. All tests are conducted on the previously introduced HHLR cluster using the MPI1 and MEM2 section. The performance analyses will present the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance furthermore the speedup will be calculated based on the presented results. 
+This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:hhlr}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. All tests are conducted on the previously introduced HHLR cluster using the MPI1 and MEM2 section. The performance analyses will present the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance furthermore the Speed-Up will be calculated based on the presented results. 
 
-The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests the linear system for the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure correction equation is solved by a CG (\emph{Conjugated Gradient}) solver with GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. All further solver parameters are listed in table \ref{tab:performance}.
+The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests the linear system for the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. All further solver parameters are listed in table \ref{tab:performance}.
 
 \begin{table}[h!]\centering
 \ra{1.3}
@@ -202,7 +202,7 @@ The performance of all solvers significantly depends on the performance of the l
 \end{table}
  
 \begin{figure}
-  \setlength{\abovecaptionskip}{5pt plus 3pt minus 2pt}
+  %\setlength{\abovecaptionskip}{5pt plus 3pt minus 2pt}
   \begin{center}
   \begin{tikzpicture}
       \begin{loglogaxis}[
@@ -225,7 +225,7 @@ The performance of all solvers significantly depends on the performance of the l
   \begin{tikzpicture}
       \begin{loglogaxis}[
         xlabel=Number of Processes,
-        ylabel=Speedup,
+        ylabel=Speed-Up,
         xtick={1,2,4,8,16,32,64,128,256,512,1024},
         xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
         ytick={1,2,4,8,16,32,64,128,256,512},
@@ -241,11 +241,11 @@ The performance of all solvers significantly depends on the performance of the l
     \\
   \ref{named}
   \end{center}
-  \caption{Speedup comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  \caption{Wall-clock time and Speed-Up comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
    \label{fig:speedup}
 \end{figure}
 
-From the comparison in figures \ref{fig:wall} and \ref{fig:speedup} it is evident that both algorithms are scalable and the coupled solution algorithm accelerates the solution process up to one order of magnitude. It has to be noted, that the presented results for the coupled solution algorithm were obtained using black-box solvers from the PETSc framework. It is assumed that the performance of the coupled solution algorithm with respect to the needed wall-clock time would benefit from multigrid solvers especially designed for the coupled system of linear equations. Examples for such special solvers can be found in \cite{darwish09,mangani14,klaij13}. Another approach is represented by \emph{physics-based} solvers which take advantage of the matrix structure as shown in figure \ref{fig:nointerlacemat}. References \cite{brown12,mcinnes14} describe how PETSc can be used to construct physics based preconditioners.
+From the comparison in figure \ref{fig:speedup} it is evident that both algorithms are scalable and the coupled solution algorithm accelerates the solution process up to one order of magnitude. It has to be noted, that the presented results for the coupled solution algorithm were obtained using black-box solvers from the PETSc framework. It is assumed that the performance of the coupled solution algorithm with respect to the needed wall-clock time would benefit from multigrid solvers especially designed for the coupled system of linear equations. Examples for such special solvers can be found in \cite{darwish09,mangani14,klaij13}. Another approach is represented by \emph{physics-based} solvers which take advantage of the matrix structure as shown in figure \ref{fig:nointerlacemat}. References \cite{brown12,mcinnes14} describe how PETSc can be used to construct physics based preconditioners.
 
 %\begin{figure}
 %  \centering
@@ -286,6 +286,71 @@ From the comparison in figures \ref{fig:wall} and \ref{fig:speedup} it is eviden
 %  \end{minipage}
 %\end{figure}
 
+\subsection{Weak Scaling Comparison of Coupled and Segregated Solution Algorithm}
+
+It has been previously reported in \cite{darwish09,vakilipour12} that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. It is known that this is not true for the SIMPLE algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so called \emph{weak} scaling of the implementation \cite{hager11}. Starting from a moderate number of unknowns for a tree-dimensional test case solving for the analytical solution presented in section \ref{sec:mms}, this benchmark will investigate how the running-time and the number of needed inner and outer iterations behaves when the computational load per process is held constant, while the number of involved processes is continuously increased. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same time by involving more processes running the solver application. Each process will get assigned a block with \(32*32*32\) unknowns. The number of involved unknowns in each test run thus can be calculated as \( N = 32*32*32*PROC \). Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE algorithm and the fully coupled solution algorithm.
+
+\begin{figure}
+  \begin{center}
+  \begin{tikzpicture}
+      \begin{loglogaxis}[
+        legend columns=-1,
+        legend entries={SIMPLE algorithm,Fully coupled algorithm},
+        legend to name=named,
+        xlabel=Number of Processes,
+        ylabel=Number of Outer Iterations,
+        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+        xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
+        %ytick={1,2,4,8,16,32,64,128,256,512},
+        %yticklabels={1,2,4,8,16,32,64,128,256,512},
+        %grid=major,
+        xmin=8,xmax=1200,
+      ]
+      \addplot[color=black,mark=*] file {./files/weak.seg.iter};
+      \addplot[color=black,mark=square*] file {./files/weak.iter};
+    \end{loglogaxis}
+    \end{tikzpicture}
+    %
+    \begin{tikzpicture}
+      \begin{loglogaxis}[
+        xlabel=Number of Processes,
+        ylabel=Wall-Clock Time s,
+        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+        xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
+        %ytick={1,2,4,8,16,32,64,128,256,512},
+        %yticklabels={1,2,4,8,16,32,64,128,256,512},
+        %grid=major,
+        xmin=8,xmax=1200,
+      ]
+      \addplot[color=black,mark=*] file {./files/weak.seg.time};
+      \addplot[color=black,mark=square*] file {./files/weak.time};
+    \end{loglogaxis}
+    \end{tikzpicture}
+    \\
+  \ref{named}
+  \end{center}
+  \caption{Comparison of the number of outer iterations and the corresponding execution wall-clock time needed to achieve an reduction of 1E-8 of the initial residual for different methods to resolve pressure-velocity coupling}
+  \label{fig:weak}
+\end{figure}
+
+The comparison in figure \ref{fig:weak} shows that the fully coupled algorithm scales ideally with respect to the number of outer iterations, which remains almost constant throughout the conducted study. The number of iterations at most differed by 2 outer iterations. These differences are suspected to be caused by the loose tolerance criterion of residual reduction in each outer iteration. As an effect of accumulating rounding errors, some test cases did not accomplish the total tolerance criterion and thus needed to perform another additional outer iteration. From the wall-clock time measurements presented in figure \ref{fig:weak} it is evident that despite the approximately constant number of outer iterations the fully coupled solution algorithm did not scale ideally. Figure \ref{fig:weakinner} shows that weak scaling is prevented because the linear solver did not scale ideally. This shows that weak scaling cannot be obtained using black-box linear solvers and that further research regarding the development of special linear solvers for the systems resulting of a fully coupled discretization of the Navier-Stokes equations is needed.
+
+\begin{figure}[h!]
+  \begin{center}
+  \begin{tikzpicture}
+    \begin{semilogxaxis}[
+        xlabel=Number of Processes,
+        ylabel=Average Number of Inner Iterations,
+        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+        xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
+      ]
+      \addplot[color=black,mark=square*] file {./files/weak.inner};
+      \end{semilogxaxis}
+    \end{tikzpicture}
+  \end{center}
+  \caption{Average number of inner iterations for different process counts solving for an analytical solution with the fully coupled solution algorithm}
+  \label{fig:weakinner}
+\end{figure}
 
 \subsection{Realistic Testing Scenario -- Complex Geometry}
 \label{sec:channel}
@@ -328,13 +393,13 @@ was chosen. All the other problem parameters were chosen such that the flow prob
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{black!20} Density    & 1E-0 & $kg/m^3$  \\
-    \rowcolor{black!00} Viscosity  & 1E-3 & $Ns/m^2$  \\
-    \rowcolor{black!20} Height     & 0.41 & m         \\
-    \rowcolor{black!00} Length     & 2.5  & m         \\
-    \rowcolor{black!20} Side length cube & 0.1  & m   \\
-    \rowcolor{black!00} Under relaxation u & 0.9 &    \\
-    \rowcolor{black!20} Under relaxation p & 0.1 &    \\
+    \rowcolor{black!20} Density            & 1E-0 & $kg/m^3$  \\
+    \rowcolor{black!00} Viscosity          & 1E-3 & $Ns/m^2$  \\
+    \rowcolor{black!20} Height             & 0.41 & m         \\
+    \rowcolor{black!00} Length             & 2.5  & m         \\
+    \rowcolor{black!20} Side length cube   & 0.1  & m   \\
+    \rowcolor{black!00} Under relaxation u & 0.9  &    \\
+    \rowcolor{black!20} Under relaxation p & 0.1  &    \\
   \end{tabular}
   \label{tab:channel}
 \end{table}
@@ -400,7 +465,23 @@ The timing results show, that already after the first grid refinement step the f
 
 \subsection{Classical Benchmarking Case -- Heat-Driven Cavity Flow}
 
-This section deals with the evaluation and comparison not only of the pressure-velocity coupling but also of the velocity-to-temperature coupling through the Boussinesq approximation and the temperature-velocity/pressure coupling through the Newton-Raphson linearization of the convective term in the temperature equation. For this the standard heat-driven cavity flow \cite{christon02,vahl83} is adapted for a three dimensional domain and the material and geometric parameters are chosen such that a non-turbulent stationary flow exists, which means that the solution lies within the regime of the approximations made by the solver.
+This section deals with the evaluation and comparison not only of the pressure-velocity coupling but also of the velocity-to-temperature coupling through the Boussinesq approximation and the temperature-velocity/pressure coupling through the Newton-Raphson linearization of the convective term in the temperature equation. For this the standard heat-driven cavity flow \cite{christon02,vahl83} is adapted for a three dimensional domain and the material and geometric parameters are chosen such that a non-turbulent stationary flow exists, which means that the solution lies within the regime of the approximations made by the solver. Figure \ref{fig:sketchcavity} shows an example for a temperature and velocity field obtained with the developed solver framework, solving for the heated cavity flow problem.
+
+\begin{figure}[h!]
+  \centering
+  \subfigure{
+  \begin{minipage}{0.45\textwidth}%
+  \includegraphics[trim=3.5cm 5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavity.pdf}
+  \raggedleft{}
+\end{minipage}}
+\hfil
+\subfigure{
+\begin{minipage}{0.45\textwidth}
+  \includegraphics[trim=3.5cm 4.5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavityw.pdf}
+\end{minipage} }
+  \caption{Temperature field and velocity field in the coordinate direction of the gravitational force of the cavity flow problem for a cross section in the middle of the problem domain }
+  \label{fig:sketchcavity}
+\end{figure}
 
 Essential for this benchmarking case is the nature of the flow. The fluid motion is a consequence of the effect of volume forces caused by temperature differences in the solution domain, hence the mathematical problem exhibits a strong coupling between the involved variables velocity, pressure and temperature. This relation is represented by the Rayleigh and Prandtl number. It is assumed that for this kind of flow the fully implicit treatment of the temperature coupling will yield further benefits with respect to wall time, compared with solution approaches that solve for the temperature separately. Table \ref{tab:cavity} lists the geometrical and solver parameters used for the performance analysis of this section.
 
