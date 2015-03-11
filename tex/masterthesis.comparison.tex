@@ -452,7 +452,7 @@ In contrast to the segregated algorithm, the fully coupled solution algorithm ac
   \caption{Performance analysis results of the channel flow problem for different numbers of unknowns comparint the segregated (SEG) to the fully coupled (CPLD) solution algorithm using one process on the MPI2 section of the HHLR supercomputer. }
 \ra{1.3}
   \begin{tabular}{lcccc}\toprule
-    No. of Unknowns & SEG - time & CPLD - time & SEG - its & CPLD - its \\
+    No. of Unknowns & SEG - time s & CPLD - time s & SEG - its & CPLD - its \\
     \midrule
     \rowcolor{black!20} 75768    & 0.2226E+02 & 0.2674E+02 & 151  & 67 \\
     \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1499E+03 & 355  & 42 \\
@@ -520,7 +520,7 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
 \ra{1.3}
   \caption{Performance analysis results of the heated cavity flow problem comparing the SIMPLE algorithm with segregated temperature solve (SEG), the fully coupled solution algorithm with segregated temperature solve (CPLD), the fully coupled solution algorithm with an implicit Boussinesq approximation (TCPLD) and the fully coupled solution algorithm using an implicit Boussinesq approximation and a semi-implicit Newton-Raphson linearization of the convective part of the temperature equation (NRCPLD).}
   \begin{tabular}{cccc}\toprule
-    Resolution & Solver configuration & Time & No. Non-linear its. \\
+    Resolution & Solver configuration & Time s & No. Non-linear its. \\
     \midrule
     \rowcolor{black!20}\multirow{4}{*}{}            & SEG    & 0.3719E+02 & 203 \\
     \rowcolor{black!20}                             & CPLD   & 0.6861E+02 & 62  \\

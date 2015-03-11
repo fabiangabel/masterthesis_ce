@@ -259,17 +259,95 @@
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementierung}
-\begin{frame}
+\begin{frame}\scriptsize
   \frametitle{Implementierung - Diskretisierung}
+  \begin{itemize}
+    \item Finite-Volumen Methode für stationäre, incompressible Navier-Stokes Gleichungen
+    \item standardmäßige Diskretisierung der konvektiven und viskosen Terme
+  \end{itemize}
+  \begin{itemize}
+    \item diskretisierte Massenerhaltungsgleichung
+  \end{itemize}
+\begin{align*}
+  \label{eq:massbalance}
+  \sum_{f \in \{w,s,b,t,n,e\}} u_{i,f} n_{f_i} S_f = 0,
+\end{align*}
+  \begin{itemize}
+    \item druckgewichtete Interpolation zur Massenflussberechnung
+  \end{itemize}
+\begin{align*}
+  u_{i,f}^{(n)} 
+  &=
+  \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \\
+  & - \left(\left(1 - \gamma_f\right) \frac{V_P}{a_P^{u_i}} + \gamma_f \frac{ V_Q}{a_Q^{u_i}}\right)
+  \left[ 
+    \underline{ \left(\frac{\partial p}{\partial x_i}\right)_f^{(n)}}
+  - \frac{1}{2} 
+  \left( 
+    \left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
+  + \left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)} 
+  \right)
+  \right]
+\end{align*}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+\begin{frame}\scriptsize
   \frametitle{Implementierung - Temperaturkopplung}
+  \begin{itemize}
+    \item Diskretisierung der Boussinesq Approximation des Auftriebsterms \(¿ \rho \beta (T - T_0 ) \)
+    \item implizit oder explizit
+  \end{itemize}
+  \begin{itemize}
+    \item Newton-Raphson Linearisierung konvektiver Term der Temperaturgleichung \\(Galpin et al.)
+  \end{itemize}
+\begin{align*}
+  \left(u_{j,f} T_f \right)^{(n)} 
+  &\approx 
+  \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  + \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} \vphantom{(u_jT)}{T_f}^{(n-1)}  -  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
+\end{align*}
+  \begin{itemize}
+    \item Diskretisierung unter Verwendung der druckgewichteten Interpolation
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}\scriptsize
+  \frametitle{Implementierung - System algebraischer Gleichungen}
+\begin{align*}
+  a_P^{u_i} u_{P,i} + \sum_{F \in NB(P)} a_F^{u_i} u_{F,i} + \underbrace{\vphantom{\sum_F}{a_P^{u_i,p} p_P+ \sum_{F \in NB(P)} a_F^{u_i,p} p_F}}_{\hbox{Pressure-velocity coupling}} + \underbrace{\vphantom{\sum_F}{ a_P^{u_i,T} T_P}}_{\hbox{Boussinesq approximation}} &= b_{P,u_i} \quad i=1,...,3  \\[2.0em]
+  a_P^{p} p_{P} + \sum_{F \in NB(P)} a_F^{p} p_F + \underbrace{ \sum_{j=1}^3 \left(a_P^{u_j,p} u_{P,j}+ \sum_{F \in NB(P)} a_F^{p,u_j} u_{F,j} \right)}_{\hbox{Pressure-velocity coupling}} &= b_{P,p}  \\[2.0em]
+  a_P^{T} T_{P} + \sum_{F \in NB(P)} a_F^{T} T_F + \underbrace{\sum_{j=1}^3 \left(a_P^{T,u_j} u_{P,j}+ \sum_{F \in NB(P)} a_F^{p,u_j} u_{F,j} \right) + a_P^{T,p} p_P + \sum_{F \in NB(P) } a_F^{T,p} p_F}_{\hbox{Newton-Raphson linearization}} &= b_{P,T}
+\end{align*}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
   \frametitle{Implementierung - Blockränder und Parallelisierung}
-  Behandlung der Blockränder nach Lilek et. al
+  \vspace{0.5cm}
+  \begin{itemize}\scriptsize
+    \item Behandlung der Blockränder nach Lilek et. al
+    \item Nutzen von PETSc Datenstrukturen zur MPI-Parallelisierung
+    \item spezielle Vektorobjekte zur Verwaltung von Ghost-Values
+    \item Nur ein Prozessor berechnet Matrixkoeffizienten für Blockübergänge
+  \end{itemize}
+  \vspace{-0.5cm}
+  \begin{columns}
+    \begin{column}{4cm}
+      \begin{figure}
+        \centering
+        \label{fig:nonmatching}
+        \resizebox{1.0\linewidth}{!}{\input{./img/nonmatching.tikz.tex}}
+        %\caption{Non-matching grid cells with hanging nodes at a two-dimensional block boundary. Indexing is based on the face segments $S_l$}
+      \end{figure}
+    \end{column}
+    \begin{column}{8cm}
+      \begin{figure}
+        \centering
+        \label{fig:segassemble}
+        \resizebox{\linewidth}{!}{\input{./img/ghosting.tikz.tex}}
+        %\caption{Storage and update of ghost values in vectors related to variables on multi block domains. The blocks have been assigned to two different Processes, \emph{Proc} $1$ and \emph{Proc} $2$. The control volumes of the two-dimensional problem domain are indexed with respect to the process local indexing.}
+        \label{fig:ghosting}
+      \end{figure}
+    \end{column}
+  \end{columns}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
@@ -295,7 +373,7 @@
 \end{columns}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+\begin{frame}\scriptsize
 \frametitle{Implementierung - Assemblierung mit Kopplung}
 \vspace{-0.5cm}
 \begin{columns}
@@ -308,11 +386,14 @@
 \end{figure}
 \end{column}
 \begin{column}{5cm}
-  \begin{itemize}\scriptsize
+  unterschiedliche Kopplungsterme:
+  \begin{itemize}
     \item blau: Druck-Geschwindigkeit
     \item rot: Geschwindkigkeit-Temperatur
     \item grün: Temperatur-Geschwindigkeit/Druck
   \end{itemize}
+  \vspace{3cm}
+  \hspace*{-3cm} \scriptsize{$\color{fnbblue}\blacksquare$} an Stelle eines Eintrags steht eine dichtbesetze \(5x5\) Matrix
 \end{column}
 \end{columns}
 \end{frame}
@@ -352,7 +433,7 @@
 \Else
   \State{\textit{SOLVE} the linear system for velocities and pressure}
 \EndIf
-\State{\textit{CALCULATE} mass fluxes using }
+\State{\textit{CALCULATE} mass fluxes }
 \If{(decoupled scalar equation)}
   \State{\textit{SOLVE} scalar equation}
 \EndIf
@@ -498,6 +579,7 @@
 \vspace{0.5cm}
 \begin{itemize}\scriptsize
   \item \(128x128x128\) Unbekannte auf Prozesse verteilt
+  \item ab 256 Prozessoren zu wenig Unbekannte pro Prozess
 \end{itemize}
 
 \end{frame}
@@ -564,7 +646,8 @@
 \vspace{0.5cm}
 \begin{itemize}\scriptsize
   \item \(32x32x32\) Unbekannte pro Prozess
-  \item Gekoppelter Algorithmus skaliert, die Implementierung aufgrund des Gleichungslösers nicht
+  \item Gekoppelter Algorithmus skaliert 
+  \item Implementierung skaliert nicht (Präkonditionierer)
 \end{itemize}
 
 \end{frame}
@@ -576,7 +659,7 @@
 \begin{figure}
   \centering
   \resizebox{1.0\linewidth}{!}{\includegraphics{./img/channel3d.pdf}}
-  \caption{Sketch of the channel flow problem domain}
+  \caption{Sketch of the channel flow problem}
   \label{fig:sketch}
 \end{figure}
 \end{column}
@@ -621,7 +704,7 @@
 \ra{1.3}
 \resizebox{7cm}{!}{
   \begin{tabular}{lcccc}\toprule
-    No. of Unknowns & SEG - time & CPLD - time & SEG - its & CPLD - its \\
+    No. of Unknowns & SEG - time s & CPLD - time s & SEG - its & CPLD - its \\
     \midrule
     \rowcolor{black!20} 75768    & 0.2226E+02 & 0.2674E+02 & 151  & 67 \\
     \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1499E+03 & 355  & 42 \\
@@ -650,11 +733,15 @@
     \caption{Temperatur-und $w$-Geschwindigkeitsfeld}
     \end{figure}
   \end{column}
- \begin{column}{4cm}
-   \begin{figure}[h!]
-   \centering
-   %\includegraphics[trim=3.5cm 5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavity.pdf}
-   \end{figure}
+ \begin{column}{6cm}
+   \begin{itemize}\scriptsize
+     \item Testfall mit natürlicher Konvektion
+     \item starke Kopplung, da  Strömung getriben durch Temperaturdifferenzen 
+     \item dreidimensionale Kavität mit beheizter Ost- und Westseite 
+     \item alle übrigen Wände adiabat
+     \item \(Ra \approx 10^4 \)
+     \item stationäre, laminare Strömung
+   \end{itemize}
  \end{column}
 \end{columns}
 \end{frame}
@@ -667,7 +754,7 @@
 \caption{Performance des SIMPLE algorithmus (SEG), des gekoppelten Algorithmus (CPLD) mit impliziter Boussinesq Approximation (TCPLD) und semi-impliziter Temperatur-Geschwindigkeits/Druck-Kopplung (NRCPLD).}
 \resizebox{7cm}{!}{
 \begin{tabular}{cccc}\toprule
-    Resolution & Solver configuration & Time & No. Non-linear its. \\
+    Resolution & Solver configuration & Time s & No. Non-linear its. \\
     \midrule
     \rowcolor{black!20}\multirow{4}{*}{}            & SEG    & 0.3719E+02 & 203 \\
     \rowcolor{black!20}                             & CPLD   & 0.6861E+02 & 62  \\

@@ -179,7 +179,7 @@ Concluding this section, the final for of the derive linear algebraic equations 
 \begin{align}
   a_P^{u_i} u_{P,i} + \sum_{F \in NB(P)} a_F^{u_i} u_{F,i} + \underbrace{\vphantom{\sum_F}{a_P^{u_i,p} p_P+ \sum_{F \in NB(P)} a_F^{u_i,p} p_F}}_{\hbox{Pressure-velocity coupling}} + \underbrace{\vphantom{\sum_F}{ a_P^{u_i,T} T_P}}_{\hbox{Boussinesq approximation}} &= b_{P,u_i} \quad i=1,...,3  \\[2.0em]
   a_P^{p} p_{P} + \sum_{F \in NB(P)} a_F^{p} p_F + \underbrace{ \sum_{j=1}^3 \left(a_P^{u_j,p} u_{P,j}+ \sum_{F \in NB(P)} a_F^{p,u_j} u_{F,j} \right)}_{\hbox{Pressure-velocity coupling}} &= b_{P,p}  \\[2.0em]
-  a_P^{T} T_{P} + \sum_{F \in NB(P)} a_F^{T} T_F + \underbrace{\sum_{j=1}^3 \left(a_P^{T,u_j} u_{P,j}+ \sum_{F \in NB(P)} a_F^{p,u_i} u_{F,i} \right) + a_P^{T,p} p_P + \sum_{F \in NB(P) } a_F^{T,p} p_F}_{\hbox{Newton-Raphson linearization}} &= b_{P,T}.
+  a_P^{T} T_{P} + \sum_{F \in NB(P)} a_F^{T} T_F + \underbrace{\sum_{j=1}^3 \left(a_P^{T,u_j} u_{P,j}+ \sum_{F \in NB(P)} a_F^{p,u_j} u_{F,j} \right) + a_P^{T,p} p_P + \sum_{F \in NB(P) } a_F^{T,p} p_F}_{\hbox{Newton-Raphson linearization}} &= b_{P,T}.
 \end{align}
 
 
