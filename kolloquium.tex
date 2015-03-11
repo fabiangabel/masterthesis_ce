@@ -352,9 +352,9 @@
 \Else
   \State{\textit{SOLVE} the linear system for velocities and pressure}
 \EndIf
-\State{\textit{CALCULATE} mass fluxes using \textbf{(\ref{eq:pwim})}}
+\State{\textit{CALCULATE} mass fluxes using }
 \If{(decoupled scalar equation)}
-  \State{\textit{SOLVE} scalar equation as described in section(\ref{sec:discretetemperature})}
+  \State{\textit{SOLVE} scalar equation}
 \EndIf
 \EndWhile
 \end{algorithmic}
@@ -571,19 +571,83 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
   \frametitle{Kanalströmung - Problemstellung}
+  \begin{columns}
+    \begin{column}{5cm}
+\begin{figure}
+  \centering
+  \resizebox{1.0\linewidth}{!}{\includegraphics{./img/channel3d.pdf}}
+  \caption{Sketch of the channel flow problem domain}
+  \label{fig:sketch}
+\end{figure}
+\end{column}
+\begin{column}{5cm}
+  \begin{itemize}\scriptsize
+    \item Würfel als Hindernisse
+    \item Parabolisches Einstromprofil
+    \item \(Re \approx 20 \)
+    \item Laminare Strömung
+  \end{itemize}
+\end{column}
+\end{columns}
+\vspace{-0.5cm}
+\begin{figure}
+   \centering
+    \subfigure{
+      \resizebox{0.3\linewidth}{!}{\input{./img/blocking2.tikz.tex}}
+      \raggedleft{}
+    }
+    \hfil
+    \subfigure{
+      \resizebox{0.3\linewidth}{!}{\input{./img/blocking.tikz.tex}}
+      \raggedleft{}
+    }
+    \caption{Blocking for the two different obstacles within the problem domain of the channel flow}
+    \label{fig:blocking}
+\end{figure}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
   \frametitle{Kanalströmung - Druck-Geschwindigkeitskopplung}
+  \vspace{0.3cm}
+\begin{figure}
+  \centering
+  \resizebox{0.8\linewidth}{!}{\input{./img/channel.tikz.tex}}
+  \caption{West and east boundary of the numerical grid for the channel flow problem}
+  \label{fig:channel1}
+\end{figure}
+\vspace{-0.7cm}
+\begin{table}[h!]\centering
+  \caption{Performance analysis results of the channel flow problem for different numbers of unknowns comparint the segregated (SEG) to the fully coupled (CPLD) solution algorithm using one process on the MPI2 section of the HHLR supercomputer. }
+\ra{1.3}
+\resizebox{7cm}{!}{
+  \begin{tabular}{lcccc}\toprule
+    No. of Unknowns & SEG - time & CPLD - time & SEG - its & CPLD - its \\
+    \midrule
+    \rowcolor{black!20} 75768    & 0.2226E+02 & 0.2674E+02 & 151  & 67 \\
+    \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1499E+03 & 355  & 42 \\
+    \rowcolor{black!20} 2611080  & 1.1352E+05 & 0.3105E+04 & 1592 & 39 \\
+  \end{tabular}
+}
+  \label{tab:channelcompare}
+\end{table}
+%
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Beheizte Kavität - Problemstellung}
 \begin{columns}
-  \begin{column}{4cm}
+  \begin{column}{6cm}
+    \vspace{-0.1cm}
     \begin{figure}[h!]
     \centering
-    \includegraphics[trim=3.5cm 5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavity.pdf}
+    \resizebox{0.75\linewidth}{!}{\includegraphics[trim=3.5cm 5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavity.pdf}}
+    \end{figure}
+    \vspace{-0.9cm}
+    \begin{figure}[h!]
+    \setlength{\abovecaptionskip}{-5pt plus 3pt minus 2pt}
+    \centering
+    \hspace*{0.45cm}\resizebox{0.75\linewidth}{!}{\includegraphics[trim=3.5cm 5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavityw.pdf}}
+    \caption{Temperatur-und $w$-Geschwindigkeitsfeld}
     \end{figure}
   \end{column}
  \begin{column}{4cm}
@@ -620,10 +684,6 @@
     \rowcolor{black!20}                                & TCPLD  & 0.1950E+05 &  50   \\
     \rowcolor{black!20} \multirow{-4}{*}{128x128x128}  & NRCPLD & 0.6155E+04 &  18   \\ %\hline
     %
-    %\rowcolor{black!00}\multirow{4}{*}{}               & SEG    &  & \\
-    %\rowcolor{black!00}                                & CPLD   &  & \\
-    %\rowcolor{black!00}                                & TCPLD  &  & \\
-    %\rowcolor{black!00} \multirow{-4}{*}{256x256x256}  & NRCPLD &  & \\ %\hline
   \end{tabular}
 }
   \label{tab:cavitycompare}
