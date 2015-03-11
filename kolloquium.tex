@@ -26,6 +26,13 @@
 % Private Declarations
 %\usepackage{psfrag}
 \usepackage{multirow}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{shapes,positioning,calc,arrows.meta,decorations.markings}
+\usepackage{tkz-euclide} % loads  TikZ and tkz-base
+\usetkzobj{angles} % important you want to use angles
 %\usepackage{latexsym}
 %\usepackage{pstricks,pst-node}
 %\usepackage{pst-blur}
@@ -36,41 +43,29 @@
 %Für Bibliography
 \usepackage[fixlanguage]{babelbib}
 \selectbiblanguage{german}
-%\selectlanguage{english}
+%\selectlanguage{german}
 \usepackage{booktabs}
 \usepackage{pgfplots}
 \usepackage{rotating}
+\usepackage{setspace} %to use \doublespacing in tables
+\usepackage{multirow} %multiple rows in tabular environments
+\usepackage{booktabs} %provides extra tables commands and in general makes tables look a little nicer than without
+\usepackage{colortbl} 
+\usepackage{xcolor}   %are required to allow the colour of table and text elements to be altered
+\usepackage{xfrac}    %is required to make nicer fractions that look good in tables
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
 %\usepackage{longtable,tabu,booktabs}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                               %%
-%%  --- setup for the presentation ---           %%
-%%                                               %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Title and Subtitle
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% usage:   \title[short title]{title}
-%
-% short title necessary only for long titles, because optionally 
-% goes to footer line
-
+\setbeamercolor{caption name}{fg=fnbblue}
+\setbeamerfont{caption name}{size=\tiny}
+\setbeamerfont{caption}{size=\tiny}
+\setbeamercolor{bibliography entry author}{fg=fnbblue}
+\setbeamercolor{bibliography entry journal}{fg=fnbblue}
 
 \title[Masterthesis ]{\small{Implementierung und Untersuchung \\einer hoch effizienten Methode \\zur Druck-Geschwindigkeits-Kopplung}}
-
 \subtitle{\small{Masterthesis}}
+%\subtitle
+%{- Eine Einführung -}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Authors and Institute
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
 % usage: \author[short author]{author1\inst{1} \and \author2\inst{2}}
 %
 %        \institute[short institute]
@@ -85,51 +80,17 @@
 % short author/short institute necessary only for many authors,
 % because optionally go to footer line
 %
-\author[Fabian Gabel ]
-{{Fabian~Gabel }}
+\author[Fabian Gabel ]{Fabian Gabel}
 
-    %\institute[TU Darmstadt, FNB]
-    %{
-    %  \inst{1}%
-    %  Fachgebiet Numerische Berechnungsverfahren\\
-    %  im Maschinenbau, Raum 330
-    %}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Date and conference name
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% usage:   \date[short date]{date}
-%
-% actually more useful for conference name
-% short date necessary only if reused for footer line
-
+\institute[FNB, TU Darmstadt]
+%{Fachgebiet für Numerische Berechnungsverfahren im Maschinenbau\\
+%Technische Universität Darmstadt}
 
 \date[\today]
 {Kolloquium, XX.XX.2015}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Subject
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% usage:   \subject{subject}
-%
-% this goes only into pdf-information catalogue so 
-% rather optional
 
-
-\subject{interne Bekanntmachung}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Misc
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Uncomment the following if you would like to see 
-% the Contents of your talk at the begin of every 
-% section (appropriately highlighted)
-
-
+\subject{seminar presentation}
 
 % \AtBeginSubsection[]
 % {
@@ -139,14 +100,9 @@
 %   \end{frame}
 % }
 
-
-% If itemize/enumerate environments are to be shown step by
-% step generally, this command can be used
-
-%\beamerdefaultoverlayspecification{<+->}
-
-%\pgfdeclareimage[width=\paperwidth]{bg_alt_title}{fnbbeamer-bg-folie4x3-titel-foto-etch}
+\pgfdeclareimage[width=\paperwidth]{bg_alt_title}{fnbbeamer-bg-folie4x3-titel-foto-etch}
 \pgfdeclareimage[width=\paperwidth]{bg_title}{fnbbeamer-bg-folie4x3-titel-etch}
+
 
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,550 +183,227 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Motivation}
 \begin{frame}
 
 \frametitle{Motivation}
     \vspace{0.5cm}
-    Challenges for CFD--applications:
+    Herausforderungen für CFD-Applikationen:
     \begin{itemize}
-    \item \small{Complex geometries and coupled multiphisics problems}
-    \item \small{Short running time}
-    \item \small{High accuracy}
+    \item \small{Schnelle Verfügbarkeit von Simulationsergebnissen}
+    \item \small{Ergebnisse mit hoher Genauigkeit}
     \end{itemize}
 
     \begin{columns}
         \begin{column}{6cm}
             \begin{figure}
             \centering
-            \includegraphics[width= 0.8\linewidth]{bilder/turbine.jpg}
-            \caption{Gas turbine (VDI)}
+            \includegraphics[width= 0.8\linewidth]{./img/turbine.jpg}
+            \caption{Gasturbine (VDI)}
             \end{figure}
         \end{column}
         \begin{column}{6cm}
             \begin{itemize}
-                \item \small{Efficient, scalable algorithms}
-                \item \small{Parallelisation}
-                \item \small{Local block-refinement}
+                \item \small{Einsatz robuster Algorithmen}
+                \item \small{Skalierbarkeit der Lösungsmethode}
+                \item \small{Effizienzsteigerung durch Adaptivität}
             \end{itemize}
         \end{column}
     \end{columns}
 
 \end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \begin{frame}
 
 \frametitle{Motivation}
-    Einfluss auf Laufzeit in wissenschaftlichen Codes:
-
+    Vollständig gekoppelter Lösungsansatz für Navier-Stokes Gleichungen (Darwish 2009):
     \begin{itemize}
-    \item Flussberechnung
-    \item Lösung linearer Gleichungssysteme
+    \item Semi-implizite Druck-Geschwindigkeits Kopplung statt sequentieller Lösung
+    \item Robuster Algorithmus ohne Unterrelaxation
     \end{itemize}
 
-    Effizienz des Gleichungslösers \(\rightarrow\) Effizienz des Löserprogramms
+    \vspace{1cm}
+    Neue Herausforderung:
+    \begin{itemize}
+      \item Umgang mit Speicheranforderungen
+      \item Auswahl geeigneter skalierbarer Gleichungslöser
+    \end{itemize}
 
 \end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\section{Aufgabenstellung und Bearbeitung}
 \begin{frame}
 
-    \frametitle{PETSc}
-    Portable, Extensible Toolkit for Scientific Computation
-    \begin{itemize}
-    \item R\&D Award (2009)
-    \item Bibliothek für PDEs und Sparse--Matrix--Berechnungen
-    \item Datenstrukturen für wissenschaftliche Codes (Vektoren, Matrizen, Index--Sets)
-    \item Framework zur MPI--Parallelisierung
-    \item hochskalierende Gleichungslöser und Präkonditionierer
-    \item weltweit am meisten eingesetzte numerische Softwarebibliothek
-    \item CFD, Medizin, Wirtschaftsmodellierung, Strukturmechanik, Kernphysik, ...
-    \end{itemize}
+\frametitle{Aufgabenstellung und Bearbeitung}
+  \begin{itemize}
+    \item Implementierung eines vollständig gekoppelten Lösungsansatzes 
+      \begin{itemize}\scriptsize
+        \item Finite-Volumen Diskretisierung der 3d Navier-Stokes Gleichungen auf block-strukturierten, lokal verfeinerten Gittern mit hängenden Knoten
+        \item Kopplungsansätze für Temperaturgleichung 
+        \item MPI-Parallelisierung des Lösungsansatzes mit PETSc
+      \end{itemize}
+    \item Skalierbarkeitsuntersuchung auf HHLR
+    \item Performancevergleich mit herkömmlichem SIMPLE Verfahren für unterschiedliche Testfälle
+      \begin{itemize}\scriptsize
+        \item Manufactured Solution
+        \item Kanalströmung mit komplexem Hindernis
+        \item Strömung in beheizter Kavität (Adaption MIT - Benchmark)
+      \end{itemize}
+  \end{itemize}
 
 \end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}
-
-\frametitle{Aufgabenstellung}
-    \begin{itemize}
-    \item Sinnvoller Einsatz von PETSc zur Parallelisierung
-    \item Anwendung auf einen Löser für skalare Transportgleichungen
-    \item h-refinement in Parallelisierung berücksichtigen
-    \item Untersuchung der parallelen Effizienz der Applikation
-    \end{itemize}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Implementierung}
-
 \begin{frame}
-\frametitle{Gittergenerierung}
-%\vspace{0.2cm}
+  \frametitle{Implementierung - Diskretisierung}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{Implementierung - Temperaturkopplung}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{Implementierung - Blockränder und Parallelisierung}
+  Behandlung der Blockränder nach Lilek et. al
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Implementierung - Assemblierung}
 \begin{columns}
-\begin{column}{6cm}
-\begin{itemize}
-    \item Enwicklung Gittergenerator
-    \begin{itemize}
-        \item Gittergeometrie
-        \item kartesische Gitterblöcke
-        \item Randbedingungen
-    \end{itemize}
-\end{itemize}
-\end{column}
-\begin{column}{6cm}
+  \begin{column}{0.5cm}
+  \end{column}
+  \begin{column}{3cm}
+  \begin{figure}
+    \centering
+    \resizebox{1.5\linewidth}{!}{\input{./img/blockstruc.tikz.tex}}
+    \caption{\tiny{Blockstruturiertes Gitter und resultierende Matrixbelegung für eine Variable ohne Kopplung}}
+  \end{figure}
+  \end{column}
+  \begin{column}{10cm}
+  \begin{figure}
+    \centering
+    \label{fig:segassemble}
+    \resizebox{.6\linewidth}{!}{\input{./img/matrix.tikz.tex}}
+%\caption{Non-zero structure of the linear systems used in the SIMPLE algorithm for a block-structured grid consisting of one  $2\times2\times2$ cell and one $3\times3\times3$ cell block}
+  \end{figure}
+  \end{column}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Implementierung - Assemblierung mit Kopplung}
+\vspace{-0.5cm}
+\begin{columns}
+\begin{column}{7cm}
 \begin{figure}
-\centering
-%\includegraphics[trim=3cm 24cm 0cm 2cm,width=1.2\linewidth]{bilder/grid}
+  \centering
+  \label{fig:cpldassemble}
+  \resizebox{\linewidth}{!}{\input{./img/coupledmat.tikz.tex}}
+  %\caption{Matrixstruktur für Blockmatrizen}
 \end{figure}
+\end{column}
+\begin{column}{5cm}
+  \begin{itemize}\scriptsize
+    \item blau: Druck-Geschwindigkeit
+    \item rot: Geschwindkigkeit-Temperatur
+    \item grün: Temperatur-Geschwindigkeit/Druck
+  \end{itemize}
 \end{column}
 \end{columns}
-
 \end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \begin{frame}
-
-\frametitle{Behandlung von Blockrändern}
-\vspace{0.2cm}
-
-\begin{figure}
-\centering
-%\includegraphics[width=0.4\textwidth]{bilder/ghostcells}
-\end{figure}
-
-    \begin{columns}
-        \begin{column}{1cm}
-        \end{column}
-        \begin{column}{5cm}
-        \tiny{Ansatz nach Lange et al.}
-            \begin{figure}
-                %\centering
-                %\includegraphics[width=1.0\textwidth]{bilder/multigrid}
-            \end{figure}
-        \end{column}
-
-        \begin{column}{5cm}
-        \tiny{Ansatz nach Lilek et al.}
-            \begin{figure}
-                %\centering
-              %\includegraphics[width=0.7\textwidth]{bilder/peric}
-            \end{figure}
-        \end{column}
-    \end{columns}
-
+  \frametitle{Implementierung - Lösungsalgorithmus}
 \end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\section{Performanceuntersuchung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Preprocessing}
-%\begin{columns}
-
-%    \begin{column}{6cm}
-    \begin{itemize}
-        \item Preprocessing zur Ermittlung der Nachbarschaftsbeziehungen
-        \begin{itemize}
-            \item Globale Indexierung
-            \item Teilgrenzflächen
-        \end{itemize}
-    \end{itemize}
-%    \end{column}
-
-    %\begin{column}{6cm}
-    \begin{figure}
-        \centering
-        %\includegraphics[width=0.5\textwidth]{bilder/peric}
+  \frametitle{STREAM Benchmark - Sustainable Memory Bandwidth}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{Manufactured Solution}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{Manufactured Solution - Strong-Scaling}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{Manufactured Solution - Weak-Scaling}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{Kanalströmung - Problemstellung}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{Kanalströmung - Druck-Geschwindigkeitskopplung}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Beheizte Kavität - Problemstellung}
+\begin{columns}
+  \begin{column}{4cm}
+    \begin{figure}[h!]
+    \centering
+    \includegraphics[trim=3.5cm 5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavity.pdf}
     \end{figure}
-    %\end{column}
-
-%\end{columns}
-
+  \end{column}
+ \begin{column}{4cm}
+   \begin{figure}[h!]
+   \centering
+   %\includegraphics[trim=3.5cm 5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavity.pdf}
+   \end{figure}
+ \end{column}
+\end{columns}
 \end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}
-
-\frametitle{Löserprogramm}
-\begin{itemize}
-
-    \item Parallele Lösung der skalaren Transportgleichung
-    \item Ortsdiskretisierung mittels Finite--Volumen--Ansatz
-    \begin{itemize}
-        \item UDS (implizit,explizit) + CDS (explizit) -- Konvektiv
-        \item Zentraldifferenzen -- Diffusiv
-        \item Verzögerte Korrektur
-    \end{itemize}
-
-    \item Finite--Differenzen Zeitdiskretisierung
-    \begin{itemize}
-        \item Implizites Einschrittverfahren
-    \end{itemize}
-
-\end{itemize}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}
-\frametitle{Einbindung von PETSc}
-\vspace{0.2cm}
-\small{Austausch von Variablenwerten benachbarter Blöcke (Scatter--Routinen)}
-
-\begin{figure}
-\centering
-%\includegraphics[width=0.8\textwidth]{bilder/vectoarr}
-\end{figure}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}
-
-\frametitle{Einbindung von PETSc}
-\vspace{0.2cm}
-\small{Parallele Matrixassemblierung (globale Systemmatrix)}
-
-\begin{figure}
-\centering
-%\includegraphics[width=0.6\textwidth]{bilder/matrix}
-\end{figure}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Verifikation}
-\begin{frame}
-
-\frametitle{Verifikation}
-\vspace{0.2cm}
-\begin{itemize}
-    \item \small{Konsistenzordnung 2 -- örtlich, 1 -- zeitlich}
-    \item \small{Methode der Manufactured Solutions}
-    \item \small{\( \phi^m (t,x,y,z )=( 2\sin (x^2\pi)+3\cos (y^2\pi)+5\sin (z^2\pi ) )\exp (-t ) \)}
-\end{itemize}
-\vspace{0.2cm}
-
-\pgfplotsset{
-    tick label style={font=\tiny}
-    }
-\begin{figure}
-\centering
-\begin{tikzpicture}
-\begin{loglogaxis}[
-    %small,
-    width=7cm,
-    ylabel=Fehler,
-    xtick={1,2,4,8},
-    xticklabels={${1h_x\text{, }1h_t}$,$2h_x\text{, }4h_t$,$4h_x\text{, }16h_t$,$8h_x\text{, }64h_t$},
-    grid=major,
-    legend style={ cells={anchor=east}, legend pos=outer north east, },
-    ]
-    \addplot coordinates {
-        (1, 2.70705849688271719E-004) 
-        (2, 1.11517924567996834E-003) 
-        (4, 4.41834118871322311E-003)
-        (8, 1.67582264349951486E-002) };
-    \addlegendentry{beob. Fehler};
-    \addplot[red] coordinates {
-        (1, 0.0002618472880467992) 
-        (2, 0.0010473891521871968) 
-        (4, 0.0041895566087487872)
-        (8, 1.67582264349951486E-002) };
-    \addlegendentry{id. Fehler};
-
-\end{loglogaxis}
-\end{tikzpicture}
-\end{figure}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Untersuchung der Effizienz}
-\begin{frame}
-
-\frametitle{Benchmark als Voruntersuchung}
-\vspace{0.2cm}
-\small{STREAM-Benchmark (Triad) zur Voruntersuchung auf Multiprozessorsystem \textit{texas}}
-
-\begin{figure}
-\centering
-%\includegraphics[width=0.8\textwidth]{bilder/konfig}
-\end{figure}
-
-\end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
+  \frametitle{Beheizte Kavität - Temperaturkopplung}
 
-\frametitle{Benchmark als Voruntersuchung}
-\vspace{0.2cm}
-
-\small{Einflussfaktoren: Bandbreite \(\leftrightarrow\) Latenzzeit}
-
-%   \begin{columns}
-%   \begin{column}{8cm}
-%       \begin{figure}
-%       \centering
-%       \begin{tikzpicture}
-%       \begin{axis}[
-%           ylabel=Bandbreite MB/s,
-%           xtick={1,2,3,4},
-%           xticklabels={$a$,$b$,$c$,$d$},
-%           xlabel=Verwendete Konfiguration,
-%           grid=major,
-%           width=6cm,
-%           legend style={ cells={anchor=east}, legend pos=outer north east, }
-%           ]
-%           \addplot file {inputfiles/benchmark/bench.1};
-%               \addlegendentry {1 P};
-%           \addplot file {inputfiles/benchmark/bench.2};
-%               \addlegendentry {2 P};
-%           \addplot file {inputfiles/benchmark/bench.4};
-%               \addlegendentry {4 P};
-%           \addplot file {inputfiles/benchmark/bench.8};
-%               \addlegendentry {8 P};
-%           \addplot file {inputfiles/benchmark/bench.16};
-%               \addlegendentry {16 P};
-%           \addplot file {inputfiles/benchmark/bench.32};
-%               \addlegendentry {32 P};
-%           \addplot file {inputfiles/benchmark/bench.64};
-%               \addlegendentry {64 P};
-%       \end{axis}
-%       \end{tikzpicture}
-%       \label{fig:bench}
-%       \end{figure}
-%   \end{column}
-%   \begin{column}{4cm}
-%   %\includegraphics[width=0.8\linewidth]{bilder/16Konfig}
-%   \end{column}
-%   \end{columns}
+\begin{table}[h!]\centering
+\ra{1.3}
+\caption{Performance des SIMPLE algorithmus (SEG), des gekoppelten Algorithmus (CPLD) mit impliziter Boussinesq Approximation (TCPLD) und semi-impliziter Temperatur-Geschwindigkeits/Druck-Kopplung (NRCPLD).}
+\resizebox{7cm}{!}{
+\begin{tabular}{cccc}\toprule
+    Resolution & Solver configuration & Time & No. Non-linear its. \\
+    \midrule
+    \rowcolor{black!20}\multirow{4}{*}{}            & SEG    & 0.3719E+02 & 203 \\
+    \rowcolor{black!20}                             & CPLD   & 0.6861E+02 & 62  \\
+    \rowcolor{black!20}                             & TCPLD  & 0.1012E+03 & 31  \\
+    \rowcolor{black!20} \multirow{-4}{*}{32x32x32}  & NRCPLD & 0.2153E+02 & 22  \\ %\hline
+    %
+    \rowcolor{black!00}\multirow{4}{*}{}            & SEG    & 0.1997E+04 &  804 \\
+    \rowcolor{black!00}                             & CPLD   & 0.7687E+03 &  63  \\
+    \rowcolor{black!00}                             & TCPLD  & 0.1278E+04 &  59  \\
+    \rowcolor{black!00} \multirow{-4}{*}{64x64x64}  & NRCPLD & 0.4240E+03 &  17  \\ %\hline
+    %
+    \rowcolor{black!20}\multirow{4}{*}{}               & SEG    & 0.5197E+05 &  3060 \\
+    \rowcolor{black!20}                                & CPLD   & 0.1860E+05 &  74   \\
+    \rowcolor{black!20}                                & TCPLD  & 0.1950E+05 &  50   \\
+    \rowcolor{black!20} \multirow{-4}{*}{128x128x128}  & NRCPLD & 0.6155E+04 &  18   \\ %\hline
+    %
+    %\rowcolor{black!00}\multirow{4}{*}{}               & SEG    &  & \\
+    %\rowcolor{black!00}                                & CPLD   &  & \\
+    %\rowcolor{black!00}                                & TCPLD  &  & \\
+    %\rowcolor{black!00} \multirow{-4}{*}{256x256x256}  & NRCPLD &  & \\ %\hline
+  \end{tabular}
+}
+  \label{tab:cavitycompare}
+\end{table}
 
 \end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}
-\frametitle{Numerische Effizienz}
-\vspace{0.2cm}
-    \begin{itemize}
-        \item \small{stationäres Problem mit \(2e6\) Unbekannten}
-        \item \small{Effizienz der Lösung eines Gleichungssystems}
-    \end{itemize}
-%       \begin{figure}
-%       \centering
-%       \begin{tikzpicture}
-%       \begin{semilogxaxis}
-%           [
-%           width=7cm,
-%           ylabel=numerische Effizienz,
-%           ymin=0.5,
-%           ymax=1.4,
-%           xlabel=Anzahl Prozessoren,
-%           xtick={1,2,4,8,16,32,64},
-%           xticklabels={1,2,4,8,16,32,64},
-%           grid=major,
-%           legend style={ cells={anchor=east}, legend pos=outer north east, }
-%           ]
-%           \addplot file {inputfiles/numericalEfficiency/numericalEfficiency_bjacobi.128.out};
-%               \addlegendentry {Block--Jakobi};
-%           \addplot file {inputfiles/numericalEfficiency/numericalEfficiency_ml.128.out};
-%               \addlegendentry {AMG};
-%       \end{semilogxaxis}
-%       \end{tikzpicture}
-%       \end{figure}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}
-\frametitle{Parallele Effizienz}
-\vspace{0.2cm}
-\small{Anzahl Blöcke bzw. innerer Iterationen konstant gehalten}
-\vspace{0.5cm}
-
-%\begin{columns}
-%\pgfplotsset{
-%    tick label style={font=\small}
-%    }
-%    \begin{column}{5cm}
-%    \centering
-%    \begin{tikzpicture}
-%    \begin{axis}[
-%        title=Block--Jakobi,
-%        ymin=0,
-%        ymax=1.1,
-%        grid=major,
-%        width=5cm,
-%        ylabel=parallele Effizienz,
-%        xtick={1,2,3,4},
-%        xticklabels={$a$,$b$,$c$,$d$},
-%        ytick={0,0.2,0.4,0.6,0.8,1},
-%        xlabel=Konfiguration
-%        %legend style={ cells={anchor=east}, legend pos=outer north east, }
-%        ]
-%        \addplot file {inputfiles/parallelEfficiency_new/parallelEfficiency_bjacobi_new.128.1.out};
-%            %\addlegendentry {1 Prozessor};
-%        \addplot file {inputfiles/parallelEfficiency_new/parallelEfficiency_bjacobi_new.128.2.out};
-%            %\addlegendentry {2 Prozessoren};
-%        \addplot file {inputfiles/parallelEfficiency_new/parallelEfficiency_bjacobi_new.128.4.out};
-%            %\addlegendentry {4 Prozessoren};
-%        \addplot file {inputfiles/parallelEfficiency_new/parallelEfficiency_bjacobi_new.128.8.out};
-%            %\addlegendentry {8 Prozessoren};
-%        \addplot file {inputfiles/parallelEfficiency_new/parallelEfficiency_bjacobi_new.128.16.out};
-%            %\addlegendentry {16 Prozessoren};
-%        \addplot file {inputfiles/parallelEfficiency_new/parallelEfficiency_bjacobi_new.128.32.out};
-%            %\addlegendentry {32 Prozessoren};
-%        \addplot file {inputfiles/parallelEfficiency_new/parallelEfficiency_bjacobi_new.128.64.out};
-%            %\addlegendentry {64 Prozessoren};
-%    \end{axis}
-%    \end{tikzpicture}
-%%    \caption{\(2e6\) KVs}
-%    \end{column}
-%    \begin{column}{6cm}
-%    \centering
-%    \begin{tikzpicture}
-%    \begin{axis}[
-%        title=AMG,
-%        ymin=0,
-%        ymax=1.1,
-%        grid=major,
-%        width=5cm,
-%        %ylabel=parallele Effizienz,
-%        xtick={1,2,3,4},
-%        xticklabels={$a$,$b$,$c$,$d$},
-%        ytick={0,0.2,0.4,0.6,0.8,1},
-%        xlabel=Konfiguration,
-%        legend style={ cells={anchor=east}, legend pos=outer north east, }
-%        ]
-%        \addplot file {inputfiles/parallelEfficiency/parallelEfficiency_ml.128.1.out};
-%            \addlegendentry {1 P};
-%        \addplot file {inputfiles/parallelEfficiency/parallelEfficiency_ml.128.2.out};
-%            \addlegendentry {2 P};
-%        \addplot file {inputfiles/parallelEfficiency/parallelEfficiency_ml.128.4.out};
-%            \addlegendentry {4 P};
-%        \addplot file {inputfiles/parallelEfficiency/parallelEfficiency_ml.128.8.out};
-%            \addlegendentry {8 P};
-%        \addplot file {inputfiles/parallelEfficiency/parallelEfficiency_ml.128.16.out};
-%            \addlegendentry {16 P};
-%        \addplot file {inputfiles/parallelEfficiency/parallelEfficiency_ml.128.32.out};
-%            \addlegendentry {32 P};
-%        \addplot file {inputfiles/parallelEfficiency/parallelEfficiency_ml.128.64.out};
-%            \addlegendentry {64 P};
-%    \end{axis}
-%    \end{tikzpicture}
-%    \end{column}
-%\end{columns}
-%%\vspace{0.5cm}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}
-\frametitle{Strong Scaling}
-\vspace{0.2cm}
-\small{Testfall mit insgesamt \(2e6\) Unbekannten; 8 gerechntete Zeitschritte}
-
-\begin{figure}[h!]
-\centering
-\begin{tikzpicture}
-\begin{loglogaxis}
-    [
-    width=7cm,
-    ylabel=SpeedUp,
-    xlabel=Anzahl Prozessoren,
-    xtick={1,2,4,8,16,32,64},
-    ytick={1,2,4,8,16,32,64}, xticklabels={1,2,4,8,16,32,64},
-    yticklabels={1,2,4,8,16,32,64},
-    grid=major,
-    legend style={ cells={anchor=east}, legend pos=outer north east, }
-    ]
-    \addplot file {inputfiles/speedup/speedup_bjacobi.128};
-        \addlegendentry {Block--Jakobi};
-    \addplot file {inputfiles/speedup/speedup_ml.128};
-        \addlegendentry {AMG};
-\end{loglogaxis}
-\end{tikzpicture}
-%\caption{SpeedUp des Programms f"ur einen vorgegebenen Testfall}
-%\label{fig:speedup}
-\end{figure}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}
-
-\frametitle{Weak Scaling}
-\vspace{0.2cm}
-\small{Testfall mit \(2e6\) Unbekannten pro Prozessor, 8 gerechnete Zeitschritte}
-
-\begin{figure}[h!]
-\centering
-\begin{tikzpicture}
-\begin{semilogxaxis}
-    [
-    width=7cm,
-    ylabel=Laufzeit in s,
-    xlabel=Anzahl Prozessoren,
-    %ytick={100,300,500,1000},
-    %yticklabels={100,300,500,1000},
-    xtick={1,2,4,8,16,32,64},
-    grid=major,
-    xticklabels={1,2,4,8,16,32,64},
-    grid=major,
-    legend style={ cells={anchor=east}, legend pos=outer north east, }
-    ]
-    \addplot file {inputfiles/weakscaling/weakscaling_bjacobi.128};
-        \addlegendentry {Block--Jakobi};
-    \addplot file {inputfiles/weakscaling/weakscaling_ml.128};
-        \addlegendentry {AMG};
-\end{semilogxaxis}
-\end{tikzpicture}
-%\caption{Laufzeitentwicklung der Programmausf"uhrung in der Untersuchung des \textit{weak scaling}}
-%\label{fig:weak}
-\end{figure}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Fazit und Ausblick}
-
 \begin{frame}
-\frametitle{Fazit und Ausblick}
-\vspace{0.2cm}
-\begin{itemize}
-    \item paralleler Löser für skalare Transportgleichung
-    \item stationäre/instationäre Probleme
-    \item 3d blockstrukturierte Gitter (Möglichkeit zu h-refinement)
-    \item Kopplung der Blöcke nach Ansatz von Lilek et al.
-    \item Benchmark Untersuchungen
-    \item Skalierbarkeit der Applikation
-\end{itemize}
-Weiterführung:
-\begin{itemize}
-    \item Strömungslöser
-    \item Potential hybrider Parallelisierung
-    \item Field--Interlacing 
-\end{itemize}
-
+  \frametitle{Fazit}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{Ausblick}
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
