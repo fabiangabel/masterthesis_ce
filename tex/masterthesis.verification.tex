@@ -96,6 +96,7 @@ Finally the source term for the temperature equation was calculated as
 \end{align*}
 
 \subsection{Measurement of Error and Calculation of Order}
+\label{sec:error}
 
 In this subsection the result of the verification process via the formerly in subsection \ref{sec:manufacturedsolution} stated manufactured solutions will be presented. To verify the solver framework using the Order-of-Accuracy test criterion, an error measure has to be chosen on which the evaluation is based upon. According to \cite{salari00} the error measure for each variable \(\phi\) will be calculated at the end of each computation as the normalized \(L_2\)-norm of the deviation of the exact solution \(\tilde{\phi}\), sometimes referred to as the normalized global error or the RMS error
 \begin{displaymath}
@@ -185,7 +186,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
 \subsection{Influence of the Under-Relaxation Factor for the Velocities}
 \label{sec:independence}
 
-In section \ref{sec:pwim} the main purpose of introducing the pressure weighted interpolation method was to assure comparability of the generated results from the segregated solver algorithm and the coupled solver algorithm. Section \ref{sec:error} showed good agreement of the error calculated with the segregated solver using the pressure weighted interpolation method and the coupled solver. This section presents the results that are attained if the standard Rhie-Chow interpolation technique with different under-relaxation factors \(\alpha_\vec{u}\) is used to interpolate the velocities to the boundary faces instead of the pressure weighted interpolation technique. Figure \ref{fig:underrelaxation} shows the normalized \(L_2\) norm of the error of the results for the velocity \(u_1\) for different under-relaxation factors. The \(L_2\) norms have been normalized by the \(L_2\) norm of the respective calculation that uses the pressure weighted interpolation method. 
+In section \ref{sec:massflux} the main purpose of introducing the pressure weighted interpolation method was to assure comparability of the generated results from the segregated solver algorithm and the coupled solver algorithm. Section \ref{sec:error} showed good agreement of the error calculated with the segregated solver using the pressure weighted interpolation method and the coupled solver. This section presents the results that are attained if the standard Rhie-Chow interpolation technique with different under-relaxation factors \(\alpha_\vec{u}\) is used to interpolate the velocities to the boundary faces instead of the pressure weighted interpolation technique. Figure \ref{fig:underrelaxation} shows the normalized \(L_2\) norm of the error of the results for the velocity \(u_1\) for different under-relaxation factors. The \(L_2\) norms have been normalized by the \(L_2\) norm of the respective calculation that uses the pressure weighted interpolation method. 
 
 It is evident that the higher the under-relaxation factor the smaller the deviation of the results obtained with the standard Rhie-Chow interpolation technique from the results obtained with the pressure weighted interpolation method. This can be justified by the fact that, for an under-relaxation factor \(\alpha_\vec{u} = 1\), the pressure weighted interpolation and the Rhie-Chow interpolation would yield the same result according to equation (\ref{eq:pwim}). Furthermore it can be observed that the deviation decreases with increasing mesh resolution which is the expected behaviour \cite{ferziger02}.
 
@@ -291,7 +292,7 @@ It is evident that the higher the under-relaxation factor the smaller the deviat
   anchor=south}}
 \begin{semilogyaxis}[
     grid=minor,,
-    ylabel={Normalized $L_2$-Norm of error of velocity $u_1$},
+    ylabel={Normalized $L_2$-norm of error of velocity $u_1$},
     xlabel={Under-relaxation factor $\alpha_\vec{u},\, \alpha_p = 0.1$},
     xtick={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0},
 %   ytick={1.7e-003,1.75e-3,1.8e-003,1.85e-3},

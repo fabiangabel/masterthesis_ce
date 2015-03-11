@@ -12,7 +12,7 @@ The solver framework that has been developed in the course of the present thesis
 \subsubsection{Employed Hardware and Software -- The Lichtenberg-High Performance Computer }
 \label{sec:hhlr}
 
-All performance analyses that are presented in this thesis were conducted on the Lichtenberg-High Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner}) \cite{hhlr}. The cluster consist of different sections according to the used hardware. Throughout the thesis, tests were performed using the first and the second MPI section of the cluster. The first section consists of 705 nodes of which each runs two Intel\textregistered Xeon\textregistered E5-2670 processors and offers 32GB of memory. The second section consists of 356 nodes of which each runs two Intel Xeon E5-2680 v3 processors and offers 64GB of memory. As interconnect for both sections FDR-14 InfiniBand is used.
+All performance analyses that are presented in this thesis were conducted on the Lichtenberg-High Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner}). The cluster consist of different sections according to the used hardware. Throughout the thesis, tests were performed using the first and the second MPI section of the cluster. The first section consists of 705 nodes of which each runs two Intel\textregistered Xeon\textregistered E5-2670 processors and offers 32GB of memory. The second section consists of 356 nodes of which each runs two Intel Xeon E5-2680 v3 processors and offers 64GB of memory. As interconnect for both sections FDR-14 InfiniBand is used.
 
 All tests programs were compiled using the Intel compiler suite version 15.0.0 and the compiler options
 \lstset{language=bash,
@@ -182,7 +182,7 @@ It should be taken into account that the STREAM benchmark used to test the prese
 
 \subsubsection{Speed-Up Measurement and Impact of Coupling Algorithm for Analytic Test Case}
 
-This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:hhlr}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. This property of applications if often termed \emph{strong} scalability \cite{hager11}. All tests are conducted on the previously introduced HHLR cluster using the MPI1 and MEM2 section. The performance analyses will present the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance furthermore the Speed-Up will be calculated based on the presented results. 
+This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:hhlr}. Furthermore the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. This property of applications if often termed \emph{strong} scalability \cite{hager11}. All tests are conducted on the previously introduced HHLR cluster using the MPI1 section. The performance analyses will present the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance furthermore the Speed-Up will be calculated based on the presented results. 
 
 The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests the linear system for the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. All further solver parameters are listed in table \ref{tab:performance}.
 
@@ -209,8 +209,8 @@ The performance of all solvers significantly depends on the performance of the l
         legend columns=-1,
         legend entries={SIMPLE algorithm,Fully coupled algorithm},
         legend to name=named,
-        xlabel=Number of Processes,
-        ylabel=Wall-Clock Time s,
+        xlabel=Number of processes,
+        ylabel=Wall-clock time s,
         xtick={1,2,4,8,16,32,64,128,256,512,1024},
         xticklabels={1,2,4,8,16,32,64,128,256,512,1024},
         xmin=1,xmax=1200,
@@ -224,7 +224,7 @@ The performance of all solvers significantly depends on the performance of the l
   %
   \begin{tikzpicture}
       \begin{loglogaxis}[
-        xlabel=Number of Processes,
+        xlabel=Number of processes,
         ylabel=Speed-Up,
         xtick={1,2,4,8,16,32,64,128,256,512,1024},
         xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
@@ -297,8 +297,8 @@ It has been previously reported in \cite{darwish09,vakilipour12} that the couple
         legend columns=-1,
         legend entries={SIMPLE algorithm,Fully coupled algorithm},
         legend to name=named,
-        xlabel=Number of Processes,
-        ylabel=Number of Outer Iterations,
+        xlabel=Number of processes,
+        ylabel=Number of outer iterations,
         xtick={1,2,4,8,16,32,64,128,256,512,1024},
         xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
         %ytick={1,2,4,8,16,32,64,128,256,512},
@@ -313,8 +313,8 @@ It has been previously reported in \cite{darwish09,vakilipour12} that the couple
     %
     \begin{tikzpicture}
       \begin{loglogaxis}[
-        xlabel=Number of Processes,
-        ylabel=Wall-Clock Time s,
+        xlabel=Number of processes,
+        ylabel=Wall-clock time s,
         xtick={1,2,4,8,16,32,64,128,256,512,1024},
         xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
         %ytick={1,2,4,8,16,32,64,128,256,512},
@@ -339,8 +339,8 @@ The comparison in figure \ref{fig:weak} shows that the fully coupled algorithm s
   \begin{center}
   \begin{tikzpicture}
     \begin{semilogxaxis}[
-        xlabel=Number of Processes,
-        ylabel=Average Number of Inner Iterations,
+        xlabel=Number of processes,
+        ylabel=Average number of inner iterations,
         xtick={1,2,4,8,16,32,64,128,256,512,1024},
         xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
       ]
