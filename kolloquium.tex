@@ -22,7 +22,7 @@
 \usepackage{color}
 %Zur Darstellung von Code
 %\usepackage[ruled,chapter]{algorithm}
-\usepackage[]{algorithmic}
+%\usepackage[]{algorithmic}
 % Private Declarations
 %\usepackage{psfrag}
 \usepackage{multirow}
@@ -51,6 +51,9 @@
 \usepackage{multirow} %multiple rows in tabular environments
 \usepackage{booktabs} %provides extra tables commands and in general makes tables look a little nicer than without
 \usepackage{colortbl} 
+\usepackage{algorithm} %algorithms
+\usepackage{algpseudocode}
+\usepackage{algpascal}
 \usepackage{xcolor}   %are required to allow the colour of table and text elements to be altered
 \usepackage{xfrac}    %is required to make nicer fractions that look good in tables
 \newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
@@ -103,6 +106,8 @@
 \pgfdeclareimage[width=\paperwidth]{bg_alt_title}{fnbbeamer-bg-folie4x3-titel-foto-etch}
 \pgfdeclareimage[width=\paperwidth]{bg_title}{fnbbeamer-bg-folie4x3-titel-etch}
 
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\vecg}[1]{\boldsymbol{#1}}
 
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -314,24 +319,254 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
   \frametitle{Implementierung - Lösungsalgorithmus}
+\alglanguage{pseudocode}
+\begin{algorithm}[H]
+\label{al:simple}
+\caption{SIMPLE Algorithm}
+\begin{algorithmic}\scriptsize
+\State{\textit{INITIALIZE} variables}
+\While{(convergence criterion not accomplished)}
+\State{\textit{SOLVE} linearized momentum balances}
+\State{\textit{CALCULATE} mass fluxes}
+\State{\textit{SOLVE} pressure correction equation to assure continuity}
+\State{\textit{UPDATE} pressure}
+\State{\textit{UPDATE} velocities and mass fluxes}
+\If{(decoupled scalar equation)}
+  \State{\textit{SOLVE} scalar equation}
+  \EndIf
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{Implementierung - Lösungsalgorithmus}
+\alglanguage{pseudocode}
+\begin{algorithm}[H]
+\caption{Fully Coupled Solution Algorithm}
+\begin{algorithmic}\scriptsize
+\State{\textit{INITIALIZE} variables}
+\While{(convergence criterion not accomplished)}
+\If{(temperature coupling)}
+  \State{\textit{SOLVE} the linear system for velocities, pressure and temperature}
+\Else
+  \State{\textit{SOLVE} the linear system for velocities and pressure}
+\EndIf
+\State{\textit{CALCULATE} mass fluxes using \textbf{(\ref{eq:pwim})}}
+\If{(decoupled scalar equation)}
+  \State{\textit{SOLVE} scalar equation as described in section(\ref{sec:discretetemperature})}
+\EndIf
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Performanceuntersuchung}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
   \frametitle{STREAM Benchmark - Sustainable Memory Bandwidth}
+
+\begin{columns}
+  \begin{column}{7cm}
+  \begin{figure} \centering
+  \pgfplotsset{every axis/.append style={
+      font=\tiny,
+      line width=1pt,
+      tick style={line width=0.8pt}}}
+      \begin{tikzpicture}
+        \pgfplotsset{every axis legend/.append style={
+        at={(0.5,1.03)},
+        anchor=south}}
+      \begin{axis}[
+        ylabel={Sustainable memory bandwidth MB/s},
+        xlabel={Number of bound cores},
+        xtick={1,4,8,12,16},
+        %ytick={1.7e-003,1.75e-3,1.8e-003,1.85e-3},
+        %yticklabels={1.7E-3,1.75E-3,1.8E-3,1.85E-3},
+        %ymin=1.65e-003,ymax=1.9e-003,
+        xmin=0,xmax=17,
+        %ymin=0.5e4,ymax=1.3e5,
+        ymin=0,ymax=8e4,
+        %legend pos=outer north east,
+        %height=20cm,width=10cm
+        width=7.5cm,
+        grid=major,
+        ]
+        \addplot file {./files/mpi1.def};
+        \addplot file {./files/mpi1.op1};
+        \addplot file {./files/mpi1.core};
+        \addlegendentry{Default binding};
+        \addlegendentry{map-by ppr:8:node map-by ppr:4:socket}
+        \addlegendentry{map-by core}
+      \end{axis}
+      \end{tikzpicture}
+    \end{figure}
+    \end{column}
+    \begin{column}{5cm}
+      \begin{itemize}\scriptsize
+        \item Nutzung eines Knoten der MPI1-Sektion des HHLR
+        \item Low-level bechmark
+        \item Für bandbreitenlimitierte Programmperformance
+        \item Vectortriade: \( a[i] = b[i] + scalar * c[i] \) 
+      \end{itemize}
+    \end{column}
+    \end{columns}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+\begin{frame}\scriptsize
   \frametitle{Manufactured Solution}
+  \begin{itemize}
+    \item Divergenzfreie Lösung für Geschwindigkeit
+    \item \(\vec{u} = \nabla \times \vecg{\Psi}\)
+  \end{itemize}
+  \begin{align*}
+    u_1 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2+2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3  \\
+    u_2 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3-2\,\cos \left( {x_1}^{2 }+{x_2}^{2}+{x_3}^{2} \right) x_1 \\
+    u_3 &= -2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1-2\,\cos \left( {x_1}^{ 2}+{x_2}^{2}+{x_3}^{2} \right) x_2
+  \end{align*}
+  \begin{itemize} 
+    \item Lösungen für Druck und Temperatur
+  \end{itemize}
+  \begin{align*}
+    p &= \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \cos \left( {x_1}^{2}+ {x_2}^{2 }+{x_3}^{2} \right) \\
+    T &= \sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3 }^{2} \right).
+  \end{align*}
+  \begin{itemize}
+    \item Problemgebiet so wählen, dass Kontinuität im diskreten Sinne global erfüllt wird
+  \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-  \frametitle{Manufactured Solution - Strong-Scaling}
+\frametitle{Manufactured Solution - Strong-Scaling}
+\begin{columns}
+\begin{column}{5.4cm}
+\begin{figure}
+  %\setlength{\abovecaptionskip}{5pt plus 3pt minus 2pt}
+  \begin{center}
+  \begin{tikzpicture}
+      \begin{loglogaxis}[
+        legend columns=-1,
+        legend entries={SIMPLE algorithm,Fully coupled algorithm},
+        legend to name=named,
+        xlabel=Number of processes,
+        ylabel=Wall-clock time s,
+        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+        xticklabels={1,2,4,8,16,32,64,128,256,512,1024},
+        xmin=1,xmax=1200,
+        width=6.0cm,
+        font=\tiny,
+      ]
+      \addplot[color=black,mark=*] file {./files/seg.128};
+      \addplot[color=black,mark=square*] file {./files/cpld.gamg.128};
+      \ref{named}
+    \end{loglogaxis}
+  % \caption{Wall-clock time comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  % \label{fig:wall}
+  \end{tikzpicture}
+  \end{center}
+\end{figure}
+\end{column}
+\begin{column}{7cm}
+  \begin{figure}
+  \begin{center}
+  \begin{tikzpicture}
+      \begin{loglogaxis}[
+        xlabel=Number of processes,
+        ylabel=Speed-Up,
+        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+        xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
+        ytick={1,2,4,8,16,32,64,128,256,512},
+        yticklabels={1,2,4,8,16,32,64,128,256,512},
+        grid=major,
+        xmin=8,xmax=1200,
+        width=6.0cm,
+        font=\tiny,
+        legend style={ cells={anchor=east}, legend pos=outer north east, }
+      ]
+      \addplot[color=black,mark=*] file {./files/speedup.seg.128};
+      \addlegendentry {SEG}
+      \addplot[color=black,mark=square*] file {./files/speedup.cpld.128};
+      \addlegendentry {CPLD}
+      \addplot[mark=none,black] file {./files/speedup.ideal};
+    \end{loglogaxis}
+  \end{tikzpicture}
+  \end{center}
+  \end{figure}
+\end{column}
+\end{columns}
+
+\vspace{0.5cm}
+\begin{itemize}\scriptsize
+  \item \(128x128x128\) Unbekannte auf Prozesse verteilt
+\end{itemize}
+
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
   \frametitle{Manufactured Solution - Weak-Scaling}
+\begin{columns}
+\begin{column}{5cm}
+  \vspace{-0.7cm}
+\begin{figure}
+  %\setlength{\abovecaptionskip}{5pt plus 3pt minus 2pt}
+  \begin{center}
+  \begin{tikzpicture}
+      \begin{loglogaxis}[
+        legend columns=-1,
+        legend entries={SIMPLE algorithm,Fully coupled algorithm},
+        legend to name=named,
+        xlabel=Number of processes,
+        ylabel=Number of outer iterations,
+        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+        xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
+        %ytick={1,2,4,8,16,32,64,128,256,512},
+        %yticklabels={1,2,4,8,16,32,64,128,256,512},
+        %grid=major,
+        xmin=8,xmax=1200,
+        height=5.0cm,
+        font=\tiny,
+      ]
+      \addplot[color=black,mark=*] file {./files/weak.seg.iter};
+      \addplot[color=black,mark=square*] file {./files/weak.iter};
+      \ref{named}
+    \end{loglogaxis}
+  % \caption{Wall-clock time comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  % \label{fig:wall}
+  \end{tikzpicture}
+  \end{center}
+\end{figure}
+\end{column}
+\begin{column}{7cm}
+  \begin{figure}
+  \begin{center}
+  \begin{tikzpicture}
+      \begin{loglogaxis}[
+        xlabel=Number of processes,
+        ylabel=Wall-clock time s,
+        xtick={1,2,4,8,16,32,64,128,256,512,1024},
+        xticklabels={1,2,4,8,16,32,64,128,256,512,1024,},
+        xmin=8,xmax=1200,
+        height=5.0cm,
+        font=\tiny,
+        legend style={ cells={anchor=east}, legend pos=outer north east, }
+      ]
+      \addplot[color=black,mark=*] file {./files/weak.seg.time};
+      \addlegendentry {SEG}
+      \addplot[color=black,mark=square*] file {./files/weak.time};
+      \addlegendentry {CPLD}
+    \end{loglogaxis}
+  \end{tikzpicture}
+  \end{center}
+  \end{figure}
+\end{column}
+\end{columns}
+
+\vspace{0.5cm}
+\begin{itemize}\scriptsize
+  \item \(32x32x32\) Unbekannte pro Prozess
+  \item Gekoppelter Algorithmus skaliert, die Implementierung aufgrund des Gleichungslösers nicht
+\end{itemize}
+
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
