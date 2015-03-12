@@ -88,7 +88,7 @@ Since the present work also aims at analyzing the efficiency of different method
 
 The decoupled approach is similar to the treatment of the velocity-to-temperature coupling described in subsection \ref{sec:segdiscretization}. If this approach is chosen no special measures have to be taken. The momentum balances receive a contribution \( b_P^{u_i,T}\) with
 \begin{displaymath}
-  b_P^{u_i,T} := - \rho \beta \left( T_P^{(n-1)} - T_0 \right) V_P,
+  b_P^{u_i,T} := - \rho \beta \left( T_P^{(n-1)} - T_0 \right) g_i V_P,
 \end{displaymath}
 that handles the coupling explicitly by using the temperature result of the previous outer iteration. In some cases it might be necessary to under-relax the temperature each iteration \cite{ferziger02}.
 
@@ -96,9 +96,9 @@ that handles the coupling explicitly by using the temperature result of the prev
 
 In the same way it is possible to realize the coupling described in the previous subsection by implicitly considering the temperature in the momentum balances, which leads to an additional matrix coefficient \(a_P^{u_i,T}\) and an additional contribution to the right hand side accounting for the coupling to the temperature equation
 \begin{displaymath}
-  a_P^{u_i,T} = \rho \beta V_P 
+  a_P^{u_i,T} = \rho \beta g_i V_P 
   \quad \text{and} \quad
-  b_P^{u_i,T} = \rho \beta T_0 V_P.
+  b_P^{u_i,T} = \rho \beta T_0 g_i V_P.
 \end{displaymath}
 
 \subsubsection{Temperature-to-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
@@ -175,33 +175,46 @@ At block boundaries the new matrix coefficients \(a_L^{u_i,p}\) and \(a_R^{u_i,p
 
 \subsection{Assembly of Linear Systems -- Final Form of Equations}
 
-Concluding this section, the final for of the derive linear algebraic equations are presented. Based on the presented discretization each equation only contains variable values of neighbouring control volumes. The set of five equations reads
+Concluding this section, the final form of the derived linear algebraic equations are presented. Based on the presented discretization each equation only contains variable values of neighbouring control volumes. The set of five equations reads
 \begin{align}
-  a_P^{u_i} u_{P,i} + \sum_{F \in NB(P)} a_F^{u_i} u_{F,i} + \underbrace{\vphantom{\sum_F}{a_P^{u_i,p} p_P+ \sum_{F \in NB(P)} a_F^{u_i,p} p_F}}_{\hbox{Pressure-velocity coupling}} + \underbrace{\vphantom{\sum_F}{ a_P^{u_i,T} T_P}}_{\hbox{Boussinesq approximation}} &= b_{P,u_i} \quad i=1,...,3  \\[2.0em]
-  a_P^{p} p_{P} + \sum_{F \in NB(P)} a_F^{p} p_F + \underbrace{ \sum_{j=1}^3 \left(a_P^{u_j,p} u_{P,j}+ \sum_{F \in NB(P)} a_F^{p,u_j} u_{F,j} \right)}_{\hbox{Pressure-velocity coupling}} &= b_{P,p}  \\[2.0em]
-  a_P^{T} T_{P} + \sum_{F \in NB(P)} a_F^{T} T_F + \underbrace{\sum_{j=1}^3 \left(a_P^{T,u_j} u_{P,j}+ \sum_{F \in NB(P)} a_F^{p,u_j} u_{F,j} \right) + a_P^{T,p} p_P + \sum_{F \in NB(P) } a_F^{T,p} p_F}_{\hbox{Newton-Raphson linearization}} &= b_{P,T}.
+  a_P^{u_i} u_{P,i}^{\vphantom{u_i}}
+  + \sum_{F \in NB(P)} a_F^{u_i} u_{F,i}^{\vphantom{u_i}} 
+  + \underbrace{\vphantom{\sum_F}{a_P^{u_i,p} p_P^{\vphantom{u_i,p}}
+  + \sum_{F \in NB(P)} a_F^{u_i,p} p_F^{\vphantom{u_i,p}}}}_{\hbox{Pressure-velocity coupling}} 
+  + \underbrace{\vphantom{\sum_F}{ a_P^{u_i,T} T_P^{\vphantom{u_i,T}}}}_{\hbox{Boussinesq approximation}} 
+  &= b_{P,u_i}^{\vphantom{u_i,T}} \quad i=1,...,3  \\[2.0em]
+  a_P^{\, p} p_{P}^{\vphantom{p}} 
+  + \sum_{F \in NB(P)} a_F^{\,p} p_F^{\vphantom{\,p}} 
+  + \underbrace{ \sum_{j=1}^3 \left(a_P^{\,p,u_j} u_{P,j}^{\vphantom{p,u_j}}
+  + \sum_{F \in NB(P)} a_F^{\, p,u_j} u_{F,j}^{\vphantom{p,u_j}} \right)}_{\hbox{Pressure-velocity coupling}} 
+  &= b_{P,p}^{\vphantom{p,u_j}}  \\[2.0em]
+  a_P^{T} T_{P}^{\vphantom{T}} 
+  + \sum_{F \in NB(P)} a_F^{T} T_F^{\vphantom{T}} 
+  + \underbrace{\sum_{j=1}^3 \left(a_P^{T,u_j} u_{P,j}^{\vphantom{T,u_j}}
+  + \sum_{F \in NB(P)} a_F^{T,u_j} u_{F,j}^{\vphantom{T,u_j}} \right) 
+  + a_P^{T,p} p_P^{\vphantom{T,p}} 
++ \sum_{F \in NB(P) } a_F^{T,p} p_F^{\vphantom{T,p}}}_{\hbox{Newton-Raphson linearization}} 
+  &= b_{P,T}^{\vphantom{T,p}}.
 \end{align}
-
 
 The different degrees of coupling between the different equations will affect the matrix structure. Depending on the variable arrangement other matrix structures are possible. Figure \ref{fig:cpldassemble} shows the resulting block matrix structure if the fields are treated as interlaced quantities. Figure \ref{fig:interlacemat} shows the non-zero structure of a block matrix for the same case if no field interlacing is used. It should be noted, that the variable arrangement only affects the storage of the matrices not the way the matrix is used, since it is possible to arbitrarily reorder the matrix entries through the underlying index sets to obtain other matrix representations. On commonly used matrix representation is shown in figure \ref{fig:nointerlacemat}.
 
 \begin{figure}
   \centering
-  \label{fig:cpldassemble}
   \input{./img/coupledmat.tikz.tex}
   \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The blue coefficients represent the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling and the green coefficients result from the Newton-Raphson linearization technique.}
+  \label{fig:cpldassemble}
 \end{figure}
 
 \begin{figure}
   \centering
-  \label{fig:interlacemat}
   \input{./img/interlacemat.tikz.tex}
   \caption{Non-zero structure of the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The variables have been interlaced and the matrix consists of blocks as shown in figure \ref{fig:cpldassemble}.}
+  \label{fig:interlacemat}
 \end{figure}
 
 \begin{figure}
   \centering
-  \label{fig:nointerlacemat}
    \input{./img/nointerlacemat.tikz.tex}
   \caption{Non-zero structure the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The variables have been ordered such that each major matrix block refers to only one variable or the coupling between exactly two variables.}
   \label{fig:nointerlacemat}

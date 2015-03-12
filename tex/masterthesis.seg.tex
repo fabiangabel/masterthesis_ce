@@ -53,10 +53,10 @@ where the superscript \((n-1)\) denotes the previous outer iteration number. The
 Figure \ref{fig:virt} gives an interpretation of the virtual control volume.
 
 \begin{figure}[h]
-\label{fig:virt}
   \input{./img/virt.tikz.tex}
   \centering{}
   \caption{Possible interpretation of a virtual control volume (grey) located between nodes $P$ and $Q$ }
+  \label{fig:virt}
 \end{figure}
 
 To guarantee convergence of this expression for \(u_{i,f}\), under-relaxation is necessary \cite{majumdar88}. To eliminate the undefined artifacts surging form the virtualization of a control volume the following assumptions have to be made to derive a closed expression for the velocity on the boundary face \(S_f\)
@@ -667,9 +667,9 @@ To maintain the conservation property of finite-volume methods, block boundaries
 
 \begin{figure}
   \centering
-  \label{fig:nonmatching}
   \input{./img/nonmatching.tikz.tex}
   \caption{Non-matching grid cells with hanging nodes at a two-dimensional block boundary. Indexing is based on the face segments $S_l$}
+  \label{fig:nonmatching}
 \end{figure}
 
 Once the geometric data, including the information regarding the interpolation coefficients at block boundaries, has been provided, the fluxes through these boundaries can be calculated as presented in the antecedent subsections. The connectivity of neighbouring control volumes of different grid blocks is represented by matrix coefficients \(a_L^{\phi}\) and \(a_R^{\phi}\), where \(\phi \in \{u_1,u_2,u_3,p,T\}\).
@@ -736,7 +736,7 @@ After all matrix coefficients have been successfully calculated, the linear syst
 
 \begin{figure}
   \centering
-  \label{fig:segassemble}
   \input{./img/matrix.tikz.tex}
   \caption{Non-zero structure of the linear systems used in the SIMPLE algorithm for a block-structured grid consisting of one  $2\times2\times2$ cell and one $3\times3\times3$ cell block}
+  \label{fig:segassemble}
 \end{figure}
