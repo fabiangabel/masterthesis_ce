@@ -195,23 +195,28 @@
     \vspace{0.5cm}
     Herausforderungen für CFD-Applikationen:
     \begin{itemize}
-    \item \small{Schnelle Verfügbarkeit von Simulationsergebnissen}
+    \item \small{schnelle Verfügbarkeit von Simulationsergebnissen}
     \item \small{Ergebnisse mit hoher Genauigkeit}
+    \item \small{Umgang mit komplexen Geometrien}
+    \item \small{multiphysikalische Problemstellungen}
     \end{itemize}
 
     \begin{columns}
+      \vspace{-0.5cm}
         \begin{column}{6cm}
             \begin{figure}
             \centering
             \includegraphics[width= 0.8\linewidth]{./img/turbine.jpg}
+            \setlength{\abovecaptionskip}{-5pt plus 3pt minus 2pt}
             \caption{Gasturbine (VDI)}
             \end{figure}
         \end{column}
-        \begin{column}{6cm}
+        \begin{column}{8cm}
             \begin{itemize}
                 \item \small{Einsatz robuster Algorithmen}
                 \item \small{Skalierbarkeit der Lösungsmethode}
                 \item \small{Effizienzsteigerung durch Adaptivität}
+                \item \small{Umgang mit Variablenkopplung}
             \end{itemize}
         \end{column}
     \end{columns}
@@ -223,7 +228,7 @@
 \frametitle{Motivation}
     Vollständig gekoppelter Lösungsansatz für Navier-Stokes Gleichungen (Darwish 2009):
     \begin{itemize}
-    \item Semi-implizite Druck-Geschwindigkeits Kopplung statt sequentieller Lösung
+    \item Semi-implizite Druck-Geschwindigkeits-Kopplung statt sequentieller Lösung
     \item Robuster Algorithmus ohne Unterrelaxation
     \end{itemize}
 
@@ -243,7 +248,7 @@
   \begin{itemize}
     \item Implementierung eines vollständig gekoppelten Lösungsansatzes 
       \begin{itemize}\scriptsize
-        \item Finite-Volumen Diskretisierung der 3d Navier-Stokes Gleichungen auf block-strukturierten, lokal verfeinerten Gittern mit hängenden Knoten
+        \item Finite-Volumen Diskretisierung der 3d Navier-Stokes Gleichungen auf blockstrukturierten, lokal verfeinerten Gittern mit hängenden Knoten
         \item Kopplungsansätze für Temperaturgleichung 
         \item MPI-Parallelisierung des Lösungsansatzes mit PETSc
       \end{itemize}
@@ -262,7 +267,7 @@
 \begin{frame}\scriptsize
   \frametitle{Implementierung - Diskretisierung}
   \begin{itemize}
-    \item Finite-Volumen Methode für stationäre, incompressible Navier-Stokes Gleichungen
+    \item Finite-Volumen Methode für stationäre, inkompressible Navier-Stokes Gleichungen
     \item standardmäßige Diskretisierung der konvektiven und viskosen Terme
   \end{itemize}
   \begin{itemize}
@@ -270,7 +275,7 @@
   \end{itemize}
 \begin{align*}
   \label{eq:massbalance}
-  \sum_{f \in \{w,s,b,t,n,e\}} u_{i,f} n_{f_i} S_f = 0,
+  \sum_{f \in \{w,s,b,t,n,e\}} u_{i,f} n_{f_i} S_f = 0
 \end{align*}
   \begin{itemize}
     \item druckgewichtete Interpolation zur Massenflussberechnung
@@ -298,12 +303,12 @@
     \item implizit oder explizit
   \end{itemize}
   \begin{itemize}
-    \item Newton-Raphson Linearisierung konvektiver Term der Temperaturgleichung \\(Galpin et al.)
+    \item Newton-Raphson Linearisierung des konvektiven Terms der Temperaturgleichung \\(Galpin et al.)
   \end{itemize}
 \begin{align*}
   \left(u_{j,f} T_f \right)^{(n)} 
   &\approx 
-  \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  + \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} \vphantom{(u_jT)}{T_f}^{(n-1)}  -  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
+  \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  + \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} \vphantom{(u_jT)}{T_f}^{(n-1)}  -  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}
 \end{align*}
   \begin{itemize}
     \item Diskretisierung unter Verwendung der druckgewichteten Interpolation
@@ -311,7 +316,7 @@
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}\scriptsize
-  \frametitle{Implementierung - System algebraischer Gleichungen}
+  \frametitle{Implementierung \\- System algebraischer Gleichungen}
 \begin{align*}
   a_P^{u_i} u_{P,i} + \sum_{F \in NB(P)} a_F^{u_i} u_{F,i} + \underbrace{\vphantom{\sum_F}{a_P^{u_i,p} p_P+ \sum_{F \in NB(P)} a_F^{u_i,p} p_F}}_{\hbox{Pressure-velocity coupling}} + \underbrace{\vphantom{\sum_F}{ a_P^{u_i,T} T_P}}_{\hbox{Boussinesq approximation}} &= b_{P,u_i} \quad i=1,...,3  \\[2.0em]
   a_P^{p} p_{P} + \sum_{F \in NB(P)} a_F^{p} p_F + \underbrace{ \sum_{j=1}^3 \left(a_P^{u_j,p} u_{P,j}+ \sum_{F \in NB(P)} a_F^{p,u_j} u_{F,j} \right)}_{\hbox{Pressure-velocity coupling}} &= b_{P,p}  \\[2.0em]
@@ -320,13 +325,14 @@
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-  \frametitle{Implementierung - Blockränder und Parallelisierung}
+  \frametitle{Implementierung \\- Blockränder und Parallelisierung}
   \vspace{0.5cm}
   \begin{itemize}\scriptsize
     \item Behandlung der Blockränder nach Lilek et. al
-    \item Nutzen von PETSc Datenstrukturen zur MPI-Parallelisierung
+    \item Portable Extensible Toolkit for Scientific Computation (PETSc)
+    \item PETSc Datenstrukturen zur MPI-Parallelisierung des Lösers
     \item spezielle Vektorobjekte zur Verwaltung von Ghost-Values
-    \item Nur ein Prozessor berechnet Matrixkoeffizienten für Blockübergänge
+    \item nur ein Prozessor berechnet Matrixkoeffizienten für Blockübergänge
   \end{itemize}
   \vspace{-0.5cm}
   \begin{columns}
@@ -359,7 +365,7 @@
   \begin{figure}
     \centering
     \resizebox{1.5\linewidth}{!}{\input{./img/blockstruc.tikz.tex}}
-    \caption{\tiny{Blockstruturiertes Gitter und resultierende Matrixbelegung für eine Variable ohne Kopplung}}
+    \caption{\tiny{Blockstrukturiertes Gitter und resultierende Matrixbelegung für eine Variable ohne Kopplung}}
   \end{figure}
   \end{column}
   \begin{column}{10cm}
@@ -374,8 +380,8 @@
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}\scriptsize
-\frametitle{Implementierung - Assemblierung mit Kopplung}
-\vspace{-0.5cm}
+\frametitle{Implementierung \\- Assemblierung mit Kopplung}
+%\vspace{-0.5cm}
 \begin{columns}
 \begin{column}{7cm}
 \begin{figure}
@@ -385,6 +391,7 @@
   %\caption{Matrixstruktur für Blockmatrizen}
 \end{figure}
 \end{column}
+  \vspace{1cm}
 \begin{column}{5cm}
   unterschiedliche Kopplungsterme:
   \begin{itemize}
@@ -445,8 +452,9 @@
 \section{Performanceuntersuchung}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-  \frametitle{STREAM Benchmark - Sustainable Memory Bandwidth}
+  \frametitle{STREAM Benchmark \\- Sustainable Memory Bandwidth}
 
+\vspace{-0.15cm}
 \begin{columns}
   \begin{column}{7cm}
   \begin{figure} \centering
@@ -485,8 +493,8 @@
     \end{column}
     \begin{column}{5cm}
       \begin{itemize}\scriptsize
-        \item Nutzung eines Knotens der MPI1-Sektion des HHLR
-        \item Low-level bechmark
+        \item Nutzung eines Knotens der MPI1-Sektion (Sandy-Bridge) des HHLR 
+        \item low-level Bechmark
         \item Für bandbreitenlimitierte Programmperformance
         \item Vectortriade: \( a[i] = b[i] + scalar * c[i] \) 
       \end{itemize}
@@ -497,20 +505,20 @@
 \begin{frame}\scriptsize
   \frametitle{Manufactured Solution}
   \begin{itemize}
-    \item Divergenzfreie Lösung für Geschwindigkeit
+    \item divergenzfreie Lösung für Geschwindigkeit
     \item \(\vec{u} = \nabla \times \vecg{\Psi}\)
   \end{itemize}
   \begin{align*}
-    u_1 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2+2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3  \\
-    u_2 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3-2\,\cos \left( {x_1}^{2 }+{x_2}^{2}+{x_3}^{2} \right) x_1 \\
-    u_3 &= -2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1-2\,\cos \left( {x_1}^{ 2}+{x_2}^{2}+{x_3}^{2} \right) x_2
+    u_1(\vec{x}) &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2+2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3  \\
+    u_2(\vec{x}) &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3-2\,\cos \left( {x_1}^{2 }+{x_2}^{2}+{x_3}^{2} \right) x_1 \\
+    u_3(\vec{x}) &= -2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1-2\,\cos \left( {x_1}^{ 2}+{x_2}^{2}+{x_3}^{2} \right) x_2
   \end{align*}
   \begin{itemize} 
     \item Lösungen für Druck und Temperatur
   \end{itemize}
   \begin{align*}
-    p &= \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \cos \left( {x_1}^{2}+ {x_2}^{2 }+{x_3}^{2} \right) \\
-    T &= \sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3 }^{2} \right).
+    p(\vec{x}) &= \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \cos \left( {x_1}^{2}+ {x_2}^{2 }+{x_3}^{2} \right) \\
+    T(\vec{x}) &= \sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3 }^{2} \right).
   \end{align*}
   \begin{itemize}
     \item Problemgebiet so wählen, dass Kontinuität im diskreten Sinne global erfüllt wird
@@ -646,7 +654,7 @@
 \vspace{0.5cm}
 \begin{itemize}\scriptsize
   \item \(32x32x32\) Unbekannte pro Prozess
-  \item Gekoppelter Algorithmus skaliert 
+  \item gekoppelter Algorithmus skaliert 
   \item Implementierung skaliert nicht (Präkonditionierer)
 \end{itemize}
 
@@ -659,20 +667,22 @@
 \begin{figure}
   \centering
   \resizebox{1.0\linewidth}{!}{\includegraphics{./img/channel3d.pdf}}
-  \caption{Sketch of the channel flow problem}
+  \setlength{\abovecaptionskip}{-15pt plus 3pt minus 2pt}
+  \caption{Skizze der Kanalströmung}
   \label{fig:sketch}
 \end{figure}
 \end{column}
 \begin{column}{5cm}
   \begin{itemize}\scriptsize
     \item Würfel als Hindernisse
-    \item Parabolisches Einstromprofil
+    \item parabolisches Einstromprofil
     \item \(Re \approx 20 \)
-    \item Laminare Strömung
+    \item laminare Strömung
+    \item nichttriviale Blockübergänge
   \end{itemize}
 \end{column}
 \end{columns}
-\vspace{-0.5cm}
+\vspace{-0.3cm}
 \begin{figure}
    \centering
     \subfigure{
@@ -684,23 +694,23 @@
       \resizebox{0.3\linewidth}{!}{\input{./img/blocking.tikz.tex}}
       \raggedleft{}
     }
-    \caption{Blocking for the two different obstacles within the problem domain of the channel flow}
+    \caption{Blocking der Umgebung der Hindernisse im Kanal}
     \label{fig:blocking}
 \end{figure}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-  \frametitle{Kanalströmung - Druck-Geschwindigkeitskopplung}
+  \frametitle{Kanalströmung - Druck-Geschwindigkeits-Kopplung}
   \vspace{0.3cm}
 \begin{figure}
   \centering
   \resizebox{0.8\linewidth}{!}{\input{./img/channel.tikz.tex}}
-  \caption{West and east boundary of the numerical grid for the channel flow problem}
+  \caption{Numerisches Gitter am West- und Ostrand der Kanalströmung}
   \label{fig:channel1}
 \end{figure}
 \vspace{-0.7cm}
 \begin{table}[h!]\centering
-  \caption{Performance analysis results of the channel flow problem for different numbers of unknowns comparint the segregated (SEG) to the fully coupled (CPLD) solution algorithm using one process on the MPI2 section of the HHLR supercomputer. }
+  \caption{Ergebnisse der Performance Untersuchung der Kanalströmung für unterschiedliche Anzahl an Unbekannten zum Vergleich des SIMPLE (SEG) und vollständig gekoppelten (CPLD) Lösungsalgorithmus}
 \ra{1.3}
 \resizebox{7cm}{!}{
   \begin{tabular}{lcccc}\toprule
@@ -736,8 +746,8 @@
  \begin{column}{6cm}
    \begin{itemize}\scriptsize
      \item Testfall mit natürlicher Konvektion
-     \item starke Kopplung, da  Strömung getriben durch Temperaturdifferenzen 
-     \item dreidimensionale Kavität mit beheizter Ost- und Westseite 
+     \item starke Kopplung, da  Strömung getrieben durch Temperaturdifferenzen 
+     \item 3d Kavität mit isothermer Ost- (kalt) und Westwand (heiß)
      \item alle übrigen Wände adiabat
      \item \(Ra \approx 10^4 \)
      \item stationäre, laminare Strömung
@@ -751,7 +761,7 @@
 
 \begin{table}[h!]\centering
 \ra{1.3}
-\caption{Performance des SIMPLE algorithmus (SEG), des gekoppelten Algorithmus (CPLD) mit impliziter Boussinesq Approximation (TCPLD) und semi-impliziter Temperatur-Geschwindigkeits/Druck-Kopplung (NRCPLD).}
+\caption{Performance des SIMPLE Algorithmus (SEG) und des gekoppelten Algorithmus (CPLD) mit impliziter Boussinesq Approximation (TCPLD) und semi-impliziter Temperatur-Geschwindigkeits/Druck-Kopplung (NRCPLD).}
 \resizebox{7cm}{!}{
 \begin{tabular}{cccc}\toprule
     Resolution & Solver configuration & Time s & No. Non-linear its. \\
@@ -779,12 +789,85 @@
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Fazit und Ausblick}
-\begin{frame}
+\begin{frame}\scriptsize
   \frametitle{Fazit und Ausblick}
+  \begin{itemize}
+    \item MPI parallelisierte Implementierung eines vollständig gekoppelten Lösungsverfahrens
+    \item 3d lockstrukturierte Gitter mit hängenden Knoten
+    \item unterschiedliche Methoden zur Temperaturkopplung
+    \item Untersuchung der Skalierbarkeit auf HHLR
+    \item Performancevergleich mit SIMPLE Löser 
+  \end{itemize}
+  \vspace{1cm}
+  weiterer Forschungbedarf:
+  \begin{itemize}
+    \item instationäre laminare Strömungen bei hohen Rayleighzahlen
+    \item implizite Kopplung im Kontext von Turbulenz, Mehrphasenströmungen, etc.
+    \item matrixfreie Präkonditionierer
+    \item physikbasierte Präkonditionierer (SIMPLE(R) oder andere Schur-Komplement Präkonditionierung)
+    \item spezielle algebraische Mehrgitter Präkonditionierer
+  \end{itemize}
 \end{frame}
- 
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]
+  \frametitle<presentation>{Literatur}    
+  \begin{thebibliography}{10} 
+  \beamertemplatearticlebibitems
+  \setbeamertemplate{bibliography item}[online]
+
+  \bibitem{petsc}
+    \small{Balay, S., Abhyankar,  
+  S., Adams,
+  M.~F., 
+  Brown, J.,
+  Brune, P.,
+  Buschelman K., 
+  Eijkhout, V.,
+  Gropp, W.~D.,
+  Kaushik D.,
+  Knepley, M.~G.,
+  Curfman McInnes, L.,
+  Rupp, K.,
+  Smith, B.~F. 
+  and Zhang H.,}
+   \newblock {PETS}c {W}eb Page.
+   \newblock \url{http://www.mcs.anl.gov/petsc} (zuletzt besucht am \today).
+
+  \beamertemplatearticlebibitems
+  \bibitem{darwish09}
+    Darwish M., Sraj, I.  und Moukalled, F.,
+    \newblock A Coupled Finite Volume Solver for the Solution of Incompressible Flows on Unstructured Grids.
+    \newblock {\em Journal of Computational Physics}, 228(1):180--201, 2009.
+
+  \beamertemplatearticlebibitems
+  \bibitem{galpin86}
+    Galpin, P. F. und Raithby, G. D.,
+    \newblock Numerical Solution of Problems in Incompressible Fluid Flow: Treatment of the Temperature-Velocity Coupling.
+    \newblock {\em Numerical Heat Transfer}, 10(2):105--129, 1986.
+
+  \beamertemplatearticlebibitems
+  \bibitem{klaij13}
+    Klaij, C. M. und Vuik, C.
+    \newblock SIMPLE-Type Preconditioners for Cell-Centered, Colocated Finite Volume Discretization of Incompressible Reynolds-Averaged Navier-Stokes Equations.
+    \newblock {\em International Journal for Numerical Methods in Fluids}, 71(7):830--849, 2013.
+
+  \beamertemplatearticlebibitems
+  \bibitem{lilek97}
+    Lilek, \u{Z}., Muzaferija, S., Peri\'c, M. und Seidl, V.,
+    \newblock An Implicit Finite-Volume Method Using Nonmatching Blocks of Structured Grid.
+    \newblock {\em Numerical Heat Transfer, Part B: Fundamentals}, 32(4):385--401, 1997.
+
+  \beamertemplatearticlebibitems
+  \bibitem{vakilipour12}
+    Vakilipour, S. und Ormiston, S. J.,
+    \newblock A Coupled Pressure-Based Co-Located Finite-Volume Solution Method for Natural-Convection Flows.
+    \newblock {\em Numerical Heat Transfer, Part B: Fundamentals}, 61(2):91--115, 2012.
+
+  \end{thebibliography}
+
+\end{frame}
+
 \end{document}
-
-
 
 
