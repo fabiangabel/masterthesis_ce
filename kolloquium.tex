@@ -192,10 +192,10 @@
       \begin{itemize}\scriptsize
         \item Finite-Volumen Diskretisierung der 3d Navier-Stokes Gleichungen auf blockstrukturierten, lokal verfeinerten Gittern mit hängenden Knoten
         \item Kopplungsansätze für Temperaturgleichung 
-        \item MPI-Parallelisierung des Lösungsansatzes mit PETSc
+        \item MPI-Parallelisierung des Lösers
       \end{itemize}
     \item Skalierbarkeitsuntersuchung auf HHLR
-    \item Performancevergleich mit herkömmlichem SIMPLE Verfahren für unterschiedliche Testfälle
+    \item Performancevergleich mit herkömmlichem SIMPLE-Verfahren für unterschiedliche Testfälle
       \begin{itemize}\scriptsize
         \item Manufactured Solution
         \item Kanalströmung mit komplexem Hindernis
@@ -211,6 +211,7 @@
   \begin{itemize}
     \item Finite-Volumen Methode für stationäre, inkompressible Navier-Stokes Gleichungen
     \item standardmäßige Diskretisierung der konvektiven und viskosen Terme
+    \item implizite Berücksichtigung des Druckgradienten
   \end{itemize}
   \begin{itemize}
     \item diskretisierte Massenerhaltungsgleichung
@@ -376,10 +377,13 @@
 \State{\textit{SOLVE} pressure correction equation to assure continuity}
 \State{\textit{UPDATE} pressure}
 \State{\textit{UPDATE} velocities and mass fluxes}
+\If{(coupled scalar equation)}
+  \State{\textit{SOLVE} scalar equation}
+\EndIf
+\EndWhile
 \If{(decoupled scalar equation)}
   \State{\textit{SOLVE} scalar equation}
-  \EndIf
-\EndWhile
+\EndIf
 \end{algorithmic}
 \end{algorithm}
 \end{frame}
@@ -398,10 +402,13 @@
   \State{\textit{SOLVE} the linear system for velocities and pressure}
 \EndIf
 \State{\textit{CALCULATE} mass fluxes }
-\If{(decoupled scalar equation)}
+\If{(coupled scalar equation)}
   \State{\textit{SOLVE} scalar equation}
 \EndIf
 \EndWhile
+\If{(decoupled scalar equation)}
+  \State{\textit{SOLVE} scalar equation}
+\EndIf
 \end{algorithmic}
 \end{algorithm}
 \end{frame}
