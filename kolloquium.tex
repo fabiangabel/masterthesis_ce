@@ -226,7 +226,7 @@
 \begin{frame}
 
 \frametitle{Motivation}
-    Vollständig gekoppelter Lösungsansatz für Navier-Stokes Gleichungen (Darwish 2009):
+    Vollständig gekoppelter Lösungsansatz für Navier-Stokes Gleichungen (Darwish et al. 2009):
     \begin{itemize}
     \item Semi-implizite Druck-Geschwindigkeits-Kopplung statt sequentieller Lösung
     \item Robuster Algorithmus ohne Unterrelaxation
@@ -303,7 +303,7 @@
     \item implizit oder explizit
   \end{itemize}
   \begin{itemize}
-    \item Newton-Raphson Linearisierung des konvektiven Terms der Temperaturgleichung \\(Galpin et al.)
+    \item Newton-Raphson Linearisierung des konvektiven Terms der Temperaturgleichung \\(Galpin et al. 1986)
   \end{itemize}
 \begin{align*}
   \left(u_{j,f} T_f \right)^{(n)} 
@@ -396,11 +396,11 @@
   unterschiedliche Kopplungsterme:
   \begin{itemize}
     \item blau: Druck-Geschwindigkeit
-    \item rot: Geschwindkigkeit-Temperatur
+    \item rot: Geschwindigkeit-Temperatur
     \item grün: Temperatur-Geschwindigkeit/Druck
   \end{itemize}
   \vspace{3cm}
-  \hspace*{-3cm} \scriptsize{$\color{fnbblue}\blacksquare$} an Stelle eines Eintrags steht eine dichtbesetze \(5x5\) Matrix
+  \hspace*{-3cm} \scriptsize{$\color{fnbblue}\blacksquare$} an Stelle eines Eintrags steht eine dicht besetzte \(5x5\) Matrix
 \end{column}
 \end{columns}
 \end{frame}
@@ -494,7 +494,7 @@
     \begin{column}{5cm}
       \begin{itemize}\scriptsize
         \item Nutzung eines Knotens der MPI1-Sektion (Sandy-Bridge) des HHLR 
-        \item low-level Bechmark
+        \item low-level Benchmark
         \item Für bandbreitenlimitierte Programmperformance
         \item Vectortriade: \( a[i] = b[i] + scalar * c[i] \) 
       \end{itemize}
@@ -793,13 +793,13 @@
   \frametitle{Fazit und Ausblick}
   \begin{itemize}
     \item MPI parallelisierte Implementierung eines vollständig gekoppelten Lösungsverfahrens
-    \item 3d lockstrukturierte Gitter mit hängenden Knoten
+    \item 3d blockstrukturierte Gitter mit hängenden Knoten
     \item unterschiedliche Methoden zur Temperaturkopplung
     \item Untersuchung der Skalierbarkeit auf HHLR
     \item Performancevergleich mit SIMPLE Löser 
   \end{itemize}
   \vspace{1cm}
-  weiterer Forschungbedarf:
+  weiterer Forschungsbedarf:
   \begin{itemize}
     \item instationäre laminare Strömungen bei hohen Rayleighzahlen
     \item implizite Kopplung im Kontext von Turbulenz, Mehrphasenströmungen, etc.
