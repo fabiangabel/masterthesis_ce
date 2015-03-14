@@ -207,7 +207,7 @@ The performance of all solvers significantly depends on the performance of the l
   \begin{tikzpicture}
       \begin{loglogaxis}[
         legend columns=-1,
-        legend entries={SIMPLE algorithm,Fully coupled algorithm},
+        legend entries={SIMPLE-algorithm,Fully coupled algorithm},
         legend to name=named,
         xlabel=Number of processes,
         ylabel=Wall-clock time s,
@@ -288,14 +288,14 @@ From the comparison in figure \ref{fig:speedup} it is evident that both algorith
 
 \subsection{Weak Scaling Comparison of Coupled and Segregated Solution Algorithm}
 
-It has been previously reported in \cite{darwish09,vakilipour12} that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. It is known that this is not true for the SIMPLE algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so called \emph{weak} scaling of the implementation \cite{hager11}. Starting from a moderate number of unknowns for a tree-dimensional test case solving for the analytical solution presented in section \ref{sec:manufacturedsolution}, this benchmark will investigate how the running-time and the number of needed inner and outer iterations behaves when the computational load per process is held constant, while the number of involved processes is continuously increased. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same time by involving more processes running the solver application. Each process will get assigned a block with \(32x32x32\) unknowns. The number of involved unknowns in each test run thus can be calculated as \( N = 32*32*32*PROC \). Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE algorithm and the fully coupled solution algorithm.
+It has been previously reported in \cite{darwish09,vakilipour12} that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. It is known that this is not true for the SIMPLE-algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so called \emph{weak} scaling of the implementation \cite{hager11}. Starting from a moderate number of unknowns for a tree-dimensional test case solving for the analytical solution presented in section \ref{sec:manufacturedsolution}, this benchmark will investigate how the running-time and the number of needed inner and outer iterations behaves when the computational load per process is held constant, while the number of involved processes is continuously increased. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same time by involving more processes running the solver application. Each process will get assigned a block with \(32x32x32\) unknowns. The number of involved unknowns in each test run thus can be calculated as \( N = 32*32*32*PROC \). Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE-algorithm and the fully coupled solution algorithm.
 
 \begin{figure}[h!]
   \begin{center}
   \begin{tikzpicture}
       \begin{loglogaxis}[
         legend columns=-1,
-        legend entries={SIMPLE algorithm,Fully coupled algorithm},
+        legend entries={SIMPLE-algorithm,Fully coupled algorithm},
         legend to name=named,
         xlabel=Number of processes,
         ylabel=Number of outer iterations,
@@ -518,7 +518,7 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
 
 \begin{table}[h!]\centering
 \ra{1.3}
-  \caption{Performance analysis results of the heated cavity flow problem comparing the SIMPLE algorithm with segregated temperature solve (SEG), the fully coupled solution algorithm with segregated temperature solve (CPLD), the fully coupled solution algorithm with an implicit Boussinesq approximation (TCPLD) and the fully coupled solution algorithm using an implicit Boussinesq approximation and a semi-implicit Newton-Raphson linearization of the convective part of the temperature equation (NRCPLD).}
+  \caption{Performance analysis results of the heated cavity flow problem comparing the SIMPLE-algorithm with segregated temperature solve (SEG), the fully coupled solution algorithm with segregated temperature solve (CPLD), the fully coupled solution algorithm with an implicit Boussinesq approximation (TCPLD) and the fully coupled solution algorithm using an implicit Boussinesq approximation and a semi-implicit Newton-Raphson linearization of the convective part of the temperature equation (NRCPLD).}
   \begin{tabular}{cccc}\toprule
     Resolution & Solver configuration & Time s & No. Non-linear its. \\
     \midrule

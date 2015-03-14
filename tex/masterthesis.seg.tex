@@ -1,7 +1,6 @@
 \section{Implicit Finite-Volume Method for Incompressible Flows -- Segregated Approach}
 \label{sec:seg}
-
-The purpose of this section is to present the discretization applied to the set of equations (\ref{eq:completeset}). Since the system of partial differential equations to be solved always exhibits a coupling, at least between the dependent variables pressure and velocity, a first solution algorithm, namely the \emph{SIMPLE} algorithm, addressed to resolve the pressure velocity coupling, is introduced. Furthermore an under-relaxation factor independent method of calculating mass fluxes by interpolation is introduced and the detailed derivation of all coefficients that result from the discretization process is presented. Finally the boundary conditions, that are relevant for the present thesis will be shown.
+  algorithm, addressed to resolve the pressure velocity coupling, is introduced. Furthermore an under-relaxation factor independent method of calculating mass fluxes by interpolation is introduced and the detailed derivation of all coefficients that result from the discretization process is presented. Finally the boundary conditions, that are relevant for the present thesis will be shown.
 
 \subsection{Discretization of the Mass Balance}
 
@@ -198,7 +197,7 @@ Upon convergence \(u_{i,P}^{(n)} = u_{i,P}^{(n-1)}\) and \(u_{i,f}^{(n)} = u_{i,
 which shows, after division by \(\alpha_\vec{u} > 0\), that \(u_{i,f}\) is independent of the under-relaxation factor.
 \end{proof}
 
-\subsection{Implicit Pressure Correction and the SIMPLE Algorithm}
+\subsection{Implicit Pressure Correction and the SIMPLE-Algorithm}
 \label{sec:simple}
 
 The goal of finite-volume methods is to deduce a system of linear algebraic equations from a partial differential equation. In the case of the momentum balances the general structure of this linear equations is
@@ -293,7 +292,7 @@ To couple velocity and pressure correctors one can subtract equation (\ref{eq:no
   - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q' 
   \right].
 \end{align}
-The majority of the class of pressure correction algorithms has these equations as a common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving for the pressure correction, still unknown. The method used in the present work is the \emph{SIMPLE} Algorithm (\emph{Semi-Implicit Method for Pressure-Linked Equations}) \cite{patankar72}. The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation (\ref{eq:nodeprime}). Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by inserting equation (\ref{eq:nodeprime}) into equation (\ref{eq:faceprime}). This gives an update formula
+The majority of the class of pressure correction algorithms has these equations as a common basis. Each algorithm then introduces special distinguishable approximations of the velocity corrections that are, at the moment of solving for the pressure correction, still unknown. The method used in the present work is the \emph{SIMPLE}-algorithm (\emph{Semi-Implicit Method for Pressure-Linked Equations}) \cite{patankar72}. The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation (\ref{eq:nodeprime}). Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by inserting equation (\ref{eq:nodeprime}) into equation (\ref{eq:faceprime}). This gives an update formula
 \begin{align}
   \label{eq:velcorr}
   u_{i,f}' 
@@ -316,7 +315,7 @@ where the right hand side \(b_{P,p}\) is defined as
 \end{equation}
 The complete discretization with central differences as approximation for the gradient of the pressure correction is straightforward and will be presented in subsection \ref{sec:segpresscorr}.
 
-The approximation performed in the SIMPLE algorithm affects convergence in a way that the pressure correction has to be under-relaxed with a parameter \(\alpha_p \in [0,1]\)
+The approximation performed in the SIMPLE-algorithm affects convergence in a way that the pressure correction has to be under-relaxed with a parameter \(\alpha_p \in [0,1]\)
 \begin{equation}
   \label{eq:pressupdate}
   p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} p_P'.
@@ -340,11 +339,11 @@ As shown in section \ref{sec:massflux} the behaviour of the pressure weighted in
   &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
 \end{align}
 
-Generally the SIMPLE algorithm can be represented by an iterative procedure as shown in Algorithm \ref{al:simple}.
+Generally the SIMPLE-algorithm can be represented by an iterative procedure as shown in Algorithm \ref{al:simple}.
 \alglanguage{pseudocode}
 \begin{algorithm}
 \label{al:simple}
-\caption{SIMPLE Algorithm}
+\caption{SIMPLE-Algorithm}
 \begin{algorithmic}
 \State{\textit{INITIALIZE} variables}
 \While{(convergence criterion not accomplished)}
@@ -541,7 +540,7 @@ As the antecedent subsections showed, it is possible to deduce a linear algebrai
 \subsubsection{Dirichlet Boundary Conditions}
 \label{sec:segDirichlet}
 
-The first boundary condition is the Dirichlet boundary condition. This type of boundary condition when used for the velocity or transported scalars is used to model inlet conditions for flow problems. For the temperature equation it may also be used at walls as will be shown in subsection \ref{sec:walls}. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. In the case of Dirichlet boundary conditions for the velocities, especially the mass flux \(\dot{m}_f\) is known and hence does not have to be calculated using the pressure weighted interpolation method. This furthermore implies that the boundary velocites do not have to be corrected at Dirichlet velocity boundaries, i.e. (\ref{eq:velcorr}) yields
+The first boundary condition is the Dirichlet boundary condition. This type of boundary condition when used for the velocity or transported scalars is used to model inlet conditions for flow problems. For the temperature equation it may also be used at walls as will be shown in subsection \ref{sec:walls}. It is characterized by specifying the value of the variable for which the equation is solved explicitly. As a result boundary fluxes can be calculated directly. In the case of Dirichlet boundary conditions for the velocities, especially the mass flux \(\dot{m}_f\) is known and hence does not have to be calculated using the pressure weighted interpolation method. This furthermore implies that the boundary velocities do not have to be corrected at Dirichlet velocity boundaries, i.e. (\ref{eq:velcorr}) yields
 \begin{displaymath}
   0 
   =
@@ -573,7 +572,7 @@ whereas the contribution to the right hand side reads
 \end{align}
 The reader should note, that even though the gradient discretization at domain boundaries is realized by a one sided forward differencing scheme instead of a central differencing scheme. This does not drastically affect accuracy because the distance used in the differential quotient is half the distance used on a central difference inside the domain \cite{schaefer99}.
 
-The case of Dirichlet boundary conditions for the pressure needs special consideration since no equation for the pressure is solved but the pressure correction. This type  of boundary condition can be applied to inlet boundaries or pressure boundaries and is recomendable if no data on the velocity distribution is known, but on the other hand the pressure difference between inlet and outlet, or the reference pressure at the outlet is an established quantity. The pressure correction at Dirichlet pressure boundary conditions is assumed to \(p' = 0\), and the modification of the coefficients of the algebraic equation for the corresponding control volumes can be carried out as in (\ref{eq:dirichletcoeff}) and (\ref{eq:dirichletrhs}). The velocity correction at the boundaries is nonzero and will have to be extrapolated using the formula for the pressure weighted interpolation applied to boundary values (\ref{eq:faceprime}).
+The case of Dirichlet boundary conditions for the pressure needs special consideration since no equation for the pressure is solved but the pressure correction. This type  of boundary condition can be applied to inlet boundaries or pressure boundaries and is recommendable if no data on the velocity distribution is known, but on the other hand the pressure difference between inlet and outlet, or the reference pressure at the outlet is an established quantity. The pressure correction at Dirichlet pressure boundary conditions is assumed to \(p' = 0\), and the modification of the coefficients of the algebraic equation for the corresponding control volumes can be carried out as in (\ref{eq:dirichletcoeff}) and (\ref{eq:dirichletrhs}). The velocity correction at the boundaries is nonzero and will have to be extrapolated using the formula for the pressure weighted interpolation applied to boundary values (\ref{eq:faceprime}).
 
 \subsubsection{Treatment of Wall Boundaries}
 \label{sec:walls}
@@ -680,7 +679,7 @@ Once the geometric data, including the information regarding the interpolation c
 \subsection{Treatment of the Singularity of the Pressure Correction Equation with Neumann Boundaries}
 \label{sec:singularitytreatment}
 
-It has to be noted that the derived pressure correction equation is a Poisson equation. As can be proven \cite{hackbusch96}, the linear \(N \times N\) systems surging from the presented discretization on a grid with \(N\) control volumes whith Neumann boundary conditions have a nullspace of dimension one, i.e.
+It has to be noted that the derived pressure correction equation is a Poisson equation. As can be proven \cite{hackbusch96}, the linear \(N \times N\) systems surging from the presented discretization on a grid with \(N\) control volumes with Neumann boundary conditions have a nullspace of dimension one, i.e.
 \begin{displaymath}
   \operatorname{null}(A_{p'}) = \operatorname{span}(\mathbb{1}),
 \end{displaymath}
@@ -740,6 +739,6 @@ After all matrix coefficients have been successfully calculated, the linear syst
 \begin{figure}
   \centering
   \input{./img/matrix.tikz.tex}
-  \caption{Non-zero structure of the linear systems used in the SIMPLE algorithm for a block-structured grid consisting of one  $2\times2\times2$ cell and one $3\times3\times3$ cell block}
+  \caption{Non-zero structure of the linear systems used in the SIMPLE-algorithm for a block-structured grid consisting of one  $2\times2\times2$ cell and one $3\times3\times3$ cell block}
   \label{fig:segassemble}
 \end{figure}
