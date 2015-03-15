@@ -1,15 +1,15 @@
 \section{Verification of the developed CAFFA Framework}
 \label{sec:verification}
 
-The systematical verification of program code is an essential part of the development process of software for scientific calculations, since it insures that the respective equations are solved correctly \cite{oberkampf02}. Scientific applications that solve partial differential equations can be verified using the method of manufactured solutions \cite{salari00}. In addition, the method of manufactured solutions will be used to proof that both solvers within the developed framework, namely the segregated and the fully coupled solver, use the same discretization of the underlying partial differential equations. Before the performance of the developed CAFFA framework will be discussed in section \ref{sec:compare}, this section presents the results of the verification process performed in the present work via the \emph{Method of Manufactured Solutions}. After mentioning the main aspects of this procedure, this section will furthermore present the theoretical discretization error of the finite-volume method as it is applied in the present thesis. The subsections that follow will then present a concrete manufactured solution and the results of using it in the verification process. Finally the results of a grid convergence study regarding the influence of the pressure weighted interpolation method from section \ref{sec:massflux} will be shown.
+The systematical verification of program code is an essential part of the development process of software for scientific calculations, since it insures that the respective equations are solved correctly \cite{oberkampf02}. Scientific applications that solve partial differential equations can be verified using the method of manufactured solutions \cite{salari00}. In addition, the method of manufactured solutions will be used to proof that both solvers within the developed framework, namely the segregated and the fully coupled solver, use the same discretization of the underlying partial differential equations. Before the performance of the developed CAFFA framework will be discussed in section \ref{sec:compare}, this section presents the results of the verification process performed in the present work via the \emph{Method of Manufactured Solutions}. This section begins by mentioning the main aspects of the method of manufactured solutions. The subsections that follow present a concrete manufactured solution and the results of using it within the verification process. Finally, the results of a grid convergence study regarding the influence of the pressure weighted interpolation method from section \ref{sec:massflux} will be shown.
 
 \subsection{The Method of Manufactured Solutions for Navier-Stokes Equations}
 
-The method of manufactured solutions comprises a systematical, formal procedure for code verification based on analytical solutions to the partial differential equations to be solved \cite{salari00}. Using this analytical solutions, the accuracy of the produced results can be assessed and, after the establishment of an acceptance criterion, used to verify the computer program. A common acceptance criterion is the \emph{Order-of-Accuracy} criterion, since in addition to the formal order of accuracy of a developed solver algorithm it verifies its consistency. It should be noted that by the method of manufactured solutions it is not possible to detect errors in the physical model.
+The method of manufactured solutions comprises a systematical, formal procedure for code verification based on analytical solutions to the partial differential equations to be solved \cite{salari00}. Using this analytical solutions, the accuracy of the produced results can be assessed and, after the establishment of an acceptance criterion, used to verify the computer program. A common acceptance criterion is the \emph{Order-of-Accuracy} criterion, since, in addition to the formal order of accuracy of a developed solver algorithm, it verifies its consistency. It should be noted that by the method of manufactured solutions it is not possible to detect errors in the physical model.
 
-The basic idea of the method of manufactured solutions is the inversion of the solution process of partial differential equations. Instead of trying to find the solution \(x\) to a given equation \(F(x) = b\) with source term \(b\), a solution \(x\) is \emph{manufactured} and the source term is constructed by applying \(F\) to \(x\). This has the advantage of choosing a solution that exercises all parts of the solution process and hence provides a thorough testing environment. On the downside the integration of boundary conditions other than Dirichlet boundary conditions might be challenging \cite{salari00}. Furthermore the program code has to be able to handle arbitrary source terms. 
+The basic idea of the method of manufactured solutions is the inversion of the solution process of partial differential equations. Instead of trying to find the solution \(x\) to a given equation \(F(x) = b\) with source term \(b\), a solution \(x\) is \emph{manufactured} and the source term is constructed by applying \(F\) to \(x\). This has the advantage of choosing a solution that exercises all parts of the solution process and hence provides a thorough testing environment. On the downside, the integration of boundary conditions other than Dirichlet boundary conditions might be challenging \cite{salari00}. Furthermore, the program code has to be able to handle arbitrary source terms. 
 
-The different guidelines that have to be followed in order to apply the method of manufactured solutions successfully, can be found in \cite{salari00}. According to the reference, manufactured solutions should be composed of infinitely often differentiable analytic functions whose derivatives are bounded by small constants. Furthermore the solution domain should not be chosen to be symmetric, but as arbitrary as possible within the limitations of the code. This may however conflict with the application of the method of manufactured solutions to verify a code to solve the Navier-Stokes equations. Subsection \ref{sec:manufacturedsolution} presents the manufactured solution including the resulting source terms for the set of partial differential equations (\ref{eq:completeset}).
+The different guidelines that have to be followed in order to apply the method of manufactured solutions successfully, can be found in \cite{salari00}. According to the reference, manufactured solutions should be composed of infinitely often differentiable analytic functions whose derivatives are bounded by small constants. Furthermore, the solution domain should not be chosen to be symmetric, but as arbitrary as possible within the limitations of the code. This may however conflict with the application of the method of manufactured solutions to verify a code to solve the Navier-Stokes equations. Subsection \ref{sec:manufacturedsolution} presents the manufactured solution including the resulting source terms for the set of partial differential equations (\ref{eq:completeset}).
 
 The verification of a solver for incompressible Navier-Stokes equations comes with additional conditions, that have to be considered: First, if the solver is not able to handle source terms in the continuity equation and respectively the pressure correction equation, a velocity field should be chosen that is inherently divergence free. This can be achieved by defining the velocity field \(\vec{u}\) through the curl of a vector field \(\vecg{\Psi}\) as
 \begin{displaymath}
@@ -19,15 +19,15 @@ Using the property that the divergence of the rotation of a vector field vanishe
 \begin{displaymath}
   \nabla \cdot \vec{u} = \nabla \cdot \left( \nabla \times \vecg{\Psi}\right) = 0,
 \end{displaymath}
-i.e. a locally divergence free velocity field, which implies that the continuity equation is fulfilled also globally in an integral sense for arbitrary domains of integration. This is not necessarily true in the discrete sense, as integrals are to be approximated by, in the case of the present thesis, the midpoint rule of integration, as shown in subsection \ref{sec:approxintegralderivative}. In the general case for arbitrary solution domains global mass conservation cannot be guaranteed even though the integrands are exact quantities at the domain boundaries. Thus in the case of finding manufactured solutions the problem domain should be fixed before manufacturing a solution. The velocity field for the manufactured solution should then either vanish on the domain boundaries, which is the case of the commonly used Taylor-Green vortex \cite{taylor37}, or should exhibit further symmetry that leads to cancelling non-zero mass fluxes across the domain boundaries. The studies performed within the scope of the present showed, that convergence of the pressure correction equation can no longer be guaranteed if the velocity field does not obey continuity in the discrete sense at the domain boundaries.
+i.e. a locally divergence free velocity field, which implies that the continuity equation is fulfilled also globally in an integral sense for arbitrary domains of integration. This is not necessarily true in the discrete sense, as integrals are to be approximated by, in the case of the present thesis, the midpoint rule of integration. In the general case for arbitrary solution domains, global mass conservation cannot be guaranteed, even though the integrands are known quantities at the domain boundaries. Thus in the case of finding manufactured solutions, the problem domain should be fixed before manufacturing a solution. The velocity field for the manufactured solution should then either vanish on the domain boundaries, which is the case of the commonly used Taylor-Green vortex \cite{taylor37}, or should exhibit further symmetry that leads to cancelling non-zero mass fluxes across the domain boundaries. The studies performed within the scope of the present showed, that convergence of the pressure correction equation can no longer be guaranteed if the velocity field does not obey continuity in the discrete sense at the domain boundaries.
 
 \subsection{Manufactured Solution for the Navier-Stokes Equations and the Temperature Equation}
 \label{sec:manufacturedsolution}
 
-This subsection presents the manufactured solution for the system of partial differential equations (\ref{eq:completeset}). The manufactured solutions and the computations needed to derive the respective source terms were performed by the computer algebra system Maple \textregistered \cite{maple}. After the computation the terms were directly translated into FORTRAN source code, such that the manufactured solution could be directly integrated into the solver framework. In the following paragraphs the used solutions for the velocity vector \((u_1,u_2,u_3)\), the pressure \(p\) and the temperature \(T\) will be formulated. The manufactured solution for the velocities was formulated as
+This subsection presents the manufactured solution for the system of partial differential equations (\ref{eq:completeset}). The manufactured solutions and the computations needed to derive the respective source terms were performed by the computer algebra system Maple \textregistered \cite{maple}. After the computation, the terms were directly translated into FORTRAN source code, such that the manufactured solution could be directly integrated into the solver framework. In the following paragraphs, the used solutions for the velocity vector \((u_1,u_2,u_3)\), the pressure \(p\) and the temperature \(T\) will be formulated. The manufactured solution for the velocities was formulated as
 \begin{align*}
-  u_1 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2+2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3 \\[1.0em]
-  u_2 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3-2\,\cos \left( {x_1}^{2 }+{x_2}^{2}+{x_3}^{2} \right) x_1 \\[1.0em]
+  u_1 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2+2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3 \\[0.5em]
+  u_2 &= 2\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3-2\,\cos \left( {x_1}^{2 }+{x_2}^{2}+{x_3}^{2} \right) x_1 \\[0.5em]
   u_3 &= -2\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1-2\,\cos \left( {x_1}^{ 2}+{x_2}^{2}+{x_3}^{2} \right) x_2.
 \end{align*}
 The manufactured solution for the pressure \(p\) was created as
@@ -42,39 +42,39 @@ The resulting source terms for the momentum balances read
 \begin{align*}
   b_1 &=8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_1}^{2}x_2
        +8\,\cos\left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_2}^{3}
-       +8\,\cos \left( {x_1}^{2} +{x_2}^{2}+{x_3}^{2} \right) {x_3}^{2}x_2  \\[0.5em]
+       +8\,\cos \left( {x_1}^{2} +{x_2}^{2}+{x_3}^{2} \right) {x_3}^{2}x_2  \\[0.2em]
 &\quad +8\,\sin \left( {x_1}^{2}+{x_2}^{2} +{x_3}^{ 2} \right) {x_1}^{2}x_3 
        +8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_2} ^{2}x_3 
-       +8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_3}^{3} \\[0.5em]
+       +8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_3}^{3} \\[0.2em]
 &\quad +7\, \sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2 } \right) 
        +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_1 
-       +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_3  \\[0.5em]
+       +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_3  \\[0.2em]
 &\quad -4\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2
        -20\,\cos \left( {x_1}^ {2}+{x_2}^ {2}+{x_3}^{2} \right) x_3
        +20\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2
-       -6\,x_1 \\[1.0em]
+       -6\,x_1 \\[0.5em]
   b_2 &=-8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_1}^{3} 
         +8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_1}^{2}x_3
-        -8\,\cos \left( {x_1}^{2 }+{x_2}^{2}+{x_3}^{2} \right) {x_2}^{2}x_1  \\[0.5em]
+        -8\,\cos \left( {x_1}^{2 }+{x_2}^{2}+{x_3}^{2} \right) {x_2}^{2}x_1  \\[0.2em]
 &\quad  -8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^ {2} \right) {x_3}^{2}x_1
         +8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_2 }^{2}x_3
-        +8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_3}^{3}  \\[0.5em]
+        +8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_3}^{3}  \\[0.2em]
 &\quad  +13\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2 } \right) 
         -4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_2
-        -4\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1  \\[0.5em]
+        -4\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1  \\[0.2em]
 &\quad  -4\,\cos \left( {x_1}^{2} +{x_2}^{ 2}+{x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_3 
         -20\, \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1
         +20\,\sin \left( {x_1}^{2}+ {x_2}^{2}+{x_3}^{2} \right) x_3
-        -2\,x_2 \\[1.0em]
+        -2\,x_2 \\[0.5em]
         b_3 &=-8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_1}^{2}x_2
         -8\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_2}^{3}
-        -8\,\cos \left( {x_1}^{2} +{x_2}^{2}+{x_3}^{2} \right) {x_3}^{2}x_2 \\[0.5em]
+        -8\,\cos \left( {x_1}^{2} +{x_2}^{2}+{x_3}^{2} \right) {x_3}^{2}x_2 \\[0.2em]
 &\quad  -8\,\sin \left( {x_1}^{2}+{x_2}^{2} +{x_3}^{ 2} \right) {x_1}^{3}
         -8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2}\right) {x_2}^ {2}x_1
-        -8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_3}^{2} x_1 \\[0.5em]
+        -8\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) {x_3}^{2} x_1 \\[0.2em]
 &\quad  -19\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2 } \right) 
         +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_1 
-        +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_3 \\[0.5em]
+        +4\, \left( \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \right) ^{2}x_3 \\[0.2em]
 &\quad  -4\,\cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2 
         +20\,\cos \left( {x_1}^ {2}+{x_2}^ {2}+{x_3}^{2} \right) x_1-
         20\,\sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2
@@ -83,15 +83,15 @@ The resulting source terms for the momentum balances read
 Finally the source term for the temperature equation was calculated as
 \begin{align*}
   b_T &=-4\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \cos \left( {x_3}^{2} \right) \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2}\right) x_2x_3
-        -4\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \cos \left( {x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_3 \\[0.5em]
+        -4\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \cos \left( {x_3}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_3 \\[0.2em]
 &\quad  +4\,\sin \left( {x_1}^{2} \right) \sin \left( {x_3}^{2} \right) \sin \left( {x_2}^{2} \right) \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_2
-        -4\,\sin \left( {x_1}^{2} \right) \sin \left( {x_3}^{2} \right) \sin \left( {x_2}^{2} \right) \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2x_3 \\[0.5em]
+        -4\,\sin \left( {x_1}^{2} \right) \sin \left( {x_3}^{2} \right) \sin \left( {x_2}^{2} \right) \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_2x_3 \\[0.2em]
 &\quad  +4\,\cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2} \right) \cos \left( {x_1}^{2} \right) \cos \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_2
-        +4\,\cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2} \right) \cos \left( {x_1}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_3 \\[0.5em]
+        +4\,\cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2} \right) \cos \left( {x_1}^{2} \right) \sin \left( {x_1}^{2}+{x_2}^{2}+{x_3}^{2} \right) x_1x_3 \\[0.2em]
 &\quad  +4\,{x_1}^{2}\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2} \right) 
-        +4\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) {x_2}^{2}\sin \left( {x_3}^{2} \right) \\[0.5em]
+        +4\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) {x_2}^{2}\sin \left( {x_3}^{2} \right) \\[0.2em]
 &\quad  +4\, {x_3}^{2} \sin \left( {x_1}^{2} \right) \cos \left( {x_2}^{2} \right) \sin \left( {x_3 }^{2} \right) 
-        -2\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^ {2} \right) \cos \left( {x_3}^{2} \right) \\[0.5em]
+        -2\,\sin \left( {x_1}^{2} \right) \cos \left( {x_2}^ {2} \right) \cos \left( {x_3}^{2} \right) \\[0.2em]
 &\quad  +2\,\sin \left( {x_1}^{2} \right) \sin \left( {x_3}^{2} \right) \sin \left( {x_2}^{2} \right) 
         -2\,\cos \left( {x_2}^{2} \right) \sin \left( {x_3}^{2} \right) \cos \left( {x_1}^{2 } \right).
 \end{align*}
@@ -99,25 +99,25 @@ Finally the source term for the temperature equation was calculated as
 \subsection{Measurement of Error and Calculation of Order}
 \label{sec:error}
 
-In this subsection the result of the verification process via the formerly in subsection \ref{sec:manufacturedsolution} stated manufactured solutions will be presented. To verify the solver framework using the Order-of-Accuracy test criterion, an error measure has to be chosen on which the evaluation is based upon. According to \cite{salari00} the error measure for each variable \(\phi\) will be calculated at the end of each computation as the normalized \(L_2\)-norm of the deviation of the exact solution \(\tilde{\phi}\), sometimes referred to as the normalized global error or the RMS error
+In this subsection the result of the verification process via the formerly in subsection \ref{sec:manufacturedsolution} stated manufactured solution will be presented. To verify the solver framework using the Order-of-Accuracy test criterion, an error measure has to be chosen on which the evaluation is based upon. According to \cite{salari00} the error measure for each variable \(\phi\) will be calculated at the end of each computation as the normalized \(L_2\)-norm of the deviation of the exact solution \(\tilde{\phi}\), sometimes referred to as the normalized global error or the RMS-error
 \begin{displaymath}
   \operatorname{err}(\phi) = \sqrt{ \frac {\iiint\limits_V \left( \phi - \tilde{\phi} \right)^2 \mathrm{d}V }{\iiint\limits_V \mathrm{d}V }} \approx \sqrt{ \frac{ \sum_{n=1}^N \left(\phi_n - \tilde{\phi}_n \right)^2 V_n }{\sum_{n=1}^{N} V_n}} .
 \end{displaymath}
-Herein \(N\) denotes the number of control volumes of the discretized solution domain \(V\). Each control volume has the volume \(V_n\). The numerical and the exact solution are evaluated at the center of each control volume for the error calculations. In order to calculate the normalized global error of the pressure \(p\) the same modification as in subsection \ref{sec:singularitytreatment} has to be performed on the analytical solution \(\tilde{p}\), which in the case of the present work means to subtract the weighted mean value
+Herein \(N\) denotes the number of control volumes of the discretized solution domain \(V\). Each control volume has the volume \(V_n\). The numerical and the exact solution are evaluated at the center of each control volume for the error calculations. In order to calculate the normalized global error of the pressure \(p\), the same modification as in subsection \ref{sec:singularitytreatment} has to be performed on the analytical solution \(\tilde{p}\), which in the case of the present work means to subtract the weighted mean value
 \begin{displaymath}
   \operatorname{mean}\left( \tilde{p} \right) = \frac{\iiint\limits_V \tilde{p} \mathrm{d}V}{\iiint\limits_V \mathrm{d}V} \approx \frac{\sum_{n=1}^N \tilde{p}_n V_n}{\sum_{n=1}^N V_n}
 \end{displaymath}
-from it and to calculate the error as
+and to calculate the error as
 \begin{displaymath}
-  \operatorname{err}(p,N) \approx \sqrt{ \frac{ \sum_{n=1}^N \left(p_n - \tilde{p}_n -\operatorname{mean}\left(\tilde{p}\right) \right)^2 V_n }{\sum_{n=1}^{N} V_n}} .
+  \operatorname{err}(p,N) \approx \sqrt{ \frac{ \sum_{n=1}^N \left(p_n - \tilde{p}_n -\operatorname{mean}\left(\tilde{p}\right) \right)^2 V_n }{\sum_{n=1}^{N} V_n}}.
 \end{displaymath}
-The following tables will list the calculated error terms for the velocities, the pressure and the temperature for different grid resolutions and both solver algorithms. The grid resolutions \((n \times n \times n)\) are chosen such that \(n\), the number of control volumes in each coordinate direction, will be a power of \(2\). The Errors were evaluated after the maximal relative residual of all linear systems in one outer iteration fell below the threshold \(1\e{-14}\). The concrete implementation of the tolerance criterion to accept a converged solution is found in section \ref{sec:convergence}.
+The following tables will list the calculated error terms for the velocities, the pressure and the temperature for different grid resolutions and both solver algorithms on a problem domain in the form of a cube with side length \(2m\) whose center is located at \(x_C = \left(0,0,0\right) \). All involved material properties are chosen to \(1\), the gravitational acceleration is chosen to \(\vec{g} = \left(7,13,-19\right)\). As a reference temperature \(T_0 = 0\) is used. The grid resolutions \((n \times n \times n)\) are chosen such that \(n\), the number of control volumes in each coordinate direction, will be a power of \(2\). The Errors are evaluated after the maximal relative residual of all linear systems in one outer iteration fell below the threshold \(1\e{-14}\). The concrete implementation of the tolerance criterion to accept a converged solution is found in section \ref{sec:convergence}.
 
 A comparison of the results leads to the first conclusion, that the results from the segregated solver algorithm and the coupled solver algorithm coincide, which implies that the same discretization is used in both cases. According to \cite{salari00} the next step comprises the calculation of the formal order of accuracy \(\hat{p}_\phi\) for each variable that the program solves for. This can be done by evaluating the quotient of two different resolutions \(n1\) and \(n2\) as 
 \begin{displaymath}
   \hat{p}_{\phi} = \frac{\log\left(\frac{\operatorname{err}(\phi,{n1})}{\operatorname{err}(\phi,{n2})}\right)}{\log\left(\frac{n1}{n2}\right)}.
 \end{displaymath}
-The discretization techniques used in the present thesis yield an asymptotic discretization error of two \cite{schaefer99}. Comparing with the results in the tables \ref{tab:velorder}, \ref{tab:pressorder} and \ref{tab:temporder} shows the asymptotic behavior of the calculated order which leads to the conclusion that the discretization has been implemented with success.
+The discretization techniques used in the present thesis yield an asymptotic discretization error of \(2\) \cite{schaefer99}. Comparing with the results in the tables \ref{tab:velorder}, \ref{tab:pressorder} and \ref{tab:temporder} shows the asymptotic behavior of the calculated order which leads to the conclusion that the discretization has been implemented with success.
 
 \begin{table}[h!]\centering
 \ra{1.3}
@@ -141,9 +141,9 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!00}                           &    4.629259933395594E-004 & 4.6292599348776502E-004 & 2.0123 \\
     \rowcolor{black!00} \multirow{-3}{*}{64x64x64}&    4.630008203550293E-004 & 4.6300082038027822E-004 & 2.0330 \\ %\hline
     %
-    \rowcolor{black!20}\multirow{3}{*}{}             & 1.172266972290949E-004 & & 2.0177  \\
-    \rowcolor{black!20}                              & 1.150024026498247E-004 & & 2.0091  \\
-    \rowcolor{black!20} \multirow{-3}{*}{128x128x128}& 1.140471182846354E-004 & & 2.0214  \\ %\hline
+    \rowcolor{black!20}\multirow{3}{*}{}             & 1.172266972290949E-004 & 1.172266974040543E-004 & 2.0177  \\
+    \rowcolor{black!20}                              & 1.150024026498247E-004 & 1.150024030604766E-004 & 2.0091  \\
+    \rowcolor{black!20} \multirow{-3}{*}{128x128x128}& 1.140471182846354E-004 & 1.140471183418716E-004 & 2.0214  \\ %\hline
     %
     \rowcolor{black!00}\multirow{3}{*}{}             & 2.876932445431025E-005 & & 2.0267 \\
     \rowcolor{black!00}                              & 2.771472789328757E-005 & & 2.0529 \\
@@ -158,11 +158,11 @@ The discretization techniques used in the present thesis yield an asymptotic dis
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(p\) from Segregated Solver & Error of \(p\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
-    \rowcolor{black!20} 8x8x8       & 0.183035893121686      &  0.1830358946646808      &        \\%\hline
-    \rowcolor{black!00} 16x16x16    & 8.967727683983406E-002 &  8.9677276839825765E-002 & 1.0293 \\%\hline
-    \rowcolor{black!20} 32x32x32    & 3.796485688816108E-002 &  3.7964815814009345E-002 & 1.2401 \\%\hline
-    \rowcolor{black!00} 64x64x64    & 1.438780100622541E-002 &  1.4387801006156546E-002 & 1.3998 \\%\hline
-    \rowcolor{black!20} 128x128x128 & 5.160705648852031E-003 &                          & 1.4792 \\%\hline
+    \rowcolor{black!20} 8x8x8       & 0.183035893121686      &  0.183035894664680      &        \\%\hline
+    \rowcolor{black!00} 16x16x16    & 8.967727683983406E-002 &  8.967727683982576E-002 & 1.0293 \\%\hline
+    \rowcolor{black!20} 32x32x32    & 3.796485688816108E-002 &  3.796481581400934E-002 & 1.2401 \\%\hline
+    \rowcolor{black!00} 64x64x64    & 1.438780100622541E-002 &  1.438780100615654E-002 & 1.3998 \\%\hline
+    \rowcolor{black!20} 128x128x128 & 5.160705648852031E-003 &  5.160705649392788E-003 & 1.4792 \\%\hline
     \rowcolor{black!00} 256x256x256 & 1.809811107444374E-003 &                          & 1.5117 \\%\hline
   \end{tabular}
   \label{tab:pressorder}
@@ -174,12 +174,12 @@ The discretization techniques used in the present thesis yield an asymptotic dis
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(T\) from Segregated Solver & Error of \(T\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
-    \rowcolor{black!20} 8x8x8       & 4.067532377541200E-003  & 4.0675323775378296E-003  &        \\%\hline
-    \rowcolor{black!00} 16x16x16    & 1.132477318394773E-003  & 1.1324773183947821E-003  & 1.8447 \\%\hline
-    \rowcolor{black!20} 32x32x32    & 2.931009801582052E-004  & 2.9310096243402903E-004  & 1.9500 \\%\hline
-    \rowcolor{black!00} 64x64x64    & 7.410021974469997E-005  & 7.4100219743344219E-005  & 1.9838 \\%\hline
-    \rowcolor{black!20} 128x128x128 & 1.858846421984987E-005  &                          & 1.9951 \\%\hline
-    \rowcolor{black!00} 256x256x256 & 4.651911366447223E-006  &                          & 1.9985 \\%\hline
+    \rowcolor{black!20} 8x8x8       & 4.067532377541200E-003  & 4.067532377537829E-003  &        \\%\hline
+    \rowcolor{black!00} 16x16x16    & 1.132477318394773E-003  & 1.132477318394782E-003  & 1.8447 \\%\hline
+    \rowcolor{black!20} 32x32x32    & 2.931009801582052E-004  & 2.931009624340290E-004  & 1.9500 \\%\hline
+    \rowcolor{black!00} 64x64x64    & 7.410021974469997E-005  & 7.410021974334421E-005  & 1.9838 \\%\hline
+    \rowcolor{black!20} 128x128x128 & 1.858846421984987E-005  & 1.858846421622182E-005  & 1.9951 \\%\hline
+    \rowcolor{black!00} 256x256x256 & 4.651911366447223E-006  &                         & 1.9985 \\%\hline
   \end{tabular}
   \label{tab:temporder}
 \end{table}
@@ -187,9 +187,9 @@ The discretization techniques used in the present thesis yield an asymptotic dis
 \subsection{Influence of the Under-Relaxation Factor for the Velocities}
 \label{sec:independence}
 
-In section \ref{sec:massflux} the main purpose of introducing the pressure weighted interpolation method was to assure comparability of the generated results from the segregated solver algorithm and the coupled solver algorithm. Section \ref{sec:error} showed good agreement of the error calculated with the segregated solver using the pressure weighted interpolation method and the coupled solver. This section presents the results that are attained if the standard Rhie-Chow interpolation technique with different under-relaxation factors \(\alpha_\vec{u}\) is used to interpolate the velocities to the boundary faces instead of the pressure weighted interpolation technique. Figure \ref{fig:underrelaxation} shows the normalized \(L_2\) norm of the error of the results for the velocity \(u_1\) for different under-relaxation factors. The \(L_2\) norms have been normalized by the \(L_2\) norm of the respective calculation that uses the pressure weighted interpolation method. 
+In section \ref{sec:massflux}, the main purpose of introducing the pressure weighted interpolation method, was to assure comparability of the generated results from the segregated solver algorithm and the coupled solver algorithm. Section \ref{sec:error} showed good agreement of the error calculated with the segregated solver, using the pressure weighted interpolation method, and the coupled solver. This section presents the results that are attained, if the standard Rhie-Chow interpolation technique with different under-relaxation factors \(\alpha_\vec{u}\) is used to interpolate the velocities to the boundary faces instead of the pressure weighted interpolation technique. Figure \ref{fig:underrelaxation} shows the normalized \(L_2\) norm of the error of the results for the velocity \(u_1\) for different under-relaxation factors. The \(L_2\) norms have been normalized by the \(L_2\) norm of the respective calculation that uses the pressure weighted interpolation method. 
 
-It is evident that the higher the under-relaxation factor the smaller the deviation of the results obtained with the standard Rhie-Chow interpolation technique from the results obtained with the pressure weighted interpolation method. This can be justified by the fact that, for an under-relaxation factor \(\alpha_\vec{u} = 1\), the pressure weighted interpolation and the Rhie-Chow interpolation would yield the same result according to equation (\ref{eq:pwim}). Furthermore it can be observed that the deviation decreases with increasing mesh resolution which is the expected behaviour \cite{ferziger02}.
+It is evident that, the higher the under-relaxation factor, the smaller the deviation of the results obtained with the standard Rhie-Chow interpolation technique from the results obtained with the pressure weighted interpolation method. This can be justified by the fact that, for an under-relaxation factor \(\alpha_\vec{u} = 1\), the pressure weighted interpolation and the Rhie-Chow interpolation would yield the same result according to equation (\ref{eq:pwim}). Furthermore, it can be observed that the deviation decreases with increasing mesh resolution which is the expected behaviour \cite{ferziger02}.
 
 %\begin{figure} \centering
 %\begin{tikzpicture}
