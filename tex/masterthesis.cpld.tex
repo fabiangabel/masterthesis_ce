@@ -161,7 +161,7 @@ The explicit parts resulting from the Newton-Raphson linearization yield additio
 
 \subsection{Boundary Conditions on Domain and Block Boundaries}
 
-The treatment of boundary conditions and transitional conditions at block boundaries is very similar to the way presented in section \ref{sec:segboundary}. The main difference results from the fact that in addition to the necessary changes from section \ref{sec:segboundary}, modifications are necessary to the new matrix coefficients from the discretized momentum balance and the pressure equation in the coupled solution algorithm. The purpose of this section is therefore to only focus on these additional changes.
+The treatment of boundary conditions and transitional conditions at block boundaries is very similar to the way presented in section \ref{sec:segboundary}. The main difference results from the fact, that, in addition to the necessary changes from section \ref{sec:segboundary}, modifications are necessary to the new matrix coefficients from the discretized momentum balance and the pressure equation in the coupled solution algorithm. The purpose of this section is therefore to only focus on these additional changes.
 
 How Dirichlet boundary conditions, also known as inlet boundaries, affect the matrix coefficients that only correspond to the velocities has been presented in section \ref{sec:segDirichlet}. It is common to use Neumann boundary conditions for the pressure at Dirichlet boundaries with respect to the velocities \cite{darwish09}. Under the assumption that the gradient of the pressure vanishes at inlet boundaries, the matrix coefficients for the velocity-to-pressure coupling have to be modified to 
 \begin{displaymath}
@@ -171,7 +171,7 @@ Wall boundary conditions are treated likewise with the additional modifications 
 
 The treatment of velocity Dirichlet boundary conditions in the pressure equation is straightforward, since they correspond to mass fluxes through the boundary faces. Hence the matrix coefficients remain unchanged and only the right hand side contributions embrace the fact that no implicit interpolation is necessary to calculate the mass flux through the boundary face.
 
-Finally it should be noted that the that the Newton-Raphson linearization technique does not apply to the velocities on boundary faces, since the value of the velocities is known exactly and a linearization of the convective contribution becomes unnecessary.
+Finally, it should be noted that the that the Newton-Raphson linearization technique does not apply to the velocities on boundary faces, since the value of the velocities is known exactly and a linearization of the convective contribution becomes unnecessary.
 
 %\subsubsection{Dirichlet Boundary Condition for Pressure} NOT TO BE USED
 
@@ -180,7 +180,7 @@ At block boundaries the new matrix coefficients \(a_L^{u_i,p}\) and \(a_R^{u_i,p
 \subsection{Assembly of Linear Systems -- Final Form of Equations}
 \label{sec:cpldassembly}
 
-Concluding this section, the final form of the derived linear algebraic equations are presented. Based on the presented discretization each equation only contains variable values of neighboring control volumes. The set of five equations reads
+Concluding this section, the final form of the derived linear algebraic equations are presented. Based on the presented discretization, each equation only contains variable values of neighboring control volumes. The set of five equations reads
 \begin{align}
   a_P^{u_i} u_{P,i}^{\vphantom{u_i}}
   + \sum_{F \in NB(P)} a_F^{u_i} u_{F,i}^{\vphantom{u_i}} 
@@ -202,25 +202,25 @@ Concluding this section, the final form of the derived linear algebraic equation
   &= b_{P,T}^{\vphantom{T,p}}.
 \end{align}
 
-The different degrees of coupling between the different equations will affect the matrix structure. Depending on the variable arrangement other matrix structures are possible. Figure \ref{fig:cpldassemble} shows the resulting block matrix structure if the fields are treated as interlaced quantities. Figure \ref{fig:interlacemat} shows the non-zero structure of a block matrix for the same case if no field interlacing is used. It should be noted, that the variable arrangement only affects the storage of the matrices not the way the matrix is used, since it is possible to arbitrarily reorder the matrix entries through the underlying index sets to obtain other matrix representations. On commonly used matrix representation is shown in figure \ref{fig:nointerlacemat}.
+The different degrees of coupling between the different equations will affect the matrix structure. Depending on the variable, arrangement other matrix structures are possible. Figure \ref{fig:cpldassemble} shows the resulting block matrix structure if the fields are treated as interlaced quantities. Figure \ref{fig:interlacemat} shows the non-zero structure of a block matrix for the same case if no field interlacing is used. It should be noted, that the variable arrangement only affects the storage of the matrices not the way the matrix is used, since it is possible to arbitrarily reorder the matrix entries through the underlying index sets to obtain other matrix representations. One commonly used matrix representation is shown in figure \ref{fig:nointerlacemat}.
 
 \begin{figure}
   \centering
   \input{./img/coupledmat.tikz.tex}
-  \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The blue coefficients represent the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling and the green coefficients result from the Newton-Raphson linearization technique.}
+  \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The blue coefficients represent the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling and the green coefficients result from the Newton-Raphson linearization technique.}
   \label{fig:cpldassemble}
 \end{figure}
 
 \begin{figure}
   \centering
   \input{./img/interlacemat.tikz.tex}
-  \caption{Non-zero structure of the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The variables have been interlaced and the matrix consists of blocks as shown in figure \ref{fig:cpldassemble}.}
+  \caption{Non-zero structure of the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The variables have been interlaced and the matrix consists of blocks as shown in figure \ref{fig:cpldassemble}.}
   \label{fig:interlacemat}
 \end{figure}
 
 \begin{figure}
   \centering
    \input{./img/nointerlacemat.tikz.tex}
-  \caption{Non-zero structure the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell and one $3\times3\times3$ cell block. The variables have been ordered such that each major matrix block refers to only one variable or the coupling between exactly two variables.}
+  \caption{Non-zero structure the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The variables have been ordered such that each major matrix block refers to only one variable or the coupling between exactly two variables.}
   \label{fig:nointerlacemat}
 \end{figure}
