@@ -17,6 +17,7 @@ On the other side PETSc contains a large collection of parallel solvers for line
 In addition to the mentioned tools, PETSc also comes with an internal profiler tool, that collects a variety of information on the used PETSc objects and bundles them into a human readable log file. The log file and other dynamic output, which can be triggered by command line arguments, facilitate the optimization process of developed applications and allow the accurate determination of performance measures.
 
 \subsection{Grid Generation and Preprocessing}
+\label{sec:gridpreproc}
 
 A grid generator has been developed to generate hexahedral block-structured grids. To provide flexibility for testing locally refined and skewed grids the grid generator deploys a random number generator which moves grid points within the domain and varies the number of grid cells of each block optionally. Key feature of the developed framework is the handling of block-structured locally refined grids with non-matching block interfaces. The neighboring relations are represented by a special type of boundary condition.
 

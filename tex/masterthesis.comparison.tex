@@ -181,7 +181,7 @@ As can be seen from figure \ref{fig:mpi1band} and \ref{fig:mpi2band}, the scalin
 It should be taken into account that the STREAM benchmark used to test the present architecture was provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem, by always using all available cores per socket, but only running the benchmark on \(n\) processes while the other \(24 - n\) or \(16 - n\) processes run calculations which only use data from the L\(1\)-cache of their corresponding core. The intention of this approach was to regulate the turbo-boost effects by keeping a constant load on the processors for different numbers of STREAM benchmark processes. However this approach didn't generate results different from figures \ref{fig:mpi1band} and \ref{fig:mpi2band}.
 
 \subsubsection{Speed-Up Measurement and Impact of Coupling Algorithm for Analytic Test Case}
-\ref{sec:speedup}
+\label{sec:speedup}
 
 This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR, which has been presented in section \ref{sec:hhlr}. Furthermore, the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. This property of applications if often termed \emph{strong} scalability \cite{hager11}. All Speed-Up tests are conducted on the MPI1 section. The performance analyses will show the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance the Speed-Up will be calculated based on the presented results. Since the performance of segregated algorithms is linked to the amount of under-relaxation applied to the variables in each outer iteration, a preliminary test is conducted to support choosing the optimal amount of under-relaxation. As pointed out in \cite{ferziger02,schaefer99}, it is recommended to choose the amount of under-relaxation for the pressure depending on the amount of under-relaxation for the velocity as
 \begin{displaymath}
@@ -209,6 +209,7 @@ Figure \ref{fig:underrelax} shows the results of the preliminary runtime measure
 The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests, the linear system for the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with the GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner from PETSc. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. All further solver parameters are listed in table \ref{tab:performance}.
 
 \begin{table}[h!]\centering
+  \caption{Characteristic problem properties used in the performance measurements solving for an analytic solution}
 \ra{1.3}
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
@@ -219,7 +220,6 @@ The performance of all solvers significantly depends on the performance of the l
     \rowcolor{black!20} Under-relaxation p & 0.1 &  \\
     \rowcolor{black!00} Relative tolerance & 1E-8&
   \end{tabular}
-  \caption{Characteristic problem properties used in the performance measurements solving for an analytic solution}
   \label{tab:performance}
 \end{table}
  
@@ -571,4 +571,41 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
 It can be noticed from table \ref{tab:cavitycompare}, that the solely use of velocity-to-temperature coupling does not result in benefits compared to the coupled solution for velocities and pressure combined with a decoupled solve for the temperature equation. This is accredited to the treatment of the non-linearity of the temperature equation in the TCPLD solver configuration. Even though the momentum balances implicitly use the temperature from the next iteration, the temperature equation does not use the velocities of the next iteration. Instead the convective fluxes are calculated with the velocities from the previous iteration. Even though the implicit velocity-to-temperature coupling reduces the number of needed non-linear iterations an increase in the needed wall-clock time for computation can be noticed. This is attributed to the augmented costs during the application of the linear solver algorithm as a result of the additional degree of freedom that the linear system embraces. The necessary number of outer iterations is higher than in the NRCPLD configuration, since the convective fluxes in the temperature equation are not coupled to the momentum balances, which degrades the convergence of the non-linear iteration process.
 
 It can be concluded, that in order to profit from the benefits of implicit coupling, the key lies in the semi-implicit temperature-to-velocity/pressure coupling. However, it should be noted, that the implicit consideration of the corresponding terms furthermore increases the amount of memory needed for computation and hence does not come without deficiencies.
+
+\subsection{Effect of Different Non-Orthogonal Correctors}
+
+Section \ref{sec:nonorth} introduced different ways to address the degradation of the grid quality due to non-orthogonality of the grid. This section compares the three different correctors, the orthogonal correction, the minimum correction and the overrelaxed approach, which are used in the discretization process of the gradients at cell boundary faces. For this purpose the grid generator program of section \ref{sec:gridpreproc} was extended to generate skewed grids. For this purpose a random number generator was used to randomly move each inner grid point within a specified neighborhood of the original location. Figure \ref{fig:nonorthgrid} illustrates the concept for a two-dimensional \(8 \time 8\) grid. To maintain the grid's integrity after the movement of the grid points the neighborhoods were limited by half the distance \(\Delta x\) of two neighboring grid points.
+
+\begin{figure}[h!]
+  \begin{center}
+    \input{./img/nonorthgrid.tikz.tex}
+    \caption{Skewing of an initially equidistant structured orthogonal grid via random movement of inner grid points within a small neighborhood of their original location. The neighborhood with maximal diameter is indicated by a circle around an inner grid point}
+    \label{fig:nonorthgrid}
+  \end{center}
+\end{figure}
+
+To measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed, measuring the number of needed outer iterations. The grid skewness was parametrized with the relative diameter \(\alpha\) of the maximal neighborhood, which constrains the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location.
+
+\begin{figure}[h!]
+  \begin{center}
+  \begin{tikzpicture}
+    \begin{axis}[
+      ylabel={Number of needed outer iterations},
+      xlabel={Relative diameter of the neighborhood},
+      xtick={0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0},
+      xmin=0,xmax=1,
+      legend pos=outer north east,
+      ]
+      \addplot[color=black,mark=square*] file {./files/nonorth.oc};
+      \addplot[color=black,mark=*] file {./files/nonorth.mc};
+      \addplot[color=black,mark=triangle*] file {./files/nonorth.or};
+      \addlegendentry{Orthogonal correction};
+      \addlegendentry{Minimum correction};
+      \addlegendentry{Overrelaxed approach};
+      \end{axis}
+    \end{tikzpicture}
+  \end{center}
+\caption{Number of needed outer iterations for different relative diameters of the neighborhood in which the movement of grid points takes place parametrized by the orthogonal corrector}
+\label{fig:nonorth}
+\end{figure}
 

@@ -98,7 +98,7 @@ where \(\vecg{\Delta}\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E
 
 This is the approach as proposed in \cite{muzaferja}. It should be noted that even though \cite{ferziger02} references \cite{muzaferja}, \cite{ferziger02} uses a different approach, which will be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by always choosing \(\vec{k}\) to be orthogonal to \(\vecg{\Delta}\), which leads to
 \begin{displaymath}
-  \vecg{\Delta} = \left( \vec{d} \cdot \vec{S}_e \right) \frac{\vec{d}}{||\vec{d}||_2}.
+  \vecg{\Delta} = \left( \vec{d} \cdot \vec{S}_e \right) \frac{\vec{d}}{\vec{d} \cdot \vec{d}}.
 \end{displaymath}
 It should be noted that the influence of the orthogonal contribution decreases with increasing non-orthogonality of the grid.
 
@@ -151,7 +151,7 @@ where the first term can be approximated using a central differencing scheme for
 \end{displaymath}
 It should be noted that the use of a deferred correction, in conjunction with the requirement that the non-orthogonal correction vanishes on orthogonal grid, introduces an inconsistent discretization of \( \left(\nabla \phi \right)_e \cdot \vecg{\Delta} \).
 
-\subsection{Numerical Solution of Non-Linear Systems -- Linearization Techniques}
+\subsection{Numerical Solution of Non-Linear Systems -- Picard Iteration}
 \label{sec:nonlinear}
 
 In the process of solving non-linear systems, normally two levels of iterations are distinguished: The \emph{inner} iterations, which account for the iterations needed to solve a given system of linear equations, and the \emph{outer} iterations which deal with a possible non-linearity or coupling of the equations. As shown in section \ref{sec:nonorth}, outer iterations are also necessary if one choses the deferred correction approach in order to blend higher and lower order discretization schemes, or in order to apply non-orthogonal correctors.
