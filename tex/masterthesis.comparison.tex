@@ -1,7 +1,7 @@
 \section{Comparison of Solver Concepts}
 \label{sec:compare}
 
-This section conducts the performance analysis of both developed solvers. In the first part of this section, the used hardware and software is described. Furthermore, important performance measures are introduced. After performing a preliminary benchmark to measure the sustainable bandwidth, the Speed-Up is measured for both solver programs. The second part of this section tests the performance of the algorithm on a test case with complex geometry and on a cavity benchmark for flows with natural convection.
+This section conducts the performance analysis of both developed solvers. In the first part of this section, the used hardware and software is described. Furthermore, important performance measures are introduced. After performing a preliminary benchmark to measure the sustainable bandwidth, the Speed-Up is measured for both solver programs. The second part of this section tests the performance of the algorithm on a test case with complex geometry and on a cavity benchmark for flows with natural convection. In the end the results of a study on the effect of non-orthogonal corrections on the convergence behaviour of the coupled solution algorithm is presented.
   
 \subsection{Parallel Performance}
 
@@ -189,7 +189,7 @@ This section presents the results from the Speed-Up measurements conducted on th
 \end{displaymath}
 Figure \ref{fig:underrelax} shows the results of the preliminary runtime measurements for different choices of the under-relaxation factor \( \alpha_{\vec{u}} \). The problem that was solved during this test, corresponds to the manufactured solution for the velocities and the pressure presented in section \ref{sec:manufacturedsolution}. It can be observed, that the optimal under-relaxation factor can be found in a neighborhood of \(0.95\). Based on the results presented in figure \ref{fig:underrelax} the under-relaxation was chosen to \( \alpha_{\vec{u}} =0.9 \). 
 
-\begin{figure}
+\begin{figure}[h!]
   %\setlength{\abovecaptionskip}{5pt plus 3pt minus 2pt}
   \centering
   \begin{tikzpicture}
@@ -223,7 +223,7 @@ The performance of all solvers significantly depends on the performance of the l
   \label{tab:performance}
 \end{table}
  
-\begin{figure}
+\begin{figure}[h!]
   %\setlength{\abovecaptionskip}{5pt plus 3pt minus 2pt}
   \begin{center}
   \begin{tikzpicture}
@@ -572,9 +572,10 @@ It can be noticed from table \ref{tab:cavitycompare}, that the solely use of vel
 
 It can be concluded, that in order to profit from the benefits of implicit coupling, the key lies in the semi-implicit temperature-to-velocity/pressure coupling. However, it should be noted, that the implicit consideration of the corresponding terms furthermore increases the amount of memory needed for computation and hence does not come without deficiencies.
 
-\subsection{Effect of Different Non-Orthogonal Correctors}
+\subsection{Effect of Different Non-Orthogonal Correctors on Solver Convergence}
+\label{sec:studynonorth}
 
-Section \ref{sec:nonorth} introduced different ways to address the degradation of the grid quality due to non-orthogonality of the grid. This section compares the three different correctors, the orthogonal correction, the minimum correction and the overrelaxed approach, which are used in the discretization process of the gradients at cell boundary faces. For this purpose the grid generator program of section \ref{sec:gridpreproc} was extended to generate skewed grids. For this purpose a random number generator was used to randomly move each inner grid point within a specified neighborhood of the original location. Figure \ref{fig:nonorthgrid} illustrates the concept for a two-dimensional \(8 \time 8\) grid. To maintain the grid's integrity after the movement of the grid points the neighborhoods were limited by half the distance \(\Delta x\) of two neighboring grid points.
+Section \ref{sec:nonorth} introduced different ways to address the degradation of the grid quality due to non-orthogonality of the grid. This section compares the three different correctors, the orthogonal correction, the minimum correction and the over-relaxed approach, which are used in the discretization process of the gradients at cell boundary faces. For this purpose the grid generator program of section \ref{sec:gridpreproc} was extended to generate skewed grids. A random number generator was used to move each inner grid point within a specified neighborhood of the original location and to skew the grid. Figure \ref{fig:nonorthgrid} illustrates the concept for a two-dimensional \(8 \times 8\) grid. It is evident that the previous orthogonality of the grid is lost and the need for non-orthogonal correctors becomes visible. It should be noted that even in the case of orthogonal grids, non-orthogonal correction may become necessary to treat fluxes across block boundaries if neighboring blocks have been locally refined. To maintain the grid's integrity after the movement of the grid points the neighborhoods were limited by half the distance \(\Delta x\) of two neighboring grid points, as indicated for on point in figure \ref{fig:nonorthgrid}.
 
 \begin{figure}[h!]
   \begin{center}
@@ -584,9 +585,9 @@ Section \ref{sec:nonorth} introduced different ways to address the degradation o
   \end{center}
 \end{figure}
 
-To measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed, measuring the number of needed outer iterations. The grid skewness was parametrized with the relative diameter \(\alpha\) of the maximal neighborhood, which constrains the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location.
+To measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed, measuring the number of needed outer iterations to solve for the analytical solution presented in section \ref{sec:manufacturedsolution}.  For this, all correctors for non-orthogonalities from section \ref{sec:nonorth} have been implemented in the coupled solver program. The grid skewness was parametrized with the relative diameter \(\alpha\) of the maximal neighborhood, which constrains the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location. The calcutations were terminated after a reduction of \(10^{-14}\) of the relative initial residual was obtained.
 
-\begin{figure}[h!]
+\begin{figure}
   \begin{center}
   \begin{tikzpicture}
     \begin{axis}[
@@ -596,16 +597,19 @@ To measure the effect of different non-orthogonal corrections on the solution pr
       xmin=0,xmax=1,
       legend pos=outer north east,
       ]
-      \addplot[color=black,mark=square*] file {./files/nonorth.oc};
-      \addplot[color=black,mark=*] file {./files/nonorth.mc};
+      \addplot[color=black,mark=*]         file {./files/nonorth.mc};
+      \addplot[color=black,mark=square*]   file {./files/nonorth.oc};
       \addplot[color=black,mark=triangle*] file {./files/nonorth.or};
-      \addlegendentry{Orthogonal correction};
       \addlegendentry{Minimum correction};
-      \addlegendentry{Overrelaxed approach};
+      \addlegendentry{Orthogonal correction};
+      \addlegendentry{Over-relaxed approach};
       \end{axis}
     \end{tikzpicture}
   \end{center}
 \caption{Number of needed outer iterations for different relative diameters of the neighborhood in which the movement of grid points takes place parametrized by the orthogonal corrector}
 \label{fig:nonorth}
 \end{figure}
+
+The results presented in figure \ref{fig:nonorth} affirm the results presented in \cite{jasak96}. Is can be observed, that for small movements of grid points the choice of corrector does not affect convergence. However as movements of grid points increase, and thus higher non-orthogonality increases, the over-relaxed approach outperforms the other correctors with respect to the number of needed outer iterations. This does directly translate into performance with respect to wall-clock time, since the computational effort of the application of each non-orthogonal corrector is approximately the same.
+
 
