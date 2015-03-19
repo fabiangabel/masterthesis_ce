@@ -1,7 +1,7 @@
 
 \newcommand*{\xMin}{0}%
 \newcommand*{\xMax}{12}%
-\newcommand*{\xStep}{0.47}%
+\newcommand*{\xStep}{0.48}%
 \newcommand*{\nStep}{35}
 \newcommand*{\yMin}{0}%
 \newcommand*{\yMax}{1}%
@@ -27,8 +27,8 @@
     }
 
     \foreach \j in {0,...,34} {
-        \node[anchor=center] at (-0.3,\xStep*\nStep-\j*\xStep-0.5*\xStep) {\j};
-        \node[anchor=center] at (\j*\xStep+0.5*\xStep,\xStep*\nStep+0.3) {\j};
+        \node[anchor=center] at (-0.3,\xStep*\nStep-\j*\xStep-0.5*\xStep) {\scriptsize \j};
+        \node[anchor=center] at (\j*\xStep+0.5*\xStep,\xStep*\nStep+0.3) { \scriptsize \j};
     }
 
     \foreach \i in {0,...,34} {

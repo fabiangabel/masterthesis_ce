@@ -124,9 +124,9 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
     height=12cm,width=15cm,
     grid=major,
     ]
-    \addplot file {./files/mpi1.def};
-    \addplot file {./files/mpi1.op1};
-    \addplot file {./files/mpi1.core};
+    \addplot file[color=black,mark=*] {./files/mpi1.def};
+    \addplot file[color=black,mark=square*] {./files/mpi1.op1};
+    \addplot file[color=black,mark=triangle*] {./files/mpi1.core};
     \addlegendentry{Default binding};
     \addlegendentry{map-by ppr:8:node map-by ppr:4:socket}
     \addlegendentry{map-by core}
@@ -158,18 +158,18 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
     height=12cm,width=15cm,
     grid=major,
     ]
-    \addplot file {./files/mpi2.def};
-     \addlegendentry{Default Binding};
-     \addplot file {./files/mpi2.op1};
-     \addlegendentry{map-by ppr:8:node map-by ppr:4:socket};
+    \addplot file[color=black,mark=*] {./files/mpi2.def};
+     \addplot file[color=black,mark=square*] {./files/mpi2.op1};
      %\addplot file {./files/mpi2.op2};
      %\addlegendentry{map-by ppr:8:node map-by ppr:4:socket:PE=3};
-     \addplot file {./files/mpi2.op3};
-     \addlegendentry{map-by ppr:4:node map-by ppr:4:socket:PE=6};
-     \addplot file{./files/mpi2.core};
-    \addlegendentry{map-by core}
+     \addplot file[color=black,mark=triangle*] {./files/mpi2.op3};
+     \addplot file {./files/mpi2.core};
      %\addplot file {./files/mpi2.op4};
      % \addlegendentry{map-by ppr:6:node map-by ppr:4:socket:PE=4};
+    \addlegendentry{Default Binding};
+    \addlegendentry{map-by ppr:8:node map-by ppr:4:socket};
+    \addlegendentry{map-by ppr:4:node map-by ppr:4:socket:PE=6};
+    \addlegendentry{map-by core}
 \end{axis}
 \end{tikzpicture}
 \caption{Sustainable memory bandwidth as determined by the STREAM benchmark (Triad) for different process binding options on one node of the MPI2 section}
@@ -183,7 +183,7 @@ It should be taken into account that the STREAM benchmark used to test the prese
 \subsubsection{Speed-Up Measurement and Impact of Coupling Algorithm for Analytic Test Case}
 \label{sec:speedup}
 
-This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR, which has been presented in section \ref{sec:hhlr}. Furthermore, the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. This property of applications if often termed \emph{strong} scalability \cite{hager11}. All Speed-Up tests are conducted on the MPI1 section. The performance analyses will show the absolute time needed to solve for the flow of the analytical solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance the Speed-Up will be calculated based on the presented results. Since the performance of segregated algorithms is linked to the amount of under-relaxation applied to the variables in each outer iteration, a preliminary test is conducted to support choosing the optimal amount of under-relaxation. As pointed out in \cite{ferziger02,schaefer99}, it is recommended to choose the amount of under-relaxation for the pressure depending on the amount of under-relaxation for the velocity as
+This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR, which has been presented in section \ref{sec:hhlr}. Furthermore, the impact of the scaling algorithm on the running time of the corresponding solver program will be shown. This property of applications if often termed \emph{strong} scalability \cite{hager11}. All Speed-Up tests are conducted on the MPI1 section. The performance analyses will show the absolute time needed to solve for the flow of the analytic solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance the Speed-Up will be calculated based on the presented results. Since the performance of segregated algorithms is linked to the amount of under-relaxation applied to the variables in each outer iteration, a preliminary test is conducted to support choosing the optimal amount of under-relaxation. As pointed out in \cite{ferziger02,schaefer99}, it is recommended to choose the amount of under-relaxation for the pressure depending on the amount of under-relaxation for the velocity as
 \begin{displaymath}
   \alpha_p = 1 - \alpha_{\vec{u}}.
 \end{displaymath}
@@ -202,14 +202,14 @@ Figure \ref{fig:underrelax} shows the results of the preliminary runtime measure
       \addplot[color=black,mark=*] file {./files/underrelax.64};
     \end{axis}
   \end{tikzpicture}
-  \caption{Wall-clock time comparison for the SIMPLE-algorithm solving for an analytical solution on a grid with $64^3$ cells using different under-relaxation factors}
+  \caption{Wall-clock time comparison for the SIMPLE-algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $64^3$ cells using different under-relaxation factors}
   \label{fig:underrelax}
 \end{figure}
 
 The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests, the linear system for the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with the GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner from PETSc. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. All further solver parameters are listed in table \ref{tab:performance}.
 
 \begin{table}[h!]\centering
-  \caption{Characteristic problem properties used in the performance measurements solving for an analytic solution}
+  \caption{Characteristic problem properties used in the performance measurements, solving for the analytic solution presented in section \ref{sec:manufacturedsolution}}
 \ra{1.3}
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
@@ -240,7 +240,7 @@ The performance of all solvers significantly depends on the performance of the l
       \addplot[color=black,mark=*] file {./files/seg.128};
       \addplot[color=black,mark=square*] file {./files/cpld.gamg.128};
     \end{loglogaxis}
-  % \caption{Wall-clock time comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  % \caption{Wall-clock time comparison for segregated and fully coupled solution algorithm solving for an analytic solution on a grid with $128^3$ cells}
   % \label{fig:wall}
   \end{tikzpicture}
   %
@@ -263,7 +263,7 @@ The performance of all solvers significantly depends on the performance of the l
     \\
   \ref{named}
   \end{center}
-  \caption{Wall-clock time and Speed-Up comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $128^3$ cells}
+  \caption{Wall-clock time and Speed-Up comparison for segregated and fully coupled solution algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a strucutred grid with $128^3$ cells}
    \label{fig:speedup}
 \end{figure}
 
@@ -288,7 +288,7 @@ From the comparison in figure \ref{fig:speedup} it is evident, that both algorit
 %      \addplot[mark=none,black] file {./files/speedup.ideal};
 %    \end{loglogaxis}
 %    \end{tikzpicture}
-%    \caption{Speedup comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
+%    \caption{Speedup comparison for segregated and fully coupled solution algorithm solving for an analytic solution on a grid with $256^3$ cells}
 %  \end{minipage}
 %  \hfil
 %  \begin{minipage}{0.45\textwidth}
@@ -304,14 +304,14 @@ From the comparison in figure \ref{fig:speedup} it is evident, that both algorit
 %      \addplot file {./files/cpld.gamg.256};
 %      \end{loglogaxis}
 %    \end{tikzpicture}
-%    \caption{Wall clock time comparison for segregated and fully coupled solution algorithm solving for an analytical solution on a grid with $256^3$ cells}
+%    \caption{Wall clock time comparison for segregated and fully coupled solution algorithm solving for an analytic solution on a grid with $256^3$ cells}
 %  \end{minipage}
 %\end{figure}
 
 \subsection{Weak Scaling Comparison of Coupled and Segregated Solution Algorithm}
 \label{sec:weakscaling}
 
-It has been previously reported in \cite{darwish09,vakilipour12}, that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. It is known that this is not true for the SIMPLE-algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so called \emph{weak} scaling of the implementation \cite{hager11}. Starting from a moderate number of unknowns for a tree-dimensional test case solving for the analytical solution presented in section \ref{sec:manufacturedsolution}, this benchmark will investigate how the running-time and the number of needed inner and outer iterations behaves when the computational load per process is held constant, while the number of involved processes is continuously increased. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same time by involving more processes running the solver application. Each process will get assigned a block with \(32x32x32\) unknowns. Thus, the number of involved unknowns in each test run can be calculated as \( N = 32\times32\times32\times32 \). Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE-algorithm and the fully coupled solution algorithm.
+It has been previously reported in \cite{darwish09,vakilipour12}, that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. It is known that this is not true for the SIMPLE-algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so called \emph{weak} scaling of the implementation \cite{hager11}. Starting from a moderate number of unknowns for a tree-dimensional test case solving for the analytic solution presented in section \ref{sec:manufacturedsolution}, this benchmark will investigate how the running-time and the number of needed inner and outer iterations behaves when the computational load per process is held constant, while the number of involved processes is continuously increased. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same time by involving more processes running the solver application. Each process will get assigned a block with \(32x32x32\) unknowns. Thus, the number of involved unknowns in each test run can be calculated as \( N = 32\times32\times32\times32 \). Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE-algorithm and the fully coupled solution algorithm.
 
 \begin{figure}[h!]
   \begin{center}
@@ -371,7 +371,7 @@ The comparison in figure \ref{fig:weak} shows, that the fully coupled algorithm 
       \end{semilogxaxis}
     \end{tikzpicture}
   \end{center}
-  \caption{Average number of inner iterations for different process counts solving for an analytical solution with the fully coupled solution algorithm}
+  \caption{Average number of inner iterations for different process counts solving for the analytic solution presented in section \ref{sec:manufacturedsolution} with the fully coupled solution algorithm}
   \label{fig:weakinner}
 \end{figure}
 
@@ -585,7 +585,7 @@ Section \ref{sec:nonorth} introduced different ways to address the degradation o
   \end{center}
 \end{figure}
 
-To measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed, measuring the number of needed outer iterations to solve for the analytical solution presented in section \ref{sec:manufacturedsolution}.  For this, all correctors for non-orthogonalities from section \ref{sec:nonorth} have been implemented in the coupled solver program. The grid skewness was parametrized with the relative diameter \(\alpha\) of the maximal neighborhood, which constrains the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location. The calcutations were terminated after a reduction of \(10^{-14}\) of the relative initial residual was obtained.
+To measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed, measuring the number of needed outer iterations to solve for the analytic solution presented in section \ref{sec:manufacturedsolution}.  For this, all correctors addressing grid non-orthogonality from section \ref{sec:nonorth} have been implemented in the coupled solver program. The grid skewness was parametrized with the relative diameter \(\alpha\) of the maximal neighborhood, which constrains the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location. The calculations were terminated after a reduction of \(10^{-14}\) of the relative initial residual was obtained.
 
 \begin{figure}
   \begin{center}
@@ -612,10 +612,10 @@ To measure the effect of different non-orthogonal corrections on the solution pr
 
 The results presented in figure \ref{fig:nonorth} affirm the results presented in \cite{jasak96}. Is can be observed, that for small movements of grid points the choice of corrector does not affect convergence. However as movements of grid points increase, and thus higher non-orthogonality increases, the over-relaxed approach outperforms the other correctors with respect to the number of needed outer iterations. This does directly translate into performance with respect to wall-clock time, since the computational effort of the application of each non-orthogonal corrector is approximately the same.
 
-\subsection{Achieving Ideal Loadbalancing by Automatic Matrix Partitioning}
+\subsection{Achieving Ideal Load Balancing by Automatic Matrix Partitioning}
 
-Motivate this special loadbalancing by giving a pie chart about where the time was spent
+Motivate this special load balancing by giving a pie chart about where the time was spent
 Three approaches: Data Partitioning -> scatter data across lots of blocks (pro and cons), matrix does not depend on blocks, complete data partitioning
 Formula for Partitioning
-Matrixpartitioning before and after
+Matrix partitioning before and after
 

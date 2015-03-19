@@ -5,7 +5,7 @@ The systematical verification of program code is an essential part of the develo
 
 \subsection{The Method of Manufactured Solutions for Navier-Stokes Equations}
 
-The method of manufactured solutions comprises a systematical, formal procedure for code verification based on analytical solutions to the partial differential equations to be solved \cite{salari00}. Using this analytical solutions, the accuracy of the produced results can be assessed and, after the establishment of an acceptance criterion, used to verify the computer program. A common acceptance criterion is the \emph{Order-of-Accuracy} criterion, since, in addition to the formal order of accuracy of a developed solver algorithm, it verifies its consistency. It should be noted that by the method of manufactured solutions it is not possible to detect errors in the physical model.
+The method of manufactured solutions comprises a systematical, formal procedure for code verification based on analytic solutions to the partial differential equations to be solved \cite{salari00}. Using this analytic solutions, the accuracy of the produced results can be assessed and, after the establishment of an acceptance criterion, used to verify the computer program. A common acceptance criterion is the \emph{Order-of-Accuracy} criterion, since, in addition to the formal order of accuracy of a developed solver algorithm, it verifies its consistency. It should be noted that by the method of manufactured solutions it is not possible to detect errors in the physical model.
 
 The basic idea of the method of manufactured solutions is the inversion of the solution process of partial differential equations. Instead of trying to find the solution \(x\) to a given equation \(F(x) = b\) with source term \(b\), a solution \(x\) is \emph{manufactured} and the source term is constructed by applying \(F\) to \(x\). This has the advantage of choosing a solution that exercises all parts of the solution process and hence provides a thorough testing environment. On the downside, the integration of boundary conditions other than Dirichlet boundary conditions might be challenging \cite{salari00}. Furthermore, the program code has to be able to handle arbitrary source terms. 
 
@@ -103,7 +103,7 @@ In this subsection the result of the verification process via the formerly in su
 \begin{displaymath}
   \operatorname{err}(\phi) = \sqrt{ \frac {\iiint\limits_V \left( \phi - \tilde{\phi} \right)^2 \mathrm{d}V }{\iiint\limits_V \mathrm{d}V }} \approx \sqrt{ \frac{ \sum_{n=1}^N \left(\phi_n - \tilde{\phi}_n \right)^2 V_n }{\sum_{n=1}^{N} V_n}} .
 \end{displaymath}
-Herein \(N\) denotes the number of control volumes of the discretized solution domain \(V\). Each control volume has the volume \(V_n\). The numerical and the exact solution are evaluated at the center of each control volume for the error calculations. In order to calculate the normalized global error of the pressure \(p\), the same modification as in subsection \ref{sec:singularitytreatment} has to be performed on the analytical solution \(\tilde{p}\), which in the case of the present work means to subtract the weighted mean value
+Herein \(N\) denotes the number of control volumes of the discretized solution domain \(V\). Each control volume has the volume \(V_n\). The numerical and the exact solution are evaluated at the center of each control volume for the error calculations. In order to calculate the normalized global error of the pressure \(p\), the same modification as in subsection \ref{sec:singularitytreatment} has to be performed on the analytic solution \(\tilde{p}\), which in the case of the present work means to subtract the weighted mean value
 \begin{displaymath}
   \operatorname{mean}\left( \tilde{p} \right) = \frac{\iiint\limits_V \tilde{p} \mathrm{d}V}{\iiint\limits_V \mathrm{d}V} \approx \frac{\sum_{n=1}^N \tilde{p}_n V_n}{\sum_{n=1}^N V_n}
 \end{displaymath}
@@ -111,7 +111,7 @@ and to calculate the error as
 \begin{displaymath}
   \operatorname{err}(p,N) \approx \sqrt{ \frac{ \sum_{n=1}^N \left(p_n - \tilde{p}_n -\operatorname{mean}\left(\tilde{p}\right) \right)^2 V_n }{\sum_{n=1}^{N} V_n}}.
 \end{displaymath}
-The following tables will list the calculated error terms for the velocities, the pressure and the temperature for different grid resolutions and both solver algorithms on a problem domain in the form of a cube with side length \(2m\) whose center is located at \(x_C = \left(0,0,0\right) \). All involved material properties are chosen to \(1\), the gravitational acceleration is chosen to \(\vec{g} = \left(7,13,-19\right)\). As a reference temperature \(T_0 = 0\) is used. The grid resolutions \((n \times n \times n)\) are chosen such that \(n\), the number of control volumes in each coordinate direction, will be a power of \(2\). The Errors are evaluated after the maximal relative residual of all linear systems in one outer iteration fell below the threshold \(1\e{-14}\). The concrete implementation of the tolerance criterion to accept a converged solution is found in section \ref{sec:convergence}.
+The following tables will list the calculated error terms for the velocities, the pressure and the temperature for different grid resolutions and both solver algorithms on a problem domain in the form of a cube with side length \(2m\) whose center is located at \(x_C = \left(0,0,0\right) \). All involved material properties are chosen to \(1\), the gravitational acceleration is chosen to \(\vec{g} = \left(7,13,-19\right)\). As a reference temperature \(T_0 = 0\) is used. The grid resolutions \((n \times n \times n)\) are chosen such that \(n\), the number of control volumes in each coordinate direction, will be a power of \(2\). The Errors are evaluated after the maximal relative residual of all linear systems in one outer iteration fell below the threshold \(1\e{-14}\). The concrete implementation of the tolerance criterion to accept a converged solution is found in section \ref{sec:convergence}. It should be noted that no results were calculated with the coupled solver for the case of \(256 \times 256 \times 256 \) unknowns due to convergence problems of the linear equation solver.
 
 A comparison of the results leads to the first conclusion, that the results from the segregated solver algorithm and the coupled solver algorithm coincide, which implies that the same discretization is used in both cases. According to \cite{salari00} the next step comprises the calculation of the formal order of accuracy \(\hat{p}_\phi\) for each variable that the program solves for. This can be done by evaluating the quotient of two different resolutions \(n1\) and \(n2\) as 
 \begin{displaymath}
@@ -146,7 +146,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!20} \multirow{-3}{*}{128x128x128}& 1.140471182846354E-004 & 1.140471183418716E-004 & 2.0214  \\ %\hline
     %
     \rowcolor{black!00}\multirow{3}{*}{}             & 2.876932445431025E-005 & & 2.0267 \\
-    \rowcolor{black!00}                              & 2.771472789328757E-005 & & 2.0529 \\
+    \rowcolor{black!00}                              & 2.771472789328757E-005 & d.n.c. & 2.0529 \\
     \rowcolor{black!00} \multirow{-3}{*}{256x256x256}& 2.826736500332136E-005 & & 2.0124 \\ %\hline
   \end{tabular}
   \label{tab:velorder}
@@ -163,7 +163,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!20} 32x32x32    & 3.796485688816108E-002 &  3.796481581400934E-002 & 1.2401 \\%\hline
     \rowcolor{black!00} 64x64x64    & 1.438780100622541E-002 &  1.438780100615654E-002 & 1.3998 \\%\hline
     \rowcolor{black!20} 128x128x128 & 5.160705648852031E-003 &  5.160705649392788E-003 & 1.4792 \\%\hline
-    \rowcolor{black!00} 256x256x256 & 1.809811107444374E-003 &                          & 1.5117 \\%\hline
+    \rowcolor{black!00} 256x256x256 & 1.809811107444374E-003 &  d.n.c.                 & 1.5117 \\%\hline
   \end{tabular}
   \label{tab:pressorder}
 \end{table}
@@ -179,7 +179,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
     \rowcolor{black!20} 32x32x32    & 2.931009801582052E-004  & 2.931009624340290E-004  & 1.9500 \\%\hline
     \rowcolor{black!00} 64x64x64    & 7.410021974469997E-005  & 7.410021974334421E-005  & 1.9838 \\%\hline
     \rowcolor{black!20} 128x128x128 & 1.858846421984987E-005  & 1.858846421622182E-005  & 1.9951 \\%\hline
-    \rowcolor{black!00} 256x256x256 & 4.651911366447223E-006  &                         & 1.9985 \\%\hline
+    \rowcolor{black!00} 256x256x256 & 4.651911366447223E-006  & d.n.c.                  & 1.9985 \\%\hline
   \end{tabular}
   \label{tab:temporder}
 \end{table}
@@ -362,6 +362,6 @@ It is evident that, the higher the under-relaxation factor, the smaller the devi
      \draw (axis cs:0.1,0.971052034681996) -- (axis cs:0.2,0.977030190229609) node [midway,fill,white,color=gray,text=white,font=\footnotesize,draw=gray,below right]{$64^3$};
 \end{semilogyaxis}
 \end{tikzpicture}
-\caption{Comparison of calculated error for different under-relaxation factors $\alpha_\vec{u}$ on a grid with different grid resolutions unknowns}
+\caption{Comparison of calculated error for different under-relaxation factors $\alpha_\vec{u}$ on grids with $16\times16\times16$, $32\times32\times32$ and $64\times64\times64$ cells}
 \label{fig:underrelaxation}
 \end{figure}

@@ -108,7 +108,9 @@ In the same way, it is possible to realize the coupling described in the previou
 \subsubsection{Temperature-to-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
 \label{sec:nrcoupled}
 
-The previous section discussed the velocity-to-temperature coupling and so far, only the momentum balances were affected by the realization of the coupling methods. Independently, it is possible to couple the temperature equation, not only to the momentum balances, but also to the pressure equation. In section \ref{sec:discretetemperature}, the non-linear partial differential equations were linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid. But, if an implicit temperature coupling is sought, a coupling of the temperature equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization}, which can be interpreted as a bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial.
+The previous section discussed the velocity-to-temperature coupling and so far, only the momentum balances were affected by the realization of the coupling methods. Independently, it is possible to couple the temperature equation, not only to the momentum balances, but also to the pressure equation. The purpose of this subsection is to present a discretization that achives this opposite type of coupling, which will be referred to as \emph{temperature-to-velocity/pressure} coupling.
+
+In section \ref{sec:discretetemperature}, the non-linear partial differential equations were linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid. But, if an implicit temperature coupling is sought, a coupling of the temperature equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization}, which can be interpreted as a bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial, similar to Newton-like methods to solve non-linear equations \cite{ferziger02}. It should be noted that, even though Newton-like methods are known for their faster, up to quadratic convergence compared to methods with linear convergence like the Picard iteration, the intention of using a Newton-like linearization is to create coupling to accelerate convergence. For a Newton-like linearization to accelerate convergence, instead of only the convective term, the whole equation should use a Newton method for the non-linear solution algorithm. For this, the \emph{Newton-Raphson linearization} has not been used within segregated, SIMPLE-like solution algorithms \cite{ferziger02}.
 
 The Newton-Raphson linearization technique is applied to the convective term of the temperature equation as follows. A first order Taylor approximation of the mass specific convective flux through the boundary face \(S_f\) around the \((n-1)\)st iteration value yields for the approximation at the \(n\)th iteration
 \begin{align*}
@@ -169,7 +171,17 @@ How Dirichlet boundary conditions, also known as inlet boundaries, affect the ma
 \end{displaymath}
 Wall boundary conditions are treated likewise with the additional modifications to the right hand side contribution as presented in section \ref{sec:walls}.
 
-The treatment of velocity Dirichlet boundary conditions in the pressure equation is straightforward, since they correspond to mass fluxes through the boundary faces. Hence the matrix coefficients remain unchanged and only the right hand side contributions embrace the fact that no implicit interpolation is necessary to calculate the mass flux through the boundary face.
+The treatment of velocity Dirichlet boundary conditions in the pressure equation is straightforward, since they correspond to mass fluxes through the boundary faces. Hence, the matrix coefficients remain unchanged and only the right hand side contributions embrace the fact that no implicit interpolation is necessary to calculate the mass flux through the boundary face.
+
+In the case of Dirichlet pressure boundary conditions, an additional contribution to the right hand side of the momentum balances has to be considered
+\begin{displaymath}
+  b_P^{u_i} = b_P^{u_i} + p_f n_{i,f} S_f.
+\end{displaymath}
+As presented in subsection \ref{sec:segboundary} a \emph{lagged} Dirichlet boundary condition is used for the velocities in the discretized momentum balances. Different to the presentation in subsection \ref{sec:segboundary} the boundary mass fluxes in the pressure equation are considered implicitly. This creates additional contributions to the coefficients accounting for the pressure-to-velocity coupling in the pressure equation
+\begin{displaymath}
+  a_P^{p,u_i} = a_P^{p,u_i} + \rho n_{f,i} S_f.
+\end{displaymath}
+The coefficients for the pressure are modified as usual for Dirichlet boundary conditions, which was shown in section \ref{sec:segboundary}.
 
 Finally, it should be noted that the that the Newton-Raphson linearization technique does not apply to the velocities on boundary faces, since the value of the velocities is known exactly and a linearization of the convective contribution becomes unnecessary.
 
@@ -207,7 +219,7 @@ The different degrees of coupling between the different equations will affect th
 \begin{figure}
   \centering
   \input{./img/coupledmat.tikz.tex}
-  \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The blue coefficients represent the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling and the green coefficients result from the Newton-Raphson linearization technique.}
+  \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The blue coefficients represent the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling due to the implicit Boussinesq-approximation and the green coefficients result from the Newton-Raphson linearization technique addressing the temperature-to-velocity/pressure coupling.}
   \label{fig:cpldassemble}
 \end{figure}
 
@@ -221,6 +233,6 @@ The different degrees of coupling between the different equations will affect th
 \begin{figure}
   \centering
    \input{./img/nointerlacemat.tikz.tex}
-  \caption{Non-zero structure the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The variables have been ordered such that each major matrix block refers to only one variable or the coupling between exactly two variables.}
+  \caption{Non-zero structure of the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The variables have been ordered in a way that each major matrix block refers to only one variable or the coupling between exactly two variables as it is denoted by the corresponding subindices.}
   \label{fig:nointerlacemat}
 \end{figure}

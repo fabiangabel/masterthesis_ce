@@ -575,7 +575,7 @@ whereas the contribution to the right hand side reads
 \end{align}
 The reader should note, that, even though the gradient discretization at domain boundaries is realized by a one sided forward differencing scheme instead of a central differencing scheme, this does not drastically affect accuracy, because the distance used in the differential quotient is half the distance used in a central difference for the inside of the domain \cite{schaefer99}.
 
-The case of Dirichlet boundary conditions for the pressure needs special consideration since no equation for the pressure is solved but instead an equation for the pressure correction. This type of boundary condition can be applied to inlet boundaries or pressure boundaries and is recommendable if on the on hand no data on the velocity distribution is known, but on the other hand the pressure difference between inlet and outlet, or the reference pressure at the outlet is a known quantity. The pressure correction at Dirichlet pressure boundaries is assumed to \(p' = 0\), and the modification of the coefficients of the algebraic equation for the corresponding control volumes can be carried out as in (\ref{eq:dirichletcoeff}) and (\ref{eq:dirichletrhs}). The velocity correction at the boundaries is nonzero and will have to be extrapolated, using the formula for the pressure weighted interpolation applied to boundary values (\ref{eq:faceprime}).
+The case of Dirichlet boundary conditions for the pressure needs special consideration since no equation for the pressure is solved but instead an equation for the pressure correction. This type of boundary condition can be applied to inlet boundaries or pressure boundaries and is recommendable if on the one hand no data on the velocity distribution is known, but on the other hand the pressure difference between inlet and outlet, or the reference pressure at the outlet is a known quantity. The pressure correction at Dirichlet pressure boundaries is assumed to \(p' = 0\), and the modification of the coefficients of the algebraic equation for the corresponding control volumes can be carried out as in (\ref{eq:dirichletcoeff}) and (\ref{eq:dirichletrhs}). The velocity correction at the boundaries is nonzero and will have to be extrapolated, using the formula for the pressure weighted interpolation applied to boundary values (\ref{eq:faceprime}). Even though Dirichlet boundary conditions for the pressure would correspond to Neumann boundary conditions for the velocities, a Dirichlet boundary condition for the velocities is used as well, using an extrapolated velocity value as fixed value for the calculation of boundary fluxes in the momentum balances. 
 
 \subsubsection{Treatment of Wall Boundaries}
 \label{sec:walls}
@@ -736,11 +736,11 @@ an expression that can be modified to derive a linear system whose solution is t
   b_{P,u_i} + \frac{(1 - \alpha_{\vec{u}})\, a_P^{u_i}}{\alpha_{\vec{u}}}\, u_{i,P}^{(n-1)}. 
 \end{displaymath}
 
-After all matrix coefficients have been successfully calculated, the linear system system can be represented by a system matrix \(A\) and a right hand side vector \(b\). Figure \ref{fig:segassemble} shows the non-zero structure of a linear system for a grid consisting of a \(2\times2\times2\) cell and a \(3\times3\times3\) cell block.
+After all matrix coefficients have been successfully calculated, the linear system system can be represented by a system matrix \(A\) and a right hand side vector \(b\). Figure \ref{fig:segassemble} shows the non-zero structure of a linear system for a grid consisting of a \(2\times2\times2\) cell block and a \(3\times3\times3\) cell block.
 
 \begin{figure}
   \centering
   \input{./img/matrix.tikz.tex}
-  \caption{Non-zero structure of the linear systems used in the SIMPLE-algorithm for a block-structured grid consisting of one  $2\times2\times2$ cell and one $3\times3\times3$ cell block}
+  \caption{Non-zero structure of the linear systems used in the SIMPLE-algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block}
   \label{fig:segassemble}
 \end{figure}
