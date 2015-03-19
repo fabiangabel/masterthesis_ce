@@ -612,10 +612,4 @@ To measure the effect of different non-orthogonal corrections on the solution pr
 
 The results presented in figure \ref{fig:nonorth} affirm the results presented in \cite{jasak96}. Is can be observed, that for small movements of grid points the choice of corrector does not affect convergence. However as movements of grid points increase, and thus higher non-orthogonality increases, the over-relaxed approach outperforms the other correctors with respect to the number of needed outer iterations. This does directly translate into performance with respect to wall-clock time, since the computational effort of the application of each non-orthogonal corrector is approximately the same.
 
-\subsection{Achieving Ideal Load Balancing by Automatic Matrix Partitioning}
-
-Motivate this special load balancing by giving a pie chart about where the time was spent
-Three approaches: Data Partitioning -> scatter data across lots of blocks (pro and cons), matrix does not depend on blocks, complete data partitioning
-Formula for Partitioning
-Matrix partitioning before and after
-
+\input{./tex/masterthesis.testing}
