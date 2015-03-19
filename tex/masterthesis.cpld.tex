@@ -28,7 +28,7 @@ As in the case of segregated methods, it is not advisable to solve the mass bala
   \right].
 \end{displaymath}
 The adaption comprises the removal of last term of equation (\ref{eq:pwim}) accounting for the under-relaxation, since according to \cite{darwish09} no under-relaxation is needed in fully coupled algorithms, which is equivalent to an under-relaxation factor \(\alpha_\vec{u} = 1\). Furthermore, the underlined partial derivatives are going to be treated implicitly. This leads to the semi-implicit pressure equation
-\begin{align}
+\begin{align*}
   \sum_{F \in NB(P)} 
   \rho
   \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,F}^{(n)} \right]\,  S_f
@@ -47,7 +47,7 @@ The adaption comprises the removal of last term of equation (\ref{eq:pwim}) acco
   + \left(\frac{\partial p}{\partial x_i}\right)_F^{(n-1)} 
   \right)
   \right] \, S_f.
-\end{align}
+\end{align*}
 
 Even though this equation is solved for the pressure \(p\), while equation (\ref{eq:presscorr}) is solved for the pressure correction \(p'\), the matrix coefficients from the discretization of the pressure correction equation (\ref{eq:segpresscorrcoeff}) and the calculation of the right hand side given in equation (\ref{eq:presscorrb}), remain the same. For the implicit coupling to the velocities \(u_i\), additional matrix coefficients have to be considered. These can be calculated as
 \begin{displaymath}
@@ -193,7 +193,7 @@ At block boundaries the new matrix coefficients \(a_L^{u_i,p}\) and \(a_R^{u_i,p
 \label{sec:cpldassembly}
 
 Concluding this section, the final form of the derived linear algebraic equations are presented. Based on the presented discretization, each equation only contains variable values of neighboring control volumes. The set of five equations reads
-\begin{align}
+\begin{align*}
   a_P^{u_i} u_{P,i}^{\vphantom{u_i}}
   + \sum_{F \in NB(P)} a_F^{u_i} u_{F,i}^{\vphantom{u_i}} 
   + \underbrace{\vphantom{\sum_F}{a_P^{u_i,p} p_P^{\vphantom{u_i,p}}
@@ -212,14 +212,65 @@ Concluding this section, the final form of the derived linear algebraic equation
   + a_P^{T,p} p_P^{\vphantom{T,p}} 
 + \sum_{F \in NB(P) } a_F^{T,p} p_F^{\vphantom{T,p}}}_{\hbox{Newton-Raphson linearization}} 
   &= b_{P,T}^{\vphantom{T,p}}.
-\end{align}
+\end{align*}
 
-The different degrees of coupling between the different equations will affect the matrix structure. Depending on the variable, arrangement other matrix structures are possible. Figure \ref{fig:cpldassemble} shows the resulting block matrix structure if the fields are treated as interlaced quantities. Figure \ref{fig:interlacemat} shows the non-zero structure of a block matrix for the same case if no field interlacing is used. It should be noted, that the variable arrangement only affects the storage of the matrices not the way the matrix is used, since it is possible to arbitrarily reorder the matrix entries through the underlying index sets to obtain other matrix representations. One commonly used matrix representation is shown in figure \ref{fig:nointerlacemat}.
+The different degrees of coupling between the different equations will affect the matrix structure. Depending on the variable, arrangement other matrix structures are possible. Figure \ref{fig:cpldassemble} shows the resulting block matrix structure if the fields are treated as interlaced quantities. This variable arrangement corresponds to a linear sub system for each control volume:
+\begin{displaymath}
+\left[
+  \begin{array}{ccccc}
+    a_P^{u_1}   & 0           & 0           & a_P^{u_1,p} & a_P^{u_1,T} \\[0.5em]
+    0           & a_P^{u_2}   & 0           & a_P^{u_2,p} & a_P^{u_2,T} \\[0.5em]
+    0           & 0           & a_P^{u_1}   & a_P^{u_3,p} & a_P^{u_3,T} \\[0.5em]
+    a_P^{p,u_1} & a_P^{p,u_2} & a_P^{p,u_3} & a_P^{p}     & 0           \\[0.5em]
+    a_P^{T,u_1} & a_P^{T,u_2} & a_P^{T,u_3} & a_P^{T,p}   & a_P^{T}
+  \end{array}
+\right]
+\left[
+\begin{array}{c}
+  u_{1,P} \\[0.5em]
+  u_{2,P} \\[0.5em]
+  u_{3,P} \\[0.5em]
+  p_{P  } \\[0.5em]
+  T_{P}
+\end{array}
+\right]
++
+\sum_{F \in NB(P)}
+\left[
+  \begin{array}{ccccc}
+    a_F^{u_1}   & 0           & 0           & a_F^{u_1,p} & a_F^{u_1,T} \\[0.5em]
+    0           & a_F^{u_2}   & 0           & a_F^{u_2,p} & a_F^{u_2,T} \\[0.5em]
+    0           & 0           & a_F^{u_1}   & a_F^{u_3,p} & a_F^{u_3,T} \\[0.5em]
+    a_F^{p,u_1} & a_F^{p,u_2} & a_F^{p,u_3} & a_F^{p}     & 0           \\[0.5em]
+    a_F^{T,u_1} & a_F^{T,u_2} & a_F^{T,u_3} & a_F^{T,p}   & a_F^{T}
+  \end{array}
+\right]
+\left[
+\begin{array}{c}
+  u_{1,F} \\[0.5em]
+  u_{2,F} \\[0.5em]
+  u_{3,F} \\[0.5em]
+  p_{F  } \\[0.5em]
+  T_{F}
+\end{array}
+\right]
+=
+\left[
+\begin{array}{c}
+  b_{P}^{u_1} \\[0.5em]
+  b_{P}^{u_2} \\[0.5em]
+  b_{P}^{u_3} \\[0.5em]
+  b_{P}^{p}   \\[0.5em]
+  b_{P}^{T}
+\end{array}
+\right].
+\end{displaymath}
+Figure \ref{fig:interlacemat} shows the non-zero structure of a block matrix for the same case if field interlacing is used. It should be noted, that the variable arrangement only affects the storage of the matrices not the way the matrix is used, since it is possible to arbitrarily reorder the matrix entries through the underlying index sets to obtain other matrix representations. One commonly used matrix representation is shown in figure \ref{fig:nointerlacemat}.
 
 \begin{figure}
   \centering
   \input{./img/coupledmat.tikz.tex}
-  \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The blue coefficients represent the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling due to the implicit Boussinesq-approximation and the green coefficients result from the Newton-Raphson linearization technique addressing the temperature-to-velocity/pressure coupling.}
+  \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The blue coefficients represent the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling due to the implicit Boussinesq approximation and the green coefficients result from the Newton-Raphson linearization technique addressing the temperature-to-velocity/pressure coupling.}
   \label{fig:cpldassemble}
 \end{figure}
 

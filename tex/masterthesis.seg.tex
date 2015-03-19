@@ -23,8 +23,8 @@ The advantages of using a cell-centered variable arrangement are evident: The tr
 A common practice to eliminate this behaviour is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. However, the original interpolation scheme does not guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms that are used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. These issues will be addressed in this subsection which, at the end, will present an interpolation method that assures an under-relaxation independent solution: the \emph{pressure-weighted interpolation method} \cite{miller88}.
 
 The starting point of the pressure-weighted interpolation method is formed by the discretized momentum balances at node \(P\) and an arbitrary neighboring node \(Q\). The discretization for finite-volume methods and details including the incorporation of under-relaxation factors will be handled in subsection \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), read
-\begin{subequations}
-\begin{align}
+%\begin{subequations}
+\begin{align*}
     u_{i,P}^{(n)} 
     &= 
     - \frac{\alpha_{\vec{u}_P}}{a_P^{u_i}} \left(\sum_{F \in NB(P)} a_F^{u_i} u_{i,F}^{(n)}
@@ -38,8 +38,8 @@ The starting point of the pressure-weighted interpolation method is formed by th
     +                                     b_{Q,u_i}^{(n-1)} 
     -                                     V_Q\left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}   \right)
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,Q}^{(n-1)} \quad,
-\end{align}
-\end{subequations}
+\end{align*}
+%\end{subequations}
 where the superscript \((n-1)\) denotes the previous outer iteration number. The reader should note, that the pressure gradient has not been discretized yet. This has the advantage that the selective interpolation technique \cite{schaefer99} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same way a semi-discrete implicit momentum balance can be formulated for a virtual control volume located between nodes \(P\) and \(Q\). \begin{equation}
   \label{eq:virtualu}
   u_{i,f}^{(n)} 
@@ -448,13 +448,13 @@ It should be noted, that the convective fluxes carrying an \(l\) for \emph{lower
   F_{i,f}^{c,h} &= u_{i,F} \, \gamma_f + u_{i,P} \, (1 - \gamma_f),
 \end{align*}
 where the variable values have to be taken from the previous iteration step \((n-1)\) as necessary and the mass flux \(\dot{m}_f\) has been used as result of the linearization process. Now, the results can be summarized by presenting the convective contribution to the matrix coefficients \(a_{F,u_i}\) and \(a_P^{u_i}\) and the right hand side \(b_{P,u_i}\) as
-\begin{subequations}
-\begin{align}
+%\begin{subequations}
+\begin{align*}
   a_F^{u_i,c} &= \min(\dot{m}_f ,0), \quad \quad a_P^{u_i,c} = \sum_{F \in NB(P)} \max(0,\dot{m}_f) \\[1em]
   \text{and} \quad b_{P,u_i}^c &= \sum_{F \in NB(P)} \eta  \left(u_{i,F}^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right)
                    + \eta \left( u_{i,P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right).
-\end{align}
-\end{subequations}
+\end{align*}
+%\end{subequations}
 
 \subsubsection{Discretization of the Diffusive Term}
 
@@ -489,8 +489,8 @@ where the unit vector pointing in direction of the straight line connecting cont
   \vecg{\xi}_f = \frac{\vec{x}_P - \vec{x}_F}{|| \vec{x}_p - \vec{x}_F ||_2}.
 \end{displaymath}
 The interpolation of the cell center gradients to the boundary faces is performed as in (\ref{eq:interpolgrad}). Now, the contribution of the diffusive part to the matrix coefficients and the right hand side can be calculated as
-\begin{subequations}
-\begin{align}
+%\begin{subequations}
+\begin{align*}
   a_F^{u_i,d} &= - \frac{\mu S_f}{||\vec{x}_P - \vec{x}_F||_2}, 
   \quad \quad a_P^{u_i,d} = \sum_{F \in NB(P)} \frac{\mu S_f}{|| \vec{x}_P - \vec{x}_F ||} \\[1em]
   b_{F,u_i}^d &=  - \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} + n_{f_i}\right)S_f  
@@ -498,20 +498,20 @@ The interpolation of the cell center gradients to the boundary faces is performe
   &=  - \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \xi_{f_i} S_f
   + \mu \left( \left( \frac{\partial u_i}{\partial x_j} \right)_f^{(n-1)}
   + \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} \right) n_{f_i} S_f.
-\end{align}
-\end{subequations}
+\end{align*}
+%\end{subequations}
 
 \subsubsection{Discretization of the Source Terms}
 
 Since in the segregated solution approach in every equation all other variables but the dominant one are treated as constants and the source terms in equation (\ref{eq:semidiscrete}) do not depend on the dominant variable, the discretization is straightforward. The source terms of the momentum balance are discretized using the midpoint integration rule for volume integrals, which leads to the source term
-\begin{equation}
+\begin{displaymath}
   - \iiint\limits_V \frac{\partial p}{\partial x_i} \mathrm{d}V
   - \iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V
   \approx
   - \left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} V_P
   - \rho \beta \left(T_P^{(n-1)} - T_0\right) V_P
   = b_{P,u_i}^{sc}.
-\end{equation}
+\end{displaymath}
 
 \subsection{Discretization of the Temperature Equation}
 \label{sec:discretetemperature}
@@ -523,16 +523,16 @@ The discretization of the temperature equation is performed by the same means as
   = \underbrace{\iiint\limits_V \vphantom{\frac{ T}{ x_j} } q_T \mathrm{d}V }_{\text{source term}}.
 \end{displaymath}
 Now, proceeding as in the previous subsections, one can discretize the advective term, the diffusive term and the source term. Since this process does not provide further insight, only the final results will be presented. The discretization yields the matrix coefficients as
-\begin{subequations}
-  \begin{align}
+%\begin{subequations}
+  \begin{align*}
     a_F^{T} &= \min(\dot{m}_f,0) + \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
     a_P^{T} &= \sum_{F \in NB(P)}\max(0,\dot{m}_f) - \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
     b_{P,T} &= \sum_{F \in NB(P)} \eta  \left(T_F^{(n-1)} \left( \min(\dot{m}_f,0) - \gamma_f \right)\right) 
              + \eta \left( T_{P}^{(n-1)} \left( \max(0,\dot{m}_f) - \left(1 - \gamma_f\right) \right)\right) \nonumber \\[0.5em]
             &\quad + \sum_{F \in NB(P)} \left( \frac{\partial T}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_j} - n_{f_j}\right)S_f \nonumber \\[0.5em]
             &\quad + q_{T_P} V_P.
-  \end{align}
-\end{subequations}
+  \end{align*}
+%\end{subequations}
 Again it is possible, though not always as necessary as in the case of the velocities, to under-relax the solution of the resulting linear system with a factor \(\alpha_T\). This can be accomplished in the way that will be shown in subsection \ref{sec:structure}.
 
 \subsection{Boundary Conditions}
@@ -583,9 +583,9 @@ The case of Dirichlet boundary conditions for the pressure needs special conside
 A common boundary for the solution domain is given by solid walls. For all kind of flows this boundary condition first of all has a kinematic character, since the concept of impermeable walls dictates a zero normal velocity at the wall. In viscous flows, wall boundaries can be interpreted furthermore as a no-slip condition, i.e. a Dirichlet boundary condition for the tangential velocities. Convective fluxes through solid walls are thus zero by definition, however, the diffusive fluxes of the velocities and the temperature require special consideration. To approximate the fluid behavior on a wall boundary correctly, special modifications have to be taken into account to model the normal a shear tension. Furthermore, diffusive fluxes for the temperature can be given by Neumann or Dirichlet boundary conditions.
 
 The derivation of the discretized diffusive flux through wall boundaries starts from the integral momentum balance (\ref{eq:cauchy}) for the vector \(\vec{u}\). Here, only the term for surface forces is needed
-\begin{equation}
+\begin{displaymath}
   \vec{F}_w =  \iint\limits_{S_w} \vec{t} \mathrm{d}S = \iint\limits_{S_w} \vec{T}(\vec{n}_w) \mathrm{d}S.
-\end{equation}
+\end{displaymath}
 For the purpose of treating wall boundary conditions, it is appropriate to use a local coordinate system \(n,t,s\), where \(n\) denotes the wall normal coordinate, \(t\) denotes the coordinate tangential to the wall shear force and, \(s\) is the binormal coordinate. With respect to this coordinate system, the wall normal vector is represented by \(\vec{n}_w = \left( 1, 0 , 0 \right)^T\) and the image of the wall normal vector \(\vec{T}(\vec{n_w})\) is represented by 
 \begin{displaymath}
 \vec{T}(\vec{n}_w) =
@@ -621,7 +621,7 @@ which, together with the continuity equation in differential form (\ref{eq:conti
   \label{eq:contiwall}
  \frac{ \partial u_n }{ \partial x_n } + \frac{ \partial u_t }{ \partial x_t } =  \frac{ \partial u_n }{ \partial x_n } = 0,
 \end{equation}
-what is equivalent to \( \tau_{nn} = 0\) at the wall. It should be noted that the velocity is assumed to have no component in the binormal direction. A physical interpretation of \ref{eq:contiwall} would be, that the transfer of momentum at the wall occurs by shear forces exclusively. Furthermore, the coordinate direction \(t\) is chosen to be parallel to the shear force, which does not represent a restriction, because of the possibility to rotate the coordinate system within the plane. This leads to \( \tau_{ns} = 0 \). Hence, the absolute value of the surface force only depends on the normal derivative of the velocity tangential to the wall. After transforming the coordinates back to the system \((x_1, x_2, x_3)\) the surface force can be calculated and the integral can be discretized using the midpoint integration rule 
+what is equivalent to \( \tau_{nn} = 0\) at the wall. It should be noted that the velocity is assumed to have no component in the binormal direction. A physical interpretation of (\ref{eq:contiwall}) would be, that the transfer of momentum at the wall occurs by shear forces exclusively. Furthermore, the coordinate direction \(t\) is chosen to be parallel to the shear force, which does not represent a restriction, because of the possibility to rotate the coordinate system within the plane. This leads to \( \tau_{ns} = 0 \). Hence, the absolute value of the surface force only depends on the normal derivative of the velocity tangential to the wall. After transforming the coordinates back to the system \((x_1, x_2, x_3)\) the surface force can be calculated and the integral can be discretized using the midpoint integration rule 
 \begin{equation}
   \label{eq:wallforce}
   \vec{F}_w 
@@ -709,13 +709,13 @@ The objective of a finite-volume method is to create a set of linear algebraic e
   a_P^{u_i} u_{P_i} + \sum_{F \in NB(P)} a_F u_{F_i} = b_{P,u_i},
 \end{displaymath}
 where the coefficients are composed as
-\begin{subequations}
+%\begin{subequations}
 \begin{align*}
   a_P^{u_i} &= a_P^{u_i,c} - a_P^{u_i,d} \\
   a_F^{u_i} &= a_F^{u_i,c} - a_F^{u_i,d} \\
   b_{P,u_i} &= b_{P,u_i,c} - b_{P,u_i,d} + b_{P,u_i}^{sc}.
 \end{align*}
-\end{subequations}
+%\end{subequations}
 Similar expressions for the pressure correction equation and the temperature equation can be deduced. In the case of control volumes located at boundaries some of the coefficients will be calculated in a different way. This aspect has been addressed in section \ref{sec:segboundary}.
 
 For the decoupled iterative solution process of the Navier-Stokes equations it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by an \emph{under-relaxation} technique, a convex combination of the solution of the linear system for the present iteration \((n)\) and from the previous iteration \((n-1)\), with the under-relaxation parameter \(\alpha_{u_i} \in (0,1]\), where \(\alpha_{u_i} = 1\) corresponds to no under-relaxation. Generally speaking, this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting, the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\) \cite{schaefer99}. This has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right hand side. This helps to increase memory efficiency.

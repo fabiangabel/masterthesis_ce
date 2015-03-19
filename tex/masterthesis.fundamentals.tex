@@ -137,10 +137,10 @@ Since in incompressible fluids only pressure differences matter, this has no eff
 \label{sec:boussinesq}
 
 Modeling of an incompressible flow with heat transfer has to take into account that fluid properties, as for example density, change with varying temperature. If the variation of temperature is small, one can still assume constant density to maintain the structure of the advection and diffusion terms in (\ref{eq:nsfull}), and only consider changes of the density in the gravitational term. If linear variation of density with respect to temperature is assumed, this approximation is called \emph{Boussinesq} approximation \cite{gray76}. This approximation furthermore consists in assuming that all other fluid properties are constant and viscous dissipation can be neglected. In this case, the Navier-Stokes equations are formulated using a reference density \(\rho_0\) at the reference temperature \(T_0\) and the following temperature-dependent density \(\rho\)
-\begin{equation}
+\begin{displaymath}
   \rho \left( T \right) = \rho_0 \left( 1 - \beta \left( T - T_0 \right) \right).
-\end{equation}
-Here, \(\beta\) denotes the coefficient of thermal expansion. Using the Boussinesq-approximation, the incompressible Navier-Stokes equations in differential form can be formulated as
+\end{displaymath}
+Here, \(\beta\) denotes the coefficient of thermal expansion. Using the Boussinesq approximation, the incompressible Navier-Stokes equations in differential form can be formulated as
 \begin{align*}
   \rho_0 \frac{\partial \left( u_i \right)}{\partial t} 
   + \rho_0 \frac{\partial}{\partial x_j} \left( u_i  u_j \right) 

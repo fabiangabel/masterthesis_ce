@@ -202,7 +202,7 @@ Figure \ref{fig:underrelax} shows the results of the preliminary runtime measure
       \addplot[color=black,mark=*] file {./files/underrelax.64};
     \end{axis}
   \end{tikzpicture}
-  \caption{Wall-clock time comparison for the SIMPLE-algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $64^3$ cells using different under-relaxation factors}
+  \caption{Wall-clock time comparison for the SIMPLE-algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $64^3$ cells using different under-relaxation factors up to $\alpha_\vec{u}=0.999$}
   \label{fig:underrelax}
 \end{figure}
 
@@ -580,7 +580,7 @@ Section \ref{sec:nonorth} introduced different ways to address the degradation o
 \begin{figure}[h!]
   \begin{center}
     \input{./img/nonorthgrid.tikz.tex}
-    \caption{Skewing of an initially equidistant structured orthogonal grid via random movement of inner grid points within a small neighborhood of their original location. The neighborhood with maximal diameter is indicated by a circle around an inner grid point}
+    \caption{Skewing of an initially equidistant, structured and orthogonal grid via random movement of inner grid points within a small neighborhood of their original location. The neighborhood with maximal diameter is indicated by a circle around one inner grid point}
     \label{fig:nonorthgrid}
   \end{center}
 \end{figure}
@@ -606,7 +606,7 @@ To measure the effect of different non-orthogonal corrections on the solution pr
       \end{axis}
     \end{tikzpicture}
   \end{center}
-\caption{Number of needed outer iterations for different relative diameters of the neighborhood in which the movement of grid points takes place parametrized by the orthogonal corrector}
+\caption{Number of needed outer iterations for different relative diameters of the neighborhood in which the movement of grid points takes place, parametrized by the orthogonal corrector}
 \label{fig:nonorth}
 \end{figure}
 
