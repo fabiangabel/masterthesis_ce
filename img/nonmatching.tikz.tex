@@ -52,7 +52,9 @@
 \draw[thin] (A4) -- (A6) -- (B3) -- (B2) -- cycle ;
 
 \coordinate (L) at (barycentric cs:A2=1,A4=1,B1=1,B2=1);
-\draw[fill=black] (L) circle (0.1) node[above right] {$L_{l,l+1}$} ;
+\draw[fill=black] (L) circle (0.1) node[below left] {$L_{l}\,,L_{l+1}$} ;
+\coordinate (L2) at (barycentric cs:A4=1,A6=1,B3=1,B2=1);
+\fill [gray!50] (L2) circle (0.1) ;
 \coordinate (R) at (barycentric cs:A1=1,A3=1,C1=1,C2=1);
 \draw[fill=black] (R) circle (0.1) node[above right] {$R_l$} ;
 \coordinate (RR) at (barycentric cs:A3=1,A5=1,C2=1,C3=1);
