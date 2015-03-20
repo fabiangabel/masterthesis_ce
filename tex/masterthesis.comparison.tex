@@ -614,7 +614,9 @@ The results presented in figure \ref{fig:nonorth} affirm the results presented i
 
 The performance analyses conducted in subsection \ref{sec:speedup} relied on perfect load balancing and thus a load balancing efficiency of \(100\%\). However, in practice, achieving and maintaining ideal load balancing throughout the solution process may be difficult, because of local refinement strategies or an unfavorable grid blocking, i.e. the partition of the solution domain into grid blocks, that lead to an imbalance of load that is distributed among the involved processes. 
 
-One possibility to partially address load imbalances is motivated by the fact, that solution algorithms which solve partial differential equations, spend a significant amount of their time solving linear algebraic systems. Figures \ref{fig:barbalance} show, that approximately \(50\%\) of the wall-clock time of the segregated SIMPLE-solution algorithm, and up-to \(89\%\) of wall clock time of the coupled solution algorithm are spent solving linear systems. The goal of this subsection is to present a simple method by which ideal load balancing with respect to the linear equation solver can be obtained by automatic matrix partitioning.
+One possibility to partially address load imbalances is motivated by the fact, that solution algorithms which solve partial differential equations, spend a significant amount of their time solving linear algebraic systems. Based on the wall-clock time measurements for the solution of an analytic test case with 826891 unknowns, figure \ref{fig:barbalance} shows, that approximately \(48\%\) of the wall-clock time of the segregated SIMPLE-solution algorithm, and up-to \(89\%\) of wall clock time of the coupled solution algorithm are spent solving linear systems. The goal of this subsection is to present a simple method by which ideal load balancing, with respect to the linear equation solver, can be obtained using automatic matrix partitioning.
+
+Using built in PETSc subroutines, the rows of the corresponding matrices can be distributed automatically across all involved processes. With this technique each process will retain the initially assigned variable data and calculate gradients, fluxes and matrix and right hand side coefficients for the unknowns that correspond to the assigned portion of the numerical grid. Independently the process gets assigned a portion of the matrix, which generally leads to the process assembling parts of the matrix that do not correspond to the coefficients it calculated. Thus additional communication becomes necessary during the matrix assembly step.
 
 \begin{figure}[!h]
   \centering
@@ -644,9 +646,9 @@ n(p)
 \end{array}\right.
 ,
 \end{equation}
-where \(p = 0,\dots,m-1\) and \(\lfloor \cdot \rfloor\) denotes the floor-function, which maps the possibly rational result of the integer division in (\ref{eq:load}) to the largest integer smaller than the result. It is evident that using equation (\ref{eq:load}) for load balancing leads to numbers of unknowns that differ by maximal one unknown across the involved processors.
+where \(p = 0,\dots,m-1\) and \(\lfloor \cdot \rfloor\) denotes the floor-function, which maps the possibly rational result of the integer division in (\ref{eq:load}) to the largest integer smaller than the result. It is evident, that using equation (\ref{eq:load}) for load balancing leads to numbers of rows that differ by maximal one row across the involved processors.
 
-To analyse the effect of the ideal matrix partitioning, a random number generator was used to create different grid resolutions for each one of the eight blocks of a block structured grid, having a total of 826891 cells. Figure \ref{fig:barbalance} shows the initial distribution of unknowns and the balanced number of unknowns with respect to the matrix. It is evident, that due to the simplicity of the load balancing technique a lot of data has to be redistributed. The data is distributed in contiguous chunks, which leads to some processes like process 0 or process 2 to keep their initially assigned data while processors like process 3 or process 5 loose almost all their assigned data. More complex distribution algorithms are necessary to maximize the retention rate of data for the individual processors, since a higher retention rate directly reduces the communication during matrix assembly.
+To analyse the effect of the ideal matrix partitioning, a random number generator was used to create different grid resolutions for each one of the eight blocks of a block structured grid, having a total of 826891 cells. Figure \ref{fig:barbalance} shows the default distribution of rows, that would correspond to the data each process has been assigned, comparing with the balanced number of rows, for the case if the automatic matrix partitioning is used. One can observe, that, due to the simplicity of the load balancing technique, significant incoherences surge between the assigned grid and variable data and the assigned matrix rows. The rows are distributed in contiguous chunks, which leads to processes like process 0 or process 2 keeping high data coherence with the assigned matrix rows, while processes like process 3 or process 5 lack data coherence. Thus, more complex distribution algorithms are necessary to maximize the retention rate of data for the individual processors maintaining the data coherence, since a higher retention rate directly reduces the communication needed during matrix assembly. This is especially recommendable for higher processor counts as the scattering of data and corresponding matrix rows may significantly decrease performance.
 
 \begin{figure}[h!]
 \newcommand{\wheelchart}[3]{
@@ -691,8 +693,8 @@ To analyse the effect of the ideal matrix partitioning, a random number generato
       %enlargelimits=0.35,
       %legend pos=outer north east,
       xbar,
-      bar width=7pt,
-      height=8cm,
+      bar width=5pt,
+      height=9cm,
       width=8cm
     ]
     \addplot[fill=black]          coordinates {(103362,0) (103362,1) (103362,2) (103361,3) (103361,4) (103361,5) (103361,6) (103361,7)};
@@ -733,21 +735,23 @@ To analyse the effect of the ideal matrix partitioning, a random number generato
 \node[align=center] at (292.5:3.0cm) {Proc 3};
 \node[align=center] at (337.5:3.0cm) {Proc 2};
 
-\node[align=center] at   (61.2:1.25cm) { P0};
-\node[align=center] at   (30.6:1.25cm) { P1};
-\node[align=center] at  (-28.8:1.25cm) { P2};
-\node[align=center] at (-102.6:1.25cm) { P3};
-\node[align=center] at (-158.4:1.25cm) { P4};
-\node[align=center] at (-203.4:1.25cm) { P5};
-\node[align=center] at (-223.2:1.25cm) { P6};
-\node[align=center] at (-258.8:1.25cm) { P7};
+\node[align=center] at   (61.2:1.25cm) { P 0};
+\node[align=center] at   (30.6:1.25cm) { P 1};
+\node[align=center] at  (-28.8:1.25cm) { P 2};
+\node[align=center] at (-102.6:1.25cm) { P 3};
+\node[align=center] at (-158.4:1.25cm) { P 4};
+\node[align=center] at (-203.4:1.25cm) { P 5};
+\node[align=center] at (-223.2:1.25cm) { P 6};
+\node[align=center] at (-258.8:1.25cm) { P 7};
 \end{tikzpicture}
 \end{minipage}
 \caption{Comparison of the number of unknowns assigned to each process and the assigned rows of the matrix using automatic repartitioning for load balancing of the 826891 unknowns. The inner pie chart shows the initial distribution of the matrix rows, whereas the outer pie chart shows the distribution of the matrix rows after the automatic repartitioning.}
 \label{fig:distcpld}
 \end{figure}
 
-The next step is to compare the effect on runtime and the redistribution of runtime on the phases where the time was spent. Figure \ref{fig:distseg} shows, that for the presented test case the redistribution of the matrix on one hand decreases the needed wall clock time, while on the other hand increases the share of the MAIN phase. The MAIN phase accounts among others for the matrix assembly, which is the only action of this phase that is affected by the matrix distribution, since depending on the new matrix layout, one processor might need to assemble parts of the matrix which do not reside in its address space. It can be observed that due to the increased amount of communication necessary for the matrix assembly, relatively more time was spent in this phase compared to the test case using the default partitioning. The absolute difference in time is negligible, which shows that the communication overhead during the matrix assembly is more than compensated by the application of the ideally balanced matrix solver steps. It should be noted that all test calculations were performed using a single node of the MPI section of the HHLR, thus the presented results do not account for the probable communication performance degradation due to the effects of the interconnect.
+The following paragraph will analyse the effect of the automatic matrix partitioning as load balancing technique on the runtime and the redistribution of runtime on the phases where the time was spent. The phases for the segregated solution algorithm are the MAIN phase, which accounts for the calculation of gradients, fluxes, matrix coefficients and the matrix assembly, the MOM phase, in which the linear systems of the momentum balances are solved and the PRESSCORR phase, in which the linear systems are solved for the pressure correction. Figure \ref{fig:distseg} shows, that for the presented test case the automatic partitioning of the matrix on the one hand decreases the needed wall clock time, while on the other hand it increases the share of the MAIN phase at the total runtime. Matrix assembly during the MAIN phase is the only action of this phase, that is affected by the new matrix distribution. Thus, initial load imbalances will still affect the calculation of gradients, and other passages of the implementation that use global reduce operations and forced synchronization like the calculation of the mean pressure to adjust the pressure level throughout the solution domain.
+
+Depending on the parallel matrix layout, one processor might need to assemble parts of the matrix, which do not reside in its address space. It can be observed that, due to the increased amount of communication necessary for the matrix assembly, relatively more time was spent in this phase compared to the test case using the default partitioning. The absolute difference in time is negligible, which shows that the communication overhead during the matrix assembly step is more than compensated by the application of the ideally balanced matrix solver steps. It should be noted, that all test calculations were performed using a single node of the MPI section of the HHLR, thus the presented results do not account for the additional communication performance degradation due to the effects of the inter-node interconnect.
 
 As figure \ref{fig:barbalance} shows, the beneficial effect of automatic matrix partitioning on solver performance is expected to increase significantly if applied to the matrix used in the coupled solution process. On the one hand relatively more time is spent solving the linear system and on the other hand only one linear system is solved compared to the four linear systems solved in a segregated solution algorithm.
 
@@ -764,7 +768,7 @@ As figure \ref{fig:barbalance} shows, the beneficial effect of automatic matrix 
   \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
  \pie [ color ={ black!10 , black!50 , black!30 , black!40}, rotate =90, radius=2.5 ]  {50/MAIN, 13/MOM, 37/PRESSCORR}
- \node[draw,align=left] at (0,-3.5) {Default partitioning -- 0.1241E+04s};
+ \node[draw,align=left] at (0,+3.5) {Default partitioning -- 0.1241E+04s};
 \end{tikzpicture}
 \end{minipage}}
 \hfil
@@ -772,7 +776,7 @@ As figure \ref{fig:barbalance} shows, the beneficial effect of automatic matrix 
   \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
  \pie [ color ={ black!10 , black!50 , black!30 , black!40}, rotate =90, radius=2.5 ]  {64/MAIN, 12/MOM, 24/PRESSCORR}
- \node[draw,align=left] at (0,-3.5) {Automatic partitioning -- 0.9891E+03s};
+ \node[draw,align=left] at (0,+3.5) {Automatic partitioning -- 0.9891E+03s};
 \end{tikzpicture}
 \end{minipage}}
 \caption{Distribution of wall-clock time for one and eight processes, solving for an analytic solution, using the default data partitioning for matrix assembly and automatic partitioning to balance the load. MAIN refers to the gradient calculations, the flux calculation and matrix assembly, MOM to the solution of the linear systems for the momentum balance and PRESS to the solution of the linear systems for the pressure correction.}
