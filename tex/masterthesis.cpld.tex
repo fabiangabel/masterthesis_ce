@@ -49,7 +49,7 @@ The adaption comprises the removal of last term of equation (\ref{eq:pwim}) acco
   \right] \, S_f.
 \end{align*}
 
-Even though this equation is solved for the pressure \(p\), while equation (\ref{eq:presscorr}) is solved for the pressure correction \(p'\), the matrix coefficients from the discretization of the pressure correction equation (\ref{eq:segpresscorrcoeff}) and the calculation of the right hand side given in equation (\ref{eq:presscorrb}), remain the same. For the implicit coupling to the velocities \(u_i\), additional matrix coefficients have to be considered. These can be calculated as
+Even though this equation is solved for the pressure \(p\), while equation (\ref{eq:presscorr}) is solved for the pressure correction \(p'\), the matrix coefficients from the discretization of the pressure correction equation (\ref{eq:segpresscorrcoeff}) and the calculation of the right-hand side given in equation (\ref{eq:presscorrb}), remain the same. For the implicit coupling to the velocities \(u_i\), additional matrix coefficients have to be considered. These can be calculated as
 \begin{displaymath}
   a_F^{p,u_i} = \rho \, \gamma_f S_f \quad \text{and} \quad a_P^{p,u_i} = \sum_{F \in NB(P)} \rho \, (1-\gamma_f) \, S_f.
 \end{displaymath}
@@ -98,7 +98,7 @@ that handles the coupling explicitly by using the temperature result of the prev
 
 \subsubsection{Implicit Velocity-to-Temperature Coupling}
 
-In the same way, it is possible to realize the coupling described in the previous subsection by implicitly considering the temperature in the momentum balances, which leads to an additional matrix coefficient \(a_P^{u_i,T}\) and an additional contribution to the right hand side, accounting for the coupling to the temperature equation,
+In the same way, it is possible to realize the coupling described in the previous subsection by implicitly considering the temperature in the momentum balances, which leads to an additional matrix coefficient \(a_P^{u_i,T}\) and an additional contribution to the right-hand side, accounting for the coupling to the temperature equation,
 \begin{displaymath}
   a_P^{u_i,T} = \rho \beta g_i V_P 
   \quad \text{and} \quad
@@ -140,7 +140,7 @@ A comparison with section \ref{sec:segconvective} shows, that the underlined ter
     \right] \nonumber \\[1em]
     &  \quad\quad -\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
 \end{align*}
-If this semi-implicit, semi-discrete equation is discretized completely, new matrix and right hand side contributions can be calculated
+If this semi-implicit, semi-discrete equation is discretized completely, new matrix and right-hand side contributions can be calculated
 \begin{align*}
   \allowdisplaybreaks
   &a_F^{T,u_i} = \rho T_f^{(n-1)} \gamma_f n_{f,i} S_f \\[1.0em] 
@@ -149,7 +149,7 @@ If this semi-implicit, semi-discrete equation is discretized completely, new mat
   &\text{and} \quad
   a_P^{T,p} = - \sum_{F \in NB(P)} T_f^{(n-1)} a_F^{T,p}.
 \end{align*}
-The explicit parts resulting from the Newton-Raphson linearization yield additional contributions to the right hand side
+The explicit parts resulting from the Newton-Raphson linearization yield additional contributions to the right-hand side
 \begin{displaymath}
   b_P^{T,\text{NR}} 
   = 
@@ -169,11 +169,11 @@ How Dirichlet boundary conditions, also known as inlet boundaries, affect the ma
 \begin{displaymath}
   a_P^{u_i,p} = a_P^{u_i,p} + n_{f,i} S_f.
 \end{displaymath}
-Wall boundary conditions are treated likewise with the additional modifications to the right hand side contribution as presented in section \ref{sec:walls}.
+Wall boundary conditions are treated likewise with the additional modifications to the right-hand side contribution as presented in section \ref{sec:walls}.
 
-The treatment of velocity Dirichlet boundary conditions in the pressure equation is straightforward, since they correspond to mass fluxes through the boundary faces. Hence, the matrix coefficients remain unchanged and only the right hand side contributions embrace the fact that no implicit interpolation is necessary to calculate the mass flux through the boundary face.
+The treatment of velocity Dirichlet boundary conditions in the pressure equation is straightforward, since they correspond to mass fluxes through the boundary faces. Hence, the matrix coefficients remain unchanged and only the right-hand side contributions embrace the fact that no implicit interpolation is necessary to calculate the mass flux through the boundary face.
 
-In the case of Dirichlet pressure boundary conditions, an additional contribution to the right hand side of the momentum balances has to be considered
+In the case of Dirichlet pressure boundary conditions, an additional contribution to the right-hand side of the momentum balances has to be considered
 \begin{displaymath}
   b_P^{u_i} = b_P^{u_i} + p_f n_{i,f} S_f.
 \end{displaymath}
