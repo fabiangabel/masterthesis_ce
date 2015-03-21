@@ -1,14 +1,14 @@
 \section{Implicit Finite-Volume Method for Incompressible Flows -- Fully Coupled Approach}
 \label{sec:cpld}
 
-Since the antecedent section \ref{sec:seg} already discussed the discretization details of the involved equations, this section aims at a comparison on the algorithmic level of the SIMPLE-algorithm, presented in section \ref{sec:simple}, with an implementation of a fully coupled solution algorithm. It should be noted, that the discretization of the equations to be solved is not changed in any way to maintain comparability, so the presented differences are due to differences in the solution algorithm exclusively. Successful implementations of a fully coupled solution algorithm for incompressible Navier-Stokes equations have been presented in \cite{chen10,darwish09,falk13,vakilipour12}. The presented work will extend the solution approach presented in \cite{falk13} to three-dimensional domains. Furthermore, this section will present various approaches to incorporate different degrees of velocity-to-temperature and temperature-to-velocity/pressure coupling, as they are presented in \cite{vakilipour12}. Finally, the structure of the resulting linear system to be solved is discussed.
+Since the antecedent section \ref{sec:seg} already discussed the discretization details of the involved equations, this section aims at a comparison on the algorithmic level of the SIMPLE-algorithm, presented in section \ref{sec:simple}, with an implementation of a fully coupled solution algorithm. It should be noted that the discretization of the equations to be solved is not changed in any way to maintain comparability, so the presented differences are due to differences in the solution algorithm exclusively. Successful implementations of a fully coupled solution algorithm for incompressible Navier-Stokes equations have been presented in \cite{chen10,darwish09,falk13,vakilipour12}. The presented work will extend the solution approach presented in \cite{falk13} to three-dimensional domains. Furthermore, this section will present various approaches incorporating different degrees of velocity-to-temperature and temperature-to-velocity/pressure coupling, as they are presented in \cite{vakilipour12}. Finally, the structure of the resulting linear system to be solved is discussed.
 
 \subsection{The Fully Coupled Algorithm -- Pressure-Velocity Coupling Reconsidered}
 \label{sec:reconsider}
 
-This subsection motivates the use of a fully coupled algorithm to address pressure-velocity coupling and mentions the differences to the approach presented in subsection \ref{sec:simple}. The mentioned subsection presented a common solution approach to solve the incompressible Navier-Stokes equations. After linearizing the equations, the momentum balances are solved, using the pressure from the previous iteration as a guess. Generally the velocity field obtained by solving a momentum balance with a guessed pressure does not obey continuity, hence the velocity field and the pressure field have to be corrected. This in turn leads to an inferior solution with respect to the residual of the momentum balances. To avoid this iterative guess-and-correct solution process, another class of approaches dealing with the pressure-velocity coupling problematic, represented by algorithms that are \emph{fully coupled}, will be introduced now.
+This subsection motivates the use of a fully coupled algorithm to address pressure-velocity coupling and mentions the differences to the approach presented in subsection \ref{sec:simple}. The mentioned subsection presented a common solution approach to solve the incompressible Navier-Stokes equations. After linearizing the equations, the momentum balances are solved, using the pressure from the previous iteration as a guess. Generally the velocity field obtained by solving a momentum balance with a guessed pressure does not obey continuity. Hence, the velocity field and the pressure field have to be corrected. This in turn leads to an inferior solution with respect to the residual of the momentum balances. To avoid this iterative guess-and-correct solution process, another class of approaches dealing with the pressure-velocity coupling problematic, represented by algorithms that are \emph{fully coupled}, will be introduced now.
 
-The central aspect of fully coupled solution methods for Navier-Stokes equations is, that instead of solving for the velocities and pressure corrections sequentially, the velocity field and the pressure are solved for simultaneously \cite{schaefer99}. This way, every velocity field that is calculated, obeys conservation of momentum and mass, without the need to be corrected. As a result, the under-relaxation due to the resolution of the pressure-velocity coupling is no longer required, which accelerates convergence significantly. The only reason for still needing an iterative solution process, is the nonlinearity of the Navier-Stokes equations, which is accounted for by the use of the Picard iteration process, which has been presented in subsection \ref{sec:nonlinear}. The iterations fortunately make room for deferred corrections as introduced in subsection \ref{sec:segdiscretization}. It should be noted that it is also possible to use the coupled solution algorithm to calculate pressure corrections. Reference \cite{klaij13} uses this approach to solve the Navier-Stokes equations by using a SIMPLE-type method as preconditioner.
+The central aspect of fully coupled solution methods for Navier-Stokes equations is, that instead of solving for the velocities and pressure corrections sequentially, the velocity field and the pressure are solved for simultaneously \cite{schaefer99}. This way, every velocity field that is calculated obeys conservation of momentum and mass, without the need to be corrected. As a result, the under-relaxation due to the resolution of the pressure-velocity coupling is no longer required, which accelerates convergence significantly. The only reason for still needing an iterative solution process, is the nonlinearity of the Navier-Stokes equations, which is accounted for by the use of the Picard iteration process, which has been presented in subsection \ref{sec:nonlinear}. The iterations, fortunately, make room for deferred corrections as introduced in subsection \ref{sec:segdiscretization}. It should be noted that it is also possible to use the coupled solution algorithm to calculate pressure corrections. Reference \cite{klaij13} uses this approach to solve the Navier-Stokes equations by using a SIMPLE-type method as preconditioner.
 
 On the downside, implementations of fully coupled solution methods require significantly more system memory than segregated methods. This is due to the higher amount of information, that has to be available at the same time, and the resulting linear systems, which also require more memory, due to the increased amount of unknowns to solve for. Furthermore, the bad condition of the linear algebraic system \cite{schaefer99} tends to slow down the convergence of the equation solver algorithm.
 
@@ -94,7 +94,7 @@ The decoupled approach for addressing velocity-to-temperature coupling is simila
 \begin{displaymath}
   b_P^{u_i,T} := - \rho \beta \left( T_P^{(n-1)} - T_0 \right) g_i V_P,
 \end{displaymath}
-that handles the coupling explicitly by using the temperature result of the previous outer iteration. In some cases it might be necessary to under-relax the temperature each iteration \cite{ferziger02}.
+that handles the coupling explicitly by using the temperature result of the previous outer iteration. In some cases, it might be necessary to under-relax the temperature each iteration \cite{ferziger02}.
 
 \subsubsection{Implicit Velocity-to-Temperature Coupling}
 
@@ -108,11 +108,11 @@ In the same way, it is possible to realize the coupling described in the previou
 \subsubsection{Temperature-to-Velocity/Pressure Coupling -- Newton-Raphson Linearization}
 \label{sec:nrcoupled}
 
-The previous section discussed the velocity-to-temperature coupling and so far, only the momentum balances were affected by the realization of the coupling methods. Independently, it is possible to couple the temperature equation, not only to the momentum balances, but also to the pressure equation. The purpose of this subsection is to present a discretization that achives this opposite type of coupling, which will be referred to as \emph{temperature-to-velocity/pressure} coupling.
+The previous section discussed the velocity-to-temperature coupling and so far, only the momentum balances were affected by the realization of the coupling methods. Independently, it is possible to couple the temperature equation, not only to the momentum balances, but also to the pressure equation. The purpose of this subsection is to present a discretization that achieves this opposite type of coupling, which will be referred to as \emph{temperature-to-velocity/pressure} coupling.
 
 In section \ref{sec:discretetemperature}, the nonlinear partial differential equations were linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure correction equations. If the decoupled approach is used, this treatment remains valid. But, if an implicit temperature coupling is sought, a coupling of the temperature equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization}, which can be interpreted as a bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial, similar to Newton-like methods to solve nonlinear equations \cite{ferziger02}. It should be noted that, even though Newton-like methods are known for their faster, up to quadratic convergence compared to methods with linear convergence like the Picard iteration, the intention of using a Newton-like linearization is to create coupling to accelerate convergence. For a Newton-like linearization to accelerate convergence, instead of only the convective term, the whole equation should use a Newton method for the nonlinear solution algorithm. For this, the \emph{Newton-Raphson linearization} has not been used within segregated, SIMPLE-like solution algorithms \cite{ferziger02}.
 
-The Newton-Raphson linearization technique is applied to the convective term of the temperature equation as follows. A first order Taylor approximation of the mass specific convective flux through the boundary face \(S_f\) around the \((n-1)\)st iteration value yields for the approximation at the \(n\)th iteration
+The Newton-Raphson linearization technique is applied to the convective term of the temperature equation as follows. A first order Taylor approximation of the mass-specific convective flux through the boundary face \(S_f\) around the \((n-1)\)st iteration value yields for the approximation at the \(n\)th iteration
 \begin{align*}
   \left(u_{j,f} T_f \right)^{(n)} 
   &\approx 
@@ -126,7 +126,7 @@ The Newton-Raphson linearization technique is applied to the convective term of 
   &=
   \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  + \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} \vphantom{(u_jT)}{T_f}^{(n-1)}  -  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
 \end{align*}
-A comparison with section \ref{sec:segconvective} shows, that the underlined term coincides with the term from the usual linearization. The first of the two new terms will be treated implicitly and explicitly after using the pressure-weighted interpolation method from section \ref{sec:massflux} to interpolate the value of \(u_{j,f}\). The second term will be treated explicitly. The use of the pressure-weighted interpolation method does not only create a temperature-to-velocity but also a temperature-to-pressure coupling. Applying the pressure-weighted interpolation, the equation for the mass specific convective flux reads
+A comparison with section \ref{sec:segconvective} shows that the underlined term coincides with the term from the usual linearization. The first of the two new terms will be treated implicitly and explicitly after using the pressure-weighted interpolation method from section \ref{sec:massflux} to interpolate the value of \(u_{j,f}\). The second term will be treated explicitly. The use of the pressure-weighted interpolation method does create not only a temperature-to-velocity but also a temperature-to-pressure coupling. Applying the pressure-weighted interpolation, the equation for the mass-specific convective flux reads
 \begin{align*}
   \left(u_{j,f} T_f \right)^{(n)} 
   &\approx 
@@ -163,7 +163,7 @@ The explicit parts resulting from the Newton-Raphson linearization yield additio
 
 \subsection{Boundary Conditions on Domain and Block Boundaries}
 
-The treatment of boundary conditions and transitional conditions at block boundaries is very similar to the way presented in section \ref{sec:segboundary}. The main difference results from the fact, that, in addition to the necessary changes from section \ref{sec:segboundary}, modifications are necessary to the new matrix coefficients from the discretized momentum balance and the pressure equation in the coupled solution algorithm. The purpose of this section is therefore to only focus on these additional changes.
+The treatment of boundary conditions and transitional conditions at block boundaries is very similar to the way presented in section \ref{sec:segboundary}. The main difference results from the fact, that, in addition to the necessary changes from section \ref{sec:segboundary}, modifications are necessary to the new matrix coefficients from the discretized momentum balance and the pressure equation in the coupled solution algorithm. The purpose of this section is, therefore, to focus on these additional changes only.
 
 How Dirichlet boundary conditions, also known as inlet boundaries, affect the matrix coefficients that only correspond to the velocities has been presented in section \ref{sec:segDirichlet}. It is common to use Neumann boundary conditions for the pressure at Dirichlet boundaries with respect to the velocities \cite{darwish09}. Under the assumption that the gradient of the pressure vanishes at inlet boundaries, the matrix coefficients for the velocity-to-pressure coupling have to be modified to 
 \begin{displaymath}
@@ -171,7 +171,7 @@ How Dirichlet boundary conditions, also known as inlet boundaries, affect the ma
 \end{displaymath}
 Wall boundary conditions are treated likewise with the additional modifications to the right-hand side contribution as presented in section \ref{sec:walls}.
 
-The treatment of velocity Dirichlet boundary conditions in the pressure equation is straightforward, since they correspond to mass fluxes through the boundary faces. Hence, the matrix coefficients remain unchanged and only the right-hand side contributions embrace the fact that no implicit interpolation is necessary to calculate the mass flux through the boundary face.
+The treatment of velocity Dirichlet boundary conditions in the pressure equation is straightforward since they correspond to mass fluxes through the boundary faces. Hence, the matrix coefficients remain unchanged, and only the right-hand side contributions embrace the fact that no implicit interpolation is necessary to calculate the mass flux through the boundary face.
 
 In the case of Dirichlet pressure boundary conditions, an additional contribution to the right-hand side of the momentum balances has to be considered
 \begin{displaymath}
@@ -183,7 +183,7 @@ As presented in subsection \ref{sec:segboundary} a \emph{lagged} Dirichlet bound
 \end{displaymath}
 The coefficients for the pressure are modified as usual for Dirichlet boundary conditions, which was shown in section \ref{sec:segboundary}.
 
-Finally, it should be noted that the that the Newton-Raphson linearization technique does not apply to the velocities on boundary faces, since the value of the velocities is known exactly and a linearization of the convective contribution becomes unnecessary.
+Finally, it should be noted that the that the Newton-Raphson linearization technique does not apply to the velocities on boundary faces, since the value of the velocities is known exactly, and a linearization of the convective contribution becomes unnecessary.
 
 %\subsubsection{Dirichlet Boundary Condition for Pressure} NOT TO BE USED
 
@@ -214,7 +214,7 @@ Concluding this section, the final form of the derived linear algebraic equation
   &= b_{P,T}^{\vphantom{T,p}}.
 \end{align*}
 
-The different degrees of coupling between the different equations will affect the matrix structure. Depending on the variable, arrangement other matrix structures are possible. Figure \ref{fig:cpldassemble} shows the resulting block matrix structure if the fields are treated as interlaced quantities. This variable arrangement corresponds to a linear sub system for each control volume:
+The different degrees of coupling between the different equations will affect the matrix structure. Depending on the variable, arrangement other matrix structures are possible. Figure \ref{fig:cpldassemble} shows the resulting block matrix structure if the fields are treated as interlaced quantities. This variable arrangement corresponds to a linear subsystem for each control volume:
 \begin{displaymath}
 \left[
   \begin{array}{ccccc}
@@ -265,7 +265,7 @@ The different degrees of coupling between the different equations will affect th
 \end{array}
 \right].
 \end{displaymath}
-Figure \ref{fig:interlacemat} shows the non-zero structure of a block matrix for the same case if field interlacing is used. It should be noted, that the variable arrangement only affects the storage of the matrices not the way the matrix is used, since it is possible to arbitrarily reorder the matrix entries through the underlying index sets to obtain other matrix representations. One commonly used matrix representation is shown in figure \ref{fig:nointerlacemat}.
+Figure \ref{fig:interlacemat} shows the non-zero structure of a block matrix for the same case if field interlacing is used. It should be noted, that the variable arrangement only affects the storage of the matrices, not the way the matrix is used, since it is possible to reorder the matrix entries arbitrarily through the underlying index sets to obtain other matrix representations. One commonly used matrix representation is shown in figure \ref{fig:nointerlacemat}.
 
 \begin{figure}
   \centering
@@ -277,7 +277,7 @@ Figure \ref{fig:interlacemat} shows the non-zero structure of a block matrix for
 \begin{figure}
   \centering
   \input{./img/interlacemat.tikz.tex}
-  \caption{Non-zero structure of the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The variables have been interlaced and the matrix consists of blocks as shown in figure \ref{fig:cpldassemble}.}
+  \caption{Non-zero structure of the linear system used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The variables have been interlaced, and the matrix consists of blocks as shown in figure \ref{fig:cpldassemble}.}
   \label{fig:interlacemat}
 \end{figure}
 
