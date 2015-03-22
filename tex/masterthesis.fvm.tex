@@ -1,13 +1,13 @@
-\section{Finite-Volume Methods for Incompressible Flows -- Theoretical Basics}
+\chapter{Finite-Volume Methods for Incompressible Flows -- Theoretical Basics}
 \label{sec:fvm}
 
-This section deals with the fundamentals of the numerical solution via a finite-volume method for the formerly presented set of partial differential equations (\ref{eq:completeset}). The focus of this section is providing an overview on the methods used in the present thesis. The information contained in this section is based on \cite{ferziger02,jasak96,schaefer99,muzaferja}. The overview starts by mentioning the relevant grid types and the discretization techniques. On the basis of integral formulations of the equations to be solved, the contained integrals and differential operators have to be discretized. This chapter furthermore presents different approaches to the handling of corrections for cases of increased non-orthogonality, which are causing degradation of grid quality.
+This chapter deals with the fundamentals of the numerical solution via a finite-volume method for the formerly presented set of partial differential equations (\ref{eq:completeset}). The focus of this chapter is providing an overview on the methods used in the present thesis. The information contained in this chapter is based on \cite{ferziger02,jasak96,schaefer99,muzaferja}. The overview starts by mentioning the relevant grid types and the discretization techniques. On the basis of integral formulations of the equations to be solved, the contained integrals and differential operators have to be discretized. This chapter furthermore presents different approaches to the handling of corrections for cases of increased non-orthogonality, which are causing degradation of grid quality.
   
 The finite-volume method aims at providing particular linear algebraic equations to determine an approximate solution of a partial differential equation. However, since the Navier-Stokes equations are nonlinear, an intermediate step, before solvers for linear equation systems can be applied: The discrete equations have to be linearized. This condition leads to the need for an iteration process, the \emph{Picard iteration}, which this thesis will also briefly explain. 
       
-\subsection{Numerical Grid}
+\section{Numerical Grid}
 
-This subsection provides a brief overview on the grid structure relevant to the present thesis. The main idea behind finite-volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so-called \emph{control volumes}. The result of this finite partition of a contiguous problem domain is called numerical grid. Every grid consists of a finite number of control volumes representing the boundaries of a discrete domain of integration. Depending on whether the numerical solution of an equation is to be calculated on the boundary vertices or in the center of a grid cell, the variable arrangement is denoted to be vertex-oriented or cell center-oriented. The remainder of the present thesis assumes that the variables reside in the cell centers of the respective control volumes.
+This section provides a brief overview on the grid structure relevant to the present thesis. The main idea behind finite-volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so-called \emph{control volumes}. The result of this finite partition of a contiguous problem domain is called numerical grid. Every grid consists of a finite number of control volumes representing the boundaries of a discrete domain of integration. Depending on whether the numerical solution of an equation is to be calculated on the boundary vertices or in the center of a grid cell, the variable arrangement is denoted to be vertex-oriented or cell center-oriented. The remainder of the present thesis assumes that the variables reside in the cell centers of the respective control volumes.
 
 Another option to arrange variables specifically for algorithms that solve the Navier-Stokes equations is the so-called \emph{staggering}. This method stores the variable values of different variables at different grid locations, which facilitates the interpolation of the respective values. As the methods employed in the present thesis are intended to be applicable to complex geometries, the cell-centered non-staggered approach offers more flexibility. Figure \ref{fig:cell vertex} shows the different variable arrangement options on a two-dimensional grid.
 
@@ -55,7 +55,7 @@ Inside a structured grid block, cells with the shape of hexahedrons are used. In
   \end{minipage}}
  \end{figure}
 
-\subsection{Approximation of Integrals and Derivatives}
+\section{Approximation of Integrals and Derivatives}
 \label{sec:approxintegralderivative}
 
 In the course of transforming a partial differential equation into a system of linear algebraic equations, integrals and derivatives have to be approximated. The simplest method for approximating an integral is by using the \emph{midpoint rule}. This rule is similar to the mean value theorem of integration, which states that there exists a point \(\vec{\xi} \in V\) for a Riemann integrable function \(\phi\) such that \(\textstyle \phi(\xi) \int_V \mathrm{d}V = \int_V \phi(x) \mathrm{d}V\). For the midpoint rule \(\vec{\xi}\) is taken to be the center of mass of \(V\). If the integration domain \(V\) is indeed a volume, fortunately the calculation of \(\phi(\mathbb{\xi})\) with \(\textstyle \vec{\xi} := \left({ \int_V x_i \mathrm{d}V }/{ \int_V \mathrm{d}V } \right)_{i = 1,\dots,3}\) presents no difficulties since, due to the collocated variable arrangement, the value of \(\phi\) is stored in the cell center, which corresponds to the location \(\vec{\xi}\). However, if the domain of integration is a surface, a preceding interpolation step is necessary.
@@ -86,7 +86,7 @@ where \( \gamma_e := {||\vec{x}_P - \vec{x}_e||_2}/{||\vec{x}_P - \vec{x}_E||_2}
   \sum_f \phi_f n_i S_f.
 \end{equation}
 
-\subsection{Treatment of Non-Orthogonality of Grid Cells}
+\section{Treatment of Non-Orthogonality of Grid Cells}
 \label{sec:nonorth}
 
 Unfortunately, real applications involve complex geometries, a fact which in turn affects the grid's orthogonality. On non-orthogonal meshes, the directional derivative in the direction of the face's unit normal vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other hand, the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error following from this approximation \cite{jasak96}. Hence, a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
@@ -94,11 +94,11 @@ Unfortunately, real applications involve complex geometries, a fact which in tur
   \label{eq:orthdecomp}
   \vec{S}_e = \vecg{\Delta} + \vec{k},
 \end{equation}
-where \(\vecg{\Delta}\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center \(\vec{x}_P\) of the control volume \(P\) to the center \(\vec{x}_E\) of its neighbor \(E\). This vector controls the \emph{orthogonal} contribution to the directional derivative. Vector \(\vec{k}\) controls the influence of the \emph{non-orthogonal} contribution. In the next paragraphs, the three main decompositions of the surface vector \(\vec{S}_e\) will be presented by stating the respective expression for \(\vecg{\Delta}\). The resulting vector \(\vec{k}\) can be calculated by using (\ref{eq:orthdecomp}). One important characteristic common to all the presented approaches is that the non-orthogonal contribution vanishes when an orthogonal grid is used. For reasons of graphical representation, the decompositions are chosen to be represented two-dimensionally. Figure \ref{fig:nonorth} gives a geometrical interpretation of the three approaches. The last subsection deals with the integration of one generic approach into the discretization process. 
+where \(\vecg{\Delta}\) is parallel to the vector \(\vec{d}_e := \left(\vec{x}_E - \vec{x}_P\right)\) that directly connects the center \(\vec{x}_P\) of the control volume \(P\) to the center \(\vec{x}_E\) of its neighbor \(E\). This vector controls the \emph{orthogonal} contribution to the directional derivative. Vector \(\vec{k}\) controls the influence of the \emph{non-orthogonal} contribution. In the next paragraphs, the three main decompositions of the surface vector \(\vec{S}_e\) will be presented by stating the respective expression for \(\vecg{\Delta}\). The resulting vector \(\vec{k}\) can be calculated by using (\ref{eq:orthdecomp}). One important characteristic common to all the presented approaches is that the non-orthogonal contribution vanishes when an orthogonal grid is used. For reasons of graphical representation, the decompositions are chosen to be represented two-dimensionally. Figure \ref{fig:nonorth} gives a geometrical interpretation of the three approaches. The last section deals with the integration of one generic approach into the discretization process. 
 
 The results of a study on the effect of different correctors on the convergence behavior of a solver for partial differential equations can be found in section \ref{sec:studynonorth}.
 
-\subsubsection{Minimum Correction Approach}
+\subsection{Minimum Correction Approach}
 
 \cite{muzaferja} proposes this approach. Even though \cite{ferziger02} references \cite{muzaferja}, \cite{ferziger02} uses a different approach, which will be presented in the next paragraph. This method is designed to keep the non-orthogonal contribution minimal by always choosing \(\vec{k}\) to be orthogonal to \(\vecg{\Delta}\), which leads to
 \begin{displaymath}
@@ -106,7 +106,7 @@ The results of a study on the effect of different correctors on the convergence 
 \end{displaymath}
 It is important to note that the influence of the orthogonal contribution decreases with increasing non-orthogonality of the grid.
 
-\subsubsection{Orthogonal Correction Approach}
+\subsection{Orthogonal Correction Approach}
 \label{seq:orthcorrapproach}
 
 \cite{ferziger02} presents the following method for decomposing the surface normal vector, which is an approach also implemented in the developed solvers. This approach uses a simple projection, independent of the non-orthogonality of the grid. As a result, the orthogonal contribution \(||\vecg{\Delta}||_2 =  ||\vec{S}_e||_2\) and is thus modeled as 
@@ -114,7 +114,7 @@ It is important to note that the influence of the orthogonal contribution decrea
   \vecg{\Delta} =  S_e \frac{\vec{d}}{ ||\vec{d}||_2}.
 \end{displaymath}
 
-\subsubsection{Over-Relaxed Approach}
+\subsection{Over-Relaxed Approach}
 
 \cite{jasak96,darwish09} use the last approach, which is characterized by an increasing influence of the orthogonal contribution with increasing grid non-orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
 \begin{displaymath}
@@ -143,7 +143,7 @@ It is important to note that the influence of the orthogonal contribution decrea
 \caption{Minimum correction, orthogonal correction and over-relaxed approach}
 \end{figure}
 
-\subsubsection{Deferred Non-Orthogonal Correction}
+\subsection{Deferred Non-Orthogonal Correction}
 
 In order to reduce the computational stencil that would be necessary to handle the non-orthogonal correction implicitly, the correction will be treated explicitly, using a deferred correction which guarantees, that in the case of a fully converged solution, only the face normal derivative is taken into account. Generally, the discretization using a non-orthogonal correction would yield 
 \begin{displaymath}
@@ -155,7 +155,7 @@ Here, the first term can be approximated using a central differencing scheme for
 \end{displaymath}
 It should be noted that the use of a deferred correction, in conjunction with the requirement that the non-orthogonal correction vanishes on orthogonal grid, introduces an inconsistent discretization of \( \left(\nabla \phi \right)_e \cdot \vecg{\Delta} \).
 
-\subsection{Numerical Solution of Nonlinear Systems -- Picard Iteration}
+\section{Numerical Solution of Nonlinear Systems -- Picard Iteration}
 \label{sec:nonlinear}
 
 In the process of solving nonlinear systems, typically two levels of iterations are distinguished: The \emph{inner} iterations, which account for the iterations needed to solve a given system of linear equations, and the \emph{outer} iterations which deal with a possible nonlinearity or coupling of the equations. As shown in section \ref{sec:nonorth}, outer iterations are also necessary if one chooses the deferred correction approach in order to blend higher and lower order discretization schemes, or in order to apply non-orthogonal correctors.

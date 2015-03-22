@@ -14,7 +14,7 @@
     (intersection cs: first line= {(A1) -- (A2)},
     second line = {(A6) -- ($(A1)!(A6)!(A2)$)});
 
-  \tkzMarkRightAngle[fill=gray!30,size=.25](A5,A7,A6) % size number in cm
+  \tkzMarkRightAngle[fill=tud0b,size=.25](A5,A7,A6) % size number in cm
   
   \draw[fill=black] (A1) circle (0.15em)
     node[above right]{P};
@@ -25,10 +25,10 @@
   \draw[fill=black] (A5) circle (0.15em);
   \draw[fill=black] (A7) circle (0.15em);
 
-  \draw[arrows = {-Stealth},gray!70,thick] (A7) -- (A6) node [midway,right] {${\mathbf{k}}$};
-  \draw[arrows = {-Stealth},gray!50,thick] (A5) -- (A7) node [midway,below] {$\boldsymbol{\Delta}$};
+  \draw[arrows = {-Stealth},thick] (A7) -- (A6) node [midway,right] {${\mathbf{k}}$};
+  \draw[arrows = {-Stealth},thick] (A5) -- (A7) node [midway,below] {$\boldsymbol{\Delta}$};
   
   \draw[arrows = {-Stealth}] (A1) -- (A2);
-  \draw[gray,thick,dashed] (A3) -- (A4);
-  \draw[arrows = {-Stealth},gray] (A5) -- (A6) node [sloped,midway,above] {${\mathbf{S}_e}$};
+  \draw[thick,dashed] (A3) -- (A4);
+  \draw[arrows = {-Stealth}] (A5) -- (A6) node [sloped,midway,above] {${\mathbf{S}_e}$};
 \end{tikzpicture}

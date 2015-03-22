@@ -19,7 +19,7 @@
   }
 
 \newcommand\markcelllorange[3] {
-  \fill[orange,draw=black] (\xStep*\nStep+#2*\xStepp,\xStepp*\nStepp-#1*\xStepp) -- (\xStep*\nStep+#2*\xStepp+\xStepp,\xStepp*\nStepp-#1*\xStepp) -- (\xStep*\nStep+#2*\xStepp+\xStepp,\xStepp*\nStepp-#1*\xStepp-\xStepp) -- (\xStep*\nStep+#2*\xStepp,\xStepp*\nStepp-#1*\xStepp-\xStepp) -- cycle;
+  \fill[tud2a,draw=black] (\xStep*\nStep+#2*\xStepp,\xStepp*\nStepp-#1*\xStepp) -- (\xStep*\nStep+#2*\xStepp+\xStepp,\xStepp*\nStepp-#1*\xStepp) -- (\xStep*\nStep+#2*\xStepp+\xStepp,\xStepp*\nStepp-#1*\xStepp-\xStepp) -- (\xStep*\nStep+#2*\xStepp,\xStepp*\nStepp-#1*\xStepp-\xStepp) -- cycle;
   \node[anchor=center] at (\xStep*\nStep+#2*\xStepp+0.5*\xStepp,\xStepp*\nStepp-#1*\xStepp-0.5*\xStepp) {#3};
   }
 
@@ -29,7 +29,7 @@
   }
 
   \newcommand\markcelorange[2] {
-    \fill[orange,draw=black] (0,-#1*0.25*\xStep) -- (0.25*\xStep,-#1*0.25*\xStep) -- (0.25*\xStep,-#1*0.25*\xStep-0.25*\xStep) -- (0,-#1*0.25*\xStep-0.25*\xStep) -- cycle;
+    \fill[tud2a,draw=black] (0,-#1*0.25*\xStep) -- (0.25*\xStep,-#1*0.25*\xStep) -- (0.25*\xStep,-#1*0.25*\xStep-0.25*\xStep) -- (0,-#1*0.25*\xStep-0.25*\xStep) -- cycle;
     \node[anchor=center] at (-0.25*\xStep,-#1*0.25*\xStep-0.125*\xStep) {\footnotesize #2};
   }
 

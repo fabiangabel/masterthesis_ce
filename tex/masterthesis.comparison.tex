@@ -1,18 +1,18 @@
-\section{Comparison of Solver Concepts}
+\chapter{Comparison of Solver Concepts}
 \label{sec:compare}
 
-This section conducts the performance analysis of both developed solvers. In the first part of this section, the used hardware and software is described. Furthermore, necessary performance measures are introduced. After performing a preliminary benchmark to measure the sustainable bandwidth, the Speed-Up is measured for both solver programs. The second part of this section assesses the performance of the algorithm by a test case with complex geometry and a cavity benchmark for flows with natural convection. In the end, the results of a study on the effect of non-orthogonal corrections on the convergence behavior of the coupled solution algorithm are presented.
+This chapter presents the performance analyses of both developed solvers. In the first part of this section, the used hardware and software is described. Furthermore, necessary performance measures are introduced. After performing a preliminary benchmark to measure the sustainable bandwidth, the Speed-Up is measured for both solver programs. The second part of this chapter assesses the performance of the algorithm by a test case with complex geometry and a cavity benchmark for flows with natural convection. Furthermore, the results of a study on the effect of non-orthogonal corrections on the convergence behavior of the coupled solution algorithm are presented. The last section of this chapter proposes a method for load balancing by automatic matrix partitioning.
   
-\subsection{Parallel Performance}
+\section{Parallel Performance}
 
 In many cases, scientific code is used to solve complex problems regarding memory requirements or to make calculation results available within a short time. In both scenarios, code that designed to run in parallel can address the mentioned challenges. Code that runs in parallel can allocate more memory resources which makes the calculation of complex problems feasible. If the code is scalable, the program execution can be shortened by involving more processes to solve a problem of constant size on the compatible hardware.
 
-The solver framework, which has been extended in the course of the present thesis, has been parallelized using the PETSc library. After introducing the used hardware and software, the central measures of parallel performance are introduced. Then preliminary tests, using low-level benchmarks, are carried out, which establish upper-performance bounds on the parallel efficiency and the scalability of the developed solver framework. The last subsections present the results of the efficiency evaluation of the solver framework.
+The solver framework, which has been extended in the course of the present thesis, has been parallelized using the PETSc library. After introducing the used hardware and software, the central measures of parallel performance are introduced. Then preliminary tests, using low-level benchmarks, are carried out, which establish upper performance-bounds on the parallel efficiency and the scalability of the developed solver framework. The last sections present the results of the efficiency evaluation of the solver framework.
 
-\subsubsection{Employed Hardware and Software -- The Lichtenberg-High-Performance Computer }
+\subsection{Employed Hardware and Software -- The Lichtenberg-High-Performance Computer }
 \label{sec:hhlr}
 
-All performance analyses which are presented in this thesis build on test conducted on the Lichtenberg-High-Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner}). The cluster consists of different sections according to the used hardware. Throughout the thesis, tests were performed using the first and the second MPI section of the cluster. The first section consists of 705 nodes of which each runs two Intel\textregistered Xeon\textregistered E5-2670 processors and offers 32GB of memory. The second section consists of 356 nodes of which each runs two Intel Xeon E5-2680 v3 processors and offers 64GB of memory. As interconnect for both sections, FDR-14 InfiniBand is used.
+All performance analyses which are presented in this thesis build on tests conducted on the Lichtenberg-High-Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner}). The cluster consists of different sections according to the used hardware. Throughout the thesis, tests were performed using the first and the second MPI section of the cluster. The first section consists of 705 nodes of which each runs two Intel\textregistered Xeon\textregistered E5-2670 processors and offers 32GB of memory. The second section consists of 356 nodes of which each runs two Intel Xeon E5-2680 v3 processors and offers 64GB of memory. As interconnect for both sections, FDR-14 InfiniBand is used.
 
 All tests programs were compiled using the Intel compiler suite version 15.0.0 and the compiler options
 \lstset{language=bash,
@@ -37,9 +37,9 @@ CXXOPTFLAGS="-O3 -xHost" \
 --download-hypre \
 --download-ml
 \end{lstlisting}
-As the configurations options show, to maximize the efficiency of PETSc, a math kernel library should be used, that has been optimized for the underlying hardware architecture. Is in the case of the present thesis the Intel \emph{MKL} (\emph{Math Kernel Library}) has been used. The Open MPI library was compiled using Intel compilers as well.
+To maximize the efficiency of PETSc, a math kernel library should be used, that has been optimized for the underlying hardware architecture. Is in the case of the present thesis the Intel \emph{MKL} (\emph{Math Kernel Library}) has been used. The Open MPI library was compiled using Intel compilers as well.
 
-\subsubsection{Measures of Performance}
+\subsection{Measures of Performance}
 
 This section establishes the needed set of measures to evaluate the performance of a solver program, which will be used in the following sections. The first measure is the plain measure of the computer's runtime \(T_P\) for solving a given problem, where \(P \in \mathbb{N}\) denotes the number of involved processes. This so-called \emph{wall-clock} time can be measured directly, by calling subroutines of the underlying operating system and corresponds to the human perception of the time, which has passed. This time does not correspond to the often mentioned \emph{CPU} time. In fact, CPU time is only one contributor to wall-clock time. On the one hand, wall-clock time contains the time needed for communication and I/O, hence considers idle states of the processor. On the other hand, CPU time only considers the time in which the processor is actively working. This fact makes wall-clock time not only a more complete time measure, but also a more accurate one when dealing with parallel processors. The idle times of the processor due to communication are taken into account by the wall-clock time, whereas they are ignored by CPU time.
 
@@ -60,7 +60,7 @@ While wall-clock time is an absolute measure that can be used to compare differe
        is formed by the quotient of the wall-clock times needed for the complete problem domain and partial solves on subdomains. This measure does neither depend on hardware nor the used implementation. Instead, it directly relates to the size and partition of the grid. 
 \end{itemize}
 
-It is not possible to calculate all three efficiencies at the same time using only plain wall-clock time measurements of a given application.  Different solver configurations have to be used to calculate them separately. Since the focus of the investigation of the present thesis does not lie on load balancing, for the remainder of the thesis \(E^{load}_P = 100\%  \) is assumed. This assumption does not present a considerable drawback since an ideal load balancing is easily obtainable nowadays by the use of grid partitioning algorithms \cite{ferziger02}. Using identical algorithms for different numbers of involved processes, implicitly achieves \(E^{num}_P = 100 \%\). In this case, the parallel efficiency of an application can be measured through the quotient of the needed wall-clock time. In order to measure the numerical efficiency of an algorithm, the respective hardware counters have to be evaluated. This evaluation can be made using the built-in log file functionality of PETSc. 
+It is not possible to calculate all three efficiencies at the same time using only plain wall-clock time measurements of a given application.  Different solver configurations have to be used to calculate them separately. Since the focus of the investigation of the present thesis does not lie on load balancing, for all further tests that do not directly address load balancing \(E^{load}_P = 100\%  \) is assumed. This assumption does not present a considerable drawback since an ideal load balancing is easily obtainable nowadays by the use of grid partitioning algorithms \cite{ferziger02}. Section \ref{sec:load} presents a simple method to achieve load balancing for the linear solvers. Using identical algorithms for different numbers of involved processes, implicitly achieves \(E^{num}_P = 100 \%\). In this case, the parallel efficiency of an application can be measured through the quotient of the needed wall-clock time. In order to measure the numerical efficiency of an algorithm, the respective hardware counters have to be evaluated. This evaluation can be made using the built-in log file functionality of PETSc. 
 
 Another common performance measure is the \emph{Speed-Up}
 \begin{displaymath}
@@ -68,11 +68,17 @@ Another common performance measure is the \emph{Speed-Up}
 \end{displaymath}
 Speed-Up and parallel efficiency characterize the parallel scalability of an application and determine the regimes of efficient use of hardware resources.
 
-\subsubsection{Preliminary Upper Bounds on the Performance -- The STREAM Benchmark}
+\subsection{Determining Upper Performance-Bounds -- The STREAM Benchmark}
 
-Scientific applications, which solve partial differential equations, rely on sparse matrix computations, which usually exhibit the sustainable memory bandwidth as bottleneck with respect to the runtime performance of the program \cite{hager11}. The purpose of this section is to establish a frame in terms of an upper-performance-bound in which the efficiency of the developed solver framework can be evaluated critically. As a standard measure for the maximum sustainable bandwidth, low-level benchmarks can be used, which focus on evaluating specific properties of the deployed hardware architecture. In this case, the STREAM benchmark suite \cite{mccalpin07,mccalpin95} provides apt tests, which are designed to work with data sets that exceed the cache size of the involved processor architecture. This forces the processors to stream the needed data directly from memory instead of reusing the data residing in their caches. These types of tests can be used to calculate an upper bound on the memory bandwidth for the CAFFA framework.
+Scientific applications, which solve partial differential equations, rely on sparse matrix computations, which usually exhibit the sustainable memory bandwidth as bottleneck with respect to the runtime performance of the program \cite{hager11}. The purpose of this section is to establish a frame in terms of an upper performance-bound in which the efficiency of the developed solver framework can be evaluated critically. As a standard measure for the maximum sustainable bandwidth, low-level benchmarks can be used, which focus on evaluating specific properties of the deployed hardware architecture. In this case, the McCalpin STREAM benchmark suite \cite{mccalpin07,mccalpin95} provides apt tests, which are designed to work with data sets that exceed the cache size of the involved processor architecture. This forces the processors to stream the needed data directly from memory instead of reusing the data residing in their caches. These types of tests can be used to calculate an upper bound on the memory bandwidth for the CAFFA framework.
 
-In terms of parallel scalability, the STREAM benchmark can also be used as an upper-performance bound. According to \cite{petsc-web-page}, the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band} show the test results of the STREAM benchmark on the two different MPI sections of the HHRL. It is central to run the tests exclusively on each node, i.e. that no other process is running on the same node, for the results to be reproducible. %Before presenting results the different binding configurations will be explained.
+In particular this subsection presents the calculated sustainable memory bandwidth as determined by the TRIAD kernel of the STREAM benchmark suite. The kernel loop of the TRIAD kernel consists of the operations 
+\begin{displaymath}
+  a[i] = b[i] + scalar * c[i] ,
+\end{displaymath}
+where the sizes of the vectors \(a\), \(b\) and \(c\) have to be chosen according to the deployed hardware.
+
+In terms of parallel scalability, the STREAM benchmark can also be used to determine an upper performance-bound. According to \cite{petsc-web-page}, the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band} show the test results of the STREAM benchmark on the two different MPI sections of the HHRL. For the results to be reproducible, it is central to run these tests exclusively on each node, i.e. that no other process is running on the same node. %Before presenting results the different binding configurations will be explained.
 
 %The first configuration sequentially binds the processes to the cores beginning on the first socket. When every core has a bound process, the binding algorithm binds the following processes to cores of the second socket. The second configuration binds the processes in a round robin manner regarding the sockets. This configuration, different to the second configuration, binds one process to three cores. Figures \ref{fig:binding1},\ref{fig:binding2} and \ref{fig:binding3} demonstrate the different binding options for two sockets and processors with twelve cores each, when eight processes are to be bound to the resources.
 
@@ -102,10 +108,10 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
 %\end{figure}
 
 \begin{figure} \centering
-  \pgfplotsset{every axis/.append style={
-      font=\large,
-      line width=1pt,
-  tick style={line width=0.8pt}}}
+%  \pgfplotsset{every axis/.append style={
+%     font=\large,
+%     line width=1pt,
+% tick style={line width=0.8pt}}}
 \begin{tikzpicture}
   \pgfplotsset{every axis legend/.append style={
       at={(0.5,1.03)},
@@ -125,27 +131,27 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
     height=12cm,width=15cm,
     grid=major,
     ]
-    \addplot file[color=black,mark=*] {./files/mpi1.def};
-    \addplot file[color=black,mark=square*] {./files/mpi1.op1};
-    \addplot file[color=black,mark=triangle*] {./files/mpi1.core};
+    \addplot[color=black,mark=*] file {./files/mpi1.def};
+    \addplot[color=black,mark=square*] file {./files/mpi1.op1};
+    \addplot[color=black,mark=triangle*] file {./files/mpi1.core};
     \addlegendentry{Default binding};
     \addlegendentry{map-by ppr:8:node map-by ppr:4:socket}
     \addlegendentry{map-by core}
 \end{axis}
 \end{tikzpicture}
-\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (Triad) for different process binding options on one node of the MPI1 section}
+\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different process binding options on one node of the MPI1 section}
 \label{fig:mpi1band}
 \end{figure}
 
 \begin{figure} \centering
-  \pgfplotsset{every axis/.append style={
-      font=\large,
-      line width=1pt,
-  tick style={line width=0.8pt}}}
+% \pgfplotsset{every axis/.append style={
+%     font=\large,
+%     line width=1pt,
+% tick style={line width=0.8pt}}}
 \begin{tikzpicture}
-  \pgfplotsset{every axis legend/.append style={
-      at={(0.5,1.03)},
-  anchor=south}}
+ \pgfplotsset{every axis legend/.append style={
+     at={(0.5,1.03)},
+ anchor=south}}
 \begin{axis}[
     ylabel={Sustainable memory bandwidth MB/s},
     xlabel={Number of processes},
@@ -159,12 +165,12 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
     height=12cm,width=15cm,
     grid=major,
     ]
-    \addplot file[color=black,mark=*] {./files/mpi2.def};
-     \addplot file[color=black,mark=square*] {./files/mpi2.op1};
+    \addplot[color=black,mark=*] file {./files/mpi2.def};
+     \addplot[color=black,mark=square*] file {./files/mpi2.op1};
      %\addplot file {./files/mpi2.op2};
      %\addlegendentry{map-by ppr:8:node map-by ppr:4:socket:PE=3};
-     \addplot file[color=black,mark=triangle*] {./files/mpi2.op3};
-     \addplot file {./files/mpi2.core};
+     \addplot[color=black,mark=triangle*] file {./files/mpi2.op3};
+     \addplot[color=black,mark=o] file {./files/mpi2.core};
      %\addplot file {./files/mpi2.op4};
      % \addlegendentry{map-by ppr:6:node map-by ppr:4:socket:PE=4};
     \addlegendentry{Default Binding};
@@ -173,22 +179,24 @@ In terms of parallel scalability, the STREAM benchmark can also be used as an up
     \addlegendentry{map-by core}
 \end{axis}
 \end{tikzpicture}
-\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (Triad) for different process binding options on one node of the MPI2 section}
+\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different process binding options on one node of the MPI2 section}
 \label{fig:mpi2band}
 \end{figure}
 
 As can be seen from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}, the scaling of the sustainable bandwidth behaves rather erratic. As a consequence, for process counts up to eight for the MPI1 section and process counts up to six for the MPI2 section, no reliable results can be obtained from the STREAM benchmark. It is assumed that this kind of behavior is due to the automatic turbo-boost the deployed processors apply, which cannot be controlled other than by turning it off on the nodes directly from the BIOS. For the following performance analyses with respect to parallel performance, it is desirable to minimize this kind of unpredictable side effects. Since all performance measures are relative, with the exception of the plain measurement of wall-clock time, the reference value for the following relative performance measurements will be taken from the program execution for the maximum number of processes that can be bound to one deployed socket without any overlapping.
 
-The STREAM benchmark used to test the present architecture has been provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem. This was done by always using all available cores per socket, but running the benchmark only on \(n\) processes, while the other \(24 - n\) or \(16 - n\) processes are running calculations which are only using data from the L\(1\)-cache of their corresponding core. The intention of this approach was to regulate the turbo-boost effects by keeping a constant load on the processors for different numbers of STREAM benchmark processes. However this approach didn't generate results different from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}.
+The STREAM benchmark used to test the present architecture has been provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem. This was done by always using all available cores per socket, but running the benchmark only with \(n\) processes, while the other \(24 - n\) or \(16 - n\) processes are running calculations which are only using data from the L\(1\)-cache of their corresponding core. The intention of this approach was to regulate the turbo-boost effects by keeping a constant load on the processors for different numbers of STREAM benchmark processes. However this approach did not generate results different from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}.
 
-\subsubsection{Speed-Up Measurement and Effect of Coupling Algorithm for Analytic Test Case}
+\subsection{Speed-Up Measurement and Effect of Coupling Algorithm for Analytic Test Case}
 \label{sec:speedup}
 
-This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR, which has been presented in section \ref{sec:hhlr}. Furthermore, the effect of the scaling algorithm on the running time of the corresponding solver program will be shown. This property of applications if often termed \emph{strong} scalability \cite{hager11}. All Speed-Up tests are conducted on the MPI1 section. The performance analyses will show the absolute time needed to solve for the flow of the analytic solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance, the Speed-Up will be calculated based on the presented results. Since the performance of segregated algorithms depends on the amount of under-relaxation applied to the variables in each outer iteration, a preliminary test is conducted to support choosing the optimal amount of under-relaxation. As pointed out in \cite{ferziger02,schaefer99}, it is recommended to choose the amount of under-relaxation for the pressure depending on the amount of under-relaxation for the velocity as
+This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR, which has been presented in section \ref{sec:hhlr}. The tests for this section distribute a problem of constant size to an increasing number of processes. The measurements of the decrease of time will show if the application performance improves by involving more processes in the solution process. This property of applications if often termed \emph{strong} scalability \cite{hager11}. Furthermore, the effect of the coupling algorithm on the running time of the corresponding solver program will be shown. 
+
+All Speed-Up tests are conducted on the MPI1 section. The performance analyses will show the absolute time needed to solve for the flow of the analytic solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance, the Speed-Up will be calculated based on the presented results. Since the performance of segregated algorithms depends on the amount of under-relaxation applied to the variables in each outer iteration, a preliminary test is conducted to support choosing the optimal amount of under-relaxation. As \cite{ferziger02} and \cite{schaefer99} point out, it is recommended to choose the amount of under-relaxation for the pressure depending on the amount of under-relaxation for the velocity as
 \begin{displaymath}
   \alpha_p = 1 - \alpha_{\vec{u}}.
 \end{displaymath}
-Figure \ref{fig:underrelax} shows the results of the preliminary runtime measurements for different choices of the under-relaxation factor \( \alpha_{\vec{u}} \). The problem, which was solved in this test, corresponds to the manufactured solution for the velocities and the pressure presented in section \ref{sec:manufacturedsolution}. Figure \ref{fig:underrelax} shows that the optimal under-relaxation factor can be found in a neighborhood of \(0.95\). Based on Figure \ref{fig:underrelax} the under-relaxation was chosen to \( \alpha_{\vec{u}} =0.9 \). 
+Figure \ref{fig:underrelax} shows the results of the preliminary runtime measurements for different choices of the under-relaxation factor \( \alpha_{\vec{u}} \). The problem, which was solved in this test, corresponds to the manufactured solution for the velocities and the pressure presented in section \ref{sec:manufacturedsolution}. Figure \ref{fig:underrelax} shows that the optimal under-relaxation factor can be found in a neighborhood of \(0.95\). Based on Figure \ref{fig:underrelax} the under-relaxation was chosen to \( \alpha_{\vec{u}} =0.9 \) for the following performance analysis. 
 
 \begin{figure}[h!]
   %\setlength{\abovecaptionskip}{5pt plus 3pt minus 2pt}
@@ -215,10 +223,10 @@ The performance of all solvers significantly depends on the performance of the l
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{black!20} Density    & 1E-0 & $kg/m^3$      \\
+    \rowcolor{tud0b} Density    & 1E-0 & $kg/m^3$      \\
     \rowcolor{black!00} Viscosity  & 1E-0 & $Ns/m^2$  \\
     \rowcolor{black!00} Under-relaxation u & 0.9 &  \\
-    \rowcolor{black!20} Under-relaxation p & 0.1 &  \\
+    \rowcolor{tud0b} Under-relaxation p & 0.1 &  \\
     \rowcolor{black!00} Relative tolerance & 1E-8&
   \end{tabular}
   \label{tab:performance}
@@ -258,7 +266,7 @@ The performance of all solvers significantly depends on the performance of the l
       ]
       \addplot[color=black,mark=*] file {./files/speedup.seg.128};
       \addplot[color=black,mark=square*] file {./files/speedup.cpld.128};
-      \addplot[mark=none,black] file {./files/speedup.ideal};
+      \addplot[color=black,mark=none] file {./files/speedup.ideal};
     \end{loglogaxis}
     \end{tikzpicture}
     \\
@@ -268,7 +276,7 @@ The performance of all solvers significantly depends on the performance of the l
    \label{fig:speedup}
 \end{figure}
 
-From the comparison of both algorithms in Figure \ref{fig:speedup} it is evident that both algorithms are scalable, and that the coupled solution algorithm accelerates the solution process almost up to one order of magnitude. For higher amounts of under-relaxation for the velocities the difference in performance is expected to increase as Figure \ref{fig:underrelax} suggests. The presented results for the coupled solution algorithm were obtained using black-box solvers from the PETSc framework. It is assumed that the performance of the coupled solution algorithm with respect to the needed wall-clock time would benefit from multigrid solvers especially designed for the coupled system of linear equations. Examples for such special solvers can be found in \cite{darwish09,klaij13,mangani14}. \emph{Physics-based} solver represent another approach. These solvers take advantage of the matrix structure as shown in figure \ref{fig:nointerlacemat}. References \cite{brown12,mcinnes14} describe how PETSc can be used to construct physics based preconditioners in the context of multiphysics simulations.
+From the comparison of both algorithms in Figure \ref{fig:speedup} it is evident that both algorithms are scalable, and that the coupled solution algorithm accelerates the solution process almost up to one order of magnitude. For higher amounts of under-relaxation for the velocities the difference in performance is expected to increase as Figure \ref{fig:underrelax} suggests. The presented results for the coupled solution algorithm were obtained using black-box solvers from the PETSc framework. It is assumed that the performance of the coupled solution algorithm with respect to the needed wall-clock time would benefit from multigrid solvers especially designed for the coupled system of linear equations. Examples for such special solvers can be found in \cite{darwish09,klaij13,mangani14}. \emph{Physics-based} solvers represent another approach. These solvers take advantage of the matrix structure as shown in figure \ref{fig:nointerlacemat}. References \cite{brown12,mcinnes14} describe how PETSc can be used to construct physics based preconditioners in the context of multiphysics simulations.
 
 %\begin{figure}
 %  \centering
@@ -297,7 +305,7 @@ From the comparison of both algorithms in Figure \ref{fig:speedup} it is evident
 %    \begin{tikzpicture}
 %      \begin{loglogaxis}[
 %        xlabel=Number of Processes,
-%        ylabel=Wall-Clock Time s,
+%        ylabel=Wall-clock time s,
 %        xtick={1,4,16,64,256,1024},
 %        xticklabels={1,4,16,64,256,1024},
 %      ]
@@ -309,10 +317,10 @@ From the comparison of both algorithms in Figure \ref{fig:speedup} it is evident
 %  \end{minipage}
 %\end{figure}
 
-\subsection{Weak Scaling Comparison of Coupled and Segregated Solution Algorithm}
+\section{Weak Scaling Comparison of Coupled and Segregated Solution Algorithm}
 \label{sec:weakscaling}
 
-It has been previously reported in \cite{darwish09,vakilipour12}, that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. Generally, this is not true for the SIMPLE-algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so-called \emph{weak} scaling of the implementation \cite{hager11}. This benchmark will investigate how the running time and the number of needed inner and outer iterations behave when the computational load per process is held constant while the number of involved processes is continuously increased. As test problem, the flow with the analytic solution presented in \ref{sec:manufacturedsolution} was chosen. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same amount of time by involving more processes running the solver application. Each process will get assigned a block with \(32x32x32\) unknowns. Thus, the number of involved unknowns \(N\) in each test run can be calculated as \( N = 32\times32\times32\times\times n \), where \(n\) denotes the number of involved processes. Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE-algorithm and the fully coupled solution algorithm.
+References \cite{darwish09} and \cite{vakilipour12} report, that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. Generally, this is not true for the SIMPLE-algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so-called \emph{weak} scaling of the implementation \cite{hager11}. This benchmark will investigate how the running time and the number of needed inner and outer iterations behave when the computational load per process is held constant while the number of involved processes is continuously increased. As test problem, the flow with the analytic solution presented in \ref{sec:manufacturedsolution} was chosen. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same amount of time by involving more processes running the solver application. Each process will get assigned a block with \(32x32x32\) unknowns. Thus, the number of involved unknowns \(N\) in each test run can be calculated as \( N = 32\times32\times32\times\times n \), where \(n\) denotes the number of involved processes. Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE-algorithm and the fully coupled solution algorithm.
 
 \begin{figure}[h!]
   \begin{center}
@@ -376,7 +384,7 @@ The comparison in Figure \ref{fig:weak} shows, that the fully coupled algorithm 
   \label{fig:weakinner}
 \end{figure}
 
-\subsection{Realistic Testing Scenario -- Complex Geometry}
+\section{Realistic Testing Scenario -- Complex Geometry}
 \label{sec:channel}
 
 Fluid flow inside closed applications is a common situation in mechanical engineering. The flow through a channel with rectangular cross section represents a simple test case, which is a part of complex applications. This section compares the single process performance of the segregated and the fully coupled solution algorithm for a flow problem within a complex geometry. The geometry of the domain is based on a channel flow problem with square cross section. Inside the channel reside two obstacles with a square cross section of which one has been twisted against the other by \(45°\). Figure \ref{fig:sketch} shows a sketch of the problem domain. 
@@ -388,7 +396,7 @@ Fluid flow inside closed applications is a common situation in mechanical engine
   \label{fig:sketch}
 \end{figure}
 
-This test case utilizes all of the previously introduced boundary conditions for flow problems, including the treatment of non-matching block boundaries. For the velocities at the inflow boundary, the parabolic distribution
+This test case utilizes all of the previously introduced boundary conditions for flow problems, including the use of non-matching block boundaries. For the velocities at the inflow boundary, the parabolic distribution
 \begin{displaymath}
   \vec{u}(x_1,x_2,x_3) 
   =
@@ -409,7 +417,7 @@ This test case utilizes all of the previously introduced boundary conditions for
   \end{array}
 \right]
 \end{displaymath}
-was chosen. At the outlet, a Dirichlet pressure boundary condition was used. All other boundaries used a no-slip solid non-moving wall boundary condition. All problem parameters were chosen to assure the flow problem resides in the regime of a non-turbulent stationary flow, for which the presented solver framework has been developed. Table \ref{tab:channel} lists the remaining material and geometrical characteristics of the test case. A study similar to section \ref{sec:speedup} was conducted to optimize the used amount of under-relaxation.
+was chosen. At the outlet, a Dirichlet pressure boundary condition was used. All other boundaries used a no-slip solid non-moving wall boundary condition. All problem parameters were chosen to assure that the flow problem resides in the regime of a non-turbulent stationary flow, for which the presented solver framework has been developed. Table \ref{tab:channel} lists the remaining material and geometrical characteristics of the test case. A study similar to the one presented in section \ref{sec:speedup} was conducted to optimize the used amount of under-relaxation.
 
 \begin{table}[h!]\centering
   \caption{Characteristic problem properties used in the channel flow test case}
@@ -417,13 +425,13 @@ was chosen. At the outlet, a Dirichlet pressure boundary condition was used. All
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{black!20} Density            & 1E-0 & $kg/m^3$  \\
+    \rowcolor{tud0b} Density            & 1E-0 & $kg/m^3$  \\
     \rowcolor{black!00} Viscosity          & 1E-3 & $Ns/m^2$  \\
-    \rowcolor{black!20} Height             & 0.41 & m         \\
+    \rowcolor{tud0b} Height             & 0.41 & m         \\
     \rowcolor{black!00} Length             & 2.5  & m         \\
-    \rowcolor{black!20} Side length cube   & 0.1  & m   \\
+    \rowcolor{tud0b} Side length cube   & 0.1  & m   \\
     \rowcolor{black!00} Under-relaxation u & 0.9  &    \\
-    \rowcolor{black!20} Under-relaxation p & 0.1  &    \\
+    \rowcolor{tud0b} Under-relaxation p & 0.1  &    \\
     \rowcolor{black!00} Relative tolerance & 1E-8      &
   \end{tabular}
   \label{tab:channel}
@@ -435,7 +443,7 @@ Using the data from Table \ref{tab:channel} and the maximal inflow velocity of $
 \end{displaymath}
 where \(\operatorname{mean}(u_1) = 0.45*\frac{4}{9} m/s = 0.2 m/s\). This shows, that the flow resides in a laminar regime.
 
-The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section \ref{sec:blockboundaries}. Since no assumptions on the geometry of a neighboring block are necessary, the mesh for each block can be constructed independently which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not negatively affect the convergence of the deployed linear solvers. Figure \ref{fig:channel1} shows the mesh at the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks. Figure \ref{fig:blocking} shows the domain decomposition into structured grid blocks around the two obstacles within the problem domain and emphasizes the need for accurate handling of non-matching block boundaries.
+The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section \ref{sec:blockboundaries}. Since no assumptions on the geometry of a neighboring block are necessary, the mesh for each block can be constructed independently, which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not negatively affect the convergence of the deployed linear solvers. Figure \ref{fig:channel1} shows the mesh on the left and right bounding walls. It is evident that this mesh leads to non-trivial transitions between the blocks. Figure \ref{fig:blocking} shows the domain decomposition into structured grid blocks around the two obstacles within the problem domain and emphasizes the need for accurate handling of non-matching block boundaries.
 
 \begin{figure}
   \centering
@@ -466,7 +474,7 @@ The present test case shows one advantage of the treatment of block boundaries, 
     \label{fig:blocking}
 \end{figure}
 
-The solution of the linear systems resulting from the discretization of the problem takes up more time during the execution of the coupled solution algorithm than during the execution of the segregated coupled algorithm. The segregated solution algorithm for small numbers of unknowns does not need many outer iterations to converge. This fact makes the segregated solver the faster one for problems involving small numbers of unknowns. However, as the number of unknowns also increases the number of needed outer iterations increases due to the under-relaxation. This behavior shows that segregated algorithms do not scale with increasing problem size.
+The solution of the linear systems resulting from the discretization of the problem takes up more time during the execution of the coupled solution algorithm than during the execution of the segregated algorithm. Furthermore, the segregated solution algorithm for small numbers of unknowns does not need many outer iterations to converge. This fact makes the segregated solver the faster one for problems involving small numbers of unknowns. However, as the number of unknowns also increases, the number of needed outer iterations increases due to the under-relaxation. This behavior shows that segregated algorithms do not scale with increasing problem size.
 
 In contrast to the segregated algorithm, the fully coupled solution algorithm achieves an approximately constant amount of needed outer iterations, independent of the number of involved unknowns. The tests regarding the weak scalability of the coupled solution algorithm presented in section \ref{sec:weakscaling} emphasize this property. Table \ref{tab:channelcompare} compares the measured wall-clock time for different numbers of unknowns. Figure \ref{fig:channel1} shows the mesh generated for the first number of unknowns. The two other numbers of unknowns result from bisecting the mesh in each direction. Every bisection of the grid scales the number of unknowns by a factor of approximately eight. The tests were conducted on the formerly presented HHLR cluster, using the MPI2 section. 
 
@@ -476,18 +484,19 @@ In contrast to the segregated algorithm, the fully coupled solution algorithm ac
   \begin{tabular}{lcccc}\toprule
     No. of Unknowns & SEG - time s & CPLD - time s & SEG - its & CPLD - its \\
     \midrule
-    \rowcolor{black!20} 75768    & 0.2226E+02 & 0.2674E+02 & 151  & 67 \\
+    \rowcolor{tud0b} 75768    & 0.2226E+02 & 0.2674E+02 & 151  & 67 \\
     \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1499E+03 & 355  & 42 \\
-    \rowcolor{black!20} 2611080  & 1.1352E+05 & 0.3105E+04 & 1592 & 39 \\
+    \rowcolor{tud0b} 2611080  & 1.1352E+05 & 0.3105E+04 & 1592 & 39 \\
   \end{tabular}
   \label{tab:channelcompare}
 \end{table}
 
 The timing results show that already after the first grid refinement step the fully coupled solution algorithm performs better with respect to the needed wall-clock time for computation. This effect is clearly visible for higher mesh resolutions.
 
-\subsection{Classical Benchmarking Case -- Temperature-Driven Cavity Flow}
+\section{Classical Benchmarking Case -- Temperature-Driven Cavity Flow}
+\label{sec:cavity}
 
-This section deals with the evaluation and comparison of the velocity-to-temperature coupling, through the Boussinesq approximation, and the temperature-velocity/pressure coupling, through the Newton-Raphson linearization of the convective term of the temperature equation. For this, the standard temperature-driven cavity flow \cite{christon02,vahl83} is adapted for three-dimensional domains. The material and geometric parameters are chosen in a way that a non-turbulent stationary flow exists. Figure \ref{fig:sketchcavity} shows an example of a temperature and velocity field obtained with the developed solver framework, solving for the temperature-driven cavity flow problem.
+This section deals with the evaluation and comparison of the velocity-to-temperature coupling, through the Boussinesq approximation, and the temperature-velocity/pressure coupling, through the Newton-Raphson linearization of the convective term of the temperature equation. For this, the standard temperature-driven cavity flow \cite{christon02,vahl83} is adapted for three-dimensional domains. The material and geometrical parameters are chosen in a way that a non-turbulent and stationary flow exists. Figure \ref{fig:sketchcavity} shows an example of a temperature and velocity field obtained with the developed solver framework, solving for the temperature-driven cavity flow problem.
 
 \begin{figure}[h!]
   \centering
@@ -513,15 +522,15 @@ Essential for this benchmarking case is the nature of the flow. The fluid motion
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{black!20} Density            & 1.19      & $kg/m^3$  \\
+    \rowcolor{tud0b} Density            & 1.19      & $kg/m^3$  \\
     \rowcolor{black!00} Viscosity          & 1.8E-5    & $Ns/m^2$  \\
-    \rowcolor{black!20} Height             & 0.021277  & m         \\
+    \rowcolor{tud0b} Height             & 0.021277  & m         \\
     \rowcolor{black!00} Temperature difference & 10    & K         \\
-    \rowcolor{black!20} Coefficient of thermal expansion & 0.00341 & $1/K$ \\
+    \rowcolor{tud0b} Coefficient of thermal expansion & 0.00341 & $1/K$ \\
     \rowcolor{black!00} Under-relaxation u & 0.8       &           \\
-    \rowcolor{black!20} Under-relaxation p & 0.2       &           \\
+    \rowcolor{tud0b} Under-relaxation p & 0.2       &           \\
     \rowcolor{black!00} Under-relaxation T & 1.0       &           \\
-    \rowcolor{black!20} Relative tolerance & 1E-8      &
+    \rowcolor{tud0b} Relative tolerance & 1E-8      &
   \end{tabular}
   \label{tab:cavity}
 \end{table}
@@ -536,7 +545,7 @@ It follows that the Rayleigh number can be determined to
 \end{displaymath}
 which implies, according to \cite{christon02}, that the flow is still stationary and non-turbulent.
 
-The tests were conducted on the formerly presented HHLR cluster, using the MPI2 section. Table \ref{tab:cavitycompare} compares the wall-clock times and numbers of needed outer iterations for different solver and coupling approaches. The presented results are in good agreement with \cite{vakilipour12}, which show a monotonic decrease of the number of iterations with increased implicit coupling for a different test case. The implicit pressure-velocity coupling is responsible for the biggest decrease in the number of nonlinear iterations. Different to the results presented in section \ref{sec:channel}, this does not yield significant performance benefits with respect to wall-clock time. In order to achieve the benefits of a fully coupled solution algorithm, the coupling has to be increased to involve semi-implicit temperature-to-velocity/pressure and implicit velocity-to-temperature coupling as well. In this context, the abbreviations \emph{SEG} for the segregated solution algorithm and \emph{CPLD} for the fully coupled solution algorithm without implicit temperature coupling are used. For the fully coupled solver configurations, \emph{TCPLD} includes only implicit velocity-to-temperature coupling, whereas \emph{NRCPLD} additionally includes implicit temperature-to-velocity/pressure coupling via the Newton-Raphson linearization.
+The tests were conducted on the formerly presented HHLR cluster, using the MPI2 section. Table \ref{tab:cavitycompare} compares the wall-clock times and numbers of needed outer iterations for different solver and coupling approaches. The presented results are in good agreement with \cite{vakilipour12}. This reference shows a monotonic decrease of the number of iterations with increased implicit coupling for a different test case at a Rayleigh number similar to the one used in the present thesis. The implicit pressure-velocity coupling is responsible for the biggest decrease in the number of nonlinear iterations. Different to the results presented in section \ref{sec:channel}, this does not yield significant performance benefits with respect to wall-clock time. In order to achieve the benefits of a fully coupled solution algorithm, the coupling has to be increased to involve semi-implicit temperature-to-velocity/pressure and implicit velocity-to-temperature coupling as well. In this context, the abbreviations \emph{SEG} for the segregated solution algorithm and \emph{CPLD} for the fully coupled solution algorithm without implicit temperature coupling are used. For the fully coupled solver configurations, \emph{TCPLD} includes only implicit velocity-to-temperature coupling, whereas \emph{NRCPLD} additionally includes implicit temperature-to-velocity/pressure coupling via the Newton-Raphson linearization.
 
 \begin{table}[h!]\centering
 \ra{1.3}
@@ -544,20 +553,20 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
   \begin{tabular}{cccc}\toprule
     Resolution & Solver configuration & Time s & No. Nonlinear its. \\
     \midrule
-    \rowcolor{black!20}\multirow{4}{*}{}            & SEG    & 0.3719E+02 & 203 \\
-    \rowcolor{black!20}                             & CPLD   & 0.6861E+02 & 62  \\
-    \rowcolor{black!20}                             & TCPLD  & 0.1012E+03 & 31  \\
-    \rowcolor{black!20} \multirow{-4}{*}{32x32x32}  & NRCPLD & 0.2153E+02 & 22  \\ %\hline
+    \rowcolor{tud0b}\multirow{4}{*}{}            & SEG    & 0.3719E+02 & 203 \\
+    \rowcolor{tud0b}                             & CPLD   & 0.6861E+02 & 62  \\
+    \rowcolor{tud0b}                             & TCPLD  & 0.1012E+03 & 31  \\
+    \rowcolor{tud0b} \multirow{-4}{*}{32x32x32}  & NRCPLD & 0.2153E+02 & 22  \\ %\hline
     %
     \rowcolor{black!00}\multirow{4}{*}{}            & SEG    & 0.1997E+04 &  804 \\
     \rowcolor{black!00}                             & CPLD   & 0.7687E+03 &  63  \\
     \rowcolor{black!00}                             & TCPLD  & 0.1278E+04 &  59  \\
     \rowcolor{black!00} \multirow{-4}{*}{64x64x64}  & NRCPLD & 0.4240E+03 &  17  \\ %\hline
     %
-    \rowcolor{black!20}\multirow{4}{*}{}               & SEG    & 0.5197E+05 &  3060 \\
-    \rowcolor{black!20}                                & CPLD   & 0.1860E+05 &  74   \\
-    \rowcolor{black!20}                                & TCPLD  & 0.1950E+05 &  50   \\
-    \rowcolor{black!20} \multirow{-4}{*}{128x128x128}  & NRCPLD & 0.6155E+04 &  18   \\ %\hline
+    \rowcolor{tud0b}\multirow{4}{*}{}               & SEG    & 0.5197E+05 &  3060 \\
+    \rowcolor{tud0b}                                & CPLD   & 0.1860E+05 &  74   \\
+    \rowcolor{tud0b}                                & TCPLD  & 0.1950E+05 &  50   \\
+    \rowcolor{tud0b} \multirow{-4}{*}{128x128x128}  & NRCPLD & 0.6155E+04 &  18   \\ %\hline
     %
     %\rowcolor{black!00}\multirow{4}{*}{}               & SEG    &  & \\
     %\rowcolor{black!00}                                & CPLD   &  & \\
@@ -567,14 +576,14 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
   \label{tab:cavitycompare}
 \end{table}
 
-Table \ref{tab:cavitycompare} demonstrates that the sole use of velocity-to-temperature coupling does not result in benefits compared to the coupled solution process for velocities and pressure combined with a decoupled solve for the temperature equation. This characteristic is accredited to the treatment of the nonlinearity of the temperature equation in the TCPLD solver configuration. Even though, the momentum balances implicitly use the temperature from the next iteration, the temperature equation does not use the velocities of the next iteration. Instead, the convective fluxes are calculated with the velocities from the previous iteration. Even though, the implicit velocity-to-temperature coupling reduces the number of needed nonlinear iterations Table \ref{tab:cavitycompare} shows an increase in the needed wall-clock time to finish the computations. This increase is attributed to the augmented costs during the application of the linear solver algorithm as a result of the additional degree of freedom that the linear system embraces. The necessary number of outer iterations is higher than in the NRCPLD configuration since the convective fluxes in the temperature equation are not coupled to the momentum balances, which degrades the convergence of the nonlinear iteration process.
+Table \ref{tab:cavitycompare} demonstrates that the sole use of velocity-to-temperature coupling does not result in benefits compared to the coupled solution process for velocities and pressure combined with a decoupled solve for the temperature equation. This characteristic is accredited to the treatment of the nonlinearity of the temperature equation in the TCPLD solver configuration. Even though the momentum balances implicitly use the temperature from the next iteration, the temperature equation does not use the velocities of the next iteration. Instead, the convective fluxes are calculated with the velocities from the previous iteration. Even though, the implicit velocity-to-temperature coupling reduces the number of needed nonlinear iterations Table \ref{tab:cavitycompare} shows an increase in the required wall-clock time to finish the computations. This increase is attributed to the augmented costs during the application of the linear solver algorithm as a result of the additional degree of freedom that the linear system embraces. The necessary number of outer iterations is higher than in the NRCPLD configuration since the convective fluxes in the temperature equation are not coupled to the momentum balances, which degrades the convergence of the nonlinear iteration process.
 
 The conducted study shows that in order to profit from the benefits of implicit coupling with to the needed number of nonlinear iterations the key lies in the semi-implicit temperature-to-velocity/pressure coupling. However, the implicit consideration of the corresponding terms furthermore increases the amount of memory needed for computation and hence does not come without deficiencies.
 
-\subsection{Effect of Different Non-Orthogonal Correctors on Solver Convergence}
+\section{Effect of Different Non-Orthogonal Correctors on Solver Convergence}
 \label{sec:studynonorth}
 
-Section \ref{sec:nonorth} introduced different ways to address the degradation of the grid quality due to non-orthogonality of the grid. This section compares the three different correctors, the orthogonal correction, the minimum correction and the over-relaxed approach, which are used in the discretization process of the gradients at the cell boundary faces. For this purpose the grid generator program of section \ref{sec:gridpreproc} was extended to generate skewed grids. A random number generator was used to move each inner grid point within a specified neighborhood of the original location and to skew the grid. Figure \ref{fig:nonorthgrid} illustrates the concept for a two-dimensional \(8 \times 8\) grid. The orthogonality of the grid is lost, and the need for non-orthogonal correctors becomes visible. Even in the case of orthogonal grids, non-orthogonal correction may become necessary to treat fluxes across block boundaries if neighboring blocks have been locally refined. To maintain the grid's integrity after the movement of the grid vertices, the neighborhoods were limited by half the distance \(\Delta x\) of two neighboring grid points, as indicated for one particular vertex in Figure \ref{fig:nonorthgrid}.
+Section \ref{sec:nonorth} introduced different ways to address the degradation of the grid quality due to non-orthogonality of the grid. This section compares the three different correctors, the orthogonal correction, the minimum correction and the over-relaxed approach, which are used in the discretization process of the gradients at the cell boundary faces. For this purpose the grid generator program of section \ref{sec:gridpreproc} was extended to generate skewed grids. A random number generator was used to move each inner grid point within a specified neighborhood of the original location and consequently skew the grid. Figure \ref{fig:nonorthgrid} illustrates the implemented concept for a two-dimensional \(8 \times 8\) grid. The orthogonality of the grid is lost, and the need for non-orthogonal correctors becomes visible. Even in the case of orthogonal grids, a non-orthogonal correction may become necessary to treat fluxes across block boundaries if neighboring blocks have been locally refined. To maintain the grid's integrity after the movement of the grid vertices, the neighborhoods are limited by half the distance \(\Delta x\) of two neighboring grid points, as indicated for one particular vertex in Figure \ref{fig:nonorthgrid}.
 
 \begin{figure}[h!]
   \begin{center}
@@ -584,7 +593,7 @@ Section \ref{sec:nonorth} introduced different ways to address the degradation o
   \end{center}
 \end{figure}
 
-To measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed.  For this, all correctors addressing grid non-orthogonality from section \ref{sec:nonorth} have been implemented in the coupled solver program. The number of needed outer iterations to solve for the analytic solution presented in section \ref{sec:manufacturedsolution} was measured. The grid skewness was parametrized with the relative diameter \(\alpha\) of the maximal neighborhood, which constrained the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location. The calculations were terminated after obtaining a reduction of \(10^{-14}\) of the relative initial residual.
+In order to measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed. For these tests, all correctors addressing grid non-orthogonality from section \ref{sec:nonorth} have been implemented in the coupled solver program. The number of needed outer iterations on a \(32\times32\times32\) grid to solve for the analytic solution presented in section \ref{sec:manufacturedsolution} was measured. The grid skewness was parametrized with the relative diameter \(\alpha\) of the maximal neighborhood, which constrained the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location. The calculations were terminated after obtaining a reduction of \(10^{-14}\) of the relative initial residual.
 
 \begin{figure}
   \begin{center}
@@ -609,34 +618,35 @@ To measure the effect of different non-orthogonal corrections on the solution pr
 \label{fig:nonorth}
 \end{figure}
 
-The results presented in Figure \ref{fig:nonorth} affirm the results presented in \cite{jasak96}. Is can be observed, that for small movements of grid points the choice of corrector does not affect convergence. However, as movements of grid points increase, and consequently the non-orthogonality increases, the over-relaxed approach outperforms the other correctors with respect to the number of needed outer iterations. This fact also applies to performance with respect to wall-clock time since the computational effort of the application of each non-orthogonal corrector is approximately the same.
+The results presented in Figure \ref{fig:nonorth} affirm the results presented in \cite{jasak96}. For small movements of grid points, the choice of corrector does not affect convergence. However, as movements of grid points increase, and consequently the non-orthogonality increases, the over-relaxed approach outperforms the other correctors with respect to the number of needed outer iterations. This fact also applies to performance with respect to wall-clock time since the computational effort of the application of each non-orthogonal corrector is approximately the same.
 
-\subsection{Achieving Ideal Load Balancing by Automatic Matrix Partitioning}
+\section{Achieving Ideal Load Balancing by Automatic Matrix Partitioning}
+\label{sec:load}
 
-The performance analyses conducted in subsection \ref{sec:speedup} relied on perfect load balancing and thus a load balancing efficiency of \(100\%\). However, in practice, achieving and maintaining ideal load balancing throughout the solution process may be difficult. Local refinement strategies or an unfavorable grid blocking, i.e. the partition of the solution domain into grid blocks, may lead to an imbalance of load. This imbalance results in an inefficient utilization of employed hardware resources due to high idle times of processors. Furthermore, as equations (\ref{eq:efficiency}) suggests, load imbalances result in an increase of wall-clock time to solve a given problem in parallel.
+The performance analyses conducted in section \ref{sec:speedup} relied on ideal load balancing and thus a load balancing efficiency of \(100\%\). However, in practice, achieving and maintaining ideal load balancing throughout the solution process may be difficult. Local refinement strategies or an unfavorable grid blocking, i.e. the partition of the solution domain into grid blocks, may lead to an imbalance of computational load. This imbalance results in an inefficient utilization of employed hardware resources due to high idle times of processors. Furthermore, as equation (\ref{eq:efficiency}) suggests, load imbalances result in an increase of wall-clock time to solve a given problem in parallel.
 
-One possibility to partially address load imbalances is motivated by the fact, that solution algorithms which solve partial differential equations, spend a significant amount of their time solving linear algebraic systems. Based on the wall-clock time measurements for the solution of an analytic test case with 826891 unknowns, Figure \ref{fig:barbalance} shows that approximately \(48\%\) of the wall-clock time of the segregated SIMPLE-solution algorithm, and up-to \(89\%\) of wall-clock time of the coupled solution algorithm are spent solving linear systems. The goal of this subsection is to present a simple method by which ideal load balancing, with respect to the linear equation solver, can be obtained using automatic matrix partitioning.
+One possibility to partially address load imbalances is motivated by the fact, that solution algorithms which solve partial differential equations, spend a significant amount of their time solving linear algebraic systems. Based on the wall-clock time measurements for the solution of an analytic test case with 826891 unknowns, Figure \ref{fig:barbalance} shows that approximately \(48\%\) of the wall-clock time of the segregated SIMPLE-solution algorithm, and up-to \(89\%\) of wall-clock time of the coupled solution algorithm are spent solving linear systems. The goal of this section is to present a simple method by which ideal load balancing, with respect to the linear equation solver, can be obtained using automatic matrix partitioning.
 
-Using built-in PETSc subroutines, the rows of the corresponding matrices can be distributed automatically across all involved processes. With this technique, each process will retain the initially assigned variable data and calculate gradients, fluxes and matrix and right-hand side coefficients for the unknowns that correspond to the assigned portion of the numerical grid. Independently the process gets assigned a portion of the matrix, which may lead to the process assembling parts of the matrix that do not correspond to the coefficients it calculated. Thus, additional communication becomes necessary during the matrix assembly step.
+By using built-in PETSc subroutines, the rows of the corresponding matrices can be distributed automatically across all involved processes. With this technique, each process will retain the initially assigned variable data and calculate gradients, fluxes and matrix and right-hand side coefficients for the unknowns that correspond to the assigned portion of the numerical grid. Independently the process gets assigned a portion of the matrix, which may lead to the process assembling parts of the matrix that do not correspond to the coefficients, which the process had calculated. Thus, additional communication becomes necessary during the matrix assembly step. This overhead may, however, be compensated by the more efficient utilization of linear equation solvers, which due to the ideal load balancing, will generate less processor idle times and make better use of the efficient implementations of the PETSc library.
 
 \begin{figure}[!h]
   \centering
   \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
- \pie [ color ={ black!10 , black!50 , black!30 , black!40}, rotate =90, radius=2.5 ]  {52/MAIN, 12/MOM, 36/PRESSCORR}
+ \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.5 ]  {52/MAIN, 12/MOM, 36/PRESSCORR}
 \end{tikzpicture}
 \hfil
 \end{minipage}
   \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
- \pie [ color ={ black!10 , black!40 , black!30 , black!40}, rotate =90, radius=2.5 ]  {11/MAIN, 89/MOM+PRESS}
+ \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.5 ]  {11/MAIN, 89/MOM+PRESS}
 \end{tikzpicture}
 \end{minipage}
 \caption{Distribution of wall-clock time spent to solve for an analytic solution with the segregated SIMPLE-algorithm (left) and the coupled solution algorithm (right) on one processor}
 \label{fig:barbalance}
 \end{figure}
 
-The formula PETSc uses to distribute vector or matrix objects containing \(N\) rows across \(m\) involved processes evenly reads for the \(p\)th process
+The formula which PETSc uses to distribute vector or matrix objects containing \(N\) rows across \(m\) involved processes reads for the \(p\)th process
 \begin{equation}
   \label{eq:load}
 n(p)
@@ -647,9 +657,9 @@ n(p)
 \end{array}\right.
 ,
 \end{equation}
-where \(p = 0,\dots,m-1\) and \(\lfloor \cdot \rfloor\) denotes the floor function, which maps the possibly rational result of the integer division in (\ref{eq:load}) to the largest integer smaller than the result. It is evident, that using equation (\ref{eq:load}) for load balancing leads to numbers of rows that differ by maximal one row across the involved processors.
+where \(p = 0,\dots,m-1\) and \(\lfloor \cdot \rfloor\) denotes the floor function. This function maps the possibly rational result of the integer division in (\ref{eq:load}) to the largest integer smaller than the result. It is evident, that using equation (\ref{eq:load}) for load balancing leads to numbers of rows that differ by maximal one row across the involved processors.
 
-To analyze the effect of the ideal matrix partitioning, a random number generator was used to create different grid resolutions for each one of the eight blocks of a block-structured grid, having a total of 826891 cells. Figure \ref{fig:barbalance} shows the default distribution of rows which would correspond to the data each process has been assigned. Furthermore, Figure \ref{fig:barbalance} compares the original data partitioning with the case using the automatic matrix partitioning. One can observe, that, due to the simplicity of the load balancing technique, significant incoherences surge between the assigned grid and variable data and the assigned matrix rows. The rows are distributed in contiguous chunks, which leads to processes like process 0 or process 2 keeping high data coherence with the assigned matrix rows, while processes like process 3 or process 5 lack data coherence. Thus, more sophisticated distribution algorithms are necessary to maximize the retention rate of data for the individual processors maintaining the data coherence since a higher retention rate directly reduces the communication needed during matrix assembly. The utilization of advanced load distribution algorithms is especially recommendable for higher processor counts as the scattering of data and the corresponding matrix rows may significantly decrease performance.
+In order to analyze the effect of the ideal matrix partitioning, a random number generator was used to create different grid resolutions for each one of the eight blocks of a block-structured grid, having a total of 826891 cells. Figure \ref{fig:barbalance} shows the default distribution of matrix rows which correspond to the data, which had been assigned to each process. Furthermore, Figure \ref{fig:barbalance} compares the original data partitioning with the case using the automatic matrix partitioning. One can observe, that, due to the simplicity of the load balancing technique, significant incoherences surge between the assigned grid and variable data and the assigned matrix rows. The rows are distributed in contiguous chunks, which leads to processes like process 0 or process 2 keeping high data coherence with the assigned matrix rows, while processes like process 3 or process 5 lack data coherence. Thus, more sophisticated distribution algorithms are necessary to maximize the retention rate of data for the individual processors maintaining the data coherence since a higher retention rate directly reduces the communication needed during matrix assembly. The utilization of advanced load distribution algorithms is especially recommendable for higher processor counts as the scattering of data and the corresponding matrix rows may significantly decrease performance.
 
 \begin{figure}[h!]
 \newcommand{\wheelchart}[3]{
@@ -699,7 +709,7 @@ To analyze the effect of the ideal matrix partitioning, a random number generato
       width=8cm
     ]
     \addplot[fill=black]          coordinates {(103362,0) (103362,1) (103362,2) (103361,3) (103361,4) (103361,5) (103361,6) (103361,7)};
-    \addplot[black,fill=black!30] coordinates {(129360,0) (7560,1) (267300,2) (76380,3) (179962,4) (21060,5) (68544,6) (76725,7)};
+    \addplot[black,fill=tud0b] coordinates {(129360,0) (7560,1) (267300,2) (76380,3) (179962,4) (21060,5) (68544,6) (76725,7)};
     \addlegendentry{After matrix repartitioning};
     \addlegendentry{Initial data decomposition};
   \end{axis}
@@ -709,23 +719,23 @@ To analyze the effect of the ideal matrix partitioning, a random number generato
 \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
 
-\wheelchart{16/gray!70,
-            1 /gray!20,
-            32/gray!70,
-            9 /gray!20,
-            22/gray!70, 
-            3 /gray!20,
-            8 /gray!70,
-            9 /gray!20}{.5cm}{2cm}
+\wheelchart{16/tud0c,
+            1 /tud0a,
+            32/tud0c,
+            9 /tud0a,
+            22/tud0c, 
+            3 /tud0a,
+            8 /tud0c,
+            9 /tud0a}{.5cm}{2cm}
 
-\wheelchart{12.5/gray!70,
-            12.5/gray!20,
-            12.5/gray!70,
-            12.5/gray!20,
-            12.5/gray!70,
-            12.5/gray!20,
-            12.5/gray!70,
-            12.5/gray!20}{2cm}{4cm}
+\wheelchart{12.5/tud0c,
+            12.5/tud0a,
+            12.5/tud0c,
+            12.5/tud0a,
+            12.5/tud0c,
+            12.5/tud0a,
+            12.5/tud0c,
+            12.5/tud0a}{2cm}{4cm}
 
 \node[align=center] at  (22.5:3.0cm) {Proc 1};
 \node[align=center] at  (67.5:3.0cm) {Proc 0};
@@ -750,11 +760,11 @@ To analyze the effect of the ideal matrix partitioning, a random number generato
 \label{fig:distcpld}
 \end{figure}
 
-The following paragraph will analyze the effect of the automatic matrix partitioning as load balancing technique on the runtime and the redistribution of runtime on the phases where the time was spent. The phases of the segregated solution algorithm are the MAIN phase, which accounts for the calculation of gradients, fluxes, matrix coefficients and the matrix assembly, the MOM phase, in which the linear systems of the momentum balances are solved, and the PRESSCORR phase, in which the linear systems are solved for the pressure correction. Figure \ref{fig:distseg} shows that, for the presented test case, the automatic partitioning of the matrix, on the one hand, decreases the needed wall clock time, while on the other hand it increases the share of the MAIN phase of the total runtime. Matrix assembly during the MAIN phase is the only action of this phase which is affected by the new matrix distribution. Thus, initial load imbalances will still affect the calculation of gradients and other passages of the implementation which use global reduce operations and forced synchronization. One example for global reduce operations and forced synchronization is the calculation of the mean pressure to adjust the pressure level throughout the solution domain. 
+The following paragraph analyzes the effects of the automatic matrix partitioning as a load balancing technique on solver performance, in particular,the following paragraph analyzes the effects on the absolut runtime and on the relative distribution of runtime among the phases in which the time was spent. The phases of the segregated solution algorithm are the MAIN phase, which accounts for the calculation of gradients, fluxes, matrix coefficients and the matrix assembly, the MOM phase, in which the linear systems of the momentum balances are solved, and the PRESSCORR phase, in which the linear systems are solved for the pressure correction. Figure \ref{fig:distseg} shows that, for the presented test case, the automatic partitioning of the matrix not only decreases the needed wall-clock time but also increases the share of the MAIN phase of the total runtime. Matrix assembly during the MAIN phase is the only action of this phase which is affected by the new matrix distribution. Thus, initial load imbalances will still affect the calculation of gradients and other passages of the implementation which use global reduce operations and forced synchronization. One example for global reduce operations and forced synchronization is the calculation of the mean pressure to adjust the pressure level throughout the solution domain. 
 
 Depending on the parallel matrix layout, one processor might need to assemble parts of the matrix, which do not reside in its address space. Due to the increased amount of communication necessary for the matrix assembly, relatively more time was spent in this phase compared to the test case using the default partitioning as Figure \ref{fig:distseg} shows. The absolute time difference is negligible, which shows that the communication overhead during the matrix assembly step is more than compensated by the application of the ideally balanced matrix solver steps. All test calculations were performed using a single node of the MPI section of the HHLR. Thus, the presented results do not account for the additional communication performance degradation due to the effects of the inter-node interconnect.
 
-As Figure \ref{fig:barbalance} shows, the beneficial effect of automatic matrix partitioning on solver performance is expected to increase significantly if applied to the matrix used in the coupled solution process. On the one hand, relatively more time is spent solving the linear system and on the other hand only one linear system is solved compared to the four linear systems solved in a segregated solution algorithm.
+As Figure \ref{fig:barbalance} shows, the beneficial effect of automatic matrix partitioning on solver performance is expected to increase significantly if applied to the matrix used in the coupled solution process. On the one hand, relatively more time is spent solving the linear system and, on the other hand, only one linear system is solved compared to the four linear systems solved in a segregated solution algorithm.
 
 \begin{figure}[h!]
 %  \subfigure{
@@ -768,7 +778,7 @@ As Figure \ref{fig:barbalance} shows, the beneficial effect of automatic matrix 
   \subfigure{
   \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
- \pie [ color ={ black!10 , black!50 , black!30 , black!40}, rotate =90, radius=2.5 ]  {50/MAIN, 13/MOM, 37/PRESSCORR}
+ \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.5 ]  {50/MAIN, 13/MOM, 37/PRESSCORR}
  \node[draw,align=left] at (0,+3.5) {Default partitioning -- 0.1241E+04s};
 \end{tikzpicture}
 \end{minipage}}
@@ -776,11 +786,11 @@ As Figure \ref{fig:barbalance} shows, the beneficial effect of automatic matrix 
   \subfigure{
   \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
- \pie [ color ={ black!10 , black!50 , black!30 , black!40}, rotate =90, radius=2.5 ]  {64/MAIN, 12/MOM, 24/PRESSCORR}
+ \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.5 ]  {64/MAIN, 12/MOM, 24/PRESSCORR}
  \node[draw,align=left] at (0,+3.5) {Automatic partitioning -- 0.9891E+03s};
 \end{tikzpicture}
 \end{minipage}}
-\caption{Distribution of wall-clock time for one and eight processes, solving for an analytic solution, using the default data partitioning for matrix assembly and automatic partitioning to balance the load. MAIN refers to the gradient calculations, the flux calculation, and matrix assembly, MOM refers to the solution of the linear systems for the momentum balance and PRESS refers to the solution of the linear systems for the pressure correction.}
+\caption{Distribution of wall-clock time for one and eight processes, solving for an analytic solution, using the default data partitioning for matrix assembly and automatic partitioning to balance the load. MAIN refers to the gradient calculations, to the flux calculations, and to matrix assembly. MOM refers to the solution of the linear systems for the momentum balance. PRESS refers to the solution of the linear systems for the pressure correction.}
 \label{fig:distseg}
 \end{figure}
 

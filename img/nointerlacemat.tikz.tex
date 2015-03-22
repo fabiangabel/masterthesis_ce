@@ -5,7 +5,7 @@
 \newcommand*{\yMin}{0}%
 \newcommand*{\yMax}{1}%
 \newcommand\markcell[2] {
-  \fill[gray,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
+  \fill[tud0c,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
   }
 
 \begin{tikzpicture}
@@ -15,8 +15,8 @@
     %\fill[gray!40] (8*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep-8*\xStep) -- (8*\xStep,\xStep*\nStep-8*\xStep) -- cycle;
 
     \foreach \j in {0,...,5} {
-    \draw [very thin,gray] (0,\j*\xStep*35) -- (\xStep*\nStep,\j*\xStep*35)  ;
-    \draw [very thin,gray] (\j*\xStep*35,0) -- (\j*\xStep*35,\xStep*\nStep)  ;
+    \draw [very thin,black] (0,\j*\xStep*35) -- (\xStep*\nStep,\j*\xStep*35)  ;
+    \draw [very thin,black] (\j*\xStep*35,0) -- (\j*\xStep*35,\xStep*\nStep)  ;
     }
 
 \markcell{  0}{  0};

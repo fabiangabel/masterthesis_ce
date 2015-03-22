@@ -42,10 +42,10 @@
 \draw (A3) -- (C2);
 \draw (A5) -- (C3);
 
-\fill[orange] (A2) -- (A4) -- (B2) -- (B1) -- cycle ; 
-\fill[orange] (A1) -- (A3) -- (C2) -- (C1) -- cycle ;
-\fill[orange!75] (A3) -- (A5) -- (C3) -- (C2) -- cycle ;
-\fill[orange!25] (A4) -- (A6) -- (B3) -- (B2) -- cycle ;
+\fill[tud2a] (A2) -- (A4) -- (B2) -- (B1) -- cycle ; 
+\fill[tud2a] (A1) -- (A3) -- (C2) -- (C1) -- cycle ;
+\fill[tud2a] (A3) -- (A5) -- (C3) -- (C2) -- cycle ;
+\fill[tud2a!25] (A4) -- (A6) -- (B3) -- (B2) -- cycle ;
 \draw[thin] (A2) -- (A4) -- (B2) -- (B1) -- cycle ;
 \draw[thin] (A1) -- (A3) -- (C2) -- (C1) -- cycle ;
 \draw[thin] (A3) -- (A5) -- (C3) -- (C2) -- cycle ;
@@ -54,7 +54,7 @@
 \coordinate (L) at (barycentric cs:A2=1,A4=1,B1=1,B2=1);
 \draw[fill=black] (L) circle (0.1) node[below left] {$L_{l}\,,L_{l+1}$} ;
 \coordinate (L2) at (barycentric cs:A4=1,A6=1,B3=1,B2=1);
-\fill [gray!50] (L2) circle (0.1) ;
+\fill [tud0b] (L2) circle (0.1) ;
 \coordinate (R) at (barycentric cs:A1=1,A3=1,C1=1,C2=1);
 \draw[fill=black] (R) circle (0.1) node[above right] {$R_l$} ;
 \coordinate (RR) at (barycentric cs:A3=1,A5=1,C2=1,C3=1);

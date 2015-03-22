@@ -6,6 +6,9 @@
 }
 
 \usepackage{kolloquium}
+\newcommand{\sqa}{{\tiny{$\color{tud7a}\blacksquare$}}}
+\newcommand{\sqb}{{\tiny{$\color{tud9a}\blacksquare$}}}
+\newcommand{\sqc}{{\tiny{$\color{tud4a}\blacksquare$}}}
 
 \title[Masterthesis ]{\small{Implementierung und Untersuchung \\einer hoch effizienten Methode \\zur Druck-Geschwindigkeits-Kopplung}}
 \subtitle{\small{Masterthesis}}
@@ -351,12 +354,10 @@
 \end{column}
   \vspace{1cm}
 \begin{column}{5cm}
-  unterschiedliche Kopplungsterme:
-  \begin{itemize}
-    \item blau: Druck-Geschwindigkeit
-    \item rot: Geschwindigkeit-Temperatur
-    \item grün: Temperatur-Geschwindigkeit/Druck
-  \end{itemize}
+  unterschiedliche Kopplungsterme:\\
+  \quad \sqa \, Druck-Geschwindigkeit \\
+  \quad \sqb \, Geschwindigkeit-Temperatur \\
+  \quad \sqc \, Temperatur-Geschwindigkeit/Druck \\
   \vspace{3cm}
   \hspace*{-3cm} \scriptsize{$\color{fnbblue}\blacksquare$} an Stelle eines Eintrags steht eine dicht besetzte \(5x5\) Matrix
 \end{column}
@@ -416,7 +417,7 @@
 \section{Performanceuntersuchung}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-  \frametitle{STREAM Benchmark \\- Sustainable Memory Bandwidth}
+  \frametitle{McCalpin STREAM Benchmark \\- Sustainable Memory Bandwidth}
 
 \vspace{-0.15cm}
 \begin{columns}
@@ -460,7 +461,7 @@
         \item Nutzung eines Knotens der MPI1-Sektion (Sandy-Bridge) des HHLR 
         \item low-level Benchmark
         \item für bandbreitenlimitierte Programmperformance
-        \item Vectortriade: \( a[i] = b[i] + scalar * c[i] \) 
+        \item TRIAD KERNEL: \( a[i] = b[i] + scalar * c[i] \) 
       \end{itemize}
     \end{column}
     \end{columns}

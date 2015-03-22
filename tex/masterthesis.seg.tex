@@ -1,8 +1,8 @@
-\section{Implicit Finite-Volume Method for Incompressible Flows -- Segregated Approach}
+\chapter{Implicit Finite-Volume Method for Incompressible Flows -- Segregated Approach}
 \label{sec:seg}
-In this section, an algorithm, addressed to resolve the pressure-velocity coupling, is introduced. Furthermore, an under-relaxation factor independent method of calculating mass fluxes by interpolation is introduced, and the detailed derivation of all coefficients that result from the discretization process is presented. Finally, the boundary conditions, which are relevant for the present thesis will be shown.
+In this chapter, an algorithm, addressed to resolve the pressure-velocity coupling, is introduced. Furthermore this chapter proposed an under-relaxation factor independent method of calculating mass fluxes by interpolation, and presents the detailed derivation of all coefficients that result from the discretization process. Finally, this chapter shows the boundary conditions, which are relevant to the present thesis.
 
-\subsection{Discretization of the Mass Balance}
+\section{Discretization of the Mass Balance}
 
 Integration of equation (\ref{eq:contidiff}) over the integration domain of a single control volume \(P\), after the application of Gauss's integration theorem and the additivity of the Riemann integral, yields
 \begin{displaymath}
@@ -13,16 +13,16 @@ In the present work the mass balance is discretized using the midpoint integrati
   \label{eq:massbalance}
   \sum_{f \in \{w,s,b,t,n,e\}} u_{i,f} n_{f_i} S_f = 0,
 \end{align}
-where no interpolation to attain the values of \(u_i\) at the face \(S_f\) has been performed yet, since the straightforward linear interpolation will lead to undesired oscillations in the solution fields. An interpolation method to circumvent this so-called \emph{checker-boarding} effect is presented in subsection \ref{sec:massflux}.
+where no interpolation to attain the values of \(u_i\) at the face \(S_f\) has been performed yet, since the straightforward linear interpolation will lead to undesired oscillations in the solution fields. An interpolation method to circumvent this so-called \emph{checker-boarding} effect is presented in section \ref{sec:massflux}.
 
-\subsection{A Pressure-Weighted Interpolation Method for Velocities}
+\section{A Pressure-Weighted Interpolation Method for Velocities}
 \label{sec:massflux}
 
 The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified, and the conservation property of finite-volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major deficiency of cell-centered variable arrangements is that the pressure field may delink, which will then lead to unphysical oscillations in both the pressure and the velocity results. If the oscillations are severe enough, the solution algorithm might even get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances, and the mass fluxes in the continuity equation are discretized using central differences. 
   
-A common practice to eliminate this behavior is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. However, the original interpolation scheme does not guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms that are used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore, the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. These issues will be addressed in this subsection which, in the end, will present an interpolation method that assures an under-relaxation independent solution: the \emph{pressure-weighted interpolation method} \cite{miller88}.
+A common practice to eliminate this behavior is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. However, the original interpolation scheme does not guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore, the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. The present section addresses these issues and present an interpolation method that assures an under-relaxation independent solution: the \emph{pressure-weighted interpolation method} \cite{miller88}.
 
-The starting point of the pressure-weighted interpolation method is formed by the discretized momentum balances at node \(P\) and an arbitrary neighboring node \(Q\). The discretization for finite-volume methods and details including the incorporation of under-relaxation factors will be handled in subsection \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), read
+The starting point of the pressure-weighted interpolation method is formed by the discretized momentum balances at node \(P\) and an arbitrary neighboring node \(Q\). The discretization for finite-volume methods and details including the incorporation of under-relaxation factors will be handled in section \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), read
 %\begin{subequations}
 \begin{align*}
     u_{i,P}^{(n)} 
@@ -54,7 +54,7 @@ Figure \ref{fig:virt} gives an interpretation of the virtual control volume.
 \begin{figure}[h]
   \input{./img/virt.tikz.tex}
   \centering{}
-  \caption{Possible interpretation of a virtual control volume (grey) located between nodes $P$ and $Q$ }
+  \caption{Possible interpretation of a virtual control volume (gray) located between nodes $P$ and $Q$ }
   \label{fig:virt}
 \end{figure}
 
@@ -109,7 +109,7 @@ Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in e
   \left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)} 
   - \left(1 - \gamma_f \right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}}\left( \frac{\partial p}{\partial x_i} \right)_P^{(n-1)} 
   - \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_i}}\left(\frac{\partial p}{\partial x_i}\right)_Q^{(n-1)}
-  \right] \nonumber \displaybreak\\[1em]
+  \right] \nonumber \\[1em]
   &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right] \nonumber \\[1em]
   &\approx
   \left[\left(1 - \gamma_f\right) u_{i,P}^{(n)} + \gamma_f u_{i,Q}^{(n)} \right] \nonumber\\[1em]
@@ -122,7 +122,7 @@ Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in e
   \right] \nonumber \\[1em]
   &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
 \end{align}
-It should be noted that the argumentation that led to the last expression, is, that the task of the underlined pressure gradient corrector in equation (\ref{eq:closepwim}) is to suppress oscillations in the converged solution for the pressure field. If there are no oscillations, this part should not become active. As long as the behavior of this corrector remains consistent, i.e. that there are no oscillations in the pressure field within a converged solution, it can be multiplied with arbitrary constants \cite{ferziger02}. This is however true on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary non-orthogonal grids, another modification has to be performed, which is based on a special case of the mean value theorem of differential calculus and the following 
+The argumentation that led to the last expression, is, that the task of the underlined pressure gradient corrector in equation (\ref{eq:closepwim}) is to suppress oscillations in the pressure field. If there are no oscillations, this part should not become active. As long as the behavior of this corrector remains consistent, i.e. that there are no oscillations in the pressure field within a converged solution, it can be multiplied with arbitrary constants \cite{ferziger02}. This fact is, however, true on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary non-orthogonal grids, another modification has to be performed, which is based on a special case of the mean value theorem of differential calculus and the following 
 \begin{prop}
   Let \(x_1,x_2 \in \mathbb{R}\) with \(x_1 \neq x_2\) and \(p(x) = a_0 + a_1 x + a_2 x^2\) a real polynomial function. Then 
   \begin{displaymath}
@@ -163,7 +163,7 @@ It is desirable for the pressure corrector to vanish independent of the grid spa
   \label{eq:pwim}
   &\quad\quad + \underline{\left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right]}.
 \end{align}
-Comparing this final expression with the standard interpolation scheme, it is evident that, normally, the underlined term is not taken into consideration \cite{ferziger02}. However, section \ref{sec:independence} shows, that neglecting this term indeed creates under-relaxation factor dependent results. This section concludes with a final
+Comparing this final expression with the standard interpolation scheme, it is evident that, usually, the underlined term is not taken into consideration \cite{ferziger02}. However, section \ref{sec:independence} shows, that neglecting this term indeed creates under-relaxation factor dependent results. This section concludes with a final
 \begin{prop}
   The pressure weighted momentum interpolation scheme (\ref{eq:pwim}) guarantees the converged solution for \(u_{i,f}\) to be independent of the velocity under-relaxation \(\alpha_\vec{u}\).
 \end{prop}
@@ -198,7 +198,7 @@ Upon convergence \(u_{i,P}^{(n)} = u_{i,P}^{(n-1)}\) and \(u_{i,f}^{(n)} = u_{i,
 which shows, after division by \(\alpha_\vec{u} > 0\), that \(u_{i,f}\) is independent of the under-relaxation factor.
 \end{proof}
 
-\subsection{Implicit Pressure Correction and the SIMPLE-Algorithm}
+\section{Implicit Pressure Correction and the SIMPLE-Algorithm}
 \label{sec:simple}
 
 Finite-volume methods aim at deducing a particular system of linear algebraic equations from a partial differential equation. In the case of the momentum balances the general structure of this linear equations is
@@ -211,7 +211,7 @@ Finite-volume methods aim at deducing a particular system of linear algebraic eq
   -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
   + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)},
 \end{displaymath}
-where the pressure gradient has been discretized only symbolically and \(b_{P,u_i}^{(n-1)}\) denotes the source term evaluated at the previous outer iteration.
+where the pressure gradient only has been discretized symbolically and \(b_{P,u_i}^{(n-1)}\) denotes the source term evaluated at the previous outer iteration.
 
 At this stage, the equations are still coupled and nonlinear. As described in section \ref{sec:nonlinear}, the Picard iteration process can be used to linearize the equations. After this, every momentum balance equation only depends on the one dominant variable \(u_i\). Furthermore, the coupling of the momentum balances through the convective term \((u_i u_j)\) is resolved in the process of linearization. In the next step, the decoupled momentum balances can be solved sequentially for the dominant variable \(u_i\). All coefficients \(a_{\{P,F\}}^{u_i}\), the source term, and the pressure gradient will be evaluated explicitly by using results of the preceding outer iteration \((n-1)\). For the pressure gradient, this means to take the pressure of the antecedent outer iteration as a first guess for the following iteration. This guess has to be corrected in an iterative way until all the nonlinear equations are fulfilled up to a certain tolerance. Section (\ref{sec:convergence}) presents a suitable convergence criterion and its implementation. This linearization process in conjunction with the pressure guess leads to the linear equation 
 \begin{equation}
@@ -223,7 +223,7 @@ At this stage, the equations are still coupled and nonlinear. As described in se
   -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
   + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}.
 \end{equation}
-Here \((*)\) indicates, that the solution of this equation still needs to be corrected in order to fulfill the discretized mass balance
+Here \((*)\) indicates that the solution of this equation still needs to be corrected in order to fulfill the discretized mass balance
 \begin{equation}
   \label{eq:contisemi}
   \sum_{F \in NB(P)} (u_i)_f^{(n)} n_i S_f = 0.
@@ -246,7 +246,7 @@ Using the procedure that has been applied in section \ref{sec:massflux} to equat
 \end{align}
 where the pressure from the previous outer iteration has been used as a pressure guess.
 
-The lack of an equation having the pressure as dominant variable leads to the necessity to alter the mass balance as the only equation left. Methods of this type are called projection methods \cite{ferziger02}. A common class of algorithms of this family of methods uses an equation for the additive pressure correction \(p'\) instead of the pressure itself and enforces continuity by correcting the velocities with an additive corrector \(u_i'\), such that
+The lack of an equation having the pressure as dominant variable leads to the necessity to alter the mass balance as the only equation left. Methods of this type are called projection methods \cite{ferziger02}. A common class of algorithms of this family of methods uses an equation for the additive pressure correction \(p'\) instead of the pressure itself. These algorithms enforce continuity by additively correcting the velocities and the pressure with the corrector \(u_i'\) and \(p'\) to
 \begin{displaymath}
   u_{i,P}^{(n)} =  u_{i,P}^{(n*)}  + u_{i,P}',\quad u_{i,f}^{(n)} =  u_{i,f}^{(n*)}  + u_{i,f}' \quad \text{and} \quad   p_P^{(n)} =  p_P^{(n-1)}  + p_P'.
 \end{displaymath}
@@ -294,7 +294,7 @@ To couple velocity and pressure correctors one can subtract equation (\ref{eq:no
   - \gamma_f \left(\frac{\partial p}{\partial x_i}\right)_Q' 
   \right].
 \end{align}
-The majority of the class of pressure correction algorithms has these equations as a common basis. Each algorithm then introduces special, distinguishable approximations of the velocity corrections that are, at the moment of solving for the pressure correction, still unknown. The method used in the present work is the \emph{SIMPLE}-algorithm (\emph{Semi-Implicit Method for Pressure-Linked Equations}) \cite{patankar72}. The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation (\ref{eq:nodeprime}). Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by inserting equation (\ref{eq:nodeprime}) into equation (\ref{eq:faceprime}). This gives an update formula
+The majority of the class of pressure correction algorithms has these equations as a common basis. Each algorithm then introduces special, distinguishable approximations of the velocity corrections that are, at the moment of solving for the pressure correction, still unknown. The method used in the present work is the \emph{SIMPLE}-algorithm (\emph{Semi-Implicit Method for Pressure-Linked Equations}) \cite{patankar72}. The approximation this algorithm performs is severe since the term containing the unknown velocity corrections is dropped entirely. The respective term has been underlined in equation (\ref{eq:nodeprime}). Since the global purpose of the presented method is to enforce continuity by implicitly calculating a pressure correction, the velocity correction has to be expressed solely in terms of the pressure correction. This can be accomplished by inserting equation (\ref{eq:nodeprime}) into equation (\ref{eq:faceprime}). This approach gives an update formula
 \begin{align}
   \label{eq:velcorr}
   u_{i,f}' 
@@ -315,7 +315,7 @@ where the right-hand side \(b_{P,p}\) is defined as
   \label{eq:presscorrb}
   b_{P,p} := \sum_{F \in NB(P)} u_{i,f}^{(n*)} n_i S_f.
 \end{equation}
-The complete discretization of this equation, using central differences as approximation for the gradient of the pressure correction, is straightforward and will be presented in subsection \ref{sec:segpresscorr}.
+The complete discretization of this equation, using central differences as approximation for the gradient of the pressure correction, is straightforward and will be presented in section \ref{sec:segpresscorr}.
 
 The approximation performed in the SIMPLE-algorithm affects convergence in a way, that the pressure correction has to be under-relaxed with a parameter \(\alpha_p \in [0,1]\)
 \begin{equation}
@@ -323,9 +323,9 @@ The approximation performed in the SIMPLE-algorithm affects convergence in a way
   p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} p_P'.
 \end{equation}
 
-It should be noted that there exist better approximations for the pressure correction which do not rely on pressure under-relaxation for convergence. On example that uses a more consistent approximation is the \emph{SIMPLEC}-algorithm (\emph{SIMPLE Consistent}) \cite{doormaal84}. A similar derivation of the pressure weighted interpolation method and its implementation for the SIMPLEC-algorithm can be found in \cite{miller88}.
+There exist better approximations for the pressure correction which do not rely on pressure under-relaxation for convergence. On example that uses a more consistent approximation is the \emph{SIMPLEC}-algorithm (\emph{SIMPLE Consistent}) \cite{doormaal84}. \cite{miller88} gives a similar derivation of the pressure weighted interpolation method and its implementation in the SIMPLEC-algorithm.
 
-As shown in section \ref{sec:massflux}, the behavior of the pressure weighted interpolation method on non-equidistant grids can be improved by replacing the linear interpolation of pressure gradients in equation (\ref{eq:faceinter}) with a simple average. This leads to the following equation for calculating mass fluxes from face velocities
+As shown in section \ref{sec:massflux}, the behavior of the pressure weighted interpolation method on non-equidistant grids can be improved by replacing the linear interpolation of pressure gradients in equation (\ref{eq:faceinter}) with a simple average. This replacement leads to the following equation for calculating mass fluxes from face velocities
 \begin{align}
   \label{eq:facecorr2}
   u_{i,f}^{(n*)} 
@@ -364,10 +364,10 @@ The SIMPLE-algorithm can be represented by an iterative procedure as shown in al
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Discretization of the Mass Fluxes and the Pressure Correction Equation}
+\section{Discretization of the Mass Fluxes and the Pressure Correction Equation}
 \label{sec:segpresscorr}
 
-Subsections \ref{sec:massflux} and \ref{sec:simple} introduced the concept of pressure weighted interpolation to avoid oscillating results and an algorithm to calculate a velocity field that obeys continuity. The derived equations have not been discretized completely. Furthermore, the approach has not been generalized for non-orthogonal grids.
+Sections \ref{sec:massflux} and \ref{sec:simple} introduced the concept of pressure weighted interpolation to avoid oscillating results and an algorithm to calculate a velocity field that obeys continuity. The derived equations have not been discretized completely. Furthermore, the approach has not been generalized for non-orthogonal grids.
 
 The discretized mass balance (\ref{eq:massbalance}) only depends on the normal velocities \(u_{i,f} n_{i,f}\). By analogy with equation (\ref{eq:facecorr2}), an interpolated normal face velocity, and thus the mass flux, can be calculated as
 \begin{align}
@@ -409,7 +409,7 @@ can be calculated as
 \end{equation}
 The right-hand side can be calculated as in equation (\ref{eq:presscorrb}) if the presented discretization is applied. 
 
-\subsection{Discretization of the Momentum Balance}
+\section{Discretization of the Momentum Balance}
 \label{sec:segdiscretization}
 
 If the stationary momentum balance is integrated over a single control volume \(P\), the result reads
@@ -420,9 +420,9 @@ If the stationary momentum balance is integrated over a single control volume \(
   = - \underbrace{\iiint\limits_V \frac{\partial p}{\partial x_i} \mathrm{d}V}_{\text{pressure sourceterm}}
   - \underbrace{\iiint\limits_V \rho \beta \left(T - T_0\right) \mathrm{d}V}_{\text{temperature sourceterm}},
 \end{equation}
-where the different terms, to be addressed individually in the following sections, are indicated. The reader should note, that the form of this equation has been modified by using Gauss's integration theorem. The terms residing on the left will be treated in an implicit and, due to deferred corrections, also in an explicit way, whereas the terms on the right will be treated exclusively in an explicit way.
+where the different terms, to be addressed individually in the following subsections, are indicated. The reader should note, that the form of this equation has been modified by using Gauss's integration theorem. The terms residing on the left will be treated in an implicit and, due to deferred corrections, also in an explicit way, whereas the terms on the right will be treated exclusively in an explicit way.
 
-\subsubsection{Linearization and Discretization of the Convective Term}
+\subsection{Linearization and Discretization of the Convective Term}
 \label{sec:segconvective}
 
 The convective term \(\left( \rho u_i u_j \right)\) of the Navier-Stokes equations is the reason for the nonlinearity of the equations. In order to deduce a set of linear algebraic equations from the Navier-Stokes equations, this term has to be linearized. As introduced in section (\ref{sec:nonlinear}), the nonlinearity will be dealt with by means of an iterative process, the Picard iteration. Therefore, the part dependent on the non-dominant dependent variable, will be approximated with its value from the previous iteration as \( \rho u_i^{(n)} u_j^{(n)} \approx \rho u_i^{(n)} u_j^{(n-1)} \). However, this linearization will not be directly visible, because it will be covered by the mass flux \(\textstyle \dot{m}_f = \iint\limits_{S_f} \rho u_j^{(n-1)} n_j \mathrm{d}S \). 
@@ -456,7 +456,7 @@ where the variable values have to be taken from the previous iteration step \((n
 \end{align*}
 %\end{subequations}
 
-\subsubsection{Discretization of the Diffusive Term}
+\subsection{Discretization of the Diffusive Term}
 
 The diffusive term contains the first partial derivatives of the velocity as a result of the material constitutive equation that characterizes the behavior of Newtonian fluids. As pointed out in section \ref{sec:nonorth}, directional derivatives can be discretized using central differences on orthogonal grids or, in the more general case of non-orthogonal grids, using central differences implicitly and an explicit deferred correction comprising the non-orthogonality of the grid. As seen in equation (\ref{eq:navierstokes}) the diffusive term of the Navier-Stokes equations can be simplified using the mass balance in the case of an incompressible flow with constant viscosity \(\mu\). To sustain the generality of the presented approach, this simplification will be omitted.
 
@@ -501,7 +501,7 @@ The interpolation of the cell center gradients to the boundary faces is performe
 \end{align*}
 %\end{subequations}
 
-\subsubsection{Discretization of the Source Terms}
+\subsection{Discretization of the Source Terms}
 
 Since in the segregated solution approach in every equation all other variables but the dominant one are treated as constants, and the source terms in equation (\ref{eq:semidiscrete}) do not depend on the dominant variable, the discretization is straightforward. The source terms of the momentum balance are discretized using the midpoint integration rule for volume integrals, which leads to the source term
 \begin{displaymath}
@@ -513,16 +513,16 @@ Since in the segregated solution approach in every equation all other variables 
   = b_{P,u_i}^{sc}.
 \end{displaymath}
 
-\subsection{Discretization of the Temperature Equation}
+\section{Discretization of the Temperature Equation}
 \label{sec:discretetemperature}
 
-The discretization of the temperature equation is performed by the same means as for the momentum balance. The only difference is a simpler diffusion term. The integral form of the temperature equation, after applying the Gauss's theorem of integration, is
+The discretization of the temperature equation is performed by the same means as for the momentum balance. The only difference is a simpler diffusion term. The integral form of the temperature equation, after applying the Gauss's theorem of integration, reads
 \begin{displaymath}
   \underbrace{ \iint\limits_S \rho u_j T n_j \mathrm{d}S }_{\text{advective term}}
   - \underbrace{ \iint\limits_S \kappa \frac{\partial T}{\partial x_j} n_j \mathrm{d}V }_{\text{diffusive term}}
   = \underbrace{\iiint\limits_V \vphantom{\frac{ T}{ x_j} } q_T \mathrm{d}V }_{\text{source term}}.
 \end{displaymath}
-Now, proceeding as in the previous subsections, one can discretize the advective term, the diffusive term, and the source term. Since this process does not provide further insight, only the final results will be presented. The discretization yields the matrix coefficients as
+Now, proceeding as in the previous sections, one can discretize the advective term, the diffusive term, and the source term. Since this process does not provide further insight, only the final results will be presented. The discretization yields the matrix coefficients as
 %\begin{subequations}
   \begin{align*}
     a_F^{T} &= \min(\dot{m}_f,0) + \frac{\kappa S_f}{||\vec{x}_P - \vec{x}_F||_2} \\[1em]
@@ -533,17 +533,17 @@ Now, proceeding as in the previous subsections, one can discretize the advective
             &\quad + q_{T_P} V_P.
   \end{align*}
 %\end{subequations}
-Again it is possible though not always as necessary as in the case of the velocities, to under-relax the solution of the resulting linear system with a factor \(\alpha_T\). This can be accomplished in the way that will be shown in subsection \ref{sec:structure}.
+Again it is possible though not always as necessary as in the case of the velocities, to under-relax the solution of the resulting linear system with a factor \(\alpha_T\). Under-relaxation of variables can be accomplished in the way that will be shown in section \ref{sec:structure}.
 
-\subsection{Boundary Conditions}
+\section{Boundary Conditions}
 \label{sec:segboundary}
 
-As the antecedent subsections showed, it is possible to deduce a linear algebraic equation for each control volume by the finite-volume method. However, the approach presented in the preceding subsections did not cover the treatment of control volumes at domain boundaries. This subsection introduces the boundary conditions which are relevant for the present work and deals with transitional conditions at block boundaries.
+As the antecedent sections showed, it is possible to deduce a linear algebraic equation for each control volume by the finite-volume method. However, the approach presented in the preceding sections did not cover the treatment of control volumes at domain boundaries. This section introduces the boundary conditions which are relevant for the present work and deals with transitional conditions at block boundaries.
 
-\subsubsection{Dirichlet Boundary Conditions}
+\subsection{Dirichlet Boundary Conditions}
 \label{sec:segDirichlet}
 
-The first boundary condition is the Dirichlet boundary condition. This type of boundary condition, when used for the velocity or transported scalars, is used to model inlet conditions for flow problems. For the temperature equation, it may also be used at walls, as will be shown in subsection \ref{sec:walls}. The Dirichlet boundary condition is characterized by explicitly specifying the value of the variable for which the equation is solved. As a result, boundary fluxes can be calculated directly. In the case of Dirichlet boundary conditions for the velocities, especially the mass flux \(\dot{m}_f\) is known and hence does not have to be calculated using the pressure weighted interpolation method. This furthermore implies that the boundary velocities do not have to be corrected at Dirichlet velocity boundaries, i.e. (\ref{eq:velcorr}) yields
+The first boundary condition is the Dirichlet boundary condition. This type of boundary condition, when used for the velocity or transported scalars, is used to model inlet conditions for flow problems. For the temperature equation, it may also be used at walls, as will be shown in subsection \ref{sec:walls}. The Dirichlet boundary condition is characterized by explicitly specifying the value of the variable for which the equation is solved. As a result, boundary fluxes can be calculated directly. In the case of Dirichlet boundary conditions for the velocities, especially the mass flux \(\dot{m}_f\) is known and hence does not have to be calculated using the pressure weighted interpolation method. This fact furthermore implies that the boundary velocities do not have to be corrected at Dirichlet velocity boundaries, i.e. (\ref{eq:velcorr}) yields
 \begin{displaymath}
   0 
   =
@@ -553,10 +553,11 @@ The first boundary condition is the Dirichlet boundary condition. This type of b
   \left(\frac{\partial p}{\partial x_i}\right)_f',
 \end{displaymath}
 which implies
-\begin{displaymath}
+\begin{equation}
+  \label{eq:dirichletneumann}
   0 = \left(\frac{\partial p}{\partial x_i}\right)_f'.
-\end{displaymath}
-This means that for the pressure correction at Dirichlet velocity boundaries a Neumann zero gradient boundary condition applies.
+\end{equation}
+Equation (\ref{eq:dirichletneumann} shows that for the pressure correction at Dirichlet velocity boundaries a Neumann zero gradient boundary condition applies.
 
 Since in the case of Dirichlet boundary conditions for the velocities or the temperature no special modifications have to be made to the discretized equations, because the resulting coefficient for a neighboring control volume laying past the boundary is considered on the right-hand side of the linear system, the implementation approach for inlet boundary conditions will be presented only for the temperature equation. Furthermore there is no boundary condition that fixes the gradient at Dirichlet boundaries, this is why it is assumed, that the partial derivatives of the respective variable are constant and can be extrapolated
 \begin{displaymath}
@@ -577,7 +578,7 @@ The reader should note, that, even though the gradient discretization at domain 
 
 The case of Dirichlet boundary conditions for the pressure needs special consideration since no equation for the pressure is solved but instead an equation for the pressure correction. This type of boundary condition can be applied to inlet boundaries or pressure boundaries and is recommendable if, on the one hand, no data on the velocity distribution is known, but, on the other hand, the pressure difference between inlet and outlet, or the reference pressure at the outlet is a known quantity. The pressure correction at Dirichlet pressure boundaries is assumed to \(p' = 0\), and the modification of the coefficients of the algebraic equation for the corresponding control volumes can be carried out as in (\ref{eq:dirichletcoeff}) and (\ref{eq:dirichletrhs}). The velocity correction at the boundaries is nonzero and will have to be extrapolated using the formula for the pressure weighted interpolation applied to boundary values (\ref{eq:faceprime}). Even though Dirichlet boundary conditions for the pressure would correspond to Neumann boundary conditions for the velocities, a Dirichlet boundary condition for the velocities is used as well, using an extrapolated velocity value as fixed value for the calculation of boundary fluxes in the momentum balances. 
 
-\subsubsection{Treatment of Wall Boundaries}
+\subsection{Treatment of Wall Boundaries}
 \label{sec:walls}
     
 A common boundary for the solution domain is given by solid walls. For all kind of flows this boundary condition first of all has a kinematic character since the concept of impermeable walls dictates a zero normal velocity at the wall. In viscous flows, wall boundaries can be interpreted furthermore as a no-slip condition, i.e. a Dirichlet boundary condition for the tangential velocities. Convective fluxes through solid walls are thus zero by definition. However, the diffusive fluxes of the velocities and the temperature require special consideration. To approximate the fluid behavior on a wall boundary correctly, special modifications have to be taken into account to model the normal a shear tension. Furthermore, diffusive fluxes for the temperature can be given by Neumann or Dirichlet boundary conditions.
@@ -663,7 +664,7 @@ The reader should note that since the deferred correction uses a Dirichlet bound
 
 If the solution of the flow field is coupled to the solution of a temperature equation, different options for the boundary condition at walls may be chosen. If, on the one hand, the wall temperature is known, a Dirichlet boundary condition for the temperature is the choice. A wall of this type is called to be \emph{isothermal}. If, on the other hand, only the heat flux is known, a Neumann boundary condition is used. In the special case of zero heat flux, the wall is called to be \emph{adiabatic}. For adiabatic walls, which are besides isothermal walls used for the present thesis, the implementation is straightforward since no coefficients have to be calculated at all.
 
-\subsubsection{Treatment of Block Boundaries}
+\subsection{Treatment of Block Boundaries}
 \label{sec:blockboundaries}
 
 If block-structured grids are used to decompose the problem domain, the characterizing property of structured grids, which is the constant amount of grid cells in each direction, gives each inner cell exactly six neighbors. If more than one grid block is used, this property is violated if the number of grid cells of each block is chosen to be arbitrary. The arbitrariness of the grid resolution is a main benefactor for the adaptivity of block-structured grids. Arbitrary grid resolutions may lead to \emph{hanging} nodes at block boundaries, which are not addressed by the discretization techniques, which have been presented in the preceding chapters. How a solution algorithm for partial differential equations via finite-volume methods can deal with block boundaries, is presented in this subsection.
@@ -679,14 +680,14 @@ To maintain the conservation property \cite{schaefer99} of finite-volume methods
 
 Once the geometric data, including the information regarding the interpolation coefficients at block boundaries, has been provided, the fluxes through these boundaries can be calculated as presented in the antecedent subsections. The coefficients in the linear system corresponding to the connectivity of neighboring control volumes of different grid blocks is represented by matrix coefficients \(a_L^{\phi}\) and \(a_R^{\phi}\), where \(\phi \in \{u_1,u_2,u_3,p,T\}\).
 
-\subsection{Treatment of the Singularity of the Pressure Correction Equation with Neumann Boundaries}
+\section{Treatment of the Singularity of the Pressure Correction Equation with Neumann Boundaries}
 \label{sec:singularitytreatment}
 
-It has to be noted, that the derived pressure correction equation is a Poisson equation. As can be proven \cite{hackbusch96}, the linear \(N \times N\) systems surging from the presented discretization on a grid with \(N\) control volumes with Neumann boundary conditions have a kernel of dimension one, i.e.
+The derived pressure correction equation is a Poisson equation. As can be proven \cite{hackbusch96}, the linear \(N \times N\) systems surging from the presented discretization on a grid with \(N\) control volumes with Neumann boundary conditions have a kernel of dimension one, i.e.
 \begin{displaymath}
   \operatorname{ker}(A_{p'}) = \operatorname{span}(\mathbb{1}),
 \end{displaymath}
-where \(\mathbb{1} = (1)_{i = 1,\dots,N} \in \mathbb{R}^N\) is the vector spanning the kernel. This singularity accounts for the property of incompressible flows, that pressure can only be determined up to a constant. To fix this constraint, various possibilities exist \cite{ferziger02}. A common method is to set the pressure correction to zero in one reference control volume which corresponds to fixing the pressure at one reference point in the problem domain. This can be done before solving the system by applying this Dirichlet-type condition, or it can be done afterward when pressure is calculated from the pressure correction. It has to be noted, that this approach is not suitable for grid convergence studies since, without special interpolation, it is not guaranteed that the reference pressure correction is taken at the correct location throughout the different grid levels.
+where \(\mathbb{1} = (1)_{i = 1,\dots,N} \in \mathbb{R}^N\) is the vector spanning the kernel. This singularity accounts for the property of incompressible flows, that pressure can only be determined up to a constant. To fix this constraint, various possibilities exist \cite{ferziger02}. A common method is to set the pressure correction to zero in one reference control volume which corresponds to fixing the pressure at one reference point in the problem domain. The fixation of the pressure can be done before solving the system by applying this Dirichlet-type condition, or it can be done afterward when pressure is calculated from the pressure correction. It has to be noted, that this approach is not suitable for grid convergence studies since, without special interpolation, it is not guaranteed that the reference pressure correction is taken at the correct location throughout the different grid levels.
 
 Since some comparisons performed in the present work rely on grid convergence studies, another approach for reducing the lose constraint of the pressure correction system has been used: The reference pressure correction is taken to be the mean value of the pressure correction over the domain 
 \begin{displaymath}
@@ -699,9 +700,9 @@ such that the net pressure correction amounts to zero. This modifies equation (\
   %\label{eq:pressupdate2}
   p_P^{(n)} = p_P^{(n-1)} + \alpha_{\vec{p}} \left( p_P' - p_{\text{ref}}' \right).
 \end{displaymath}
-It should be noted that as soon as one control volume has been provided with a Dirichlet pressure boundary condition the systems is not singular anymore. This is, for example, the case of a fixed pressure at inlet or outlet boundary conditions, which has been presented in section \ref{sec:segDirichlet}.
+It should be noted that as soon as one control volume has been provided with a Dirichlet pressure boundary condition the systems is not singular anymore. This situation is, for example, the case for a fixed pressure at inlet or outlet boundary conditions, which has been presented in section \ref{sec:segDirichlet}.
 
-\subsection{Structure of the Assembled Linear Systems}
+\section{Structure of the Assembled Linear Systems}
 \label{sec:structure}
 
 The objective of a finite-volume method is to create a set of linear algebraic equations from a discretization of partial differential equations. In the case of the discretized momentum balance, taking all contributions together, this leads to the following linear algebraic equation for each control volume \(P\)
@@ -718,7 +719,7 @@ where the coefficients are composed as
 %\end{subequations}
 Similar expressions for the pressure correction equation and the temperature equation can be deduced. In the case of control volumes located at boundaries some of the coefficients will be calculated in a different way. This aspect has been addressed in section \ref{sec:segboundary}.
 
-For the decoupled iterative solution process of the Navier-Stokes equations, it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by an \emph{under-relaxation} technique, a convex combination of the solution of the linear system for the present iteration \((n)\) and from the previous iteration \((n-1)\), with the under-relaxation parameter \(\alpha_{u_i} \in (0,1]\), where \(\alpha_{u_i} = 1\) corresponds to no under-relaxation. Generally speaking, this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting, the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\) \cite{schaefer99}. This has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right-hand side. This helps to increase memory efficiency.
+For the decoupled iterative solution process of the Navier-Stokes equations, it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by an \emph{under-relaxation} technique, a convex combination of the solution of the linear system for the present iteration \((n)\) and from the previous iteration \((n-1)\), with the under-relaxation parameter \(\alpha_{u_i} \in (0,1]\), where \(\alpha_{u_i} = 1\) corresponds to no under-relaxation. Generally speaking, this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting, the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\) \cite{schaefer99}. This choice of velocity under-relaxation has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right-hand side. This fact helps to increase memory efficiency.
 
 Let the solution for the linear system without under-relaxation be denoted as
 \begin{displaymath}

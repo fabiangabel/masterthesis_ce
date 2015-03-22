@@ -1,4 +1,4 @@
-\section{Conclusion and Outlook}
+\chapter{Conclusion and Outlook}
 \label{sec:conclusion}
 
 In the present thesis, a fully coupled solution algorithm for the Navier-Stokes equations with a finite-volume method was implemented. The method is designed to work with non-orthogonal, co-located, locally refined, block-structured grids and can handle hanging nodes resulting from non-matching block boundaries. The main difference of the implemented algorithm, compared to the commonly used segregated solution algorithms, was the implicit pressure-velocity coupling. The pressure-velocity coupling is a characterizing aspect of solution algorithms for Navier-Stokes equations with the potential to significantly reduce the time for computation. Furthermore, the solution algorithm was extended to solve for buoyancy-driven flows, by using an implicit Boussinesq approximation in the momentum balances to achieve velocity-to-temperature coupling and a semi-implicit Newton-Raphson linearization to realize implicit temperature-to-velocity/pressure coupling.

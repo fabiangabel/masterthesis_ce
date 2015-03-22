@@ -20,12 +20,25 @@
 %            backref=true]{biblatex}
 %\addbibresource{./bib/masterthesis.articles.bib}
 %\addbibresource{./bib/masterthesis.books.bib}
+%\usepackage{geometry}
+%\geometry{a4paper,left=25mm,right=20mm, top=1.5cm, bottom=1.5cm}
 
 \usepackage[intoc,noprefix]{nomencl} %for printing a list of symbols
 
 %hyperlinks and urls
 \usepackage{hyperref} %use hyperlinks in document
 \usepackage{url} %display urls as such
+
+\usepackage{setspace} %to use \doublespacing in tables
+\usepackage{multirow} %multiple rows in tabular environments
+\usepackage{booktabs} %provides extra tables commands and in general makes tables look a little nicer than without
+
+\usepackage{colortbl} 
+\usepackage{xcolor}   %are required to allow the colour of table and text elements to be altered
+%\input{masterthesis.color}
+
+\usepackage{xfrac}    %is required to make nicer fractions that look good in tables
+
 
 \usepackage{pgfplots}
 \usepackage{pgfpie}
@@ -45,13 +58,6 @@
 \usepackage{algorithm} %algorithms
 \usepackage{algpseudocode}
 \usepackage{algpascal}
-
-\usepackage{setspace} %to use \doublespacing in tables
-\usepackage{multirow} %multiple rows in tabular environments
-\usepackage{booktabs} %provides extra tables commands and in general makes tables look a little nicer than without
-\usepackage{colortbl} 
-\usepackage{xcolor}   %are required to allow the colour of table and text elements to be altered
-\usepackage{xfrac}    %is required to make nicer fractions that look good in tables
 
 
 %\usepackage{subdepth} %vertical alignment of subscripts
