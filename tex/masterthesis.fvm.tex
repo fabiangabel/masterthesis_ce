@@ -9,9 +9,9 @@ The finite-volume method aims at providing particular linear algebraic equations
 
 This section provides a brief overview on the grid structure relevant to the present thesis. The main idea behind finite-volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so-called \emph{control volumes}. The result of this finite partition of a contiguous problem domain is called numerical grid. Every grid consists of a finite number of control volumes representing the boundaries of a discrete domain of integration. Depending on whether the numerical solution of an equation is to be calculated on the boundary vertices or in the center of a grid cell, the variable arrangement is denoted to be vertex-oriented or cell center-oriented. The remainder of the present thesis assumes that the variables reside in the cell centers of the respective control volumes.
 
-Another option to arrange variables specifically for algorithms that solve the Navier-Stokes equations is the so-called \emph{staggering}. This method stores the variable values of different variables at different grid locations, which facilitates the interpolation of the respective values. As the methods employed in the present thesis are intended to be applicable to complex geometries, the cell-centered non-staggered approach offers more flexibility. Figure \ref{fig:cell vertex} shows the different variable arrangement options on a two-dimensional grid.
+Another option to arrange variables specifically for algorithms that solve the Navier-Stokes equations is the so-called \emph{staggering}. This method stores the variable values of different variables at different grid locations, which facilitates the interpolation of the respective values. As the methods employed in the present thesis are intended to be applicable to complex geometries, the cell-centered non-staggered approach offers more flexibility. Figure \ref{fig:cellvertex} shows the different variable arrangement options on a two-dimensional grid.
 
-\begin{figure}[h!]
+\begin{figure}
     \subfigure{
     \begin{minipage}[1\width]{0.3\textwidth}%
       \input{./img/vertexoriented.tikz.tex}
@@ -30,7 +30,7 @@ Another option to arrange variables specifically for algorithms that solve the N
       \input{./img/stagger.tikz.tex}
     \end{minipage}}
     \caption{Vertex centered, cell-centered and staggered variable arrangement. For the staggered arrangement, the arrows denote the velocity component and their location on the grid. The centered dot denotes the location of the pressure and further scalar quantities}
-   \label{fig:cell vertex}
+   \label{fig:cellvertex}
 \end{figure}
 
 Regarding the treatment of domain boundaries and the ordering of the cells within the problem domain, different types of numerical grids can be distinguished. The present thesis makes use of so-called boundary-fitted, block-structured grids with hexahedron cells. A structured grid is characterized by a constant amount of grid cells in each coordinate direction. The high regularity of structured grids benefits the computational efficiency of the algorithms to be used on this type of grid. In addition to that, a block-structured grid consists of different grid blocks, of which every single one, considered individually, is structured. Yet, considering the grid as a whole, the grid is unstructured. Figure \ref{fig:blockstruc} shows an example of a block-structured grid with distinguishable grid blocks. The use of block-structured grids is motivated by the need to increase the adaptivity of structured grids while maintaining high computational efficiency. Furthermore, it embraces the concept of domain decomposition which facilitates the implementation of parallel algorithms for the decomposed computational domain. Boundary-fitted grids represent domain boundaries by means of the geometry of the control volumes residing on those boundaries. This approach may lead to skewed cells, which affects the accuracy of the results obtained in these boundary cells. Using local grid refinement techniques to refine the grid in regions of geometrically complex boundaries can alleviate these effects.
@@ -122,7 +122,6 @@ It is important to note that the influence of the orthogonal contribution decrea
 \end{displaymath} 
 
 \begin{figure}[h]
-\label{fig:nonorth}
 \subfigure{
 \begin{minipage}[1\width]{0.31\textwidth}%
   \centering{}
@@ -141,6 +140,7 @@ It is important to note that the influence of the orthogonal contribution decrea
 \input{./img/overcorr.tikz.tex}
 \end{minipage}}
 \caption{Minimum correction, orthogonal correction and over-relaxed approach}
+\label{fig:nonorth}
 \end{figure}
 
 \subsection{Deferred Non-Orthogonal Correction}
