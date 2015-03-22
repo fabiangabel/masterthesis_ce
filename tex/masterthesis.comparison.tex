@@ -223,11 +223,11 @@ The performance of all solvers significantly depends on the performance of the l
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{tud0b} Density    & 1E-0 & $kg/m^3$      \\
+    \rowcolor{tud0a} Density    & 1E-0 & $kg/m^3$      \\
     \rowcolor{black!00} Viscosity  & 1E-0 & $Ns/m^2$  \\
-    \rowcolor{black!00} Under-relaxation u & 0.9 &  \\
-    \rowcolor{tud0b} Under-relaxation p & 0.1 &  \\
-    \rowcolor{black!00} Relative tolerance & 1E-8&
+    \rowcolor{tud0a} Under-relaxation u & 0.9 &  \\
+    \rowcolor{black!00} Under-relaxation p & 0.1 &  \\
+    \rowcolor{tud0a} Relative tolerance & 1E-8&
   \end{tabular}
   \label{tab:performance}
 \end{table}
@@ -425,13 +425,13 @@ was chosen. At the outlet, a Dirichlet pressure boundary condition was used. All
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{tud0b} Density            & 1E-0 & $kg/m^3$  \\
+    \rowcolor{tud0a} Density            & 1E-0 & $kg/m^3$  \\
     \rowcolor{black!00} Viscosity          & 1E-3 & $Ns/m^2$  \\
-    \rowcolor{tud0b} Height             & 0.41 & m         \\
+    \rowcolor{tud0a} Height             & 0.41 & m         \\
     \rowcolor{black!00} Length             & 2.5  & m         \\
-    \rowcolor{tud0b} Side length cube   & 0.1  & m   \\
+    \rowcolor{tud0a} Side length cube   & 0.1  & m   \\
     \rowcolor{black!00} Under-relaxation u & 0.9  &    \\
-    \rowcolor{tud0b} Under-relaxation p & 0.1  &    \\
+    \rowcolor{tud0a} Under-relaxation p & 0.1  &    \\
     \rowcolor{black!00} Relative tolerance & 1E-8      &
   \end{tabular}
   \label{tab:channel}
@@ -484,9 +484,9 @@ In contrast to the segregated algorithm, the fully coupled solution algorithm ac
   \begin{tabular}{lcccc}\toprule
     No. of Unknowns & SEG - time s & CPLD - time s & SEG - its & CPLD - its \\
     \midrule
-    \rowcolor{tud0b} 75768    & 0.2226E+02 & 0.2674E+02 & 151  & 67 \\
+    \rowcolor{tud0a} 75768    & 0.2226E+02 & 0.2674E+02 & 151  & 67 \\
     \rowcolor{black!00} 408040   & 0.4053E+03 & 0.1499E+03 & 355  & 42 \\
-    \rowcolor{tud0b} 2611080  & 1.1352E+05 & 0.3105E+04 & 1592 & 39 \\
+    \rowcolor{tud0a} 2611080  & 1.1352E+05 & 0.3105E+04 & 1592 & 39 \\
   \end{tabular}
   \label{tab:channelcompare}
 \end{table}
@@ -522,15 +522,15 @@ Essential for this benchmarking case is the nature of the flow. The fluid motion
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
     \midrule
-    \rowcolor{tud0b} Density            & 1.19      & $kg/m^3$  \\
+    \rowcolor{tud0a} Density            & 1.19      & $kg/m^3$  \\
     \rowcolor{black!00} Viscosity          & 1.8E-5    & $Ns/m^2$  \\
-    \rowcolor{tud0b} Height             & 0.021277  & m         \\
+    \rowcolor{tud0a} Height             & 0.021277  & m         \\
     \rowcolor{black!00} Temperature difference & 10    & K         \\
-    \rowcolor{tud0b} Coefficient of thermal expansion & 0.00341 & $1/K$ \\
+    \rowcolor{tud0a} Coefficient of thermal expansion & 0.00341 & $1/K$ \\
     \rowcolor{black!00} Under-relaxation u & 0.8       &           \\
-    \rowcolor{tud0b} Under-relaxation p & 0.2       &           \\
+    \rowcolor{tud0a} Under-relaxation p & 0.2       &           \\
     \rowcolor{black!00} Under-relaxation T & 1.0       &           \\
-    \rowcolor{tud0b} Relative tolerance & 1E-8      &
+    \rowcolor{tud0a} Relative tolerance & 1E-8      &
   \end{tabular}
   \label{tab:cavity}
 \end{table}
@@ -553,20 +553,20 @@ The tests were conducted on the formerly presented HHLR cluster, using the MPI2 
   \begin{tabular}{cccc}\toprule
     Resolution & Solver configuration & Time s & No. Nonlinear its. \\
     \midrule
-    \rowcolor{tud0b}\multirow{4}{*}{}            & SEG    & 0.3719E+02 & 203 \\
-    \rowcolor{tud0b}                             & CPLD   & 0.6861E+02 & 62  \\
-    \rowcolor{tud0b}                             & TCPLD  & 0.1012E+03 & 31  \\
-    \rowcolor{tud0b} \multirow{-4}{*}{32x32x32}  & NRCPLD & 0.2153E+02 & 22  \\ %\hline
+    \rowcolor{tud0a}\multirow{4}{*}{}            & SEG    & 0.3719E+02 & 203 \\
+    \rowcolor{tud0a}                             & CPLD   & 0.6861E+02 & 62  \\
+    \rowcolor{tud0a}                             & TCPLD  & 0.1012E+03 & 31  \\
+    \rowcolor{tud0a} \multirow{-4}{*}{32x32x32}  & NRCPLD & 0.2153E+02 & 22  \\ %\hline
     %
     \rowcolor{black!00}\multirow{4}{*}{}            & SEG    & 0.1997E+04 &  804 \\
     \rowcolor{black!00}                             & CPLD   & 0.7687E+03 &  63  \\
     \rowcolor{black!00}                             & TCPLD  & 0.1278E+04 &  59  \\
     \rowcolor{black!00} \multirow{-4}{*}{64x64x64}  & NRCPLD & 0.4240E+03 &  17  \\ %\hline
     %
-    \rowcolor{tud0b}\multirow{4}{*}{}               & SEG    & 0.5197E+05 &  3060 \\
-    \rowcolor{tud0b}                                & CPLD   & 0.1860E+05 &  74   \\
-    \rowcolor{tud0b}                                & TCPLD  & 0.1950E+05 &  50   \\
-    \rowcolor{tud0b} \multirow{-4}{*}{128x128x128}  & NRCPLD & 0.6155E+04 &  18   \\ %\hline
+    \rowcolor{tud0a}\multirow{4}{*}{}               & SEG    & 0.5197E+05 &  3060 \\
+    \rowcolor{tud0a}                                & CPLD   & 0.1860E+05 &  74   \\
+    \rowcolor{tud0a}                                & TCPLD  & 0.1950E+05 &  50   \\
+    \rowcolor{tud0a} \multirow{-4}{*}{128x128x128}  & NRCPLD & 0.6155E+04 &  18   \\ %\hline
     %
     %\rowcolor{black!00}\multirow{4}{*}{}               & SEG    &  & \\
     %\rowcolor{black!00}                                & CPLD   &  & \\
@@ -639,7 +639,7 @@ By using built-in PETSc subroutines, the rows of the corresponding matrices can 
 \end{minipage}
   \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
- \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.5 ]  {11/MAIN, 89/MOM+PRESS}
+ \pie [ color ={ tud0a, tud0b}, rotate =90, radius=2.5 ]  {11/MAIN, 89/MOM+PRESS}
 \end{tikzpicture}
 \end{minipage}
 \caption{Distribution of wall-clock time spent to solve for an analytic solution with the segregated SIMPLE-algorithm (left) and the coupled solution algorithm (right) on one processor}
@@ -719,22 +719,22 @@ In order to analyze the effect of the ideal matrix partitioning, a random number
 \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
 
-\wheelchart{16/tud0c,
+\wheelchart{16/tud0b,
             1 /tud0a,
-            32/tud0c,
+            32/tud0b,
             9 /tud0a,
-            22/tud0c, 
+            22/tud0b, 
             3 /tud0a,
-            8 /tud0c,
+            8 /tud0b,
             9 /tud0a}{.5cm}{2cm}
 
-\wheelchart{12.5/tud0c,
+\wheelchart{12.5/tud0b,
             12.5/tud0a,
-            12.5/tud0c,
+            12.5/tud0b,
             12.5/tud0a,
-            12.5/tud0c,
+            12.5/tud0b,
             12.5/tud0a,
-            12.5/tud0c,
+            12.5/tud0b,
             12.5/tud0a}{2cm}{4cm}
 
 \node[align=center] at  (22.5:3.0cm) {Proc 1};
