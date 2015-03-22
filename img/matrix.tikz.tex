@@ -6,7 +6,7 @@
 \newcommand*{\yMin}{0}%
 \newcommand*{\yMax}{1}%
 \newcommand\markcell[3] {
-  \fill[tud0c,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
+  \fill[tud0b,draw=black] (#2*\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep) -- (#2*\xStep+\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- (#2*\xStep,\xStep*\nStep-#1*\xStep-\xStep) -- cycle;
   \node[anchor=center] at (#2*\xStep+0.5*\xStep,\xStep*\nStep-#1*\xStep-0.5*\xStep) {#3};
   }
 
@@ -22,8 +22,8 @@
     \fill[tud0a] (8*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep-8*\xStep) -- (8*\xStep,\xStep*\nStep-8*\xStep) -- cycle;
 
     \foreach \j in {0,...,35} {
-        \draw [very thin,gray] (0,\j*\xStep) -- (\xStep*\nStep,\j*\xStep)  ;
-        \draw [very thin,gray] (\j*\xStep,0) -- (\j*\xStep,\xStep*\nStep)  ;
+        \draw [very thin,black] (0,\j*\xStep) -- (\xStep*\nStep,\j*\xStep)  ;
+        \draw [very thin,black] (\j*\xStep,0) -- (\j*\xStep,\xStep*\nStep)  ;
     }
 
     \foreach \j in {0,...,34} {

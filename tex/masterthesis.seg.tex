@@ -1,6 +1,6 @@
 \chapter{Implicit Finite-Volume Method for Incompressible Flows -- Segregated Approach}
 \label{sec:seg}
-In this chapter, an algorithm, addressed to resolve the pressure-velocity coupling, is introduced. Furthermore this chapter proposed an under-relaxation factor independent method of calculating mass fluxes by interpolation, and presents the detailed derivation of all coefficients that result from the discretization process. Finally, this chapter shows the boundary conditions, which are relevant to the present thesis.
+In this chapter, an algorithm, addressed to resolve the pressure-velocity coupling, is introduced. Furthermore, this chapter proposes a method of calculating mass fluxes by interpolation, which is is independent of the under-relaxation and presents the detailed derivation of all coefficients that result from the discretization process. Finally, this chapter shows the boundary conditions, which are relevant to the present thesis.
 
 \section{Discretization of the Mass Balance}
 
@@ -13,16 +13,16 @@ In the present work the mass balance is discretized using the midpoint integrati
   \label{eq:massbalance}
   \sum_{f \in \{w,s,b,t,n,e\}} u_{i,f} n_{f_i} S_f = 0,
 \end{align}
-where no interpolation to attain the values of \(u_i\) at the face \(S_f\) has been performed yet, since the straightforward linear interpolation will lead to undesired oscillations in the solution fields. An interpolation method to circumvent this so-called \emph{checker-boarding} effect is presented in section \ref{sec:massflux}.
+where no interpolation to attain the values of \(u_i\) at the face \(S_f\) has been performed yet since the straightforward linear interpolation will lead to undesired oscillations in the solution fields. An interpolation method to circumvent this so-called \emph{checker-boarding} effect is presented in section \ref{sec:massflux}.
 
 \section{A Pressure-Weighted Interpolation Method for Velocities}
 \label{sec:massflux}
 
 The advantages of using a cell-centered variable arrangement are evident: The treatment of non-orthogonality is simplified, and the conservation property of finite-volume methods is retained \cite{choi99,majumdar88,miller88,zhang14}. A major deficiency of cell-centered variable arrangements is that the pressure field may delink, which will then lead to unphysical oscillations in both the pressure and the velocity results. If the oscillations are severe enough, the solution algorithm might even get unstable and diverge. The described decoupling occurs, when the pressure gradient in the momentum balances, and the mass fluxes in the continuity equation are discretized using central differences. 
   
-A common practice to eliminate this behavior is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. However, the original interpolation scheme does not guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore, the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. The present section addresses these issues and present an interpolation method that assures an under-relaxation independent solution: the \emph{pressure-weighted interpolation method} \cite{miller88}.
+A common practice to eliminate this behavior is the use of a momentum interpolation technique, also known as \emph{Rhie-Chow Interpolation} \cite{rhie82}. However, the original interpolation scheme does not guarantee a unique solution, independent of the amount of under-relaxation. The performance of one of the algorithms used in the present thesis heavily relies on the under-relaxation of variables to accomplish stability. Furthermore, the original method as proposed by \cite{rhie82} does not account for large body forces which also may lead to unphysical results. The present section addresses these issues and presents an interpolation method that assures an under-relaxation independent solution: the \emph{pressure-weighted interpolation method} \cite{miller88}.
 
-The starting point of the pressure-weighted interpolation method is formed by the discretized momentum balances at node \(P\) and an arbitrary neighboring node \(Q\). The discretization for finite-volume methods and details including the incorporation of under-relaxation factors will be handled in section \ref{sec:segdiscretization}. The semi-discrete implicit momentum balances, if one solves for the velocity at node \(P\) or \(Q\), read
+The derivation of the pressure-weighted interpolation method builds on the discretized momentum balances at node \(P\) and an arbitrary neighboring node \(Q\). Section \ref{sec:segdiscretization} handles the discretization used within finite-volume methods and describes the incorporation of under-relaxation factors. The semi-discrete implicit momentum balances for the velocity at node \(P\) and \(Q\) read
 %\begin{subequations}
 \begin{align*}
     u_{i,P}^{(n)} 
@@ -40,7 +40,7 @@ The starting point of the pressure-weighted interpolation method is formed by th
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,Q}^{(n-1)} \quad,
 \end{align*}
 %\end{subequations}
-where the superscript \((n-1)\) denotes the previous outer iteration number. The reader should note, that the pressure gradient has not been discretized yet. This has the advantage that the selective interpolation technique \cite{schaefer99} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same way, a semi-discrete implicit momentum balance can be formulated for a virtual control volume located between nodes \(P\) and \(Q\). \begin{equation}
+where the superscript \((n-1)\) denotes the previous outer iteration number. The pressure gradient has not been discretized yet. This fact comes with the advantage that the selective interpolation technique \cite{schaefer99} can be applied, which is crucial for the elimination of the mentioned oscillations. In almost the same way, a semi-discrete implicit momentum balance can be formulated for a virtual control volume located between nodes \(P\) and \(Q\). \begin{equation}
   \label{eq:virtualu}
   u_{i,f}^{(n)} 
   = 
@@ -122,7 +122,7 @@ Using the assumptions made in equation (\ref{eq:approxpwim}) the expression in e
   \right] \nonumber \\[1em]
   &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
 \end{align}
-The argumentation that led to the last expression, is, that the task of the underlined pressure gradient corrector in equation (\ref{eq:closepwim}) is to suppress oscillations in the pressure field. If there are no oscillations, this part should not become active. As long as the behavior of this corrector remains consistent, i.e. that there are no oscillations in the pressure field within a converged solution, it can be multiplied with arbitrary constants \cite{ferziger02}. This fact is, however, true on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary non-orthogonal grids, another modification has to be performed, which is based on a special case of the mean value theorem of differential calculus and the following 
+The task of the underlined pressure gradient corrector in equation (\ref{eq:closepwim}) is to suppress oscillations in the pressure field. If there are no oscillations, this part should not become active. As long as the behavior of this corrector remains consistent, i.e. that there are no oscillations in the pressure field within a converged solution, it can be multiplied with arbitrary constants \cite{ferziger02}. The modification applied in the last step of the derivation of equation \ref{eq:closepwim} makes use of this fact. Previous argumentation is, however, valid on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary non-orthogonal grids, another modification has to be performed, which is based on a special case of the mean value theorem of differential calculus and the following 
 \begin{prop}
   Let \(x_1,x_2 \in \mathbb{R}\) with \(x_1 \neq x_2\) and \(p(x) = a_0 + a_1 x + a_2 x^2\) a real polynomial function. Then 
   \begin{displaymath}
@@ -148,7 +148,7 @@ On the other hand, the slope of the secant, using the third binomial rule can be
 The comparison of both expressions completes the proof.
 \end{proof}
 
-It is desirable for the pressure corrector to vanish independent of the grid spacing if the profile of the pressure is quadratic and hence does not exhibit oscillations. According to the preceding proposition, this can be accomplished by modifying equation (\ref{eq:closepwim}) to average the pressure gradients from node \(P\) and \(Q\) instead of interpolating linearly
+It is desirable for the pressure corrector to vanish independently of the grid spacing if the profile of the pressure is quadratic and hence does not exhibit oscillations. According to the preceding proposition, this can be accomplished by modifying equation (\ref{eq:closepwim}) to average the pressure gradients from node \(P\) and \(Q\) instead of interpolating linearly
 \begin{align}
   u_{i,f}^{(n)} 
   &=
@@ -223,13 +223,13 @@ At this stage, the equations are still coupled and nonlinear. As described in se
   -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n-1)} \right)
   + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}.
 \end{equation}
-Here \((*)\) indicates that the solution of this equation still needs to be corrected in order to fulfill the discretized mass balance
+Here \((*)\) indicates that in order to fulfill the discretized mass balance the solution of this equation still needs to be corrected 
 \begin{equation}
   \label{eq:contisemi}
   \sum_{F \in NB(P)} (u_i)_f^{(n)} n_i S_f = 0.
 \end{equation}
 
-Using the procedure that has been applied in section \ref{sec:massflux} to equation (\ref{eq:nodeinter}) results in the following expression for the face velocities after solving the discretized momentum balances 
+Using the procedure that from section \ref{sec:massflux} to equation (\ref{eq:nodeinter}) results in the following expression for the face velocities after solving the discretized momentum balances 
 \begin{align}
   \label{eq:faceinter}
   u_{i,f}^{(n*)} 
@@ -260,7 +260,7 @@ Now it is possible to formulate the discretized momentum balance for the correct
   -                                     V_P\left(\frac{\partial p}{\partial x_i}\right)_P^{(n)} \right)
   + \left(1 - \alpha_{\vec{u}}\right) u_{i,P}^{(n-1)}.
 \end{equation}
-It should be noted that the only difference to the equation which will be solved in the next outer iteration is, that the source term \(b_{P,u_i}\) has not been updated yet. In the same way, the discretized momentum balance for the face velocity \(u_{i,f}\) can be formulated as
+The only difference to the equation which will be solved in the next outer iteration is that the source term \(b_{P,u_i}\) has not been updated yet. In the same way, the discretized momentum balance for the face velocity \(u_{i,f}\) can be formulated as
 \begin{align}
   \label{eq:facecorr}
   u_{i,f}^{(n)} 
@@ -622,7 +622,7 @@ which, together with the continuity equation in differential form (\ref{eq:conti
   \label{eq:contiwall}
  \frac{ \partial u_n }{ \partial x_n } + \frac{ \partial u_t }{ \partial x_t } =  \frac{ \partial u_n }{ \partial x_n } = 0,
 \end{equation}
-what is equivalent to \( \tau_{nn} = 0\) at the wall. It should be noted that the velocity is assumed to have no component in the binormal direction. A physical interpretation of (\ref{eq:contiwall}) would be, that the transfer of momentum at the wall occurs by shear forces exclusively. Furthermore, the coordinate direction \(t\) is chosen to be parallel to the shear force, which does not represent a restriction, because of the possibility to rotate the coordinate system within the plane. This leads to \( \tau_{ns} = 0 \). Hence, the absolute value of the surface force only depends on the normal derivative of the velocity tangential to the wall. After transforming the coordinates back to the system \((x_1, x_2, x_3)\) the surface force can be calculated, and the integral can be discretized using the midpoint integration rule 
+what is equivalent to \( \tau_{nn} = 0\) at the wall. It should be noted that the velocity is assumed to have no component in the binormal direction. A physical interpretation of (\ref{eq:contiwall}) would be, that the transfer of momentum at the wall occurs by shear forces exclusively. Furthermore, the coordinate direction \(t\) is chosen to be parallel to the shear force, which does not represent a restriction, because of the possibility to rotate the coordinate system within the plane. This choice of \(t\) leads to \( \tau_{ns} = 0 \). Hence, the absolute value of the surface force only depends on the normal derivative of the velocity tangential to the wall. After transforming the coordinates back to the system \((x_1, x_2, x_3)\) the surface force can be calculated, and the integral can be discretized using the midpoint integration rule 
 \begin{equation}
   \label{eq:wallforce}
   \vec{F}_w 
@@ -705,7 +705,7 @@ It should be noted that as soon as one control volume has been provided with a D
 \section{Structure of the Assembled Linear Systems}
 \label{sec:structure}
 
-The objective of a finite-volume method is to create a set of linear algebraic equations from a discretization of partial differential equations. In the case of the discretized momentum balance, taking all contributions together, this leads to the following linear algebraic equation for each control volume \(P\)
+The objective of a finite-volume method is to create a set of linear algebraic equations from a discretization of partial differential equations. In the case of the discretized momentum balance, taking all contributions together, this discretization leads to the following linear algebraic equation for each control volume \(P\)
 \begin{displaymath}
   a_P^{u_i} u_{P_i} + \sum_{F \in NB(P)} a_F u_{F_i} = b_{P,u_i},
 \end{displaymath}
