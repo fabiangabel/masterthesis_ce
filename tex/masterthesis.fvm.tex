@@ -86,7 +86,7 @@ where \( \gamma_e := {||\vec{x}_P - \vec{x}_e||_2}/{||\vec{x}_P - \vec{x}_E||_2}
   \sum_f \phi_f n_i S_f.
 \end{equation}
 
-\section{Treatment of Non-Orthogonality of Grid Cells}
+\section{Treatment of the Non-Orthogonality of Grid Cells}
 \label{sec:nonorth}
 
 Unfortunately, real applications involve complex geometries, a fact which in turn affects the grid's orthogonality. On non-orthogonal meshes, the directional derivative in the direction of the face's unit normal vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other hand, the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error following from this approximation \cite{jasak96}. Hence, a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
