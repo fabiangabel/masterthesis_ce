@@ -23,6 +23,13 @@ A grid generator has been developed to generate hexahedral block-structured grid
 
 After the grid has been generated, a preprocessor program comes to application, which prepares the numerical grid for the use in the solver program. An essential part of the preprocessing step is the application of various matching algorithms depending on the type of block boundary condition. The preprocessor program differentiates between three block boundary types of which each is a subtype of the other. The most simple block boundary condition is given by a one-to-one relation between two neighboring boundary cells. The generalization of this condition involves several boundary cells that share only one neighboring boundary cell in the neighboring block. This relation is also known as a many-to-one relation. The third boundary condition on block boundaries implements the most general, also known as many-to-many, relation, which needs special consideration in the preprocessing step, because the number of neighbors one cell can have is not known a priori. What makes the third type of boundary conditions more difficult than the first two, is the geometry of the resulting boundary faces. The current implementation uses a polygon clipper to calculate the polygons resulting from the intersection of two boundary faces of neighboring blocks. Based on the polygon of the intersection, all further geometric data like interpolation factors and boundary face area can be  calculated for the later use within the solve application.
 
+\begin{figure}[h!]
+  \centering
+  \input{./img/matching.oto.tikz.tex}
+  \caption{Storage and update of ghost values in the vectors related to the variables on multi-block domains. The blocks have been assigned to two different processes, \emph{Proc} $1$ and \emph{Proc} $2$. The control volumes of the two-dimensional problem domain are indexed with respect to the process local indexing.}
+  \label{fig:matching}
+\end{figure}
+
 \section{Implementation of CAFFA}
 \label{sec:caffaimpl}
 
@@ -95,7 +102,6 @@ The present solver framework treats the calculation of matrix coefficients for b
 
 \begin{figure}[h!]
   \centering
-  \label{fig:segassemble}
   \input{./img/ghosting.tikz.tex}
   \caption{Storage and update of ghost values in the vectors related to the variables on multi-block domains. The blocks have been assigned to two different processes, \emph{Proc} $1$ and \emph{Proc} $2$. The control volumes of the two-dimensional problem domain are indexed with respect to the process local indexing.}
   \label{fig:ghosting}
