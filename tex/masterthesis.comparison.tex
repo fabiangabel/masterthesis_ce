@@ -5,7 +5,7 @@ This chapter presents the performance analyses of both developed solvers within 
   
 \section{Parallel Performance}
 
-In many cases, solver applications are used to solve complex problems regarding memory requirements and are, at the same time, expected make calculation results available within a short time. In both scenarios, code that designed to run in parallel can address the mentioned challenges. Code that runs in parallel can allocate more memory resources which makes the calculation of complex problems feasible. If the code is scalable, the program execution can be shortened by involving more processes to solve a problem of constant size on the compatible hardware. The CAFFA solver framework, which has been extended in the course of the present thesis, has been parallelized using the PETSc library. The purpose of this section is, to asses the paralell performace of this solver framework on a high-performance computer.
+In many cases, solver applications are used to solve complex problems regarding memory requirements and are, at the same time, expected make calculation results available within a short time. In both scenarios, code that designed to run in parallel can address the mentioned challenges. Code that runs in parallel can allocate more memory resources which makes the calculation of complex problems feasible. If the code is scalable, the program execution can be shortened by involving more processes to solve a problem of constant size on the compatible hardware. The CAFFA solver framework, which has been extended in the course of the present thesis, has been parallelized using the PETSc library. The purpose of this section is, to asses the parallel performance of this solver framework on a high-performance computer.
 
 After introducing the used hardware and software, this section presents central measures of parallel performance. Then, the outcome of a preliminary low-level benchmark is presented. This benchmark was carried out in order to establish upper performance-bounds on the parallel efficiency and the scalability of the developed solver framework. The last sections present the results of the parallel efficiency evaluation of the solver framework.
 
@@ -70,7 +70,7 @@ Speed-Up and parallel efficiency characterize the parallel scalability of an app
 
 \subsection{Determining Upper Performance-Bounds -- The STREAM Benchmark}
 
-Scientific applications, which solve partial differential equations, rely on sparse matrix computations, which usually exhibit the sustainable memory bandwidth as bottleneck with respect to the runtime performance of the program \cite{hager11}. The purpose of this section is to establish a frame in terms of an upper performance-bound in which the efficiency of the developed solver framework can be evaluated critically. As a standard measure for the maximum sustainable bandwidth, low-level benchmarks can be used, which focus on evaluating specific properties of the deployed hardware architecture. In this case, the McCalpin STREAM benchmark suite \cite{mccalpin07,mccalpin95} provides apt tests, which are designed to work with data sets that exceed the cache size of the involved processor architecture. This forces the processors to stream the needed data directly from memory instead of reusing the data residing in their caches. These types of tests can be used to calculate an upper bound on the memory bandwidth for the CAFFA framework.
+Scientific applications, which solve partial differential equations, rely on sparse matrix computations, which usually exhibit the sustainable memory bandwidth as bottleneck with respect to the runtime performance of the program \cite{hager11}. The purpose of this section is to establish a frame in terms of an upper performance-bound in which the efficiency of the developed solver framework can be evaluated critically. As a standard measure for the maximum sustainable bandwidth, low-level benchmarks can be used, which focus on evaluating specific properties of the deployed hardware architecture. In this case, the Mc Calpin STREAM benchmark suite \cite{mccalpin07,mccalpin95} provides apt tests, which are designed to work with data sets that exceed the cache size of the involved processor architecture. This forces the processors to stream the needed data directly from memory instead of reusing the data residing in their caches. These types of tests can be used to calculate an upper bound on the memory bandwidth for the CAFFA framework.
 
 In particular this subsection presents the calculated sustainable memory bandwidth as determined by the TRIAD kernel of the STREAM benchmark suite. The kernel loop of the TRIAD kernel consists of the operation
 \begin{displaymath}
@@ -139,7 +139,7 @@ In terms of parallel scalability, the STREAM benchmark can also be used to deter
     \addlegendentry{map-by core}
 \end{axis}
 \end{tikzpicture}
-\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different process binding options on one node of the MPI1 section}
+\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different Open MPI process binding options on one node of the MPI1 section of the HHLR}
 \label{fig:mpi1band}
 \end{figure}
 
@@ -179,13 +179,13 @@ In terms of parallel scalability, the STREAM benchmark can also be used to deter
     \addlegendentry{map-by core}
 \end{axis}
 \end{tikzpicture}
-\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different process binding options on one node of the MPI2 section}
+\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different Open MPI process binding options on one node of the MPI2 section of the HHLR}
 \label{fig:mpi2band}
 \end{figure}
 
 As can be seen from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}, the scaling of the sustainable bandwidth behaves rather erratic. As a consequence, for process counts up to eight for the MPI1 section and process counts up to six for the MPI2 section, no reliable results can be obtained from the STREAM benchmark. It is assumed that this kind of behavior is due to the automatic turbo-boost the deployed processors apply, which cannot be controlled other than by turning it off on the nodes directly from the BIOS. For the following performance analyses with respect to parallel performance, it is desirable to minimize this kind of unpredictable side effects. Since all performance measures are relative, with the exception of the plain measurement of wall-clock time, the reference value for the following relative performance measurements will be taken from the program execution for the maximum number of processes that can be bound to one deployed socket without any overlapping.
 
-The STREAM benchmark used to test the present architecture has been provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem. This was done by always using all available cores per socket, but running the benchmark only with \(n\) processes, while the other \(16 - n\) or \(24 - n\) processes are running calculations which are only using data from the L\(1\)-cache of their corresponding core. The intention of this approach was to regulate the turbo-boost effects by keeping a constant load on the processors for different numbers of STREAM benchmark processes. However, this approach did not generate results different from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}.
+The STREAM benchmark used to test the present architecture has been provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem. This was done by always using all available cores per socket, but running the benchmark only with \(n\) processes, while the other \(\left(16 - n\right)\) or \(\left(24 - n\right)\) processes are running calculations which are only using data from the L\(1\)-cache of their corresponding core. The intention of this approach was to regulate the turbo-boost effects by keeping a constant load on the processors for different numbers of STREAM benchmark processes. However, this approach did not generate results different from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}.
 
 \subsection{Speed-Up Measurement and Effect of Coupling Algorithm for Analytic Test Case}
 \label{sec:speedup}
@@ -211,7 +211,7 @@ Figure \ref{fig:underrelax} shows the results of the preliminary runtime measure
       \addplot[color=black,mark=*] file {./files/underrelax.64};
     \end{axis}
   \end{tikzpicture}
-  \caption{Wall-clock time comparison for the SIMPLE-algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $64^3$ cells using different under-relaxation factors up to $\alpha_\vec{u}=0.999$}
+  \caption{Wall-clock time comparison for the SIMPLE-algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $64\times64\times64$ cells using different under-relaxation factors up to $\alpha_\vec{u}=0.999$}
   \label{fig:underrelax}
 \end{figure}
 
@@ -272,7 +272,7 @@ The performance of all solvers significantly depends on the performance of the l
     \\
   \ref{named}
   \end{center}
-  \caption{Wall-clock time and Speed-Up comparison for segregated and fully coupled solution algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $128\times128\times128$ cells}
+  \caption{Wall-clock time and Speed-Up comparison for the segregated and the fully coupled solution algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $128\times128\times128$ cells}
    \label{fig:speedup}
 \end{figure}
 
@@ -441,7 +441,7 @@ Using the data from Table \ref{tab:channel} and the maximal inflow velocity of $
 \begin{displaymath}
   Re = \frac{\rho \operatorname{mean}(u_1) l}{\mu} = 20,
 \end{displaymath}
-where \(\textsize \operatorname{mean}(u_1) = 0.45*\frac{4}{9} m/s = 0.2 m/s\). This shows, that the flow resides in a laminar regime.
+where \(\textstyle \operatorname{mean}(u_1) = 0.45*\frac{4}{9} m/s = 0.2 m/s\). This shows, that the flow resides in a laminar regime.
 
 The present test case shows one advantage of the treatment of block boundaries, which has been introduced in section \ref{sec:blockboundaries}. Since no assumptions on the geometry of a neighboring block are necessary, the mesh for each block can be constructed independently, which increases the flexibility of the meshing of geometries. Furthermore, because of the fully implicit handling of block boundaries, the number of used blocks does not negatively affect the convergence of the deployed linear solvers. Figure \ref{fig:channel1} shows the mesh on the left and right bounding walls. This mesh leads to non-trivial transitions between the blocks. Figure \ref{fig:blocking} shows the domain decomposition into structured grid blocks around the two obstacles within the problem domain and emphasizes the need for accurate handling of non-matching block boundaries.
 
@@ -510,14 +510,14 @@ This section deals with the evaluation and comparison of the velocity-to-tempera
 \begin{minipage}{0.45\textwidth}
   \includegraphics[trim=3.5cm 4.5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavityw.pdf}
 \end{minipage} }
-\caption{Temperature field and velocity field in the coordinate direction of the gravitational force of the temperature-driven cavity flow problem for a cross section in the middle of the problem domain as \(Ra = 10^4\) }
+\caption{Temperature field and velocity field in the coordinate direction of the gravitational force of the temperature-driven cavity flow problem for a cross section in the middle of the cubical-shaped problem domain as $Ra = 10^4$ }
   \label{fig:sketchcavity}
 \end{figure}
 
 Essential for this benchmarking case is the nature of the flow. The fluid motion is a consequence of the effect of volume forces caused by temperature differences in the solution domain. Hence, the mathematical problem exhibits a strong coupling between the involved variables velocity, pressure and temperature. This relation is represented by the Rayleigh and Prandtl number of the problem. It is assumed that the fully implicit treatment of the temperature coupling will yield further benefits with respect to wall-clock time for this kind of flow, compared with solution approaches that solve for the temperature separately. Table \ref{tab:cavity} lists the geometrical and solver parameters used for the performance analysis of this section.
 
 \begin{table}[h!]\centering
-  \caption{Characteristic problem properties used in the heated cavity flow test case}
+  \caption{Characteristic problem properties used in the temperature-driven cavity flow test case}
 \ra{1.3}
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
@@ -535,9 +535,9 @@ Essential for this benchmarking case is the nature of the flow. The fluid motion
   \label{tab:cavity}
 \end{table}
 
-Using the data from Table \ref{tab:cavity} and given a Prandtl number for the flow problem \(Pr = 0.71\), the Rayleigh number \(Ra\) can be calculated. The Rayleigh number is a dimensionless quantity used to characterize buoyancy-driven flows. From the definition of the Prandtl number, the thermal diffusivity \(\alpha\) can be calculated as
+Using the data from Table \ref{tab:cavity} and given a Prandtl number for the flow problem \(Pr = 0.71\), the Rayleigh number \(Ra\) can be calculated. The Rayleigh number is a dimensionless quantity used to characterize buoyancy-driven flows. From the definition of the Prandtl number, the thermal diffusivity \(\kappa\) can be calculated as
 \begin{displaymath}
-  \alpha = \frac{\mu}{\rho \, Pr} = 2.1304 * 10^{-5}.
+  \kappa = \frac{\mu}{\rho \, Pr} = 2.1304 * 10^{-5}.
 \end{displaymath}
 It follows that the Rayleigh number can be determined to 
 \begin{displaymath}
@@ -710,7 +710,7 @@ In order to analyze the effect of the ideal matrix partitioning, a random number
     ]
     \addplot[fill=black]          coordinates {(103362,0) (103362,1) (103362,2) (103361,3) (103361,4) (103361,5) (103361,6) (103361,7)};
     \addplot[black,fill=tud0b] coordinates {(129360,0) (7560,1) (267300,2) (76380,3) (179962,4) (21060,5) (68544,6) (76725,7)};
-    \addlegendentry{After matrix repartitioning};
+    \addlegendentry{Automatix matrix partitioning};
     \addlegendentry{Initial data decomposition};
   \end{axis}
 \end{tikzpicture}
@@ -756,11 +756,11 @@ In order to analyze the effect of the ideal matrix partitioning, a random number
 \node[align=center] at (-258.8:1.25cm) { P 7};
 \end{tikzpicture}
 \end{minipage}
-\caption{Comparison of the number of unknowns assigned to each process and the assigned rows of the matrix using automatic repartitioning for load balancing of the 826891 unknowns. The inner pie chart shows the initial distribution of the matrix rows, whereas the outer pie chart shows the distribution of the matrix rows after the automatic repartitioning.}
+\caption{Comparison of the number of unknowns assigned to each process and the assigned rows of the matrix using automatic matrix partitioning for load balancing. The inner pie chart shows the initial distribution of the number of unknowns corresponding to the portion of the grid which has been assigned to a processor, whereas the outer pie chart shows the distribution of the automatically distributed matrix rows.}
 \label{fig:matpart}
 \end{figure}
 
-The following paragraph analyzes the effects of the automatic matrix partitioning as a load balancing technique on solver performance, in particular, the following paragraph analyzes the effects on the absolut runtime and on the relative distribution of runtime among the phases in which the time was spent. The phases of the segregated solution algorithm are the MAIN phase, which accounts for the calculation of gradients, fluxes, matrix coefficients and the matrix assembly, the MOM phase, in which the linear systems of the momentum balances are solved, and the PRESSCORR phase, in which the linear systems are solved for the pressure-correction. Figure \ref{fig:distseg} shows that, for the presented test case, the automatic partitioning of the matrix not only decreases the needed wall-clock time but also increases the share of the MAIN phase of the total runtime. Matrix assembly during the MAIN phase is the only action of this phase which is affected by the new matrix distribution. Thus, initial load imbalances will still affect the calculation of gradients and other passages of the implementation which use global reduce operations and forced synchronization. One example for global reduce operations and forced synchronization is the calculation of the mean pressure to adjust the pressure level throughout the solution domain. 
+The following paragraph analyzes the effects of the automatic matrix partitioning as a load balancing technique on solver performance, in particular, the following paragraph analyzes the effects on the absolute runtime and on the relative distribution of runtime among the phases in which the time was spent. The phases of the segregated solution algorithm are the MAIN phase, which accounts for the calculation of gradients, fluxes, matrix coefficients and the matrix assembly, the MOM phase, in which the linear systems of the momentum balances are solved, and the PRESSCORR phase, in which the linear systems are solved for the pressure-correction. Figure \ref{fig:distseg} shows that, for the presented test case, the automatic partitioning of the matrix not only decreases the needed wall-clock time but also increases the share of the MAIN phase of the total runtime. Matrix assembly during the MAIN phase is the only action of this phase which is affected by the new matrix distribution. Thus, initial load imbalances will still affect the calculation of gradients and other passages of the implementation which use global reduce operations and forced synchronization. One example for global reduce operations and forced synchronization is the calculation of the mean pressure to adjust the pressure level throughout the solution domain. 
 
 Depending on the parallel matrix layout, one processor might need to assemble parts of the matrix, which do not reside in its address space. Due to the increased amount of communication necessary for the matrix assembly, relatively more time was spent in this phase compared to the test case using the default partitioning as Figure \ref{fig:distseg} shows. The absolute time difference is negligible, which shows that the communication overhead during the matrix assembly step is more than compensated by the application of the ideally balanced matrix solver steps. All test calculations were performed using a single node of the MPI1 section of the HHLR. Thus, the presented results do not account for the additional communication performance degradation due to the effects of the inter-node interconnect.
 
@@ -793,5 +793,4 @@ As Figure \ref{fig:barbalance} shows, the beneficial effect of automatic matrix 
 \caption{Distribution of wall-clock time for one and eight processes, solving for an analytic solution, using the default data partitioning for matrix assembly and automatic partitioning to balance the load. MAIN refers to the gradient calculations, to the flux calculations, and to matrix assembly. MOM refers to the solution of the linear systems for the momentum balance. PRESS refers to the solution of the linear systems for the pressure-correction.}
 \label{fig:distseg}
 \end{figure}
-
 

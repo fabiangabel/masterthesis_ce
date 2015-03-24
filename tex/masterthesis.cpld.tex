@@ -1,12 +1,12 @@
 \chapter{Implicit Finite-Volume Method for Incompressible Flows -- Fully Coupled Approach}
 \label{sec:cpld}
 
-Since the antecedent chapter \ref{sec:seg} already discussed the discretization details of the involved equations, this chapter aims at a comparison on the algorithmic level of the SIMPLE-algorithm, presented in chapter \ref{sec:simple}, with an implementation of a fully coupled solution algorithm. In order to maintain comparability, the discretization of the equations to be solved is not changed. Consequently, all presented differences are due to differences in the solution algorithm. Successful implementations of a fully coupled solution algorithm for incompressible Navier-Stokes equations have been presented in \cite{chen10,darwish09,falk13,vakilipour12}. The presented work will extend the solution approach presented in \cite{falk13} to three-dimensional domains. Furthermore, this chapter will present various approaches incorporating different degrees of velocity-to-temperature and temperature-to-velocity/pressure coupling, as they are presented in \cite{vakilipour12}. Finally, the structure of the resulting linear system to be solved is discussed.
+Since the antecedent chapter \ref{sec:seg} already discussed the discretization details of the involved equations, this chapter aims at a comparison on the algorithmic level of the SIMPLE-algorithm, presented in chapter \ref{sec:simple}, with an implementation of a fully coupled solution algorithm. In order to maintain comparability, the discretization of the equations to be solved is not changed. Consequently, all presented differences are due to differences in the solution algorithm. Successful implementations of a fully coupled solution algorithm for incompressible Navier-Stokes equations have been presented in \cite{chen10,darwish09,falk13,vakilipour12}. The presented work will extend the solution approach presented in \cite{falk13} to three-dimensional domains. Furthermore, this chapter will present various approaches incorporating different degrees of velocity-to-temperature and temperature-to-velocity/pressure coupling, as they are presented in \cite{galpin86,vakilipour12}. Finally, the structure of the resulting linear system to be solved is discussed.
 
-\section{The Fully Coupled Algorithm -- Pressure-Velocity Coupling Reconsidered}
+\section{The Fully Coupled Solution Algorithm -- Pressure-Velocity Coupling Reconsidered}
 \label{sec:reconsider}
 
-This section motivates the use of a fully coupled algorithm to address pressure-velocity coupling and mentions the differences to the approach presented in section \ref{sec:simple}. The mentioned section presented a common solution approach to solving the incompressible Navier-Stokes equations. After linearizing the equations, the momentum balances are solved, using the pressure from the previous iteration as a guess. Generally the velocity field obtained by solving a momentum balance with a guessed pressure does not obey continuity. Hence, the velocity field and the pressure field have to be corrected. This correction in turn leads to an inferior solution with respect to the residual of the momentum balances. To avoid this iterative guess-and-correct solution process, another class of approaches dealing with the pressure-velocity coupling problematic, represented by algorithms that are \emph{fully coupled}, will be introduced now.
+This section motivates the use of a fully solution coupled algorithm to address pressure-velocity coupling and mentions the differences to the approach presented in section \ref{sec:simple}. The mentioned section presented a common solution approach to solving the incompressible Navier-Stokes equations. After linearizing the equations, the momentum balances are solved, using the pressure from the previous iteration as an estimate. Generally the velocity field obtained by solving a momentum balance with an pressure estimate does not obey continuity. Hence, the velocity field and the pressure field have to be corrected. This correction in turn leads to an inferior solution with respect to the residual of the momentum balances. To avoid this iterative guess-and-correct solution process, another class of approaches dealing with the pressure-velocity coupling problematic, represented by algorithms that are \emph{fully coupled}, will be introduced now.
 
 The central aspect of fully coupled solution methods for Navier-Stokes equations is, that instead of solving for the velocities and pressure-corrections sequentially, the velocity field and the pressure are solved for simultaneously \cite{schaefer99}. This way, every calculated velocity field obeys conservation of momentum and mass, without the need to be corrected. As a result, the under-relaxation due to the resolution of the pressure-velocity coupling is no longer required, which accelerates convergence significantly. The only reason for still needing an iterative solution process, is the nonlinearity of the Navier-Stokes equations, which is accounted for by the use of the Picard iteration process, which has been presented in section \ref{sec:nonlinear}. The iterations, fortunately, make room for deferred corrections as introduced in section \ref{sec:segdiscretization}. It is also possible to use the coupled solution algorithm to calculate pressure-corrections. Reference \cite{klaij13} uses this approach to solve the Navier-Stokes equations by using a SIMPLE-type method as preconditioner.
 
@@ -58,7 +58,7 @@ On the other side, the discretized momentum balance yields matrix coefficients t
 \begin{displaymath}
   a_F^{u_i,p} =  \gamma_f S_f \quad \text{and} \quad a_P^{u_i,p} = \sum_{F \in NB(P)} (1-\gamma_f) \, S_f.
 \end{displaymath}
-If the Boussinesq approximation is used implicitly, an additional coefficient \(a_P^{u_i,T}\) to account for the velocity temperature coupling has to be considered. Section \ref{sec:temperaturecoupling} will present different methods of temperature coupling in detail. Algorithm \ref{al:coupled} shows the main steps of the fully coupled solution algorithm.
+If the Boussinesq approximation is used implicitly, an additional coefficient \(a_P^{u_i,T}\) to account for the velocity-to-temperature coupling has to be considered. Section \ref{sec:temperaturecoupling} will present different methods of temperature coupling in detail. Algorithm \ref{al:coupled} shows the main steps of the fully coupled solution algorithm.
 
 \alglanguage{pseudocode}
 \begin{algorithm}
@@ -74,11 +74,11 @@ If the Boussinesq approximation is used implicitly, an additional coefficient \(
 \EndIf
 \State{\textit{CALCULATE} mass fluxes using \textbf{(\ref{eq:pwim})}}
 \If{(coupled scalar equation)}
-  \State{\textit{SOLVE} scalar equation as described in section(\ref{sec:discretetemperature})}
+  \State{\textit{SOLVE} scalar equation as described in section \ref{sec:discretetemperature}}
 \EndIf
 \EndWhile
 \If{(decoupled scalar equation)}
-  \State{\textit{SOLVE} scalar equation as described in section(\ref{sec:discretetemperature})}
+  \State{\textit{SOLVE} scalar equation as described in section \ref{sec:discretetemperature}}
 \EndIf
 \end{algorithmic}
 \end{algorithm}
@@ -110,27 +110,30 @@ It is possible to realize the coupling described in the previous subsection by i
 
 The previous subsections discussed the velocity-to-temperature coupling and so far, only the momentum balances were affected by the realization of the coupling methods. Independently, it is possible to couple the temperature equation, not only to the momentum balances, but also to the pressure equation. The purpose of this subsection is to present a discretization that achieves this opposite type of coupling, which will be referred to as \emph{temperature-to-velocity/pressure} coupling.
 
-In section \ref{sec:discretetemperature}, the nonlinear partial differential equations were linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure-correction equations. If the decoupled approach is used, this treatment remains valid. However, if an implicit temperature coupling is sought, a coupling of the temperature equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization}. This method can be interpreted as a bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial, similar to Newton-like methods to solve nonlinear equations \cite{ferziger02}. Newton-like methods are known for their faster, up to quadratic convergence compared to methods with linear convergence, like the Picard iteration. However, the intention of using a Newton-like linearization for the convective term of the temperature equation is different. Here, the Newton-Raphson linearisation is to enhance the inter-variable coupling in order to accelerate convergence. For a Newton-like linearization to accelerate convergence, instead of only the convective term, the whole equation should use a Newton method for the nonlinear solution algorithm. As a result, the \emph{Newton-Raphson linearization} is not commonly used within segregated, SIMPLE-like solution algorithms \cite{ferziger02}.
+In section \ref{sec:discretetemperature}, the nonlinear partial differential equations were linearized using a Picard iteration method. Specifically the convective term \(\rho u_j T\) was linearized by taking the mass flux from the antecedent solve of the momentum and pressure-correction equations. If the decoupled approach is used, this treatment remains valid. However, if an implicit temperature coupling is sought, a coupling of the temperature equation to the momentum balances which considers the mass fluxes is desirable. Methods that exhibit the described property can be found in \cite{galpin86,oliveira01,sheu04,vakilipour12}. A common denomination of the therein used linearization method is called \emph{Newton-Raphson linearization}. This method can be interpreted as a bilinear approximation of the convective term by the linear terms of the respective Taylor polynomial, similar to Newton-like methods to solve nonlinear equations \cite{ferziger02}. Newton-like methods are known for their faster, up to quadratic convergence compared to methods with linear convergence, like the Picard iteration. However, the intention of using a Newton-like linearization for the convective term of the temperature equation is different. Here, the Newton-Raphson linearisation is utilized to enhance the inter-variable coupling in order to accelerate convergence. For a Newton-like linearization to accelerate convergence, instead of only the convective term, the whole equation should use a Newton method for the nonlinear solution algorithm. As a result, the \emph{Newton-Raphson linearization} is not commonly used within segregated, SIMPLE-like solution algorithms \cite{ferziger02}.
 
 The Newton-Raphson linearization technique is applied to the convective term of the temperature equation as follows. A first order Taylor approximation of the mass-specific convective flux through the boundary face \(S_f\) around the \((n-1)\)st iteration value yields for the approximation at the \(n\)th iteration
-\begin{align*}
+\begin{align}
+  \label{eq:nrlinearization}
   \left(u_{j,f} T_f \right)^{(n)} 
   &\approx 
   \left(u_{j,f} T_f \right)^{(n-1)} 
   + \frac{\partial}{\partial u_{j,f}}\left( u_{j,f} T_f \right)^{(n-1)} \left(u_{j,f}^{(n)} - u_{j,f}^{(n-1)} \right) 
-  + \frac{\partial}{\partial T_f}\left( u_{j,f} T_f \right)^{(n-1)} \left( T_f^{(n)} - T_f^{(n-1)} \right) \\[0.5em]
+  + \frac{\partial}{\partial T_f}\left( u_{j,f} T_f \right)^{(n-1)} \left( T_f^{(n)} - T_f^{(n-1)} \right) \nonumber\\[0.5em]
   &=
   (u_{j,f} T_f )^{(n-1)} 
   + \vphantom{(u_{j,f} T_f)}{T_f}^{(n-1)} (\vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} - \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n-1)} ) 
-  +  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} ( \vphantom{(u_j T)}{T_f}^{(n)} - \vphantom{(u_j T)}{T_f}^{(n-1)} ) \\[0.7em]
+  +  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} ( \vphantom{(u_j T)}{T_f}^{(n)} - \vphantom{(u_j T)}{T_f}^{(n-1)} ) \nonumber\\[0.7em]
   &=
   \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  + \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} \vphantom{(u_jT)}{T_f}^{(n-1)}  -  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
-\end{align*}
-A comparison with section \ref{sec:segconvective} shows that the underlined term coincides with the term from the usual linearization. The first of the two new terms will be treated implicitly and explicitly after using the pressure-weighted interpolation method from section \ref{sec:massflux} to interpolate the value of \(u_{j,f}\). The second term will be treated explicitly. The use of the pressure-weighted interpolation method does create not only a temperature-to-velocity but also a temperature-to-pressure coupling. Applying the pressure-weighted interpolation, the equation for the mass-specific convective flux reads
+\end{align}
+A comparison with section \ref{sec:segconvective} shows that the underlined term coincides with the term from the usual linearization. The first of the two new terms will be treated implicitly and explicitly after using the pressure-weighted interpolation method from section \ref{sec:massflux} to interpolate the value of \(u_{j,f}\). The second term will be treated explicitly. The use of the pressure-weighted interpolation method does create not only a temperature-to-velocity but also a temperature-to-pressure coupling. Applying the pressure-weighted interpolation, equation \ref{eq:nrlinearization} for the mass-specific convective flux reads
 \begin{align*}
   \left(u_{j,f} T_f \right)^{(n)} 
   &\approx 
-  \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}} + \vphantom{(u_jT)}{T_f}^{(n-1)}  \left[\left(1 - \gamma_f\right) u_{j,P}^{(n)} + \gamma_f u_{j,Q}^{(n)} \right] \nonumber\\[1em]
+    \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)} \\[1em]
+    &\quad\quad
+    + \vphantom{(u_jT)}{T_f}^{(n-1)}  \left[\left(1 - \gamma_f\right) u_{j,P}^{(n)} + \gamma_f u_{j,Q}^{(n)} \right] \nonumber\\[1em]
     &\quad\quad 
     - T_f^{(n-1)}\left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_j}} + \gamma_f \frac{\alpha_\vec{u} V_Q}{a_Q^{u_j}}\right)
     \left[ 
@@ -138,7 +141,7 @@ A comparison with section \ref{sec:segconvective} shows that the underlined term
     -  \frac{1}{2} \left( \frac{\partial p}{\partial x_j} \right)_P^{(n-1)} 
     - \frac{1}{2} \left(\frac{\partial p}{\partial x_j}\right)_Q^{(n-1)} 
     \right] \nonumber \\[1em]
-    &  \quad\quad -\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
+    &  \quad\quad\quad\quad\quad -\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
 \end{align*}
 If this semi-implicit, semi-discrete equation is discretized completely, new matrix and right-hand side contributions can be calculated to
 \begin{align*}
@@ -171,7 +174,7 @@ How Dirichlet boundary conditions, also known as inlet boundaries, affect the ma
 \end{displaymath}
 Wall boundary conditions are treated likewise with the additional modifications to the right-hand side contribution as presented in section \ref{sec:walls}.
 
-The treatment of velocity Dirichlet boundary conditions in the pressure equation is straightforward since they correspond to mass fluxes through the boundary faces. Hence, the matrix coefficients remain unchanged, and only the right-hand side contributions embrace the fact that no implicit interpolation is necessary to calculate the mass flux through the boundary face.
+The treatment of velocity Dirichlet boundary conditions within the pressure equation is straightforward since they correspond to mass fluxes through the boundary faces. Hence, the matrix coefficients remain unchanged, and only the right-hand side contributions embrace the fact that no implicit interpolation is necessary to calculate the mass flux through the boundary face.
 
 In the case of Dirichlet pressure boundary conditions, an additional contribution to the right-hand side of the momentum balances has to be considered
 \begin{displaymath}
@@ -183,14 +186,14 @@ As presented in section \ref{sec:segboundary} a \emph{lagged} Dirichlet boundary
 \end{displaymath}
 The coefficients for the pressure are modified as usual for Dirichlet boundary conditions, which was shown in section \ref{sec:segboundary}.
 
-Since at Dirichlet boundaries the values of the velocities are known exactly, the Newton-Raphson linearization technique does not apply to the velocities on boundary faces. As a result, the linearization of the convective term becomes unnecessary.
+Since at Dirichlet boundaries the values of the velocities are known exactly, the Newton-Raphson linearization technique does not apply to the velocities on boundary faces. As a result, the linearization of the convective term of the temperature equation becomes unnecessary.
 
 At block boundaries the new matrix coefficients \(a_L^{u_i,p}\) and \(a_R^{u_i,p}\) for the velocity-to-pressure coupling and the matrix coefficients \(a_L^{p,u_i}\) and \(a_R^{p,u_i}\) have to be taken into account. This fact does not present any drawbacks to the presented approach.
 
 \section{Assembly of Linear Systems -- Final Form of Equations}
 \label{sec:cpldassembly}
 
-Concluding this chapter, the final form of the derived linear algebraic equations are presented. Based on the presented discretization, each equation only contains variable values of neighboring control volumes. The set of five equations reads
+Concluding this chapter, the final form of the derived linear algebraic equations is presented. Based on the presented discretization, each equation only contains variable values of neighboring control volumes. The set of five equations reads
 \begin{align*}
   a_P^{u_i} u_{P,i}^{\vphantom{u_i}}
   + \sum_{F \in NB(P)} a_F^{u_i} u_{F,i}^{\vphantom{u_i}} 
@@ -212,7 +215,7 @@ Concluding this chapter, the final form of the derived linear algebraic equation
   &= b_{P,T}^{\vphantom{T,p}}.
 \end{align*}
 
-The different degrees of coupling between the different equations will affect the matrix structure. Depending on the variable, arrangement other matrix structures are possible. Figure \ref{fig:cpldassemble} shows the resulting block matrix structure if the fields are treated as interlaced quantities. This variable arrangement corresponds to a linear subsystem for each control volume:
+The different degrees of coupling between the different equations will affect the matrix structure. Depending on the variable arrangement, other matrix structures are possible. Figure \ref{fig:cpldassemble} shows the resulting block matrix structure if the fields are treated as interlaced quantities. This variable arrangement corresponds to a linear subsystem for each control volume:
 \begin{displaymath}
 \left[
   \begin{array}{ccccc}
@@ -268,7 +271,7 @@ Figure \ref{fig:interlacemat} shows the non-zero structure of a block matrix for
 \begin{figure}
   \centering
   \input{./img/coupledmat.tikz.tex}
-  \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The yellow coefficients represent the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling due to the implicit Boussinesq approximation and the green coefficients result from the Newton-Raphson linearization technique addressing the temperature-to-velocity/pressure coupling.}
+  \caption{Non-zero structure of block submatrices of the linear systems used in the coupled solution algorithm for a block-structured grid consisting of one $2\times2\times2$ cell block and one $3\times3\times3$ cell block. The yellow coefficients account for the pressure-velocity coupling, the red coefficients correspond to the velocity-to-temperature coupling due to the implicit Boussinesq approximation and the green coefficients result from the Newton-Raphson linearization technique and address the temperature-to-velocity/pressure coupling.}
   \label{fig:cpldassemble}
 \end{figure}
 

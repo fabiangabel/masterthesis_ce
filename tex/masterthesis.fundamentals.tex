@@ -82,7 +82,7 @@ Since this thesis focuses on the transport of the scalar temperature \(T\), this
 \begin{displaymath}
   \frac{\partial \left(\rho T \right)}{\partial t} + \frac{\partial}{x_j} \left( \rho u_j - \kappa \frac{\partial T}{\partial x_j} \right) = q_T.
 \end{displaymath}
-Here \(\kappa\) denotes the thermal conductivity of the modelled material and \(q_T\) is a scalar field representing sources and sinks of heat throughout the domain of the problem. This equation is also known as the temperature equation.
+Here \(\kappa\) denotes the thermal diffusivity of the modelled material and \(q_T\) is a scalar field representing sources and sinks of heat throughout the domain of the problem. This equation is also known as the temperature equation.
 
         %Check also Peric p12 or Bird et al. (1962).
 
@@ -99,7 +99,7 @@ A common simplification when modeling low Mach number flows (\(Ma < 0.3\)), is t
 \end{displaymath}
 In other words: In order for a velocity vector field \(\vec{u}\) to be valid for incompressible flow, it has to be free of divergence, in other terms \emph{solenoidal} \cite{spurk10,aris62}.
 
-Furthermore assuming the dynamic viscosity \(\mu\) to be constant, which can be suitable in the case of isothermal flow or small temperature differences within the flow, the Navier-Stokes equations in differential form can be reduced to 
+Furthermore, assuming the dynamic viscosity \(\mu\) to be constant, which can be suitable in the case of isothermal flow or small temperature differences within the flow, the Navier-Stokes equations in differential form can be reduced to 
 \begin{subequations}
 \label{eq:navierstokes}
 \begin{align}

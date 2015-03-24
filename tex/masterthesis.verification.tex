@@ -103,7 +103,7 @@ This section presents the results of the verification process via the formerly i
 \begin{displaymath}
   \operatorname{err}(\phi) = \sqrt{ \frac {\iiint\limits_V \left( \phi - \tilde{\phi} \right)^2 \mathrm{d}V }{\iiint\limits_V \mathrm{d}V }} \approx \sqrt{ \frac{ \sum_{n=1}^N \left(\phi_n - \tilde{\phi}_n \right)^2 V_n }{\sum_{n=1}^{N} V_n}} .
 \end{displaymath}
-Here, \(N\) denotes the number of control volumes of the discretized solution domain \(V\). Each control volume has the volume \(V_n\). The numerical and the exact solution are evaluated at the center of each control volume for the error calculations. In order to calculate the normalized global error of the pressure \(p\), the the analytic solution \(\tilde{p}\) is modified as in section \ref{sec:sigularitytreatment}
+Here, \(N\) denotes the number of control volumes of the discretized solution domain \(V\). Each control volume has the volume \(V_n\). The numerical and the exact solution are evaluated at the center of each control volume for the error calculations. In order to calculate the normalized global error of the pressure \(p\), the analytic solution \(\tilde{p}\) is modified as in section \ref{sec:singularitytreatment}
 \begin{displaymath}
   \operatorname{mean}\left( \tilde{p} \right) = \frac{\iiint\limits_V \tilde{p} \mathrm{d}V}{\iiint\limits_V \mathrm{d}V} \approx \frac{\sum_{n=1}^N \tilde{p}_n V_n}{\sum_{n=1}^N V_n}
 \end{displaymath}
@@ -121,7 +121,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
 
 \begin{table}[h!]\centering
 \ra{1.3}
-  \caption{Comparison of the errors of the velocity, calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
+  \caption{Comparison of the errors of the velocity and the resulting order of accuracy, calculated by the segregated and the coupled solver for different grid resolutions}
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(\vec{u}\) from Segregated Solver & Error of \(\vec{u}\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
@@ -154,7 +154,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
 
 \begin{table}[h!]\centering
 \ra{1.3}
-  \caption{Comparison of the errors of the pressure, calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
+  \caption{Comparison of the errors of the pressure and the resulting order of accuracy, calculated by the segregated and the coupled solver for different grid resolutions}
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(p\) from Segregated Solver & Error of \(p\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
@@ -170,7 +170,7 @@ The discretization techniques used in the present thesis yield an asymptotic dis
 
 \begin{table}[h!]\centering
 \ra{1.3}
-  \caption{Comparison of the errors of the temperature, calculated by the segregated and the coupled solver for different grid resolutions and the resulting order of accuracy}
+  \caption{Comparison of the errors of the temperature and the resulting order of accuracy, calculated by the segregated and the coupled solver for different grid resolutions}
   \begin{tabular}{cccc}\toprule
     Resolution & Error of \(T\) from Segregated Solver & Error of \(T\) from Coupled Solver & Observed Order \(\hat{p}\) \\
     \midrule
@@ -362,6 +362,6 @@ Figure \ref{fig:underrelaxation} shows that the higher the under-relaxation fact
      \draw (axis cs:0.1,0.971052034681996) -- (axis cs:0.2,0.977030190229609) node [midway,fill,white,color=gray,text=white,font=\footnotesize,draw=tud0a,below right]{$64^3$};
 \end{semilogyaxis}
 \end{tikzpicture}
-\caption{Comparison of calculated error for different under-relaxation factors $\alpha_\vec{u}$ on grids with $16\times16\times16$, $32\times32\times32$ and $64\times64\times64$ cells}
+\caption{Comparison of the calculated relative error of the $u_1$ velocity for different under-relaxation factors $\alpha_\vec{u}$ on grids with $16\times16\times16$, $32\times32\times32$ and $64\times64\times64$ cells}
 \label{fig:underrelaxation}
 \end{figure}

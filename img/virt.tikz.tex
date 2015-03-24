@@ -45,7 +45,7 @@
         \draw[dashed] (A5) -- (CC5);
         \draw[dashed] (A7) -- (C7);
         \draw[dashed] (A7) -- (CC7);
-         \draw[dashed] (A11) -- (CC11);
+        \draw[dashed] (A11) -- (CC11);
 
         \coordinate (B1) at ($(A1)!0.5!(A3)$);
         \coordinate (B2) at ($(A2)!0.5!(A4)$);
@@ -102,7 +102,8 @@
 
         \node (P) at (barycentric cs:B1=1,B5=1,B6=1,B2=1) {};
         \node (Q) at (barycentric cs:B3=1,B4=1,B7=1,B8=1) {};
-        \foreach \i in {P,Q} {
+        \node (f) at (barycentric cs:A3=1,A4=1,A9=1,A10=1) {};
+        \foreach \i in {P,Q,f} {
         \draw[fill=black] (\i) circle (0.15em) node[above right] {\i};
         }
 
