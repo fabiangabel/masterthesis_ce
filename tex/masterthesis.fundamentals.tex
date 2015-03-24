@@ -37,7 +37,7 @@ Assuming the validity of Cauchy's stress theorem, one can derive Cauchy's first 
   + \frac{\partial}{\partial x_j}\left( \rho u_i u_j \right) 
   = \rho k_i + \frac{\partial \tau_{ji}}{\partial x_j},
 \end{equation}
-representing the starting point for the modeling of fluid mechanical problems. Cauchy's first law of motion does not make any assumptions regarding material properties, which is why the set of equations (\ref{eq:contifull},\ref{eq:cauchymotion}) is not closed. There does not exist an independent equation for each of the dependent variables.
+representing the starting point for the modeling of fluid mechanical problems. Cauchy's first law of motion does not make any assumptions regarding material properties. For that reason, the set of equations (\ref{eq:contifull},\ref{eq:cauchymotion}) is not closed, i.e. there does not exist an independent equation for each of the dependent variables.
 
 \section{Closing the System of Equations -- Newtonian Fluids}
 \label{sec:fundclosing}
@@ -83,8 +83,6 @@ Since this thesis focuses on the transport of the scalar temperature \(T\), this
   \frac{\partial \left(\rho T \right)}{\partial t} + \frac{\partial}{x_j} \left( \rho u_j - \kappa \frac{\partial T}{\partial x_j} \right) = q_T.
 \end{displaymath}
 Here \(\kappa\) denotes the thermal diffusivity of the modelled material and \(q_T\) is a scalar field representing sources and sinks of heat throughout the domain of the problem. This equation is also known as the temperature equation.
-
-        %Check also Peric p12 or Bird et al. (1962).
 
 \section{Necessary Simplification of Equations}
 
@@ -165,7 +163,7 @@ using \(\rho \vec{g}\) as the mass-specific force.
 
 \section{Final Form of the Set of Equations}
 
-In the previous sections, different simplifications have been introduced, which are used throughout the thesis. The final form of the set of equations to be used is thereby presented. As a further simplification, the modified pressure \(\hat{p}\) will be treated as \(p\), and since the utilization of the Boussinesq approximation replaces the variable \(\rho\) by a linear function of the temperature \(T\), the reference density \(\rho_0\) for the remainder of this thesis is referred to as \(\rho\). The following set of equations takes incompressibility into account
+In the previous sections, different simplifications have been introduced which are used throughout the thesis. The final form of the set of equations to be used is thereby presented. As a further simplification, the modified pressure \(\hat{p}\) will be treated as \(p\), and since the utilization of the Boussinesq approximation replaces the variable \(\rho\) by a linear function of the temperature \(T\), the reference density \(\rho_0\) for the remainder of this thesis is referred to as \(\rho\). The following set of equations takes incompressibility into account
 \begin{subequations}
 \label{eq:completeset}
 \begin{align}
