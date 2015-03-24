@@ -1,6 +1,6 @@
 \chapter{Implicit Finite-Volume Method for Incompressible Flows -- Segregated Approach}
 \label{sec:seg}
-In this chapter, an algorithm, addressed to resolve the pressure-velocity coupling, is introduced. Furthermore, this chapter proposes a method of calculating mass fluxes by interpolation, which is is independent of the under-relaxation and presents the detailed derivation of all coefficients that result from the discretization process. Finally, this chapter shows the boundary conditions, which are relevant to the present thesis.
+In this chapter, an algorithm, addressed to resolve the pressure-velocity coupling, is introduced. Furthermore, this chapter proposes a method of calculating mass fluxes by interpolation, which is independent of the under-relaxation and presents the detailed derivation of all coefficients that result from the discretization process. Finally, this chapter shows the boundary conditions, which are relevant to the present thesis.
 
 \section{Discretization of the Mass Balance}
 
@@ -201,7 +201,7 @@ which shows, after division by \(\alpha_\vec{u} > 0\), that \(u_{i,f}\) is indep
 \section{Implicit Pressure-Correction and the SIMPLE-Algorithm}
 \label{sec:simple}
 
-Finite-volume methods aim at deducing a particular system of linear algebraic equations from a partial differential equation. In the case of the momentum balances, the general structure of this linear equations reads as follows
+Finite-volume methods aim at deducing a particular system of linear algebraic equations from a partial differential equation. In the case of the momentum balances, the general structure of the resulting linear equation reads as follows
 \begin{displaymath}
   \label{eq:linfinal}
   u_{i,P}^{(n)} 
@@ -720,7 +720,7 @@ Here, the coefficients are composed as follows
 %\end{subequations}
 Similar expressions for the pressure-correction equation and the temperature equation can be deduced. In the case of control volumes located at boundaries some of the coefficients will be calculated in a different way. This aspect has been addressed in section \ref{sec:segboundary}.
 
-For the decoupled iterative solution process of the Navier-Stokes equations, it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by an implicit \emph{under-relaxation} technique, a convex combination of the solution of the linear system for the present iteration \((n)\) and from the previous iteration \((n-1)\), with the under-relaxation parameter \(\alpha_{u_i} \in (0,1]\), where \(\alpha_{u_i} = 1\) corresponds to no under-relaxation. Generally speaking, this parameter can be chosen individually for each equation. Since there are no rules for choosing this parameters in a general setting, the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\) \cite{schaefer99}. This choice of velocity under-relaxation has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right-hand side. This fact helps to increase memory efficiency.
+For the decoupled iterative solution process of the Navier-Stokes equations, it is necessary to reduce the change of each dependent variable in each iteration. Normally this is done by an implicit \emph{under-relaxation} technique, a convex combination of the solution of the linear system for the present iteration \((n)\) and from the previous iteration \((n-1)\), with the under-relaxation parameter \(\alpha_{u_i} \in (0,1]\), where \(\alpha_{u_i} = 1\) corresponds to no under-relaxation. Generally speaking, this parameter can be chosen individually for each equation. Since there are no rules for choosing these parameters in a general setting, the under-relaxation parameter for the velocities is chosen to be equal for all three velocities, \(\alpha_{u_i} = \alpha_{\vec{u}}\) \cite{schaefer99}. This choice of velocity under-relaxation has the further advantage that, in case the boundary conditions are implemented with the same intention, the linear system for each of the velocities remains unchanged except for the right-hand side. This fact helps to increase memory efficiency.
 
 Let the solution for the linear system without under-relaxation be denoted as
 \begin{displaymath}
