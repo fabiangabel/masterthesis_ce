@@ -1,7 +1,7 @@
 \chapter{Implicit Finite-Volume Method for Incompressible Flows -- Fully Coupled Approach}
 \label{sec:cpld}
 
-Since the antecedent chapter \ref{sec:seg} already discussed the discretization details of the involved equations, this chapter aims at a comparison on the algorithmic level of the SIMPLE-algorithm, presented in chapter \ref{sec:simple}, with an implementation of a fully coupled solution algorithm. In order to maintain comparability, the discretization of the equations to be solved is not changed. Consequently, all presented differences are due to differences in the solution algorithm. Successful implementations of a fully coupled solution algorithm for incompressible Navier-Stokes equations have been presented in \cite{chen10,darwish09,falk13,vakilipour12}. The presented work will extend the solution approach presented in \cite{falk13} to three-dimensional domains. Furthermore, this chapter will present various approaches incorporating different degrees of velocity-to-temperature and temperature-to-velocity/pressure coupling, as they are presented in \cite{galpin86,vakilipour12}. Finally, the structure of the resulting linear system to be solved is discussed.
+Since the antecedent chapter \ref{sec:seg} already discussed the discretization details of the involved equations, this chapter aims at a comparison on the algorithmic level of the SIMPLE-algorithm, presented in section \ref{sec:simple}, with an implementation of a fully coupled solution algorithm. In order to maintain comparability, the discretization of the equations to be solved is not changed. Consequently, all presented differences are due to differences in the solution algorithm. Successful implementations of a fully coupled solution algorithm for incompressible Navier-Stokes equations have been presented in \cite{chen10,darwish09,falk13,vakilipour12}. The presented work will extend the solution approach presented in \cite{falk13} to three-dimensional domains. Furthermore, this chapter will present various approaches incorporating different degrees of velocity-to-temperature and temperature-to-velocity/pressure coupling, as they are presented in \cite{galpin86,vakilipour12}. Finally, the structure of the resulting linear system to be solved is discussed.
 
 \section{The Fully Coupled Solution Algorithm -- Pressure-Velocity Coupling Reconsidered}
 \label{sec:reconsider}
@@ -12,7 +12,7 @@ The central aspect of fully coupled solution methods for Navier-Stokes equations
 
 On the downside, implementations of fully coupled solution methods require significantly more system memory than segregated methods. Since coupled solution algorithms simultaneously solve for a higher number of unknowns, a higher amount of information has to be available at all times, including the higher storage requirements for the associated linear system. Furthermore, the bad condition of the linear algebraic system \cite{schaefer99} tends to slow down the convergence of the equation solver algorithm.
 
-As in the case of segregated methods, it is not advisable to solve the mass balance equation directly \cite{schaefer99}. Instead of deriving an equation for the pressure-correction \(p'\), as shown in \ref{sec:simple}, an equation for the pressure itself is derived, using the pressure-weighted interpolation method which has been introduced in \ref{sec:massflux}. More specifically equation (\ref{eq:pwim}) is adapted for the use in a fully coupled algorithm
+As in the case of segregated methods, it is not advisable to solve the mass balance equation directly \cite{schaefer99}. Instead of deriving an equation for the pressure-correction \(p'\), as shown in section \ref{sec:simple}, an equation for the pressure itself is derived, using the pressure-weighted interpolation method which has been introduced in section \ref{sec:massflux}. More specifically equation (\ref{eq:pwim}) is adapted for the use in a fully coupled algorithm
 \begin{displaymath}
   u_{i,f}^{(n)} 
   =
@@ -49,16 +49,16 @@ The adaption comprises the removal of the last term of equation (\ref{eq:pwim}) 
   \right] \, S_f.
 \end{align*}
 
-Even though this equation is solved for the pressure \(p\), while equation (\ref{eq:presscorr}) is solved for the pressure-correction \(p'\), the matrix coefficients from the discretization of the pressure-correction equation (\ref{eq:segpresscorrcoeff}) and the calculation of the right-hand side given in equation (\ref{eq:presscorrb}), remain the same. For the implicit coupling to the velocities \(u_i\), additional matrix coefficients have to be considered. These coefficients can be calculated as follows
+Even though this equation is solved for the pressure \(p\), while equation (\ref{eq:presscorr}) is solved for the pressure-correction \(p'\), the matrix coefficients from the discretization of the pressure-correction equation (\ref{eq:segpresscorrcoeff}) and the calculation of the right-hand side given in equation (\ref{eq:presscorrb}), remain the same. For the implicit coupling to the velocities \(u_i\), also denoted as the \emph{pressure-to-velocity} coupling, additional matrix coefficients have to be considered. These coefficients can be calculated as follows
 \begin{displaymath}
   a_F^{p,u_i} = \rho \, \gamma_f S_f \quad \text{and} \quad a_P^{p,u_i} = \sum_{F \in NB(P)} \rho \, (1-\gamma_f) \, S_f.
 \end{displaymath}
 
-On the other side, the discretized momentum balance yields matrix coefficients to account for the implicit velocity-pressure coupling. These coefficients are calculated as follows
+On the other side, the discretized momentum balance yields matrix coefficients to account for the implicit \emph{velocity-to-pressure} coupling. These coefficients are calculated as follows
 \begin{displaymath}
   a_F^{u_i,p} =  \gamma_f S_f \quad \text{and} \quad a_P^{u_i,p} = \sum_{F \in NB(P)} (1-\gamma_f) \, S_f.
 \end{displaymath}
-If the Boussinesq approximation is used implicitly, an additional coefficient \(a_P^{u_i,T}\) to account for the velocity-to-temperature coupling has to be considered. Section \ref{sec:temperaturecoupling} will present different methods of temperature coupling in detail. Algorithm \ref{al:coupled} shows the main steps of the fully coupled solution algorithm.
+If the Boussinesq approximation is used implicitly, an additional coefficient \(a_P^{u_i,T}\) to account for the velocity-to-temperature coupling has to be considered. Section \ref{sec:temperaturecoupling} will present different methods of temperature coupling in detail. Algorithm 2 shows the main steps of the fully coupled solution algorithm.
 
 \alglanguage{pseudocode}
 \begin{algorithm}
@@ -68,7 +68,7 @@ If the Boussinesq approximation is used implicitly, an additional coefficient \(
 \State{\textit{INITIALIZE} variables}
 \While{(convergence criterion not accomplished)}
 \If{(temperature coupling)}
-  \State{\textit{SOLVE} the linear system for velocities, pressure and temperature}
+  \State{\textit{SOLVE} the linear system for velocities, pressure, and temperature}
 \Else
   \State{\textit{SOLVE} the linear system for velocities and pressure}
 \EndIf
@@ -86,7 +86,7 @@ If the Boussinesq approximation is used implicitly, an additional coefficient \(
 \section{Coupling to the Temperature Equation}
 \label{sec:temperaturecoupling}
 
-The present work also aims at analyzing the efficiency of different methods to couple the temperature equation to the velocities and vice versa. Consequently, this section discusses different approaches of handling the coupling of the temperature equation to the Navier-Stokes equations if the Boussinesq approximation, as introduced in section \ref{sec:boussinesq}, is used. The effectiveness of realizing a strong coupling of the temperature equation to the Navier-Stokes equations depends on the flow problem. The physical coupling tends to increase in flow scenarios of natural convection, where the temperature difference, and hence the buoyancy term in the Navier-Stokes equations, dominates the fluid movement \cite{ferziger02,vakilipour12}. It is supposed that, the higher the physical coupling of temperature and flow, the greater the benefits of using an implementation that uses a strong coupling to the temperature equation. The following subsections present different approaches to achieving implicit inter-variable coupling.
+The present work also aims at analyzing the efficiency of different methods to couple the temperature equation to the velocities and vice versa. Consequently, this section discusses different approaches of handling the coupling of the temperature equation to the Navier-Stokes equations if the Boussinesq approximation, as introduced in section \ref{sec:boussinesq}, is used. The effectiveness of realizing a strong coupling of the temperature equation to the Navier-Stokes equations depends on the flow problem. The physical coupling tends to increase in flow scenarios of natural convection, where the temperature difference, and hence the buoyancy term in the Navier-Stokes equations, dominates the fluid movement \cite{ferziger02,vakilipour12}. It is supposed that, the higher the physical coupling of temperature and flow, the greater the benefits of using an implementation that uses a strong coupling to the temperature equation. The following subsections present different approaches to achieving implicit inter-variable coupling between velocities, pressure, and temperature.
       
 \subsection{Decoupled Approach -- Explicit Velocity-to-Temperature Coupling}
 
@@ -127,7 +127,7 @@ The Newton-Raphson linearization technique is applied to the convective term of 
   &=
   \underline{\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_{j,f})}{T_f}^{(n)}}  + \vphantom{(u_{j,f} T_f)}{u_{j,f}}^{(n)} \vphantom{(u_jT)}{T_f}^{(n-1)}  -  \vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
 \end{align}
-A comparison with section \ref{sec:segconvective} shows that the underlined term coincides with the term from the usual linearization. The first of the two new terms will be treated implicitly and explicitly after using the pressure-weighted interpolation method from section \ref{sec:massflux} to interpolate the value of \(u_{j,f}\). The second term will be treated explicitly. The use of the pressure-weighted interpolation method does create not only a temperature-to-velocity but also a temperature-to-pressure coupling. Applying the pressure-weighted interpolation, equation \ref{eq:nrlinearization} for the mass-specific convective flux reads
+A comparison with section \ref{sec:segconvective} shows that the underlined term coincides with the term from the usual linearization. The first of the two new terms will be treated implicitly and explicitly after using the pressure-weighted interpolation method from section \ref{sec:massflux} to interpolate the value of \(u_{j,f}\). The second term will be treated explicitly. The use of the pressure-weighted interpolation method does create not only a temperature-to-velocity but also a temperature-to-pressure coupling. Applying the pressure-weighted interpolation, equation (\ref{eq:nrlinearization}) for the mass-specific convective flux reads
 \begin{align*}
   \left(u_{j,f} T_f \right)^{(n)} 
   &\approx 
@@ -143,14 +143,14 @@ A comparison with section \ref{sec:segconvective} shows that the underlined term
     \right] \nonumber \\[1em]
     &  \quad\quad\quad\quad\quad -\vphantom{(u_j T)}{u_{j,f}}^{(n-1)} \vphantom{(u_j T)}{T_f}^{(n-1)}.
 \end{align*}
-If this semi-implicit, semi-discrete equation is discretized completely, new matrix and right-hand side contributions can be calculated to
+If this semi-implicit, semi-discrete equation is discretized completely, the new matrix and right-hand side contributions can be calculated to
 \begin{align*}
   \allowdisplaybreaks
   &a_F^{T,u_i} = \rho T_f^{(n-1)} \gamma_f n_{f,i} S_f \\[1.0em] 
   &a_P^{T,u_i} = \sum_{F \in NB(P)} \rho T_f^{(n-1)} \left(1-\gamma_f\right) n_{f,i} S_f \\[1.0em]
   &a_F^{T,p} = -\rho T_f^{(n-1)} \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_F^{u_i}}\right) \frac{S_f}{\left(\vec{x}_P - \vec{x}_F\right) \cdot \vec{n}_f} = \rho T_f^{(n-1)} a_F^{p} \\[1.0em] 
   &\text{and} \quad
-  a_P^{T,p} = - \sum_{F \in NB(P)} T_f^{(n-1)} a_F^{T,p}.
+  a_P^{T,p} = - \sum_{F \in NB(P)} a_F^{T,p}.
 \end{align*}
 The explicit parts resulting from the Newton-Raphson linearization yield additional contributions to the right-hand side
 \begin{displaymath}
@@ -166,7 +166,7 @@ The explicit parts resulting from the Newton-Raphson linearization yield additio
 
 \section{Boundary Conditions on Domain and Block Boundaries}
 
-The treatment of boundary conditions and transitional conditions at block boundaries is very similar to the way presented in section \ref{sec:segboundary}. The main difference results from the fact that, in addition to the necessary changes from section \ref{sec:segboundary}, modifications accounting for the new matrix coefficients from the discretized momentum balance and the pressure equation are necessary. The purpose of this section is, therefore, to focus on these additional changes only.
+The treatment of boundary conditions and transitional conditions at block boundaries is very similar to the way presented in section \ref{sec:segboundary}. The main difference results from the fact that, in addition to the necessary changes from section \ref{sec:segboundary}, modifications accounting for the new matrix coefficients from the discretized momentum balance and the pressure equation are necessary. The purpose of this section is, therefore, to highlight these additional changes.
 
 How Dirichlet boundary conditions, also known as inlet boundaries, affect the matrix coefficients that only correspond to the velocities has been presented in section \ref{sec:segDirichlet}. It is common to use Neumann boundary conditions for the pressure at Dirichlet boundaries with respect to the velocities \cite{darwish09}. Under the assumption that the gradient of the pressure vanishes at inlet boundaries, the matrix coefficients for the velocity-to-pressure coupling have to be modified to 
 \begin{displaymath}
@@ -188,7 +188,7 @@ The coefficients for the pressure are modified as usual for Dirichlet boundary c
 
 Since at Dirichlet boundaries the values of the velocities are known exactly, the Newton-Raphson linearization technique does not apply to the velocities on boundary faces. As a result, the linearization of the convective term of the temperature equation becomes unnecessary.
 
-At block boundaries the new matrix coefficients \(a_L^{u_i,p}\) and \(a_R^{u_i,p}\) for the velocity-to-pressure coupling and the matrix coefficients \(a_L^{p,u_i}\) and \(a_R^{p,u_i}\) have to be taken into account. This fact does not present any drawbacks to the presented approach.
+At block boundaries the new matrix coefficients \(a_L^{u_i,p}\) and \(a_R^{u_i,p}\) for the velocity-to-pressure coupling and the matrix coefficients \(a_L^{p,u_i}\) and \(a_R^{p,u_i}\) have to be taken into account. This fact does not present any drawbacks to the presented approach. If additionally temperature-to-velocity/pressure coupling is applied, corresponding matrix coefficients as for the coupling have to be considered. The implicit Boussinesq approximation does not require additional matrix coefficients at block boundaries as this is a local approximation.
 
 \section{Assembly of Linear Systems -- Final Form of Equations}
 \label{sec:cpldassembly}

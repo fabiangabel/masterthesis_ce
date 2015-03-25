@@ -37,11 +37,11 @@
   %\group{FNB}
 % \tuprints{12345}{1234}
 % \makethesistitle
-  \maketitle
- %\selectlanguage{ngerman} \affidavit{Fabian Gabel} \selectlanguage{english}
+\maketitle
+%\selectlanguage{ngerman} \affidavit{Fabian Gabel} \selectlanguage{english}
+\include{./tex/masterthesis.erklaerung}
+\include{./tex/masterthesis.abstract}
 \cleardoublepage
-  \include{./tex/masterthesis.erklaerung}
-  \include{./tex/masterthesis.abstract}
 \setcounter{page}{1}
 \pagenumbering{roman} 
   \tableofcontents
@@ -50,26 +50,6 @@
   \listofalgorithms
 
 %\include{./tex/masterthesis.nomenclature}
-
-% \section*{TODO LIST}
-
-% \begin{itemize}
-%   \item remove equation numbering when there is no reference
-%   \item change the matrix coefficient indexing to \(a_P^{u_i,p}\) like in \cite{darwish09}.
-%   \item extend nomenclature
-%   \item align equations using the \textbf{alignat} environment
-%   \item check pressure correction equation on iteration indices (gradients)
-%   \item check simple chapter, since the right hand side lacks of deferred corrector and under-relaxed velocities
-%   \item mention the boundary conditions for the pressure correction
-%   \item check all headings for correct spelling
-%   \item Falsche Wahl der problem domain, führt zu global nicht erfüllter kontinuitätsgleichung. residuum der druckkorrectur entspricht dem massenfluss
-%   \item reference Comparison of finite-volume numerical methods with staggered and colocated
-%   \item read klaij again and use some of its arguments
-%     grids
-%   \item emphasize the flexibility of the implementation
-%   \item This is often referred to as "matrix-free", though it is still a Mat in PETSc (Mat in PETSc means "finite-dimensional linear operator").  
-%   \item Rayleigh and Reynolds
-% \end{itemize}
 
 \cleardoublepage
 \setcounter{page}{1}
@@ -85,11 +65,11 @@
   \include{./tex/masterthesis.conclusion}
   %\include{./tex/masterthesis.testing}
 
-%testing purposes
-%   \nocite{*}
 
 \clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
+%testing purposes
+%   \nocite{*}
 \bibliography{bib/masterthesis.articles,bib/masterthesis.books,bib/masterthesis.software.bib}
 %if using biblatex
 %\printbibliography[title={Book references},type=book]

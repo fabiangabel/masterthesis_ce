@@ -5,13 +5,13 @@ This chapter covers the set of fundamental equations for thermo-hydrodynamical p
 
 \section{Conservation of Mass -- Continuity Equation}
 
-The conservation law of mass, also known as the continuity equation, embraces the physical concept that, neglecting relativistic effects and nuclear reactions, mass cannot be created or destroyed. Using the notion of a mathematical control volume to denote a constant domain of integration, one can state the integral mass balance of a control volume \(V\) with control surface \(S\) with surface unit normal vector \(\vec{n} = \left( n_i \right)_{i=1,\dots,3}\) using Gauss's theorem as
+The conservation law of mass, also known as the continuity equation, embraces the physical concept that, neglecting relativistic effects and nuclear reactions, mass cannot be created or destroyed. Using the notion of a mathematical control volume to denote a constant domain of integration, one can state the integral mass balance of a control volume \(V\) with control surface \(S\) with surface unit normal vector \(\vec{n} = \left( n_i \right)_{i=1,\dots,3}\) using Gauss's theorem of integration as follows
 \begin{displaymath}
   \iiint\limits_V \frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x_i}\left( \rho u_i \right) \mathrm{d}V 
   =  \iiint\limits_V \frac{\partial \rho}{\partial t} \mathrm{d}V + \iint\limits_S \rho u_i n_i \mathrm{d}S
-  = 0,
+  = 0.
 \end{displaymath}
-where \( \rho \) denotes the material density, \(t\) denotes the independent variable of time and \(\vec{u} = \left( u_i \right)_{i=1,\dots,3}\) is the velocity vector field. Since this equation remains valid for arbitrary control volumes, the equality has to hold for the integrands as well. In this sense, the differential form of the conservation law of mass can be formulated as
+Here, \( \rho \) denotes the material density, \(t\) denotes the independent variable of time and \(\vec{u} = \left( u_i \right)_{i=1,\dots,3}\) is the velocity vector field. Since this equation remains valid for arbitrary control volumes, the equality has to hold for the integrands as well. In this sense, the differential form of the conservation law of mass can be formulated as
 \begin{equation}
   \label{eq:contifull}
   \frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x_i}\left( \rho u_i \right)
@@ -47,7 +47,7 @@ As a result of Cauchy's theorem, the stress vector \( \vec{t} \) can be calculat
   \label{eq:stresssymetry}
   \tau_{ji} = \tau_{ij}.
 \end{equation}
-Hence, the number of unknown coefficients may be reduced to six unknown components. In a first step, it is assumed that the coefficient matrix can be decomposed into fluid-static and fluid-dynamic contributions,
+Hence, the number of unknown coefficients may be reduced to six unknown components. In a further step, it is assumed that the coefficient matrix can be decomposed into fluid-static and fluid-dynamic contributions,
 \begin{displaymath}
   \tau_{ij} = -p \delta_{ij} + \sigma_{ij},
 \end{displaymath}
@@ -62,7 +62,7 @@ If one now imposes material-isotropy and the mentioned stress-symmetry (\ref{eq:
 \begin{displaymath}
   \sigma_{ij} = 2 \mu S_{ij} + \lambda S_{mm} \delta_{ij}.
 \end{displaymath}
-Here \(\lambda\) and \(\mu\) denominate scalars which depend on the local thermodynamical state. Taking everything into account, (\ref{eq:cauchymotion}) can be formulated as the differential conservation law of momentum for Newtonian fluids, better known as the \emph{Navier-Stokes equations} in differential form:
+Here \(\lambda\) and \(\mu\) denominate scalars which depend on the local thermodynamical state. Taking everything into account, (\ref{eq:cauchymotion}) can be reformulated as the differential conservation law of momentum for Newtonian fluids, better known as the \emph{Navier-Stokes equations} in differential form:
 \begin{equation}
 \label{eq:nsfull}
 \frac{\partial }{\partial t} \left(\rho u_i \right)
@@ -80,7 +80,7 @@ The modeling of the transport of scalar or vector quantities by a flow field \(\
     
 Since this thesis focuses on the transport of the scalar temperature \(T\), this section introduces the conservation law of energy in differential form, formulated in terms of the temperature,
 \begin{displaymath}
-  \frac{\partial \left(\rho T \right)}{\partial t} + \frac{\partial}{x_j} \left( \rho u_j - \kappa \frac{\partial T}{\partial x_j} \right) = q_T.
+\frac{\partial}{\partial t}\left(\rho T \right) + \frac{\partial}{\partial x_j} \left( \rho u_j - \kappa \frac{\partial T}{\partial x_j} \right) = q_T.
 \end{displaymath}
 Here \(\kappa\) denotes the thermal diffusivity of the modelled material and \(q_T\) is a scalar field representing sources and sinks of heat throughout the domain of the problem. This equation is also known as the temperature equation.
 
@@ -101,7 +101,7 @@ Furthermore, assuming the dynamic viscosity \(\mu\) to be constant, which can be
 \begin{subequations}
 \label{eq:navierstokes}
 \begin{align}
-  \frac{\partial}{\partial t}   \left(\rho u_i \right)
+  \rho \frac{\partial}{\partial t}   \left(u_i \right)
   + \rho \frac{\partial}{\partial x_j} \left( u_i  u_j \right) 
   =& \rho k_i
   - \frac{\partial p}{\partial x_i}
@@ -139,13 +139,13 @@ Modeling of an incompressible flow with heat transfer has to take into account t
 \end{displaymath}
 Here, \(\beta\) denotes the coefficient of thermal expansion. Using the Boussinesq approximation, the incompressible Navier-Stokes equations in differential form can be formulated as
 \begin{align*}
-  \rho_0 \frac{\partial \left( u_i \right)}{\partial t} 
+  \rho_0 \frac{\partial  u_i }{\partial t} 
   + \rho_0 \frac{\partial}{\partial x_j} \left( u_i  u_j \right) 
   =& \rho_0 g_i + \left(\rho - \rho_0 \right) g_i
   - \frac{\partial p}{\partial x_i}
   +  \mu \frac{\partial}{\partial x_j} \left( \frac{\partial u_i}{\partial x_j} 
   + \frac{\partial u_j}{\partial x_i} \right)  \\[0.5em]
-  =& \frac{\partial}{x_i}\left(\rho_0 g_j x_j \right) 
+  =& \frac{\partial}{\partial x_i}\left(\rho_0 g_j x_j \right) 
   + \left(\rho - \rho_0 \right) g_i
   - \frac{\partial p}{\partial x_i}
   +  \mu \frac{\partial}{\partial x_j} \left( \frac{\partial u_i}{\partial x_j} 
@@ -170,14 +170,14 @@ In the previous sections, different simplifications have been introduced which a
 \label{eq:contidiff}
 \frac{\partial u_i}{\partial x_i} =& 0. \\[1em]
 \label{eq:momentumdiff}
-\rho \frac{\partial \left( u_i \right)}{\partial t} 
+\rho \frac{\partial u_i}{\partial t} 
 + \rho \frac{\partial}{\partial x_j} \left( u_i  u_j \right) 
 =& - \frac{\partial p}{\partial x_i} 
 - \rho \beta \left( T - T_0 \right)\, g_i
 +  \mu \frac{\partial}{\partial x_j} \left( \frac{\partial u_i}{\partial x_j} 
 + \frac{\partial u_j}{\partial x_i} \right) \\[1em]
 \label{eq:temperaturediff}
-\frac{\partial \left(\rho T \right)}{\partial t} + \frac{\partial}{x_j} \left( \rho u_j T - \kappa \frac{\partial T}{\partial x_j} \right) =& q_T.
+\frac{\partial}{\partial t}\left(\rho T \right) + \frac{\partial}{\partial x_j} \left( \rho u_j T - \kappa \frac{\partial T}{\partial x_j} \right) =& q_T.
 \end{align}
 \end{subequations}
 

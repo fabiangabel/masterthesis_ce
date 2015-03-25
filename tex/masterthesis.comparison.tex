@@ -4,6 +4,7 @@
 This chapter presents the performance analyses of both developed solvers within the CAFFA framework. In the first part of this chapter, the used hardware and software is described. Furthermore, necessary performance measures are introduced. After showing the outcomes of a preliminary benchmark to measure the sustainable bandwidth, the results of the Speed-Up and the weak scalability study are presented. The second part of this chapter analyzes the performance of the algorithms on a test case with a complex geometry and a test case involving natural convection. Furthermore, the results of a study on the effect of non-orthogonal corrections on the convergence behavior of the coupled solution algorithm are presented. The last section of this chapter proposes a method for load balancing by automatic matrix partitioning.
   
 \section{Parallel Performance}
+\label{sec:parallelperformance}
 
 In many cases, solver applications are used to solve complex problems regarding memory requirements and are, at the same time, expected make calculation results available within a short time. In both scenarios, code that designed to run in parallel can address the mentioned challenges. Code that runs in parallel can allocate more memory resources which makes the calculation of complex problems feasible. If the code is scalable, the program execution can be shortened by involving more processes to solve a problem of constant size on the compatible hardware. The CAFFA solver framework, which has been extended in the course of the present thesis, has been parallelized using the PETSc library. The purpose of this section is to assess the parallel performance of this solver framework on a high-performance computer.
 
@@ -12,7 +13,7 @@ After introducing the used hardware and software, this section presents central 
 \subsection{Employed Hardware and Software -- The Lichtenberg-High-Performance Computer }
 \label{sec:hhlr}
 
-All performance analyses which are presented in this thesis build on tests conducted on the Lichtenberg-High-Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner}). The cluster consists of different sections according to the used hardware. Throughout the thesis, tests were performed using the first and the second MPI section (MPI2) of the cluster. The first section (MPI1) consists of 705 nodes of which each runs two Intel\textregistered Xeon\textregistered E5-2670 processors and offers 32GB of memory. The second section consists of 356 nodes of which each runs two Intel Xeon E5-2680 v3 processors and offers 64GB of memory. As interconnect for both sections, FDR-14 InfiniBand is used.
+All performance analyses which are presented in this thesis build on tests conducted on the Lichtenberg-High-Performance Computer, also known as \emph{HHLR} (\emph{Hessischer Hochleistungsrechner}). The cluster consists of different sections according to the used hardware. Throughout the thesis, tests were performed using the first (MPI1) and the second MPI (MPI2) section of the cluster. The first section (MPI1) consists of 705 nodes of which each runs two Intel\textregistered Xeon\textregistered E5-2670 processors and offers 32GB of memory. The second section consists of 356 nodes of which each runs two Intel Xeon E5-2680 v3 processors and offers 64GB of memory. As interconnect for both sections, FDR-14 InfiniBand is used.
 
 All tests programs were compiled using the Intel compiler suite version 15.0.0 and the compiler options
 \lstset{language=bash,
@@ -54,7 +55,7 @@ While wall-clock time is an absolute measure that can be used to compare differe
     considers the degradation of the efficiency of the underlying algorithm due to the parallelization. Many efficient algorithms owe their efficiency to recursions inside the algorithm. In the process of resolving these recursions, the efficiency of the algorithm degrades. It follows that this efficiency is entirely independent of the underlying hardware.
   \item[] The \emph{parallel efficiency}
     \begin{displaymath} E^{par}_P :=\frac{\operatorname{TIME}(\text{parallel algorithm on one processor})}{P \cdot \operatorname{TIME}(\text{parallel algorithm on \(P\) processors})} \end{displaymath} 
-      describes the effect of the need for inter-process communication, if the solution process involves more than one processor. This form of efficiency does explicitly exclude any algorithm related degradation since the time measured corresponds to the same algorithms. It follows that the parallel efficiency only depends on the implementation of the communication and the latencies associated with hardware.
+      describes the effect of the need for inter-process communication, if the solution process involves more than one process. This form of efficiency does explicitly exclude any algorithm related degradation since the time measured corresponds to the same algorithms. It follows that the parallel efficiency only depends on the implementation of the communication and the latencies associated with hardware.
   \item[] The \emph{load balancing efficiency} 
     \begin{displaymath} E^{load}_P :=\frac{\operatorname{TIME}(\text{calculation on complete domain})}{P \cdot \operatorname{TIME}(\text{calculation on biggest subdomain})} \end{displaymath}
        is formed by the quotient of the wall-clock times needed for the complete problem domain and partial solves on subdomains. This measure does neither depend on hardware nor the used implementation. Instead, it directly relates to the size and partition of the grid. 
@@ -76,7 +77,7 @@ In particular this subsection presents the calculated sustainable memory bandwid
 \begin{displaymath}
   a[i] = b[i] + scalar * c[i] ,
 \end{displaymath}
-where the sizes of the vectors \(a\), \(b\) and \(c\) have to be chosen according to the deployed hardware.
+where the sizes of the vectors \(a\), \(b\), and \(c\) have to be chosen according to the deployed hardware.
 
 In terms of parallel scalability, the STREAM benchmark can also be used to determine an upper performance-bound. According to \cite{petsc-web-page}, the parallel performance of memory bandwidth limited codes correlates with the parallel performance of the STREAM benchmark, i.e. a scalable increase in memory bandwidth is necessary for scalable application performance. The intermediate results of the benchmark can then be used to test different configurations that bind hardware resources to the involved processes. Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band} show the test results of the STREAM benchmark on the two different MPI sections of the HHRL. For the results to be reproducible, it is central to run these tests exclusively on each node, i.e. that no other test is running on the same node. %Before presenting results the different binding configurations will be explained.
 
@@ -173,7 +174,7 @@ In terms of parallel scalability, the STREAM benchmark can also be used to deter
      \addplot[color=black,mark=o] file {./files/mpi2.core};
      %\addplot file {./files/mpi2.op4};
      % \addlegendentry{map-by ppr:6:node map-by ppr:4:socket:PE=4};
-    \addlegendentry{Default Binding};
+    \addlegendentry{Default binding};
     \addlegendentry{map-by ppr:8:node map-by ppr:4:socket};
     \addlegendentry{map-by ppr:4:node map-by ppr:4:socket:PE=6};
     \addlegendentry{map-by core}
@@ -190,7 +191,7 @@ The STREAM benchmark used to test the present architecture has been provided by 
 \subsection{Speed-Up Measurement and Effect of Coupling Algorithm for Analytic Test Case}
 \label{sec:speedup}
 
-This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:hhlr}. The tests for this section distribute a problem of constant size to an increasing number of processes. The measurements of the decrease of time will show if the application performance improves by involving more processes in the solution process. This property of applications if often termed \emph{strong} scalability \cite{hager11}. Furthermore, the effect of the coupling algorithm on the running time of the corresponding solver program will be shown. 
+This section presents the results from the Speed-Up measurements conducted on the supercomputer HHLR which has been presented in section \ref{sec:hhlr}. The tests for this section distribute a problem of constant size to an increasing number of processes. The measurements of the decrease of runtime will show if the application performance improves by involving more processes in the solution process. This property of applications if often termed \emph{strong} scalability \cite{hager11}. Furthermore, the effect of the coupling algorithm on the running time of the corresponding solver program will be shown. 
 
 All Speed-Up tests are conducted on the MPI1 section. The performance analyses will show the absolute time needed to solve for the flow of the analytic solution presented in section \ref{sec:manufacturedsolution}. In order to evaluate the parallel performance, the Speed-Up will be calculated based on the presented results. Since the performance of segregated algorithms depends on the amount of under-relaxation applied to the variables in each outer iteration, a preliminary test is conducted to support choosing the optimal amount of under-relaxation. As \cite{ferziger02} and \cite{schaefer99} point out, it is recommended to choose the amount of under-relaxation for the pressure depending on the amount of under-relaxation for the velocity as
 \begin{displaymath}
@@ -215,7 +216,7 @@ Figure \ref{fig:underrelax} shows the results of the preliminary runtime measure
   \label{fig:underrelax}
 \end{figure}
 
-The performance of all solvers significantly depends on the performance of the linear solvers and the corresponding preconditioners used in the solution process. For all conducted tests, the linear system of the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure-correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with the GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner from PETSc. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. Table \ref{tab:performance} lists all further solver parameters.
+The performance of all solvers significantly depends on the performance of the linear equation solvers and the corresponding preconditioners used in the solution process. For all conducted tests, the linear system of the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure-correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with the GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner from PETSc. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. Table \ref{tab:performance} lists all further solver parameters. To directly associate the results with the influence of the deployed pressure-velocity coupling method no temperature equation will be solved for this test.
 
 \begin{table}[h!]\centering
   \caption{Characteristic problem properties used in the performance measurements, solving for the analytic solution presented in section \ref{sec:manufacturedsolution}}
@@ -317,7 +318,7 @@ From the comparison of both algorithms in Figure \ref{fig:speedup} it is evident
 %  \end{minipage}
 %\end{figure}
 
-\section{Weak Scaling Comparison of Coupled and Segregated Solution Algorithm}
+\subsection{Weak Scaling Comparison of Coupled and Segregated Solution Algorithm}
 \label{sec:weakscaling}
 
 References \cite{darwish09} and \cite{vakilipour12} report that the coupled solution algorithm also scales well with the size of the problem domain with respect to the involved number of unknowns. Generally, this is not true for the SIMPLE-algorithm as representative of the set of segregated solution algorithms. An algorithm that scales well with the problem size is apt to be tested on a benchmark that analyzes the so-called \emph{weak} scaling of the implementation \cite{hager11}. This benchmark will investigate how the running time and the number of needed inner and outer iterations behave when the computational load per process is held constant while the number of involved processes is continuously increased. As test problem, the flow with the analytic solution presented in \ref{sec:manufacturedsolution} was chosen. \emph{Weak} scaling benchmarks show, if it is possible to solve a more complex problem in the same amount of time by involving more processes running the solver application. Each process will get assigned a block with \(32x32x32\) unknowns. Thus, the number of involved unknowns \(N\) in each test run can be calculated as \( N = 32\times32\times32\times n \), where \(n\) denotes the number of involved processes. Figure \ref{fig:weak} compares the needed number of outer iterations and the corresponding wall-clock time for an implementation of the SIMPLE-algorithm and the fully coupled solution algorithm.
