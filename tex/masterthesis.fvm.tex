@@ -11,7 +11,7 @@ This section provides a brief overview of the grid structure relevant to the pre
 
 Another option to arrange variables specifically for algorithms that solve the Navier-Stokes equations is the so-called \emph{staggering}. This method stores the values of different variables at different grid locations. This storage facilitates the interpolation of the respective values. As the methods employed in the present thesis are intended to be applicable to complex geometries, the cell-centered non-staggered approach offers more flexibility. Figure \ref{fig:cellvertex} shows the different variable arrangement options on a two-dimensional grid.
 
-\begin{figure}
+\begin{figure}[h!]
     \subfigure{
     \begin{minipage}[1\width]{0.3\textwidth}%
       \input{./img/vertexoriented.tikz.tex}
@@ -87,7 +87,7 @@ where \( \gamma_e := {||\vec{x}_P - \vec{x}_e||_2}/{||\vec{x}_P - \vec{x}_E||_2}
 \section{Treatment of the Non-Orthogonality of Grid Cells}
 \label{sec:nonorth}
 
-Unfortunately, real applications involve complex geometries, a fact which in turn affects the grid's orthogonality when using boundary fitted grids. On non-orthogonal meshes, the directional derivative in the direction of the face's unit normal vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other hand, the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error following from this approximation \cite{jasak96}. Hence, a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
+Unfortunately, real applications involve complex geometries, a fact which in turn affects the grid's orthogonality when using boundary-fitted grids. On non-orthogonal meshes, the directional derivative in the direction of the face's unit normal vector \(\vec{n}_e\) can no longer be approximated as in (\ref{eq:cds}). On the other hand, the exclusive usage of (\ref{eq:gaussgrad}) is not desirable due to the bigger truncation error following from this approximation \cite{jasak96}. Hence, a compromise is made and the surface vector \(\vec{S}_e := S_e \vec{n}_e\) is decomposed as
 \begin{equation}
   \label{eq:orthdecomp}
   \vec{S}_e = \vecg{\Delta} + \vec{k},
@@ -114,7 +114,7 @@ It is important to note that the influence of the orthogonal contribution decrea
 
 \subsection{Over-Relaxed Approach}
 
-\cite{jasak96,darwish09} use the over-relaxed approach which is characterized by an increasing influence of the orthogonal contribution with increasing grid non-orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
+\cite{jasak96,darwish09} use the \emph{over-relaxed approach} which is characterized by an increasing influence of the orthogonal contribution with increasing grid non-orthogonality, as opposed to the minimum correction approach. The orthogonal contribution is calculated as
 \begin{displaymath}
   \vecg{\Delta} =  \left( \vec{S}_e \cdot \vec{S}_e \right) \frac{\vec{d}}{ \vec{d} \cdot \vec{S}_e }.
 \end{displaymath} 
@@ -152,7 +152,7 @@ Here, the first term can be approximated using a central differencing scheme for
   \label{eq:decomposenonorth}
   \left( \nabla \phi \right)_e \cdot \vec{S}_e \approx ||\vecg{\Delta}||_2 \frac{\phi_P - \phi_E}{||\vec{x}_P - \vec{x}_E||_2} - \left(\nabla \phi \right)_e^{(n-1)} \cdot \left(\vecg{\Delta} - \vec{S}_e \right).
 \end{equation}
-Equation (\ref{eq:decomposenonorth} shows that the use of a deferred correction, in conjunction with the requirement that the non-orthogonal correction vanishes on orthogonal grid, introduces an inconsistent discretization of \( \left(\nabla \phi \right)_e \cdot \vecg{\Delta} \).
+Equation (\ref{eq:decomposenonorth}) shows that the use of a deferred correction, in conjunction with the requirement that the non-orthogonal correction vanishes on orthogonal grid, introduces an inconsistent discretization of \( \left(\nabla \phi \right)_e \cdot \vecg{\Delta} \).
 
 \section{Numerical Solution of Nonlinear Systems -- Picard Iteration}
 \label{sec:nonlinear}

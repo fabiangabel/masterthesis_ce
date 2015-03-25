@@ -40,7 +40,7 @@ The derivation of the pressure-weighted interpolation method builds on the discr
     + \left(1 - \alpha_{\vec{u}}\right) u_{i,Q}^{(n-1)} \quad.
 \end{align*}
 %\end{subequations}
-Here, the superscript \((n-1)\) indicates the use of variable values of the previous outer iteration. The pressure gradient has not been discretized yet. A selective interpolation technique \cite{schaefer99} can be applied. This interpolation is crucial for the prevention of the mentioned oscillations. In almost the same way, a semi-discrete implicit momentum balance can be formulated for a virtual control volume located between nodes \(P\) and \(Q\). \begin{equation}
+Here, the superscript \((n-1)\) indicates the use of variable values of the previous outer iteration. Since the pressure gradient has not been discretized yet, a selective interpolation technique \cite{schaefer99} can be applied. This interpolation is crucial for the prevention of the mentioned oscillations. In almost the same way, a semi-discrete implicit momentum balance can be formulated for a virtual control volume located between nodes \(P\) and \(Q\). \begin{equation}
   \label{eq:virtualu}
   u_{i,f}^{(n)} 
   = 
@@ -49,9 +49,9 @@ Here, the superscript \((n-1)\) indicates the use of variable values of the prev
   -                                     V_f\left(\frac{\partial p}{\partial x_i}\right)_f^{(n-1)}  \right)
   + \left(1 - \alpha_{\vec{u}}\right) u_{i,f}^{(n-1)}.
 \end{equation}
-Figure \ref{fig:virt} gives an interpretation of the virtual control volume which shows that the motivation of this interpolation method comes form staggered variable arrangements, as figure \ref{fig:cellvertex} suggests.
+Figure \ref{fig:virt} gives an interpretation of the virtual control volume which shows that the motivation of this interpolation method comes from staggered variable arrangements, as figure \ref{fig:cellvertex} suggests.
 
-\begin{figure}[h]
+\begin{figure}
   \input{./img/virt.tikz.tex}
   \centering{}
   \caption{Interpretation of a virtual control volume (gray) located between nodes $P$ and $Q$ }
@@ -85,8 +85,9 @@ To guarantee convergence of this expression for \(u_{i,f}\), under-relaxation is
 where \(\gamma_f\) is a geometric interpolation factor. 
 
 By using the assumptions from equation (\ref{eq:approxpwim}), the expression in equation (\ref{eq:virtualu}) can be closed, so that the resulting equation will only depend on the variable values in node \(P\) and \(Q\)
+\begingroup
+\allowdisplaybreaks
 \begin{align}
-  \allowdisplaybreaks
   \label{eq:closepwim}
   u_{i,f}^{(n)} 
   &\approx 
@@ -123,6 +124,7 @@ By using the assumptions from equation (\ref{eq:approxpwim}), the expression in 
   \right] \nonumber \\[1em]
   &\quad\quad + \left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right].
 \end{align}
+\endgroup
 The task of the underlined pressure gradient corrector in equation (\ref{eq:closepwim}) is to suppress oscillations in the pressure field. If there are no oscillations, this part should not become active. As long as the behavior of this corrector remains consistent, i.e. that there are no oscillations in the pressure field within a converged solution, it can be multiplied by arbitrary constants \cite{ferziger02}. The modification applied in the last step of the derivation of equation \ref{eq:closepwim} makes use of this fact. The previous argumentation is only valid on equidistant grids, where \(\gamma_f = 1/2\) and central differences are used to calculate the gradients. On arbitrary non-orthogonal grids, another modification has to be performed which is based on a special case of the mean value theorem of differential calculus and the following 
 \begin{prop}
   Let \(x_1,x_2 \in \mathbb{R}\) with \(x_1 \neq x_2\) and \(p(x) = a_0 + a_1 x + a_2 x^2\) a real polynomial function. Then 
@@ -164,7 +166,7 @@ It is desirable for the pressure corrector to vanish independently of the grid s
   \label{eq:pwim}
   &\quad\quad + \underline{\left(1 - \alpha_\vec{u}\right) \left[ u_{i,f}^{(n-1)} - \left(1 - \gamma_f\right) u_{i,P}^{(n-1)} - \gamma_f \, u_{i,Q}^{(n-1)} \right]}.
 \end{align}
-When comparing the expression in equation (\ref{eq:pwdim}) with the standard interpolation scheme, it is evident that the underlined term is not taken into consideration usually \cite{ferziger02}. However, section \ref{sec:independence} shows that neglecting this term indeed creates under-relaxation factor dependent results. This section concludes with a final
+When comparing the expression in equation (\ref{eq:pwim}) with the standard interpolation scheme, it is evident that the underlined term is not taken into consideration usually \cite{ferziger02}. However, section \ref{sec:independence} shows that neglecting this term indeed creates under-relaxation factor dependent results. This section concludes with a final
 \begin{prop}
   The pressure weighted momentum interpolation scheme (\ref{eq:pwim}) guarantees that the converged solution for \(u_{i,f}\) is independent of the velocity under-relaxation \(\alpha_\vec{u}\).
 \end{prop}
@@ -365,6 +367,7 @@ The SIMPLE-algorithm can be represented by an iterative procedure as shown in Al
 \end{algorithmic}
 \end{algorithm}
 
+\newpage
 \section{Discretization of the Mass Fluxes and the Pressure-Correction Equation}
 \label{sec:segpresscorr}
 

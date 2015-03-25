@@ -101,7 +101,7 @@ Furthermore, assuming the dynamic viscosity \(\mu\) to be constant, which can be
 \begin{subequations}
 \label{eq:navierstokes}
 \begin{align}
-  \rho \frac{\partial}{\partial t}   \left(u_i \right)
+  \rho \frac{\partial u_i}{\partial t}   
   + \rho \frac{\partial}{\partial x_j} \left( u_i  u_j \right) 
   =& \rho k_i
   - \frac{\partial p}{\partial x_i}
@@ -177,7 +177,7 @@ In the previous sections, different simplifications have been introduced which a
 +  \mu \frac{\partial}{\partial x_j} \left( \frac{\partial u_i}{\partial x_j} 
 + \frac{\partial u_j}{\partial x_i} \right) \\[1em]
 \label{eq:temperaturediff}
-\frac{\partial}{\partial t}\left(\rho T \right) + \frac{\partial}{\partial x_j} \left( \rho u_j T - \kappa \frac{\partial T}{\partial x_j} \right) =& q_T.
+\rho \frac{\partial T}{\partial t} + \frac{\partial}{\partial x_j} \left( \rho u_j T - \kappa \frac{\partial T}{\partial x_j} \right) =& q_T.
 \end{align}
 \end{subequations}
 
