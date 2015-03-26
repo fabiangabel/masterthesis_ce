@@ -7,7 +7,7 @@ The finite-volume method aims at providing particular linear algebraic equations
       
 \section{Numerical Grid}
 
-This section provides a brief overview of the grid structure relevant to the present thesis. One central idea behind finite-volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so-called \emph{control volumes}. The result of this finite partition of a contiguous problem domain is called numerical grid. Every grid consists of a finite number of control volumes representing the boundaries of a discrete domain of integration. Depending on whether the numerical solution of an equation is to be calculated on the boundary vertices or in the center of a grid cell, the variable arrangement is denoted to be vertex-oriented or cell center-oriented. The remainder of the present thesis assumes that the variables reside in the cell centers of the respective control volumes.
+This section provides a brief overview of the grid structure relevant to the present thesis. One central idea behind finite-volume methods is to solve partial differential equations by integrating them over the specified continuous problem domain and dividing this domain into a finite number of subdomains, the so-called \emph{control volumes}. The result of this finite partition of a contiguous problem domain is called numerical grid. Every grid consists of a finite number of control volumes representing the boundaries of a discrete domain of integration. Depending on whether the numerical solution of an equation is to be calculated at the boundary vertices or at the center of a grid cell, the variable arrangement is denoted to be vertex-oriented or cell center-oriented. The remainder of the present thesis assumes that the variables reside in the cell centers of the respective control volumes.
 
 Another option to arrange variables specifically for algorithms that solve the Navier-Stokes equations is the so-called \emph{staggering}. This method stores the values of different variables at different grid locations. This storage facilitates the interpolation of the respective values. As the methods employed in the present thesis are intended to be applicable to complex geometries, the cell-centered non-staggered approach offers more flexibility. Figure \ref{fig:cellvertex} shows the different variable arrangement options on a two-dimensional grid.
 
@@ -29,7 +29,7 @@ Another option to arrange variables specifically for algorithms that solve the N
       \raggedright{}
       \input{./img/stagger.tikz.tex}
     \end{minipage}}
-    \caption{Vertex centered, cell-centered and staggered variable arrangement. For the staggered arrangement, the arrows denote the velocity component and their location on the grid. The centered dot denotes the location of the pressure and further scalar quantities}
+    \caption{Vertex centered, cell-centered and staggered variable arrangement. For the staggered arrangement, the arrows denote the velocity component and their location on the grid. The centered dot denotes the location of the pressure and further scalar quantities.}
    \label{fig:cellvertex}
 \end{figure}
 
@@ -62,7 +62,7 @@ Furthermore, in order to transform a partial differential equation into a linear
 \begin{displaymath}
   \left(\nabla \phi\right)_e \cdot \vec{n}_e,
 \end{displaymath}
-where \(\left(\nabla \phi\right)_e\) is the gradient of \(\phi\) on the boundary face \(S_e\). One method is to interpret this expression directly as a directional derivative and approximate it with a central difference
+where \(\left(\nabla \phi\right)_e\) is the gradient of \(\phi\) at the boundary face \(S_e\). One method is to interpret this expression directly as a directional derivative and approximate it with a central difference
 \begin{equation}
   \label{eq:cds}
   \left(\nabla \phi\right)_e \cdot \vec{n}_e \approx \frac{\phi_P - \phi_E}{|| \vec{x}_P - \vec{x}_E ||_2}.

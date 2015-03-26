@@ -41,7 +41,7 @@ The PETSc framework makes use of the message-passing computational model \cite{g
 
 The message-passing model is not only reflected in the application as a programming paradigm, but also in the design of parallel computers and their communication network. From this perspective, the message-passing model is an analog to the distributed memory design which encapsulates the idea of local memory and the exchange of data through a network. High-performance computers are seldom designed exclusively as distributed memory systems. They rather additionally incorporate features of another model: the shared memory model. This memory model is characterized by a common address space which each of the processes can access uniformly, i.e. with a location independent latency, or non-uniformly. Latter systems are also called \emph{NUMA} (\emph{Non-Uniform Memory Access}) systems. A widely used system design, as used in the system on which the performance tests of chapter \ref{sec:compare} are carried out, comprises features of both models by using NUMA computing nodes that share local memory and are able to exchange data with other NUMA nodes via an interconnect and the passing of messages.
 
-One important advantage of using software that uses the message passing model and hence applications that were parallelized within this programming paradigm is their compatibility with computers that use combinations of distributed and shared memory.
+One important advantage of using software that implements the message passing model and hence applications that were parallelized within this programming paradigm is their compatibility with computers that are a combination of distributed and shared memory systems.
 
 \subsection{Convergence Control} 
 \label{sec:convergence}
@@ -103,7 +103,7 @@ The present solver framework treats the calculation of matrix coefficients for b
 \begin{figure}[h!]
   \centering
   \input{./img/ghosting.tikz.tex}
-  \caption{Storage and update of ghost values in the vectors related to the variables on multi-block domains. The blocks have been assigned to two different processes, \textrm{Proc} $1$ and \emph{Proc} $2$. The control volumes of the two-dimensional problem domain are indexed with respect to the process local indexing.}
+  \caption{Storage and update of ghost values in the vectors related to the variables on multi-block domains. The blocks have been assigned to two different processes, \textrm{Proc} $1$ and \textrm{Proc} $2$. The control volumes of the two-dimensional problem domain are indexed with respect to the process local indexing.}
   \label{fig:ghosting}
 \end{figure}
 

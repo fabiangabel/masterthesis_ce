@@ -58,7 +58,7 @@ On the other side, the discretized momentum balance yields matrix coefficients t
 \begin{displaymath}
   a_F^{u_i,p} =  \gamma_f S_f \quad \text{and} \quad a_P^{u_i,p} = \sum_{F \in NB(P)} (1-\gamma_f) \, S_f.
 \end{displaymath}
-If the Boussinesq approximation is used implicitly, an additional coefficient \(a_P^{u_i,T}\) to account for the velocity-to-temperature coupling has to be considered. Section \ref{sec:temperaturecoupling} will present different methods of temperature coupling in detail. Algorithm 2 shows the main steps of the fully coupled solution algorithm.
+If the Boussinesq approximation is used implicitly, an additional coefficient \(a_P^{u_i,T}\) to account for the velocity-to-temperature coupling has to be considered. Section \ref{sec:temperaturecoupling} will present different methods of temperature coupling in detail. Algorithm 2 summarizes the main steps of the fully coupled solution algorithm.
 
 \alglanguage{pseudocode}
 \begin{algorithm}
@@ -146,9 +146,9 @@ A comparison with section \ref{sec:segconvective} shows that the underlined term
 If this semi-implicit, semi-discrete equation is discretized completely, the new matrix and right-hand side contributions can be calculated to
 \begin{align*}
   \allowdisplaybreaks
-  &a_F^{T,u_i} = \rho T_f^{(n-1)} \gamma_f n_{f,i} S_f \\[1.0em] 
-  &a_P^{T,u_i} = \sum_{F \in NB(P)} \rho T_f^{(n-1)} \left(1-\gamma_f\right) n_{f,i} S_f \\[1.0em]
-  &a_F^{T,p} = -\rho T_f^{(n-1)} \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_F^{u_i}}\right) \frac{S_f}{\left(\vec{x}_P - \vec{x}_F\right) \cdot \vec{n}_f} = \rho T_f^{(n-1)} a_F^{p} \\[1.0em] 
+  &a_F^{T,u_i} = \rho T_f^{(n-1)} \gamma_f n_{f,i} S_f \,, \\[1.0em] 
+  &a_P^{T,u_i} = \sum_{F \in NB(P)} \rho T_f^{(n-1)} \left(1-\gamma_f\right) n_{f,i} S_f \,, \\[1.0em]
+  &a_F^{T,p} = -\rho T_f^{(n-1)} \left(\left(1 - \gamma_f\right) \frac{\alpha_\vec{u} V_P}{a_P^{u_i}} + \gamma_f \frac{\alpha_\vec{u} V_F}{a_F^{u_i}}\right) \frac{S_f}{\left(\vec{x}_P - \vec{x}_F\right) \cdot \vec{n}_f} = \rho T_f^{(n-1)} a_F^{p} \,, \\[1.0em] 
   &\text{and} \quad
   a_P^{T,p} = - \sum_{F \in NB(P)} a_F^{T,p}.
 \end{align*}
@@ -188,7 +188,7 @@ The coefficients for the pressure are modified as usual for Dirichlet boundary c
 
 Since at Dirichlet boundaries the values of the velocities are known exactly, the Newton-Raphson linearization technique does not apply to the velocities on boundary faces. As a result, the linearization of the convective term of the temperature equation becomes unnecessary.
 
-At block boundaries the new matrix coefficients \(a_L^{u_i,p}\) and \(a_R^{u_i,p}\) for the velocity-to-pressure coupling and the matrix coefficients \(a_L^{p,u_i}\) and \(a_R^{p,u_i}\) have to be taken into account. This fact does not present any drawbacks to the presented approach. If additionally temperature-to-velocity/pressure coupling is applied, corresponding matrix coefficients as for the coupling have to be considered. The implicit Boussinesq approximation does not require additional matrix coefficients at block boundaries as this is a local approximation.
+At block boundaries the new matrix coefficients \(a_L^{u_i,p}\) and \(a_R^{u_i,p}\) for the velocity-to-pressure coupling and the matrix coefficients \(a_L^{p,u_i}\) and \(a_R^{p,u_i}\) for the pressure-to-velocity coupling have to be taken into account. This fact does not present any drawbacks to the presented approach. If additionally temperature-to-velocity/pressure coupling is applied, corresponding matrix coefficients \(a_L^{T,u_i}\), \(a_L^{T,p}\), \(a_R^{T,u_i}\), and \(a_R^{T,p}\), as for the pressure-velocity coupling, have to be considered. The implicit Boussinesq approximation does not require additional matrix coefficients at block boundaries as this approximation is local and thus only affects coefficients of the main diagonal.
 
 \section{Assembly of Linear Systems -- Final Form of Equations}
 \label{sec:cpldassembly}
@@ -239,9 +239,9 @@ The different degrees of coupling between the different equations will affect th
 \sum_{F \in NB(P)}
 \left[
   \begin{array}{ccccc}
-    a_F^{u_1}   & 0           & 0           & a_F^{u_1,p} & a_F^{u_1,T} \\[0.5em]
-    0           & a_F^{u_2}   & 0           & a_F^{u_2,p} & a_F^{u_2,T} \\[0.5em]
-    0           & 0           & a_F^{u_1}   & a_F^{u_3,p} & a_F^{u_3,T} \\[0.5em]
+    a_F^{u_1}   & 0           & 0           & a_F^{u_1,p} & 0 \\[0.5em]
+    0           & a_F^{u_2}   & 0           & a_F^{u_2,p} & 0 \\[0.5em]
+    0           & 0           & a_F^{u_1}   & a_F^{u_3,p} & 0 \\[0.5em]
     a_F^{p,u_1} & a_F^{p,u_2} & a_F^{p,u_3} & a_F^{p}     & 0           \\[0.5em]
     a_F^{T,u_1} & a_F^{T,u_2} & a_F^{T,u_3} & a_F^{T,p}   & a_F^{T}
   \end{array}

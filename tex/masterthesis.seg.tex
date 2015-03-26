@@ -51,7 +51,7 @@ Here, the superscript \((n-1)\) indicates the use of variable values of the prev
 \end{equation}
 Figure \ref{fig:virt} gives an interpretation of the virtual control volume which shows that the motivation of this interpolation method comes from staggered variable arrangements, as figure \ref{fig:cellvertex} suggests.
 
-\begin{figure}
+\begin{figure}[h!]
   \input{./img/virt.tikz.tex}
   \centering{}
   \caption{Interpretation of a virtual control volume (gray) located between nodes $P$ and $Q$ }
@@ -488,7 +488,7 @@ By using central differences for the implicit discretization of the directional 
   - \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} - n_{f_i}\right)S_f  } \right)
   + \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i}.
 \end{align*}
-Here, the unit vector pointing \(\vecg{xi}_f = \left({\xi_f}_i\right)_{i = 1,\dots,3}\) in the direction of the straight line, which connects control volume \(P\) and control volume \(F\) is denoted as follows
+Here, the unit vector \(\vecg{\xi}_f = \left({\xi_f}_i\right)_{i = 1,\dots,3}\) which points in the direction of the straight line, which connects control volume \(P\) and control volume \(F\) is denoted as follows
 \begin{displaymath}
   \vecg{\xi}_f = \frac{\vec{x}_P - \vec{x}_F}{|| \vec{x}_p - \vec{x}_F ||_2}.
 \end{displaymath}
@@ -496,8 +496,8 @@ The interpolation of the cell center gradients to the boundary faces is performe
 %\begin{subequations}
 \begin{align*}
   a_F^{u_i,d} &= - \frac{\mu S_f}{||\vec{x}_P - \vec{x}_F||_2}, 
-  \quad \quad a_P^{u_i,d} = \sum_{F \in NB(P)} \frac{\mu S_f}{|| \vec{x}_P - \vec{x}_F ||} \\[1em]
-  b_{F,u_i}^d &=  - \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} + n_{f_i}\right)S_f  
+  \quad \quad a_P^{u_i,d} = \sum_{F \in NB(P)} \frac{\mu S_f}{|| \vec{x}_P - \vec{x}_F ||} ,\\[1em]
+  \textrm{and} \quad b_{F,u_i}^d &=  - \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \left(\xi_{f_i} + n_{f_i}\right)S_f  
   - \mu \left( \frac{\partial u_j}{\partial x_i} \right)_f^{(n-1)} n_{f_i} S_f   \nonumber \\[0.5em]
   &=  - \sum_{F \in NB(P)} \left( \frac{\partial u_i}{\partial x_j}\right)_f^{(n-1)} \xi_{f_i} S_f
   + \mu \left( \left( \frac{\partial u_i}{\partial x_j} \right)_f^{(n-1)}
@@ -537,7 +537,7 @@ Now, proceeding as in the preceding sections, one can discretize the advective t
             &\quad + q_{T_P} V_P.
   \end{align*}
 %\end{subequations}
-Again it is possible though not always as necessary as in the case of the velocities, to under-relax the solution of the resulting linear system with an under-relaxation factor \(\alpha_T\). Section \ref{sec:structure} shows how to accomplish implicit under-relaxation of variables.
+Again it is possible though not always as necessary as in the case of the velocities, to under-relax the solution of the resulting linear system with an under-relaxation factor \(\alpha_T \in (0,1]\). Section \ref{sec:structure} shows how to accomplish implicit under-relaxation of variables.
 
 \section{Boundary Conditions}
 \label{sec:segboundary}
@@ -673,7 +673,7 @@ If the solution of the flow field is coupled to the solution of a temperature eq
 
 If structured grids are used to decompose the problem domain, the characterizing property of structured grids, which is the constant amount of grid cells in each direction, gives each inner cell exactly six neighbors. If block-structured grids are used, this property may be violated if the number of grid cells of each block is chosen to be arbitrary. The arbitrariness of the grid resolution is a main benefactor for the adaptivity of block-structured grids. Arbitrary grid resolutions may lead to \emph{hanging} nodes at block boundaries which are not addressed by the previously presented discretization techniques. How a solution algorithm for partial differential equations via finite-volume methods can deal with block boundaries, is presented in this subsection.
 
-To maintain the conservation property of finite-volume methods \cite{schaefer99}, block boundaries should not be interpreted as boundaries in the classical sense. Instead, conditions have to be formulated to guarantee that flows through block boundaries are conserved. The method to treat block boundaries which is used in the present thesis was presented by \cite{lilek97}. A different method was described in \cite{lange02}. However, the first method was chosen since it allows for a fully implicit discretization of the block boundary fluxes. This method calculates fluxes through separate face segments \(S_l\) that surge from \emph{non-matching} grid blocks. Each of these face segments gets assigned a control volume \(L\) and a control volume \(R\), which exclusively share this face segment. An algorithm to provide the information associated with these face segments has been implemented in the present thesis. Figure \ref{fig:nonmatching} shows an example of non-matching block boundaries and the used indexing for control volumes and boundary faces. This indexing is based on a numbering of the face segments \(S_l\).
+To maintain the conservation property of finite-volume methods \cite{schaefer99}, block boundaries should not be interpreted as boundaries in the classical sense. Instead, conditions have to be formulated to guarantee that flows through block boundaries are conserved. The method to treat block boundaries which is used in the present thesis was presented by \cite{lilek97}. A different method was described in \cite{lange02}. However, the first method was chosen since it allows for a fully implicit discretization of the block boundary fluxes. This method calculates fluxes through separate face segments \(S_l\) that surge from \emph{non-matching} grid blocks. Each of these face segments gets assigned a control volume \(L\) and a control volume \(R\), which exclusively share this face segment. An algorithm to provide the information associated with these face segments has been implemented in the developed solver framework. Figure \ref{fig:nonmatching} shows an example of non-matching block boundaries and the used indexing for control volumes and boundary faces. This indexing is based on a numbering of the face segments \(S_l\).
 
 \begin{figure}
   \centering
@@ -729,7 +729,7 @@ Let the solution for the linear system without under-relaxation be denoted as
 \begin{displaymath}
   \tilde{u}_{P_i}^{(n)} := \frac{b_{P,u_i} - \sum_{F \in NB(P)} a_F u_{F_i}}{a_P^{u_i}}.
 \end{displaymath}
-This equation is only a formal expression for the case, in which the linear system for the velocity component \(u_i\) is solved directly. The described convex combination yields
+This equation is only a formal expression for the case in which the linear system for the velocity component \(u_i\) is solved directly. The described convex combination yields
 \begin{align*}
   u_{P_i}^{(n)} :&= \alpha_{\vec{u}} \tilde{u}_{P_i}^{(n)} + (1 - \alpha_{\vec{u}} )\, u_{P_i}^{(n-1)} \\[0.5em]
                  &= \alpha_{\vec{u}} \frac{b_{P,u_i} - \sum_{F \in NB(P)} a_F u_{F_i}}{a_P^{u_i}} + (1 - \alpha_{\vec{u}} )\, u_{P_i}^{(n-1)},
@@ -738,10 +738,14 @@ an expression that can be modified to derive a linear system whose solution is t
 \begin{displaymath}
   \frac{a_P^{u_i}}{\alpha_{\vec{u}}} u_{i,P} + \sum_{F \in NB(P)} a_F^{u_i} u_{i,F} 
   = 
-  b_{P,u_i} + \frac{(1 - \alpha_{\vec{u}})\, a_P^{u_i}}{\alpha_{\vec{u}}}\, u_{i,P}^{(n-1)}. 
+  b_{P,u_i} + \frac{(1 - \alpha_{\vec{u}})}{\alpha_{\vec{u}}}\, a_P^{u_i} \, u_{i,P}^{(n-1)}. 
 \end{displaymath}
 
-After all matrix coefficients have been successfully calculated, the linear system can be represented by a system matrix \(A\) and a right-hand side vector \(b\). Figure \ref{fig:segassemble} shows the non-zero structure of a linear system for a grid consisting of a \(2\times2\times2\) cell block and a \(3\times3\times3\) cell block.
+After all matrix coefficients have been successfully calculated, the linear system can be represented by a system matrix \(A\) and a right-hand side vector \(b\) and reads as follows
+\begin{displaymath}
+  A \phi = b,
+\end{displaymath}
+where \(\phi \in \{u_1, u_2, u_3, p', T\}\). Figure \ref{fig:segassemble} shows the non-zero structure of a linear system matrix for a grid consisting of a \(2\times2\times2\) cell block and a \(3\times3\times3\) cell block.
 
 \begin{figure}
   \centering

@@ -38,8 +38,8 @@
 
 
     \foreach \j in {0,...,\nStep} {
-        \draw [very thin,gray] (0,\j*\xStep) -- (\xStep*\nStep,\j*\xStep)  ;
-        \draw [very thin,gray] (\j*\xStep,0) -- (\j*\xStep,\xStep*\nStep)  ;
+        \draw [very thin] (0,\j*\xStep) -- (\xStep*\nStep,\j*\xStep)  ;
+        \draw [very thin] (\j*\xStep,0) -- (\j*\xStep,\xStep*\nStep)  ;
     }
     \markcell{0}{0}{3};
     \markcell{0}{1}{6};
@@ -54,8 +54,8 @@
     \markcell{2}{2}{7};
 
     \foreach \j in {0,...,\nStepp} {
-        \draw [very thin,gray] (\xStep*\nStep,\j*\xStepp) -- (\xStep*\nStep+\xStepp*\nStepp,\j*\xStepp)  ;
-        \draw [very thin,gray] (\xStep*\nStep+\j*\xStepp,0) -- (\xStep*\nStep+\j*\xStepp,\xStepp*\nStepp)  ;
+        \draw [very thin] (\xStep*\nStep,\j*\xStepp) -- (\xStep*\nStep+\xStepp*\nStepp,\j*\xStepp)  ;
+        \draw [very thin] (\xStep*\nStep+\j*\xStepp,0) -- (\xStep*\nStep+\j*\xStepp,\xStepp*\nStepp)  ;
     }
 
     \markcelllorange{0}{0}{2};
@@ -69,11 +69,11 @@
 
     \begin{scope}[shift={(10,4)},scale=2]
     \foreach \j in {0,...,10} {
-        \draw [very thin,gray] (0,-0.25*\j*\xStep) -- (0.25*\xStep,-0.25*\j*\xStep)  ;
-        \draw [very thin,gray] (0,-0.25*\j*\xStep) -- (0,-0.25*\j*\xStep-0.25*\xStep)  ;
-        \draw [very thin,gray] (0.25*\xStep,-0.25*\j*\xStep) -- (0.25*\xStep,-0.25*\j*\xStep-0.25*\xStep)  ;
+        \draw [very thin] (0,-0.25*\j*\xStep) -- (0.25*\xStep,-0.25*\j*\xStep)  ;
+        \draw [very thin] (0,-0.25*\j*\xStep) -- (0,-0.25*\j*\xStep-0.25*\xStep)  ;
+        \draw [very thin] (0.25*\xStep,-0.25*\j*\xStep) -- (0.25*\xStep,-0.25*\j*\xStep-0.25*\xStep)  ;
     }
-    \draw [very thin,gray] (0,-0.25*11*\xStep) -- (0.25*\xStep,-0.25*11*\xStep)  ;
+    \draw [very thin] (0,-0.25*11*\xStep) -- (0.25*\xStep,-0.25*11*\xStep)  ;
     \markcel{0}{1};
     \markcel{1}{2};
     \markcel{2}{3};
@@ -86,7 +86,7 @@
     \markcelorange{9}{1};
     \markcelorange{10}{2};
     \draw[<->,thick,bend right,bend angle=40]  (0.125*\xStep,-9*0.25*\xStep-0.125*\xStep) -- (2-0.35*\xStep,-0*0.25*\xStep-0.125*\xStep);
-    \draw[<->,thick]  (0.125*\xStep,-10*0.25*\xStep-0.125*\xStep) -- (2-0.35*\xStep,-1*0.25*\xStep-0.125*\xStep) node [midway,right,xshift=2pt] {\small VecGhostUpdate()};
+    \draw[<->,thick]  (0.125*\xStep,-10*0.25*\xStep-0.125*\xStep) -- (2-0.35*\xStep,-1*0.25*\xStep-0.125*\xStep) node [midway,right,xshift=2pt] {\footnotesize VecGhostUpdate()};
 
     \draw [thick,decorate,decoration={brace,amplitude=10pt},xshift=-10pt]
     (0.0,-2.75) -- (0.0,0.0) node [black,midway,left,xshift=-10pt] 
@@ -101,11 +101,11 @@
 
     \begin{scope}[shift={(14,4)},scale=2]
     \foreach \j in {0,...,3} {
-        \draw [very thin,gray] (0,-0.25*\j*\xStep) -- (0.25*\xStep,-0.25*\j*\xStep)  ;
-        \draw [very thin,gray] (0,-0.25*\j*\xStep) -- (0,-0.25*\j*\xStep-0.25*\xStep)  ;
-        \draw [very thin,gray] (0.25*\xStep,-0.25*\j*\xStep) -- (0.25*\xStep,-0.25*\j*\xStep-0.25*\xStep)  ;
+        \draw [very thin] (0,-0.25*\j*\xStep) -- (0.25*\xStep,-0.25*\j*\xStep)  ;
+        \draw [very thin] (0,-0.25*\j*\xStep) -- (0,-0.25*\j*\xStep-0.25*\xStep)  ;
+        \draw [very thin] (0.25*\xStep,-0.25*\j*\xStep) -- (0.25*\xStep,-0.25*\j*\xStep-0.25*\xStep)  ;
     }
-    \draw [very thin,gray] (0,-0.25*4*\xStep) -- (0.25*\xStep,-0.25*4*\xStep)  ;
+    \draw [very thin] (0,-0.25*4*\xStep) -- (0.25*\xStep,-0.25*4*\xStep)  ;
     \markcelorange{0}{1};
     \markcelorange{1}{2};
     \markcel{2}{3};

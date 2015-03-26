@@ -54,7 +54,7 @@ While wall-clock time is an absolute measure that can be used to compare differe
   \begin{displaymath} E^{num}_P := \frac{\operatorname{FLOPS}(1)}{P \cdot \operatorname{FLOPS}(P)}\end{displaymath} 
     considers the degradation of the efficiency of the underlying algorithm due to the parallelization. Many efficient algorithms owe their efficiency to recursions inside the algorithm. In the process of resolving these recursions, the efficiency of the algorithm degrades. It follows that this efficiency is entirely independent of the underlying hardware.
   \item[] The \emph{parallel efficiency}
-    \begin{displaymath} E^{par}_P :=\frac{\operatorname{TIME}(\text{parallel algorithm on one processor})}{P \cdot \operatorname{TIME}(\text{parallel algorithm on \(P\) processors})} \end{displaymath} 
+    \begin{displaymath} E^{par}_P :=\frac{\operatorname{TIME}(\text{parallel algorithm using one process})}{P \cdot \operatorname{TIME}(\text{parallel algorithm on \(P\) processors})} \end{displaymath} 
       describes the effect of the need for inter-process communication, if the solution process involves more than one process. This form of efficiency does explicitly exclude any algorithm related degradation since the time measured corresponds to the same algorithms. It follows that the parallel efficiency only depends on the implementation of the communication and the latencies associated with hardware.
   \item[] The \emph{load balancing efficiency} 
     \begin{displaymath} E^{load}_P :=\frac{\operatorname{TIME}(\text{calculation on complete domain})}{P \cdot \operatorname{TIME}(\text{calculation on biggest subdomain})} \end{displaymath}
@@ -188,6 +188,7 @@ As can be seen from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}, the
 
 The STREAM benchmark used to test the present architecture has been provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem. This was done by always using all available cores per socket, but running the benchmark only with \(n\) processes, while the other \(\left(16 - n\right)\) or \(\left(24 - n\right)\) processes are running calculations which are only using data from the L\(1\)-cache of their corresponding core. The intention of this approach was to regulate the turbo-boost effects by keeping a constant load on the processors for different numbers of STREAM benchmark processes. However, this approach did not generate results different from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}.
 
+\clearpage
 \subsection{Speed-Up Measurement and Effect of Coupling Algorithm for Analytic Test Case}
 \label{sec:speedup}
 
@@ -216,7 +217,7 @@ Figure \ref{fig:underrelax} shows the results of the preliminary runtime measure
   \label{fig:underrelax}
 \end{figure}
 
-The performance of all solvers significantly depends on the performance of the linear equation solvers and the corresponding preconditioners used in the solution process. For all conducted tests, the linear system of the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure-correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with the GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner from PETSc. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. Table \ref{tab:performance} lists all further solver parameters. To directly associate the generated results with the influence of the deployed pressure-velocity coupling method, no temperature equation will be solved for this test.
+The performance of all solvers significantly depends on the performance of the linear equation solvers and the corresponding preconditioners used in the solution process. For all conducted tests, the linear system of the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure-correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with the GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner from PETSc. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. Table \ref{tab:performance} lists all further solver parameters. To directly associate the generated results with the influence of the utilized pressure-velocity coupling method, no temperature equation will be solved for this test.
 
 \begin{table}[h!]\centering
   \caption{Characteristic problem properties used in the performance measurements, solving for the analytic solution presented in section \ref{sec:manufacturedsolution}}
@@ -264,6 +265,7 @@ The performance of all solvers significantly depends on the performance of the l
         yticklabels={1,2,4,8,16,32,64,128,256,512},
         grid=major,
         xmin=8,xmax=1200,
+        ymin=1,ymax=75
       ]
       \addplot[color=black,mark=*] file {./files/speedup.seg.128};
       \addplot[color=black,mark=square*] file {./files/speedup.cpld.128};
@@ -381,7 +383,7 @@ The comparison in Figure \ref{fig:weak} illustrates that the fully coupled algor
       \end{semilogxaxis}
     \end{tikzpicture}
   \end{center}
-  \caption{Average number of inner iterations for different process counts solving for the analytic solution presented in section \ref{sec:manufacturedsolution} with the fully coupled solution algorithm}
+  \caption{Average number of inner iterations for different process counts solving for the analytic solution presented in section \ref{sec:manufacturedsolution} with the fully coupled solution algorithm. The number of involved unknowns is calculated as $32\times32\times32\times n$, where $n$ is the number of processes.}
   \label{fig:weakinner}
 \end{figure}
 
@@ -481,7 +483,7 @@ The solution of the linear systems resulting from the discretization of the prob
 In contrast to the segregated algorithm, the fully coupled solution algorithm achieves an approximately constant amount of needed outer iterations, independent of the number of involved unknowns. The tests regarding the weak scalability of the coupled solution algorithm presented in section \ref{sec:weakscaling} emphasize this property. Table \ref{tab:channelcompare} compares the measured wall-clock time for different numbers of unknowns. Figure \ref{fig:channel1} shows the mesh generated for the first number of unknowns. The two other numbers of unknowns result from bisecting the mesh in each direction. Every bisection of the grid scales the number of unknowns by a factor of approximately eight. The tests were conducted on the formerly presented HHLR cluster, using the MPI2 section. 
 
 \begin{table}[h!]\centering
-  \caption{Performance analysis results of the channel flow problem for different numbers of unknowns comparing the segregated (SEG) to the fully coupled (CPLD) solution algorithm using one process on the MPI2 section of the HHLR supercomputer. }
+  \caption{Performance analysis results of the channel flow problem for different numbers of unknowns comparing the segregated (SEG) to the fully coupled (CPLD) solution algorithm using one process on the MPI2 section of the HHLR supercomputer}
 \ra{1.3}
   \begin{tabular}{lcccc}\toprule
     No. of unknowns & SEG - time s & CPLD - time s & SEG - its & CPLD - its \\
@@ -595,7 +597,7 @@ Section \ref{sec:nonorth} introduced different ways to address the degradation o
   \end{center}
 \end{figure}
 
-In order to measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed. For these tests, all correctors addressing grid non-orthogonality from section \ref{sec:nonorth} have been implemented in the coupled solver program. The number of needed outer iterations on a \(32\times32\times32\) grid to solve for the analytic solution presented in section \ref{sec:manufacturedsolution} was measured. The grid skewness was parametrized with the relative diameter \(\alpha\) of the maximal neighborhood, which results in constraining the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location. The calculations were terminated after obtaining a reduction of \(10^{-14}\) of the relative initial residual.
+In order to measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed. For these tests, all correctors addressing grid non-orthogonality from section \ref{sec:nonorth} have been implemented in the coupled solver program. The number of needed outer iterations on a \(32\times32\times32\) grid to solve for the analytic solution presented in section \ref{sec:manufacturedsolution} was measured. The grid skewness was parametrized by the relative diameter \(\alpha\) of the maximal neighborhood, which results in constraining the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location. The calculations were terminated after obtaining a reduction of \(10^{-14}\) of the relative initial residual.
 
 \begin{figure}
   \begin{center}
@@ -644,7 +646,7 @@ By using built-in PETSc subroutines, the rows of the corresponding matrices can 
  \pie [ color ={ tud0a, tud0b}, rotate =90, radius=2.5 ]  {11/MAIN, 89/MOM+PRESS}
 \end{tikzpicture}
 \end{minipage}
-\caption{Distribution of wall-clock time spent to solve for an analytic solution with the segregated SIMPLE-algorithm (left) and the coupled solution algorithm (right) on one processor}
+\caption{Distribution of wall-clock time spent to solve for an analytic solution with the segregated SIMPLE-algorithm (left) and the coupled solution algorithm (right) using one process}
 \label{fig:barbalance}
 \end{figure}
 
@@ -661,7 +663,7 @@ n(p)
 \end{equation}
 where \(p = 0,\dots,m-1\) and \(\lfloor \cdot \rfloor\) denotes the floor function. This function maps the possibly rational result of the integer division in (\ref{eq:load}) to the largest integer smaller than the result. It is evident that using equation (\ref{eq:load}) for load balancing leads to numbers of rows that differ by maximal one row across the involved processors.
 
-In order to analyze the effect of the ideal matrix partitioning, a random number generator was used to create different grid resolutions for each one of the eight blocks of a block-structured grid, having a total of 826891 cells. Figure \ref{fig:matpart} shows the default distribution of matrix rows which correspond to the data which had been assigned to each process. Furthermore, Figure \ref{fig:matpart} compares the original data partitioning with the case using the automatic matrix partitioning. One can observe that, due to the simplicity of the load balancing technique, significant incoherences surge between the assigned grid and variable data and the assigned matrix rows. The rows are distributed in contiguous chunks, resulting in processes like process 0 or process 2 keeping high data coherence with the assigned matrix rows, while processes like process 3 or process 5 lack data coherence. Thus, more sophisticated distribution algorithms are necessary to maximize the retention rate of data for the individual processors maintaining the data coherence since a higher retention rate directly reduces the communication needed during matrix assembly. The utilization of advanced load distribution algorithms is especially recommendable for higher process counts as the scattering of data and the corresponding matrix rows may significantly decrease performance.
+  In order to analyze the effect of the ideal matrix partitioning, a random number generator was used to create different grid resolutions for each one of the eight blocks of a block-structured grid, having a total of 826891 cells. Figure \ref{fig:matpart} shows the default distribution of matrix rows which correspond to the data which had been assigned to each process. Furthermore, Figure \ref{fig:matpart} compares the original data partitioning with the case using the automatic matrix partitioning. One can observe that, due to the simplicity of the load balancing technique, significant incoherences surge between the assigned grid and variable data and the assigned matrix rows. The rows are distributed in contiguous chunks, resulting in processes like process 0 or process 2 keeping high data coherence with the assigned matrix rows, while processes like process 3 or process 5 lack data coherence. Thus, more sophisticated distribution algorithms are necessary to maximize the retention rate of data for the individual processes maintaining the data coherence since a higher retention rate directly reduces the communication needed during matrix assembly. The utilization of advanced load distribution algorithms is especially recommendable for higher process counts as the scattering of data and the corresponding matrix rows may significantly decrease performance.
 
 \begin{figure}
 \newcommand{\wheelchart}[3]{
@@ -758,7 +760,7 @@ In order to analyze the effect of the ideal matrix partitioning, a random number
 \node[align=center] at (-258.8:1.25cm) { P 7};
 \end{tikzpicture}
 \end{minipage}
-\caption{Comparison of the number of unknowns assigned to each process and the assigned rows of the matrix using automatic matrix partitioning for load balancing. The inner pie chart shows the initial distribution of the number of unknowns corresponding to the portion of the grid which has been assigned to a processor, whereas the outer pie chart shows the distribution of the automatically distributed matrix rows.}
+\caption{Comparison of the number of unknowns assigned to each process and the assigned rows of the matrix using automatic matrix partitioning for load balancing. The inner pie chart shows the initial distribution of the number of unknowns corresponding to the portion of the grid which has been assigned to a process, whereas the outer pie chart shows the distribution of the automatically distributed matrix rows.}
 \label{fig:matpart}
 \end{figure}
 
@@ -779,7 +781,7 @@ Depending on the parallel matrix layout, one processor might need to assemble pa
   \begin{minipage}{0.45\textwidth}
 \begin{tikzpicture}
  \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.5 ]  {50/MAIN, 13/MOM, 37/PRESSCORR}
- \node[draw,align=left] at (0,+3.5) {Default partitioning -- 0.1241E+04s};
+ \node[draw,align=left] at (0,+3.25) {Default partitioning -- 0.1241E+04s};
 \end{tikzpicture}
 \end{minipage}}
 \hfil
