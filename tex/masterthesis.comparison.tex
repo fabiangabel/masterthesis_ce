@@ -140,7 +140,7 @@ In terms of parallel scalability, the STREAM benchmark can also be used to deter
     \addlegendentry{map-by core}
 \end{axis}
 \end{tikzpicture}
-\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different Open MPI process binding options on one node of the MPI1 section of the HHLR}
+\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different Open MPI process binding options on one node of the MPI1 section of the HHLR.}
 \label{fig:mpi1band}
 \end{figure}
 
@@ -180,11 +180,11 @@ In terms of parallel scalability, the STREAM benchmark can also be used to deter
     \addlegendentry{map-by core}
 \end{axis}
 \end{tikzpicture}
-\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different Open MPI process binding options on one node of the MPI2 section of the HHLR}
+\caption{Sustainable memory bandwidth as determined by the STREAM benchmark (TRIAD) for different Open MPI process binding options on one node of the MPI2 section of the HHLR.}
 \label{fig:mpi2band}
 \end{figure}
 
-As can be seen from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}, the scaling of the sustainable bandwidth behaves rather erratic. As a consequence, for process counts up to eight for the MPI1 section and process counts up to six for the MPI2 section, no reliable results can be obtained from the STREAM benchmark. It is assumed that this kind of behavior is due to the automatic turbo-boost the deployed processors apply, which cannot be controlled other than by turning it off on the nodes directly from the BIOS. For the following performance analyses with respect to parallel performance, it is desirable to minimize this kind of unpredictable side effects. Since all performance measures are relative, with the exception of the plain measurement of wall-clock time, the reference value for the following relative performance measurements will be taken from the program execution for the maximum number of processes that can be bound to one deployed socket without any overlapping.
+As can be seen from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}, the scaling of the sustainable bandwidth behaves rather erratic. As a consequence, for process counts up to eight for the MPI1 section and process counts up to six for the MPI2 section, no reliable results can be obtained from the STREAM benchmark. It is assumed that this kind of behavior is due to the automatic turbo-boost the deployed processors apply, which cannot be controlled other than by turning it off on the nodes directly from the BIOS. For the following performance analyses with respect to parallel performance, it is desirable to minimize this kind of unpredictable side effects. Since all performance measures are relative, with the exception of the plain measurement of wall-clock time, the reference value for the following relative performance measurements will be taken from the program execution for the maximum number of processes that can be bound to one deployed socket without any overlapping using the \emph{map-to-core} option.
 
 The STREAM benchmark used to test the present architecture has been provided by the PETSc framework. Special effort has been made to adapt this benchmark to handle the described problem. This was done by always using all available cores per socket, but running the benchmark only with \(n\) processes, while the other \(\left(16 - n\right)\) or \(\left(24 - n\right)\) processes are running calculations which are only using data from the L\(1\)-cache of their corresponding core. The intention of this approach was to regulate the turbo-boost effects by keeping a constant load on the processors for different numbers of STREAM benchmark processes. However, this approach did not generate results different from Figure \ref{fig:mpi1band} and Figure \ref{fig:mpi2band}.
 
@@ -209,18 +209,20 @@ Figure \ref{fig:underrelax} shows the results of the preliminary runtime measure
         ylabel=Wall-clock time s,
         xtick={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0},
         xmin=0,xmax=1,
+        height=6.5cm,
+        width=9cm,
       ]
       \addplot[color=black,mark=*] file {./files/underrelax.64};
     \end{axis}
   \end{tikzpicture}
-  \caption{Wall-clock time comparison for the SIMPLE-algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $64\times64\times64$ cells using different under-relaxation factors up to $\alpha_\vec{u}=0.999$}
+  \caption{Wall-clock time comparison for the SIMPLE-algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $64\times64\times64$ cells using different under-relaxation factors up to $\alpha_\vec{u}=0.999$.}
   \label{fig:underrelax}
 \end{figure}
 
 The performance of all solvers significantly depends on the performance of the linear equation solvers and the corresponding preconditioners used in the solution process. For all conducted tests, the linear system of the discretized momentum balances will be solved with a GMRES (\emph{Generalized Minimal Residual}) \cite{saad86} Krylov subspace solver and an incomplete LU-factorization as preconditioner. The pressure-correction equation is solved by a CG (\emph{Conjugated Gradient}) solver \cite{hestenes52} with the GAMG (\emph{Geometric Algebraic Multi Grid}) preconditioner from PETSc. The coupled systems are solved by a GMRES Krylov subspace solver with GAMG preconditioning. The GAMG preconditioner was chosen so that a high numerical efficiency is obtained, constituting a basis for further parallel performance measurements based on plain wall-clock time measurements. Table \ref{tab:performance} lists all further solver parameters. To directly associate the generated results with the influence of the utilized pressure-velocity coupling method, no temperature equation will be solved for this test.
 
 \begin{table}[h!]\centering
-  \caption{Characteristic problem properties used in the performance measurements, solving for the analytic solution presented in section \ref{sec:manufacturedsolution}}
+  \caption{Characteristic problem properties used in the performance measurements, solving for the analytic solution presented in section \ref{sec:manufacturedsolution}.}
 \ra{1.3}
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
@@ -235,6 +237,7 @@ The performance of all solvers significantly depends on the performance of the l
 \end{table}
  
 \begin{figure}[h!]
+  \vspace{2cm}
   %\setlength{\abovecaptionskip}{5pt plus 3pt minus 2pt}
   \begin{center}
   \begin{tikzpicture}
@@ -247,6 +250,8 @@ The performance of all solvers significantly depends on the performance of the l
         xtick={1,2,4,8,16,32,64,128,256,512,1024},
         xticklabels={1,2,4,8,16,32,64,128,256,512,1024},
         xmin=1,xmax=1200,
+        width=9.5cm,
+        height=8cm,
       ]
       \addplot[color=black,mark=*] file {./files/seg.128};
       \addplot[color=black,mark=square*] file {./files/cpld.gamg.128};
@@ -265,7 +270,9 @@ The performance of all solvers significantly depends on the performance of the l
         yticklabels={1,2,4,8,16,32,64,128,256,512},
         grid=major,
         xmin=8,xmax=1200,
-        ymin=1,ymax=75
+        ymin=1,ymax=75,
+        width=8.0cm,
+        height=8cm,
       ]
       \addplot[color=black,mark=*] file {./files/speedup.seg.128};
       \addplot[color=black,mark=square*] file {./files/speedup.cpld.128};
@@ -275,7 +282,7 @@ The performance of all solvers significantly depends on the performance of the l
     \\
   \ref{named}
   \end{center}
-  \caption{Wall-clock time and Speed-Up comparison for the segregated and the fully coupled solution algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $128\times128\times128$ cells}
+  \caption{Wall-clock time and Speed-Up comparison for the segregated and the fully coupled solution algorithm, solving for the analytic solution presented in section \ref{sec:manufacturedsolution} on a structured grid with $128\times128\times128$ cells.}
    \label{fig:speedup}
 \end{figure}
 
@@ -364,10 +371,11 @@ References \cite{darwish09} and \cite{vakilipour12} report that the coupled solu
     \\
   \ref{named}
   \end{center}
-  \caption{Comparison of the number of outer iterations and the corresponding wall-clock time, needed to achieve a relative reduction of 1E-8 of the initial residual, for different methods to resolve pressure-velocity coupling}
+  \caption{Comparison of the number of outer iterations and the corresponding wall-clock time, needed to achieve a relative reduction of 1E-8 of the initial residual, for different methods to resolve pressure-velocity coupling.}
   \label{fig:weak}
 \end{figure}
 
+\newpage
 The comparison in Figure \ref{fig:weak} illustrates that the fully coupled algorithm scales ideally with respect to the number of outer iterations, which remains almost constant throughout the conducted study. The number of iterations at most differed by two outer iterations. These differences are suspected to be an effect of the loose tolerance criterion of residual reduction in each outer iteration. As an effect of accumulating rounding errors, some test cases did not accomplish the total tolerance criterion and thus needed to perform another additional outer iteration. From the wall-clock time measurements presented in Figure \ref{fig:weak} it is evident that, despite the approximately constant number of outer iterations, the fully coupled solution algorithm did not scale ideally. Figure \ref{fig:weakinner} shows that weak scaling is prevented because the linear solver does not scale ideally. This fact shows that weak scaling cannot be obtained using black-box linear solvers. Further research into the development of special linear solvers for the systems resulting from a fully coupled discretization of the Navier-Stokes equations is needed.
 
 \begin{figure}[h!]
@@ -396,7 +404,7 @@ Fluid flow inside closed applications is a common situation in mechanical engine
 \begin{figure}
   \centering
   \includegraphics{./img/channel3d.pdf}
-  \caption{Sketch of the channel flow problem domain}
+  \caption{Sketch of the channel flow problem domain.}
   \label{fig:sketch}
 \end{figure}
 
@@ -424,7 +432,7 @@ This test case utilizes all of the previously introduced boundary conditions for
 was chosen. At the outlet, a Dirichlet pressure boundary condition was used. All other boundaries used a no-slip solid non-moving wall boundary condition. All problem parameters were chosen to assure that the flow problem resides in the regime of a non-turbulent stationary flow, for which the presented solver framework has been developed. Table \ref{tab:channel} lists the remaining material and geometrical characteristics of the test case. A study similar to the one presented in section \ref{sec:speedup} was conducted to optimize the used amount of under-relaxation.
 
 \begin{table}[h!]\centering
-  \caption{Characteristic problem properties used in the channel flow test case}
+  \caption{Characteristic problem properties used in the channel flow test case.}
 \ra{1.3}
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
@@ -452,7 +460,7 @@ The present test case demonstrates one advantage of the treatment of block bound
 \begin{figure}
   \centering
   \input{./img/channel.tikz.tex}
-  \caption{West and east boundary of the numerical grid for the channel flow problem}
+  \caption{West and east boundary of the numerical grid for the channel flow problem.}
   \label{fig:channel1}
 \end{figure}
 
@@ -467,14 +475,16 @@ The present test case demonstrates one advantage of the treatment of block bound
    \centering
     \subfigure{
     \begin{minipage}{0.45\textwidth}%
+      \centering
       \input{./img/blocking2.tikz.tex}
     \end{minipage}}
     \hfill
     \subfigure{
     \begin{minipage}{0.45\textwidth}%
+      \centering
       \input{./img/blocking.tikz.tex}
     \end{minipage}}
-    \caption{Blocking for the two different obstacles within the problem domain of the channel flow}
+    \caption{Blocking for the two different obstacles within the problem domain of the channel flow.}
     \label{fig:blocking}
 \end{figure}
 
@@ -483,7 +493,7 @@ The solution of the linear systems resulting from the discretization of the prob
 In contrast to the segregated algorithm, the fully coupled solution algorithm achieves an approximately constant amount of needed outer iterations, independent of the number of involved unknowns. The tests regarding the weak scalability of the coupled solution algorithm presented in section \ref{sec:weakscaling} emphasize this property. Table \ref{tab:channelcompare} compares the measured wall-clock time for different numbers of unknowns. Figure \ref{fig:channel1} shows the mesh generated for the first number of unknowns. The two other numbers of unknowns result from bisecting the mesh in each direction. Every bisection of the grid scales the number of unknowns by a factor of approximately eight. The tests were conducted on the formerly presented HHLR cluster, using the MPI2 section. 
 
 \begin{table}[h!]\centering
-  \caption{Performance analysis results of the channel flow problem for different numbers of unknowns comparing the segregated (SEG) to the fully coupled (CPLD) solution algorithm using one process on the MPI2 section of the HHLR supercomputer}
+  \caption{Performance analysis results of the channel flow problem for different numbers of unknowns comparing the segregated (SEG) to the fully coupled (CPLD) solution algorithm using one process on the MPI2 section of the HHLR supercomputer.}
 \ra{1.3}
   \begin{tabular}{lcccc}\toprule
     No. of unknowns & SEG - time s & CPLD - time s & SEG - its & CPLD - its \\
@@ -514,14 +524,14 @@ This section deals with the evaluation and comparison of the velocity-to-tempera
 \begin{minipage}{0.45\textwidth}
   \includegraphics[trim=3.5cm 4.5cm 0cm 5cm, scale=0.5,clip=true]{./img/cavityw.pdf}
 \end{minipage} }
-\caption{Temperature field and velocity field in the coordinate direction of the gravitational force of the temperature-driven cavity flow problem for a cross section in the middle of the cubical-shaped problem domain as $Ra = 10^4$ }
+\caption{Temperature field and velocity field in the coordinate direction of the gravitational force of the temperature-driven cavity flow problem for a cross section in the middle of the cubical-shaped problem domain as $Ra = 10^4$.}
   \label{fig:sketchcavity}
 \end{figure}
 
 Essential for this benchmarking case is the nature of the flow. The fluid motion is a consequence of the effect of volume forces caused by temperature differences in the solution domain. Hence, the mathematical problem exhibits a strong coupling between the involved variables velocity, pressure, and temperature. This relation is represented by the Rayleigh and Prandtl number of the problem. It is assumed that the fully implicit treatment of the temperature coupling will yield further benefits with respect to wall-clock time for this kind of flow, compared to solution approaches that solve for the temperature separately. Table \ref{tab:cavity} lists the geometrical and solver parameters used for the performance analysis of this section.
 
 \begin{table}[h!]\centering
-  \caption{Characteristic problem properties used in the temperature-driven cavity flow test case}
+  \caption{Characteristic problem properties used in the temperature-driven cavity flow test case.}
 \ra{1.3}
   \begin{tabular}{lcc}\toprule
     Property & Value & Unit \\
@@ -545,9 +555,9 @@ Using the data from Table \ref{tab:cavity} and given a Prandtl number for the fl
 \end{displaymath}
 It follows that the Rayleigh number can be determined to 
 \begin{displaymath}
-  Ra = \frac{\rho g \beta \Delta T h^3}{\mu \alpha} \approx 10^4,
+  Ra = \frac{\rho g \beta \Delta T h^3}{\mu \alpha} \approx 10^4.
 \end{displaymath}
-which implies, according to \cite{christon02}, that the flow is still stationary and non-turbulent.
+This implies, according to \cite{christon02}, that the flow is still stationary and non-turbulent.
 
 The tests were conducted on the formerly presented HHLR cluster, using the MPI2 section. Table \ref{tab:cavitycompare} compares the wall-clock times and numbers of needed outer iterations for different solver and coupling approaches. The presented results are in good agreement with \cite{vakilipour12}. This reference shows a monotonic decrease of the number of iterations with increased implicit coupling for a different test case at a Rayleigh number similar to the one used in the present thesis. The implicit pressure-velocity coupling is responsible for the biggest decrease in the number of nonlinear iterations. Different to the results presented in section \ref{sec:channel}, this does not yield significant performance benefits with respect to wall-clock time. In order to achieve the benefits of a fully coupled solution algorithm, the coupling has to be extended to involve semi-implicit temperature-to-velocity/pressure and implicit velocity-to-temperature coupling. In this context, the abbreviations \emph{SEG} for the segregated solution algorithm and \emph{CPLD} for the fully coupled solution algorithm without implicit temperature coupling are used. For the fully coupled solver configurations, \emph{TCPLD} includes only implicit velocity-to-temperature coupling, whereas \emph{NRCPLD} additionally includes implicit temperature-to-velocity/pressure coupling via the Newton-Raphson linearization.
 
@@ -584,6 +594,7 @@ Table \ref{tab:cavitycompare} demonstrates that the sole use of velocity-to-temp
 
 The conducted study shows that in order to profit from the benefits of implicit coupling with respect to the needed number of nonlinear iterations the key lies in the semi-implicit temperature-to-velocity/pressure coupling. However, the implicit consideration of the corresponding terms furthermore increases the amount of memory needed for computation and hence does not come without deficiencies.
 
+\newpage
 \section{Effect of Different Non-Orthogonal Correctors on Solver Convergence}
 \label{sec:studynonorth}
 
@@ -592,14 +603,14 @@ Section \ref{sec:nonorth} introduced different ways to address the degradation o
 \begin{figure}[h!]
   \begin{center}
     \input{./img/nonorthgrid.tikz.tex}
-    \caption{Skewing of an initially equidistant, structured and orthogonal grid via random movement of inner grid points within a small neighborhood of their original location. The neighborhood with a maximal diameter is indicated by a circle around one inner grid point}
+    \caption{Skewing of an initially equidistant, structured and orthogonal grid via random movement of inner grid points within a small neighborhood of their original location. The neighborhood with a maximal diameter is indicated by a circle around one inner grid point.}
     \label{fig:nonorthgrid}
   \end{center}
 \end{figure}
 
 In order to measure the effect of different non-orthogonal corrections on the solution process, tests for different skewed grids were performed. For these tests, all correctors addressing grid non-orthogonality from section \ref{sec:nonorth} have been implemented in the coupled solver program. The number of needed outer iterations on a \(32\times32\times32\) grid to solve for the analytic solution presented in section \ref{sec:manufacturedsolution} was measured. The grid skewness was parametrized by the relative diameter \(\alpha\) of the maximal neighborhood, which results in constraining the movement of grid points. \(\alpha \in [0,1) \), where \(\alpha = 0\) corresponds to no movement of grid points at all and \(\alpha = 1\) would move grid points up to \(\textstyle \frac{\Delta x}{2} \) away from their original location. The choice of \(\alpha = 1\) is not permitted to maintain the grid's integrity. Such a choice would permit the grid generator to place two grid points at the same location. The calculations were terminated after obtaining a reduction of \(10^{-14}\) of the relative initial residual.
 
-\begin{figure}
+  \begin{figure}[h!]
   \begin{center}
   \begin{tikzpicture}
     \begin{axis}[
@@ -618,7 +629,7 @@ In order to measure the effect of different non-orthogonal corrections on the so
       \end{axis}
     \end{tikzpicture}
   \end{center}
-\caption{Number of needed outer iterations for different relative diameters of the neighborhood in which the movement of grid points takes place, parametrized by the orthogonal corrector}
+\caption{Number of needed outer iterations for different relative diameters of the neighborhood in which the movement of grid points takes place, parametrized by the orthogonal corrector.}
 \label{fig:nonorth}
 \end{figure}
 
@@ -636,17 +647,19 @@ By using built-in PETSc subroutines, the rows of the corresponding matrices can 
 \begin{figure}
   \centering
   \begin{minipage}{0.45\textwidth}
+    \centering
 \begin{tikzpicture}
- \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.5 ]  {52/MAIN, 12/MOM, 36/PRESSCORR}
+ \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.0 ]  {52/MAIN, 12/MOM, 36/PRESSCORR}
 \end{tikzpicture}
 \hfil
 \end{minipage}
   \begin{minipage}{0.45\textwidth}
+    \centering
 \begin{tikzpicture}
- \pie [ color ={ tud0a, tud0b}, rotate =90, radius=2.5 ]  {11/MAIN, 89/MOM+PRESS}
+ \pie [ color ={ tud0a, tud0b}, rotate =90, radius=2.0 ]  {11/MAIN, 89/MOM+PRESS}
 \end{tikzpicture}
 \end{minipage}
-\caption{Distribution of wall-clock time spent to solve for an analytic solution with the segregated SIMPLE-algorithm (left) and the coupled solution algorithm (right) using one process}
+\caption{Distribution of wall-clock time spent to solve for an analytic solution with the segregated SIMPLE-algorithm (left) and the coupled solution algorithm (right) using one process.}
 \label{fig:barbalance}
 \end{figure}
 
@@ -779,16 +792,18 @@ Depending on the parallel matrix layout, one processor might need to assemble pa
 %\hfil
   \subfigure{
   \begin{minipage}{0.45\textwidth}
+    \centering
 \begin{tikzpicture}
- \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.5 ]  {50/MAIN, 13/MOM, 37/PRESSCORR}
+ \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.0 ]  {50/MAIN, 13/MOM, 37/PRESSCORR}
  \node[draw,align=left] at (0,+3.25) {Default partitioning -- 0.1241E+04s};
 \end{tikzpicture}
 \end{minipage}}
 \hfil
   \subfigure{
   \begin{minipage}{0.45\textwidth}
+    \centering
 \begin{tikzpicture}
- \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.5 ]  {64/MAIN, 12/MOM, 24/PRESSCORR}
+ \pie [ color ={ tud0a, tud0c, tud0b}, rotate =90, radius=2.0 ]  {64/MAIN, 12/MOM, 24/PRESSCORR}
  \node[draw,align=left] at (0,+3.5) {Automatic partitioning -- 0.9891E+03s};
 \end{tikzpicture}
 \end{minipage}}
