@@ -36,7 +36,7 @@
 %Technische Universität Darmstadt}
 
 \date[\today]
-{Kolloquium, XX.XX.2015}
+{Kolloquium, 02.04.2015}
 
 \subject{seminar presentation}
 
@@ -158,10 +158,10 @@
         \end{column}
         \begin{column}{8cm}
             \begin{itemize}
-                \item \small{Effizienzsteigerung durch Adaptivität}
-                  \item \small{Skalierbarkeit der Lösungsmethode}
-                  \item \small{Einsatz robuster Algorithmen}
-                \item \small{Umgang mit Variablenkopplung}
+                \item \small{Adaptivität}
+                \item \small{Parallelrechner (Skalierbarkeit)}
+                  \item \small{robuste Algorithmen}
+                \item \small{Variablenkopplung berücksichtigen}
             \end{itemize}
         \end{column}
     \end{columns}
@@ -173,7 +173,8 @@
 \frametitle{Motivation}
     Vollständig gekoppelter Lösungsansatz \\für Navier-Stokes Gleichungen (Darwish et al. 2009):
     \begin{itemize}
-    \item semi-implizite Druck-Geschwindigkeits-Kopplung statt sequentieller Lösung
+    \item simultan Geschwindigkeitsfeld und Druck lösen
+    \item semi-implizite Druck-Geschwindigkeits-Kopplung 
     \item robuster Algorithmus ohne Unterrelaxation
     \end{itemize}
 
@@ -194,15 +195,15 @@
     \item Implementierung eines vollständig gekoppelten Lösungsansatzes 
       \begin{itemize}\scriptsize
         \item Finite-Volumen Diskretisierung der 3d Navier-Stokes Gleichungen auf blockstrukturierten, lokal verfeinerten Gittern mit hängenden Knoten
-        \item Kopplungsansätze für Temperaturgleichung 
         \item MPI-Parallelisierung des Lösers
+        \item Kopplungsansätze für Temperaturgleichung 
       \end{itemize}
     \item Skalierbarkeitsuntersuchung auf HHLR
     \item Performancevergleich mit herkömmlichem SIMPLE-Verfahren für unterschiedliche Testfälle
       \begin{itemize}\scriptsize
         \item Manufactured Solution
         \item Kanalströmung mit komplexem Hindernis
-        \item Strömung in beheizter Kavität (Adaption MIT - Benchmark)
+        \item auftriebsgetriebene Nieschenströmung (Adaption MIT - Benchmark)
       \end{itemize}
   \end{itemize}
 
@@ -364,30 +365,30 @@
 \end{columns}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-  \frametitle{Implementierung - Lösungsalgorithmus}
-\alglanguage{pseudocode}
-\begin{algorithm}[H]
-\label{al:simple}
-\caption{SIMPLE Algorithm}
-\begin{algorithmic}\scriptsize
-\State{\textit{INITIALIZE} variables}
-\While{(convergence criterion not accomplished)}
-\State{\textit{SOLVE} linearized momentum balances}
-\State{\textit{CALCULATE} mass fluxes}
-\State{\textit{SOLVE} pressure correction equation to assure continuity}
-\State{\textit{UPDATE} pressure}
-\State{\textit{UPDATE} velocities and mass fluxes}
-\If{(coupled scalar equation)}
-  \State{\textit{SOLVE} scalar equation}
-\EndIf
-\EndWhile
-\If{(decoupled scalar equation)}
-  \State{\textit{SOLVE} scalar equation}
-\EndIf
-\end{algorithmic}
-\end{algorithm}
-\end{frame}
+%\begin{frame}
+%  \frametitle{Implementierung - Lösungsalgorithmus}
+%\alglanguage{pseudocode}
+%\begin{algorithm}[H]
+%\label{al:simple}
+%\caption{SIMPLE Algorithm}
+%\begin{algorithmic}\scriptsize
+%\State{\textit{INITIALIZE} variables}
+%\While{(convergence criterion not accomplished)}
+%\State{\textit{SOLVE} linearized momentum balances}
+%\State{\textit{CALCULATE} mass fluxes}
+%\State{\textit{SOLVE} pressure correction equation to assure continuity}
+%\State{\textit{UPDATE} pressure}
+%\State{\textit{UPDATE} velocities and mass fluxes}
+%\If{(coupled scalar equation)}
+%  \State{\textit{SOLVE} scalar equation}
+%\EndIf
+%\EndWhile
+%\If{(decoupled scalar equation)}
+%  \State{\textit{SOLVE} scalar equation}
+%\EndIf
+%\end{algorithmic}
+%\end{algorithm}
+%\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
   \frametitle{Implementierung - Lösungsalgorithmus}
@@ -717,7 +718,7 @@
      \item starke Kopplung, da  Strömung getrieben durch Temperaturdifferenzen 
      \item 3d Kavität mit isothermer Ost- (kalt) und Westwand (heiß)
      \item alle übrigen Wände adiabat
-     \item \(Ra \approx 10^4 \)
+     \item \(Ra \approx 10^4 \), \(Pr = 0.71 \)
      \item stationäre, laminare Strömung
    \end{itemize}
  \end{column}
