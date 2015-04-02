@@ -1,7 +1,7 @@
 
 \newcommand*{\xMin}{0}%
 \newcommand*{\xMax}{12}%
-\newcommand*{\xStep}{0.48}%
+\newcommand*{\xStep}{0.52}%
 \newcommand*{\nStep}{35}
 \newcommand*{\yMin}{0}%
 \newcommand*{\yMax}{1}%
@@ -18,8 +18,8 @@
 \begin{tikzpicture}
 
     %BACKGROUND COLORING
-    \fill[tud0a] (0,\xStep*\nStep-8*\xStep) -- (8*\xStep,\xStep*\nStep-8*\xStep) -- (8*\xStep,0) -- (0*\xStep,0) -- cycle;
-    \fill[tud0a] (8*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep-8*\xStep) -- (8*\xStep,\xStep*\nStep-8*\xStep) -- cycle;
+    %\fill[tud0a] (0,\xStep*\nStep-8*\xStep) -- (8*\xStep,\xStep*\nStep-8*\xStep) -- (8*\xStep,0) -- (0*\xStep,0) -- cycle;
+    %\fill[tud0a] (8*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep) -- (35*\xStep,\xStep*\nStep-8*\xStep) -- (8*\xStep,\xStep*\nStep-8*\xStep) -- cycle;
 
     \foreach \j in {0,...,35} {
         \draw [very thin,black] (0,\j*\xStep) -- (\xStep*\nStep,\j*\xStep)  ;
@@ -27,8 +27,8 @@
     }
 
     \foreach \j in {0,...,34} {
-        \node[anchor=center] at (-0.3,\xStep*\nStep-\j*\xStep-0.5*\xStep) {\scriptsize \j};
-        \node[anchor=center] at (\j*\xStep+0.5*\xStep,\xStep*\nStep+0.3) { \scriptsize \j};
+        \node[anchor=center] at (-0.3,\xStep*\nStep-\j*\xStep-0.5*\xStep) {\small \j};
+        \node[anchor=center] at (\j*\xStep+0.5*\xStep,\xStep*\nStep+0.3) { \small \j};
     }
 
     \foreach \i in {0,...,34} {
